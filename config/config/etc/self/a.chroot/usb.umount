@@ -1,0 +1,8 @@
+#!/bin/sh
+#############
+mountpoint -q "${bootfs}" && umount "${bootfs}"
+#############
+printf "%s\n" "#############"
+lsblk
+printf "%s\n" "#############"
+#############

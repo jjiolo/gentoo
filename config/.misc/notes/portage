@@ -1,0 +1,207 @@
+
+#############
+
+[default behaviour]
+
+ updates @system @world
+ ignores none immediate dependencies
+ ignores all none essential build dependencies
+ ^ none essential, not forced to higher version than already installed >=package-1.1.1.1
+ 
+ * --deep check all dependencies dependencies for upgrade
+ * with-bdeps y force all none run time dependencies to upgrade
+
+#############
+
+#############
+
+[portage]
+
+ actions
+  --info
+  --depclean -c
+  --unmerge -C
+  --list-sets
+
+ options
+
+  --tree -t
+  --ask -a
+  --verbose -v
+  --pretend -p
+  --oneshot -1
+
+  --fetchonly -f
+  --fetch-all-uri -F
+
+  --root # install path
+  --config-root # /etc/portage path
+  --quickpkg-direct y
+
+  --jobs -j
+  --load-average -l
+
+  --buildpkg -b
+  --buildpkgonly -B
+  --usepkg -k
+  --usepkgonly -K
+  --getbinpkg -g
+  --getbinpkgonly -G
+
+  --with-bdeps # doesnt upgrade none runtime dependencies unless VARIABLE=">=package-1.1.1.1" ?
+  --onlydeps -o
+  --nodeps -O
+
+  --update -u
+  --deep -D
+  --changed-use -U
+  --newuse -N
+  --emptytree -e
+
+  --keep-going y
+
+-------------
+
+--backtrack=100
+
+--color y
+--quiet
+--quiet-build
+
+--root-deps # install build dependencies to chroot not host
+--root-deps=rdeps # discard all build-time dependencies from chroot
+
+-------------
+
+--binpkg-changed-deps ?
+--changed-deps ?
+--dynamic-deps ?
+--package-move ?
+
+emerge --quickpkg-direct y --root /run/system @system
+       --quickpkg-direct-root /binhost/rootfs
+
+#############
+
+#############
+
+[make.conf]
+
+-------------
+
+[FEATURES]
+
+ nodoc noinfo noman
+
+ mirror - emerge -F ( unless RESTRICT=mirror ? )
+ buildpkg - create binary packages for all merges
+ binpkg-multi-instance - multiple binary package USE instances
+ binpkg-docompress - compress documentation inside the binary vs compress documentation on install
+ binpkg-dostrip - strip inside the binary vs strip on install
+ binpkg-logs - keep logs from binpkg installs
+
+ -cgroup -ips-sandbox -mount-sandbox -network-sandbox -network-sandbox-proxy -pid-sandbox # cgroups and namespace sandboxing
+
+ suidctl # /etc/portage/suidctl.conf
+ sfperms # remove suid and guid bits
+ xattrs # preserve extended attributes
+
+ parallel-fetch # background downloads
+ parallel-install # more lock files for parallel execution
+ distlocks # DISTDIR and PKGDIR lock files
+ ebuild-locks # prevent unsandboxed functions being executed in parallel ?
+
+ config-protect-if-modified # only protect modified files
+ collision-protect # dont overwrite unowned files
+ protect-owned # dont overwrite owned files
+ clean-logs fail-clean -noclean -keeptemp -keepwork # tidy logs && toggle /tmp/portage debugging
+
+ multilib-strict # check lib64 > lib
+ preserved-libs # leave old libraries untill all dependent packages are removed
+
+ unknown-features-warn # warn on unknown values...
+
+-------------
+
+[WTF]
+
+ buildpkg-live ? PROPERTIES takes interactive or live, ie live pulling a git repo (constantly changing upstream)
+ noauto ?
+ ebuild-locks ? # unsandboxed ebuild phases never execute in parallel
+ qa-unresolved-soname-deps ? # check it didnt build with a library it cant find after ? /shrug
+
+-------------
+
+[VARIABLES]
+
+ INSTALL_MASK="/path/to/file" # prevent file install ?
+
+ ACCEPT_PROPERTIES - interactive || live
+ ACCEPT_RESTRICT
+  binchecks
+  bindist
+  fetch
+  installsources
+  mirror
+  network-sandbox
+  preserve-libs
+  primaryuri
+  splitdebug
+  strip
+  test
+  userpriv
+
+^ not alot else worth looking at ?
+  couldnt see any functionality changes that would benifit 
+
+#############
+
+(needs to go in notes/portage)
+
+package install
+ delete old version
+ install new version
+
+every binary linking to old library binary or symlink fails
+
+update process depends on executing multiple binaries
+update libreadline
+install bash to link against it...
+inability to execute any ebuilds (bash fails to find libreadline)
+
+leave the old version of libreadline (binary and symlink) bash can execute and install itself
+
+* pythons slotted - implies it can use older or newer versions without removal 
+* updating bash itself implies deleting the executed binary and running it before its installed ?
+
+FEATURES=preserve-libs - dont remove old libraries if packages still depends on them (var/db/pkg/*/*/REQUIRES)
+emerge @preserved-rebuild - rebuild any package that depends on old .so libraries then remove the libraries
+
+@revdep-rebuild - died when FEATURE=preserve-libs was created
+                  find binaries with missing libraries
+                  rebuild the binary hopefully linking newer libraries
+
+build.rootfs
+
+ build deps to host, binaries and libraries implies preserved-rebuild to remove old libraries
+ oneshot removes from world file ? preserve-libs checks /var/dp/pkg REQUIRES (on the host)
+
+ runtime deps to chroot, binaries and libraries implies preserved-rebuild to remove old libraries
+
+^ fairly sure build.rootfs needs preserved-rebuild
+  never execute or updated a single binary in a good 4 years ?
+  removed it from lack of visable use
+  apparently still logically required ?
+
+-------------
+
+ application binary interface (ABI)
+  binaries built before the change (functions or function arguements)
+  breaking binaries linking against newer versions
+
+ application programming interface (API)
+  binaries built after the change (functions or function arguements)
+  breaks linking against newer versions without a patch to the source
+
+#############
+

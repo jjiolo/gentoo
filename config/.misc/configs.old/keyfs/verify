@@ -1,0 +1,14 @@
+#!/bin/sh
+#############
+usage(){ printf "%s\n" "takes keyfs and file - ${1}";exit 1; }
+#############
+[ "${#}" == "2" ] || usage "no input"
+#############
+[ -f "${2}" ] || usage "file does not exist"
+[ -f "${2}.dgst" ] || usage "message digest does not exist"
+#############
+source keyfs_mount "${1}"
+#############
+openssl dgst -sha512 -verify /storage/a.keyfs/sign.pub -signature "${2}.dgst" "${2}"
+#############
+

@@ -1,0 +1,11 @@
+
+
+
+#############
+mount -o remount,rw,nodev,suid,exec,noatime,size=50% /
+#############
+nft -f /etc/nftables.logged
+#############
+sysctl -w net.ipv4.ip_unprivileged_port_start=0
+#############
+

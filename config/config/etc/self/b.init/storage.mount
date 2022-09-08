@@ -1,0 +1,19 @@
+
+#############
+
+timeout -s SIGTERM 3 sh -c 'read -p interupt && /bin/sh -li'
+
+[ -b "/dev/storage" ] && use="/dev/storage"
+[ -b "/dev/mapper/storage" ] && use="/dev/mapper/storage"
+
+[ -b "${use}" ] && fsck.ext4 -pvf "${use}"
+
+[ -b "${use}" ] &&
+fsck.ext4 -pv "${use}" &&
+install -d -o 0 -g 0 -m 0755 "${local}" &&
+mount -t ext4 -o rw,nodev,nosuid,noexec,noatime "${use}" "${local}" &&
+install -d -o 0 -g 0 -m 0755 "${local}" && 
+ln -sf "${local}" "${storage}" || ln -sf "${ephemeral}" "${storage}"
+
+#############
+

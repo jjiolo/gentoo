@@ -1,0 +1,16 @@
+#!/bin/sh
+#############
+debug(){ printf "%s\n" "debug - ${1}" ; exit 1 ; }
+#############
+[ "${#}" == "1" ] || debug "takes interface"
+#############
+[ -d "/sys/class/net/${1}" ] || debug "interface does not exist"
+#############
+
+#############
+pkill -x zcip
+#############
+ip link set up "${1}"
+#############
+env -i /sbin/zcip -vfq "${1}" /bin/zcip_script
+#############

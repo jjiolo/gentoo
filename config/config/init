@@ -1,0 +1,6 @@
+#!/bin/sh
+#############
+sleep 3
+#############
+exec /sbin/init # </dev/null &>/dev/null
+#############

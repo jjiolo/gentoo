@@ -1,0 +1,123 @@
+#!/bin/sh
+#############
+
+monitor(){
+
+############# # get stats
+
+    cpu0="$(awk 'NR==1{print$2" "$4" "$5" "$6}' /proc/stat)"
+network0="$(awk 'NR>2{print$1$2":"$10}' /proc/net/dev)"
+
+sleep 1
+
+    cpu1="$(awk 'NR==1{print$2" "$4" "$5" "$6}' /proc/stat)"
+network1="$(awk 'NR>2{print$1$2":"$10}' /proc/net/dev)"
+
+clear
+
+printf "\n#############\n#\n"
+
+############# # cpu
+
+read user0 system0 idle0 iowait0 << EOF
+${cpu0}
+EOF
+
+read user1 system1 idle1 iowait1 << EOF
+${cpu1}
+EOF
+
+cpu_active="$(((${user1}-${user0})+(${system1}-${system0})+(${iowait1}-${iowait0})))"
+cpu_total="$((${cpu_active}+(${idle1}-${idle0})))"
+cpu_pct="$((${cpu_active}*100/${cpu_total}))"
+
+printf "%s" "# [${cpu_pct}%]"
+
+############# # ram
+
+ram_total="$(awk '/MemTotal:/{print$2}' /proc/meminfo)"
+ram_available="$(awk '/MemAvailable:/{print$2}' /proc/meminfo)"
+ram_pct="$((100*(${ram_total}-${ram_available})/${ram_total}))"
+
+printf "%s" " [${ram_pct}%]"
+
+############# # loadavg
+
+printf "%s" " [$(cat /proc/loadavg)]"
+
+############# # connections
+
+printf "%s" " [$(awk '$4=="07"{print}' /proc/net/udp /proc/net/udp6|wc -l)"
+printf "%s" ":$(awk '$4=="01"{print}' /proc/net/udp /proc/net/udp6|wc -l)]"
+printf "%s" " [$(awk '$4=="0A"{print}' /proc/net/tcp /proc/net/tcp6|wc -l)"
+printf "%s" ":$(awk '$4=="01"{print}' /proc/net/tcp /proc/net/tcp6|wc -l)]"
+
+############# # sync
+
+printf "%s" " [$(awk '/Dirty:|Writeback:/{printf" "$2}' /proc/meminfo)]"
+
+############# # uptime
+
+printf "%s" " [$(date -u -d @"$(awk -F . '{print$1}' /proc/uptime)" +"%H:%M:%S")]"
+
+############# # date
+
+printf "%s" " [$(date +"%d/%m/%y %H:%M:%S")]"
+
+############# # battery
+
+if [ -d /sys/class/power_supply/BAT0 ];then
+
+energy_full="$(cat /sys/class/power_supply/BAT0/energy_full)"
+energy_now="$(cat /sys/class/power_supply/BAT0/energy_now)"
+
+printf "%s" " [$(((${energy_now}*100)/${energy_full}))%]"
+
+fi
+
+#############
+printf "\n#\n#############\n#\n"
+
+############# # network
+
+count="1"
+
+rx0_total="0"
+tx0_total="0"
+
+rx1_total="0"
+tx1_total="0"
+
+until [ "${count}" -gt "$(printf "${network0}"|wc -w)" ];do
+
+IFS=":" read interface0 rx0 tx0 << EOF
+$(printf "${network0}"|cut -d $'\n' -f"${count}")
+EOF
+
+IFS=":" read interface1 rx1 tx1 << EOF
+$(printf "${network1}"|cut -d $'\n' -f"${count}")
+EOF
+
+printf "%s\n" "# [${interface0}]"
+printf "%s\n" "#  [total]   [v $((${rx1}/1000000))mb ^ $((${tx1}/1000000))mb]"
+printf "%s\n" "#  [current] [v $(((${rx1}-${rx0})/1000))kb/s ^ $(((${tx1}-${tx0})/1000))kb/s]"
+
+count="$((${count}+1))"
+
+rx0_total="$((${rx0_total}+${rx0}))"
+tx0_total="$((${tx0_total}+${tx0}))"
+
+rx1_total="$((${rx1_total}+${rx1}))"
+tx1_total="$((${tx1_total}+${tx1}))"
+
+done
+
+printf "%s\n" "# [all]"
+printf "%s\n" "#  [total]   [v $((${rx1_total}/1000000))mb ^ $((${tx1_total}/1000000))mb]"
+printf "%s\n" "#  [current] [v $(((${rx1_total}-${rx0_total})/1000))/kb/s ^ $(((${tx1_total}-${tx0_total})/1000))kb/s]"
+
+printf "#\n#############\n#\n"
+
+############# #
+};[ "${1}" == "-t" ] && while :;do monitor;sleep 1;done || monitor
+

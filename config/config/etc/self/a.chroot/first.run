@@ -1,0 +1,41 @@
+#!/bin/sh
+#############
+# portage
+# binutils
+# gcc libtool
+# linux-headers linux-firmware
+# glibc
+# gnupg gpgme
+# openssl ca-certificates
+#############
+
+#############
+emerge --color y --depclean | tee "/binhost/logs/rebuild.depclean"
+#############
+
+#############
+emerge --color y --tree --verbose --buildpkg --usepkg --oneshot sys-apps/portage   2>&1 | tee "/binhost/logs/rebuild.portage"
+#############
+emerge --color y --tree --verbose --buildpkg --usepkg --oneshot sys-devel/binutils 2>&1 | tee "/binhost/logs/rebuild.binutils" ; binutils-config 2
+emerge --color y --tree --verbose --buildpkg --usepkg --oneshot sys-devel/gcc      2>&1 | tee "/binhost/logs/rebuild.gcc" ; gcc-config 2
+emerge --color y --tree --verbose --buildpkg --usepkg --oneshot sys-devel/libtool  2>&1 | tee "/binhost/logs/rebuild.libtool"
+#############
+emerge --color y --tree --verbose --buildpkg --usepkg --oneshot linux-headers linux-firmware 2>&1 | tee "/binhost/logs/rebuild.linux"
+#############
+emerge --color y --tree --verbose --buildpkg --usepkg --oneshot glibc 2>&1 | tee "/binhost/logs/rebuild.glibc"
+#############
+emerge -C gnupg gpgme
+emerge --color y --tree --verbose --buildpkg --usepkg --oneshot app-crypt/gnupg app-crypt/gpgme 2>&1 | tee "/binhost/logs/rebuild.gpg"
+#############
+emerge -C openssl ca-certificates c_rehash ; rm -r /etc/ssl/certs
+emerge --color y --tree --verbose --buildpkg --usepkg --oneshot dev-libs/openssl app-misc/ca-certificates 2>&1 | tee "/binhost/logs/rebuild.openssl"
+#############
+
+#############
+emerge --color y --depclean ; emerge -C perl-core/Encode perl-core/CPAN # clean up temporary blockers
+#############
+emerge --color y --tree --verbose --buildpkg --usepkg --update --deep --newuse --emptytree --keep-going y @installed 2>&1 | tee "/binhost/logs/rebuild.installed"
+#############
+perl-cleaner --all | tee "/binhost/logs/rebuild.perlcleaner"
+#############
+

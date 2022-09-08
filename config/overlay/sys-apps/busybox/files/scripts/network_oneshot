@@ -1,0 +1,25 @@
+#!/bin/sh
+#############
+debug(){ printf "%s\n" "debug - ${1}" ; exit 1 ; }
+#############
+[ "${#}" == "1" ] || [ "${#}" == "2" ] || debug "takes interface &| hostname"
+#############
+[ -d "/sys/class/net/${1}" ] || debug "interface does not exist"
+#############
+[ -z "${2}" ] || hostname="-xhostname:${2}"
+#############
+pkill udhcpc
+#############
+ip link set up "${1}"
+#############
+env -i /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /bin/udhcpc_oneshot ${hostname}
+#############
+if [ "${1}" == "nat" ]
+then
+
+ ip route add 224.0.0.0/4 dev nat scope link metric 0
+ ip route add 169.254.0.0/16 dev nat scope link metric 0
+
+fi
+#############
+

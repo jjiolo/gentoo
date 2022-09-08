@@ -1,0 +1,18 @@
+#!/bin/sh
+#############
+[ "${1}" == "config" ] || return 0
+#############
+[ -z "${interface}" ] || [ -z "${ip}" ] && return 1
+#############
+cat << EOF
+#############
+interface: ${interface}
+#############
+ip: ${ip}
+#############
+EOF
+#############
+read -rp 'continue ?'
+#############
+ip addr add "${ip}/16" broadcast "169.254.255.255" dev "${interface}"
+#############

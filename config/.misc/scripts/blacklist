@@ -1,0 +1,25 @@
+
+#############
+install -o root -g root -m 0600 "/dev/null" "blacklist.dirty"
+#############
+curl -L "https://pgl.yoyo.org/adservers/serverlist.php"|grep '^127.0.0.1'|cut -d ' ' -f2 >> blacklist.dirty
+curl -L "https://someonewhocares.org/hosts/zero/hosts"|grep '^127.0.0.1'|cut -d ' ' -f2 >> blacklist.dirty
+curl -L "https://github.com/StevenBlack/hosts/blob/master/hosts?raw=true_"|grep '^0.0.0.0'|cut -d ' ' -f2 >> blacklist.dirty
+curl -L "https://github.com/anudeepND/blacklist/blob/master/adservers.txt?raw=true_"|grep '^0.0.0.0'|cut -d ' ' -f2 >> blacklist.dirty
+curl -L "https://github.com/anudeepND/blacklist/blob/master/CoinMiner.txt?raw=true_"|grep '^0.0.0.0'|cut -d ' ' -f2 >> blacklist.dirty
+curl -L "https://github.com/anudeepND/blacklist/blob/master/facebook.txt?raw=true_"|grep '^0.0.0.0'|cut -d ' ' -f2 >> blacklist.dirty
+#############
+cat > "blacklist.clean" << EOF
+
+127.0.0.1 localhost local lo
+192.168.0.1 lan
+172.16.0.1 nat
+10.0.0.1 tun
+
+EOF
+#############
+
+grep -v 127.0.0.1 "blacklist.dirty"|cut -d '#' -f1|sort -u|sed 's/^/0.0.0.0 /' >> "blacklist.clean"
+
+#############
+

@@ -1,0 +1,10 @@
+#!/bin/sh
+#############
+. /etc/services/xmrd/install
+#############
+# ulimit 
+#############
+su -ls /bin/sh -c "exec monerod --detach --config-file '${service_storage}/xmrd.conf'" xmrd
+#############
+renice 0 -u "xmrd"
+#############

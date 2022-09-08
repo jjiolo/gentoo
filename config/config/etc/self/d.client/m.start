@@ -1,0 +1,22 @@
+#!/bin/sh
+#############
+install -d -o "${USER}" -m 0700 "${HOME}/mail" && cd "${HOME}/mail" || exit 1
+#############
+
+       [ -d ".tmp" ] || install -o "${USER}" -m 0700 -d ".tmp"
+   [ -f ".account" ] || install -o "${USER}" -m 0600 "/etc/self/d.client/m.account" ".account"
+     [ -f ".alias" ] || install -o "${USER}" -m 0600 "/etc/self/d.client/m.alias" ".alias"
+    [ -f ".muttrc" ] || install -o "${USER}" -m 0600 "/etc/self/d.client/m.conf" ".muttrc"
+ [ -f ".signature" ] || install -o "${USER}" -m 0600 "/dev/null" ".signature"
+
+      [ -f "inbox" ] || install -o "${USER}" -m 0600 "/dev/null" "inbox"
+    [ -f "archive" ] || install -o "${USER}" -m 0600 "/dev/null" "archive"
+      [ -f "trash" ] || install -o "${USER}" -m 0600 "/dev/null" "trash"
+     [ -f "drafts" ] || install -o "${USER}" -m 0600 "/dev/null" "drafts"
+       [ -f "sent" ] || install -o "${USER}" -m 0600 "/dev/null" "sent"
+
+#############
+
+ exec mutt -F ~/mail/.muttrc
+
+#############

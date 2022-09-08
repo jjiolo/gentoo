@@ -1,0 +1,13 @@
+#!/bin/sh
+#############
+[ "${#}" == "1" ] && pretend="--pretend" || pretend=""
+#############
+emerge --color y --oneshot                --tree --verbose ${pretend} --buildpkg --usepkg --update --deep --newuse --onlydeps --keep-going y @console @desktop @programs | tee "/binhost/logs/build.upgrade.onlydeps"
+#############
+emerge --color y --root "/binhost/rootfs" --tree --verbose ${pretend} --buildpkg --usepkg --update --deep --newuse --nodeps   --keep-going y @console @desktop @programs | tee "/binhost/logs/build.upgrade.nodeps"
+#############
+emerge --color y --verbose --pretend --onlydeps --emptytree @console @desktop @programs | tee "/binhost/logs/build.onlydeps"
+#############
+emerge --color y --verbose --pretend --nodeps --emptytree @console @desktop @programs | tee "/binhost/logs/build.nodeps"
+#############
+

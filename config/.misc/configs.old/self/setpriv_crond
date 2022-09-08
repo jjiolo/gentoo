@@ -1,0 +1,20 @@
+#!/bin/sh
+#############
+cd /
+#############
+
+#############
+/usr/bin/setpriv \
+ --reuid crond --regid crond --init-groups \
+ --inh-caps -all,+setuid,+setgid \
+ --ambient-caps -all,+setuid,+setgid \
+ --bounding-set -all,+setuid,+setgid \
+ --nnp \
+ --reset-env \
+ /sbin/crond -bSc /tmp/storage/services/crond
+#############
+
+#############
+# doesnt work...
+# didnt give any error output ?
+#############

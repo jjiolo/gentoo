@@ -1,0 +1,11 @@
+#############
+flush ruleset
+#############
+include "/etc/nftables/arp"
+include "/etc/nftables/bridge"
+include "/etc/nftables/nat4"
+include "/etc/nftables/nat6"
+#############
+include "/etc/nftables/chains/log"
+include "/etc/nftables/inet"
+#############

@@ -1,0 +1,92 @@
+
+#############
+path=$ENV::HOME/keyring
+#############
+[ req ]
+distinguished_name      = req_distinguished_name
+string_mask             = utf8only
+default_md              = sha512
+encrypt_key             = no
+#############
+[ req_distinguished_name ]
+emailAddress            = Email Address
+emailAddress_max        = 64
+commonName              = Common Name
+commonName_max          = 64
+#############
+
+#############
+[ root_ca ]
+certs             = $path/.certs
+new_certs_dir     = $path/.certs
+database	        = $path/.database
+serial            = $path/.serial
+RANDFILE          = $path/.rand
+private_key       = $path/private/root.pem
+certificate       = $path/contacts/self/root.crt
+default_md        = sha512
+name_opt          = ca_default
+cert_opt          = ca_default
+preserve          = no
+unique_subject    = no
+#############
+[ root_extension ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = critical,CA:true,pathlen:1
+keyUsage               = critical,keyCertSign,cRLSign
+#############
+[ root_policy ]
+countryName             = optional
+stateOrProvinceName     = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = optional
+emailAddress            = optional
+#############
+
+#############
+[ persistent_ca ]
+certs             = $path/.certs
+new_certs_dir     = $path/.certs
+database	        = $path/.database
+serial            = $path/.serial
+RANDFILE          = $path/.random
+private_key       = $path/private/persistent.pem
+certificate       = $path/contacts/self/persistent.crt
+default_md        = sha512
+name_opt          = ca_default
+cert_opt          = ca_default
+preserve          = no
+unique_subject    = no
+#############
+[ persistent_extension ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = critical,CA:true,pathlen:0
+keyUsage               = critical,keyAgreement,keyEncipherment
+#############
+[ persistent_policy ]
+countryName             = optional
+stateOrProvinceName     = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+#############
+
+#############
+[ tmp_extension ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = critical,CA:false
+keyUsage               = critical,keyAgreement,keyEncipherment
+#############
+[ tmp_policy ]
+countryName             = optional
+stateOrProvinceName     = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+#############

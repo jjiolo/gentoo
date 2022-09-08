@@ -1,0 +1,17 @@
+#!/bin/sh
+#############
+
+mount|grep -q "^/dev/mapper/storage on /tmp/z.local/services/sets" ||
+mount|grep -q "^/dev/storage on /tmp/z.local/services/sets" ||
+mount|grep -q "^host on /tmp/z.ephemeral/services/sets" || {
+
+ install -d -o root -g root -m 0755 "${services}/sets"
+ mount --bind "${services}/sets" "${services}/sets"
+ mount|grep -q "^/dev/mapper/storage on /tmp/z.local/services/sets" && mount -o remount,exec "/tmp/z.local/services/sets"
+ mount|grep -q "^/dev/storage on /tmp/z.local/services/sets" && mount -o remount,exec "/tmp/z.local/services/sets"
+ mount|grep -q "^host on /tmp/z.ephemeral/services/sets" && mount -o remount,exec "/tmp/z.ephemeral/services/sets"
+
+}
+
+#############
+

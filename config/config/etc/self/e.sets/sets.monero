@@ -1,0 +1,45 @@
+#!/bin/sh
+#############
+
+ printf "%s\n" "#############"
+
+                                                             printf "%s%s\n" " system: " "$(moneroc --version)"
+ [ -f ${services}/sets/monero/monero*/monero-wallet-cli ] && printf "%s%s\n" "storage: " "$(${services}/sets/monero/monero*/monero-wallet-cli --version)"
+ [ -f ${services}/sets/monero/monero*/monero-wallet-cli ] || printf "%s%s\n" "storage: " "not installed"
+                                                             printf "%s%s\n" " latest: " "$(curl -sLI 'https://downloads.getmonero.org/cli/linux64' | grep -i '^location')"
+
+ printf "%s\n" "#############"
+
+#############
+
+ [ "${USER}" == "root" ] && read -rp "break" || exit
+
+#############
+
+ install -d -o root -g root -m 0755 "${services}/sets" "${services}/sets/monero" && cd "${services}/sets/monero" || exit 1
+
+#############
+
+ printf "%s\n" "#############"
+
+ curl -Lo "monero.tar.bz2" "https://downloads.getmonero.org/cli/linux64"
+
+ printf "%s\n" "#############"
+
+ tar tf monero.tar.bz2
+
+ printf "%s\n" "#############"
+
+#############
+
+ read -rp "break "
+
+#############
+
+ tar xf monero.tar.bz2
+
+ chown -R root:root .
+ chmod -R 0775 .
+
+#############
+

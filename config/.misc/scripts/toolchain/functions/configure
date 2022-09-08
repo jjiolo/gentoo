@@ -1,0 +1,10 @@
+#!/bin/sh
+#############
+configure(){
+
+./configure\
+ ${architecture}\
+ ${installation_directories}
+
+}
+#############

@@ -1,0 +1,11 @@
+
+I:index
+
+E404:/tmp/storage/services/httpd/error
+
+*.cgi:/bin/ash
+
+*.git:/usr/libexec/git-core/git-http-backend
+
+/cgi-bin:root:password
+

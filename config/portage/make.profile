@@ -1,0 +1,1 @@
+../../binhost/portage/profiles/default/linux/amd64/17.1/no-multilib

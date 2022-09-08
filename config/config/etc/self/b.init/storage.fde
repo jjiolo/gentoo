@@ -1,0 +1,38 @@
+
+#############
+usage(){ printf "%s\n" "takes block and/or trigger formatting - ${1}" ; [ -b "/dev/mapper/storage" ] && cryptsetup close storage ; exit 1 ; }
+#############
+[ "${#}" == "1" ] || [ "${#}" == "2" ] || usage "no input"
+[ -b "${1}" ] || usage "input does not exist"
+[ -b "/dev/mapper/wipe"    ] && usage "wipe already exists"
+[ -b "/dev/mapper/storage" ] && usage "storage already exists"
+mountpoint -q "${local}" && usage "mount already in use"
+#############
+
+[ "${#}" == "2" ] && {
+
+lsblk
+
+read -rp "about to nuke ${1}"
+
+cryptsetup open --key-file /dev/urandom --type plain "${1}" wipe
+dd if=/dev/zero of=/dev/mapper/wipe bs=4096 conv=fsync
+cryptsetup close wipe
+
+}
+
+#############
+read -rsp 'passphrase > ' passphrase
+uuid="$(hexdump -n32 -ve '1/1 "%02x"' "${1}")"
+threads="$(($(grep -c MHz /proc/cpuinfo)*2))"
+#############
+printf "%s" "${passphrase}"|argon2 "${uuid}" -id -t 3 -m 12 -p "${threads}" -r |
+cryptsetup --key-file - --hash sha256 --cipher aes-cbc-essiv:sha256 --key-size 256 --offset 1 open --type plain "${1}" storage || usage "cryptsetup failed"
+#############
+
+[ "${#}" == "1" ] && { fsck.ext4 -pvf "/dev/mapper/storage" ; fsck.ext4 "/dev/mapper/storage" -pv || usage "fsck failed"; }
+
+[ "${#}" == "2" ] && { mkfs.ext4 -L storage "/dev/mapper/storage" || usage "mkfs failed"; }
+
+#############
+

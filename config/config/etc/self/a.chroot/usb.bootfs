@@ -1,0 +1,64 @@
+#!/bin/sh
+#############
+install -d -o 0 -g 0 -m 0700 "${bootfs}" "${bootfs}/EFI" "${bootfs}/EFI/boot" "${bootfs}/images" "${bootfs}/kernels"
+#############
+[ -d "/binhost" ] && cd "${bootfs}" || exit
+#############
+
+printf "%s\n" "creating standalone grub binary"
+
+cat > "grub.cfg" << EOF
+
+set menu_color_normal=red/black
+set menu_color_highlight=black/red
+set color_normal=red/black
+set timeout=10
+set default=0
+
+search --no-floppy --set=root --label bootfs
+
+menuentry "server"   { linux /kernels/server  quiet; initrd /images/client; }
+menuentry "desktop"  { linux /kernels/desktop quiet; initrd /images/client; }
+menuentry "laptop"   { linux /kernels/laptop  quiet; initrd /images/client; }
+
+menuentry "net_server"  { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/server ; initrd downloads/bootfs/client ; }
+menuentry "net_desktop" { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/desktop ; initrd downloads/bootfs/client ; }
+menuentry "net_laptop"  { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/laptop ; initrd downloads/bootfs/client ; }
+
+menuentry "diskless" { linux /kernels/laptop root=/dev/nfs nfsroot=172.16.0.1:/,vers=4 ip=dhcp; }
+
+EOF
+
+grub-mkstandalone -O "x86_64-efi" --output "EFI/boot/bootx64.efi" "boot/grub/grub.cfg=grub.cfg"
+
+rm -rf grub.cfg
+
+#############
+
+printf "%s\n" "installing kernels"
+
+for i in server desktop laptop virtual;do
+ [ -f "kernels/${i}" ] && mv -f "kernels/${i}" "kernels/.${i}"
+ [ -f "/binhost/kernels/${i}" ] && install -o 0 -g 0 -m 0700 "/binhost/kernels/${i}" "kernels/${i}"
+done
+
+#############
+
+printf "%s\n" "installing initramfs"
+
+for i in client;do
+ [ -f "images/${i}" ] && mv -f "images/${i}" "images/.${i}"
+ [ -f "/binhost/images/${i}" ] && install -o 0 -g 0 -m 0700 "/binhost/images/${i}" "images/${i}"
+done
+
+#############
+
+printf "%s\n" "installing config"
+
+install -o 0 -g 0 -m 0600 "/binhost/config.tar.gz" "."
+install -o 0 -g 0 -m 0600 "/binhost/config.torrent" "."
+
+#############
+sync
+#############
+

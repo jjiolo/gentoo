@@ -1,0 +1,28 @@
+#!/bin/sh
+#############
+usage(){ printf "\n${0} - ${1}\n-i input\n-r root\n-p persistent\n-t tmp\n-h help\n\n";exit; }
+
+#############
+while getopts "i:rpth" arg;do
+ case "${arg}" in
+  i) input="${OPTARG}";;
+  r) key="root.pem";;
+  p) key="persistent.pem";;
+  t) key="tmp.pem";;
+  h) usage "decrypt input";;
+  *) usage "decrypt input";;
+ esac
+done
+
+#############
+[[ -z "${key}"       ]] && usage "requires a key"
+[[ -f "${input}"     ]] && usage "input already exists"
+[[ -f "${input}.key" ]] || usage "input.key does not exist"
+[[ -f "${input}.enc" ]] || usage "input.enc does not exist"
+
+#############
+secret="$(openssl pkeyutl -derive -inkey "${key}" -peerkey "${input}.key"|openssl sha384|cut -d' ' -f2)"
+openssl enc -d -salt -base64 -md sha512 -aes-256-cbc -iv "${secret:64:32}" -K "${secret:0:64}" -in "${input}.enc" -out "${input}" || rm "${input}"
+[[ -f "${input}.sig" && ! -f "${input}.dgst" ]] && 
+{ openssl enc -d -salt -base64 -md sha512 -aes-256-cbc -iv "${secret:64:32}" -K "${secret:0:64}" -in "${input}.sig" -out "${input}.dgst" || rm "${input}.dgst"; }
+

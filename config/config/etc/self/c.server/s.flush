@@ -1,0 +1,39 @@
+#!/bin/sh
+#############
+[ "${USER}" == "root" ] || exit 1
+#############
+
+[ "${#}" == "1" ] && {
+
+install -o 0 -g 0 -m 0600 /dev/null "${storage}/.ssh/authorized_keys"
+install -o 0 -g 0 -m 0600 /dev/null "${storage}/.ssh/known_hosts"
+
+install -o 1 -g 1 -m 0600 /dev/null "${home}/user/.ssh/authorized_keys"
+install -o 1 -g 1 -m 0600 /dev/null "${home}/user/.ssh/known_hosts"
+
+install -o 2 -g 2 -m 0600 /dev/null "${home}/nobody/.ssh/authorized_keys"
+install -o 2 -g 2 -m 0600 /dev/null "${home}/nobody/.ssh/known_hosts"
+
+install -o 3 -g 3 -m 0600 /dev/null "${home}/proxy/.ssh/authorized_keys"
+install -o 3 -g 3 -m 0600 /dev/null "${home}/proxy/.ssh/known_hosts"
+
+}
+
+#############
+chown -R root: "${storage}/.ssh"
+chown -R user: "${home}/user/.ssh"
+chown -R nobody: "${home}/nobody/.ssh"
+chown -R proxy: "${home}/proxy/.ssh"
+#############
+for i in "${storage}/.ssh" "${home}/user/.ssh" "${home}/nobody/.ssh" "${home}/proxy/.ssh";do
+find "${i}" -type d -exec chmod 0700 {} \;
+find "${i}" -type f -exec chmod 0600 {} \;
+done
+#############
+printf "%s\n%s\n" "[root]"    "$(cat ${storage}/.ssh/authorized_keys)"
+printf "%s\n%s\n" "[user]"    "$(cat ${home}/user/.ssh/authorized_keys)"
+printf "%s\n%s\n" "[nobody]"  "$(cat ${home}/nobody/.ssh/authorized_keys)"
+printf "%s\n%s\n" "[proxy]"   "$(cat ${home}/proxy/.ssh/authorized_keys)"
+printf "%s\n%s\n" "[hosts]"   "$(cat ${home}/user/.ssh/known_hosts ${home}/nobody/.ssh/known_hosts ${home}/proxy/.ssh/known_hosts|sort -u)"
+#############
+

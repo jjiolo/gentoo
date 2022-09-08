@@ -1,0 +1,32 @@
+#!/bin/sh
+#############
+usage(){ printf "%s\n" "creates default ssl/ssld root authority - ${1}" ; exit 1 ; }
+#############
+install -d -o "${USER}" -m 0700 "${HOME}/.ssl" && cd "${HOME}/.ssl" || usage "home failed"
+#############
+[ -d .certs    ] && rm -r .certs
+[ -f .serial   ] && rm    .serial*
+[ -f .database ] && rm    .database*
+#############
+[ -f ssl.pem     ] && rm ssl.*
+[ -f ssld.pem    ] && rm ssld.*
+[ -f token.pem   ] && rm token.*
+[ -f service.pem ] && rm service.*
+#############
+[ -f dhparam ] && rm dhparam
+#############
+mkdir .certs
+touch .database
+echo 1234 > .serial
+#############
+openssl genpkey -algorithm ed25519 -out ssld.pem
+openssl req -new -x509 -config /etc/ssl/openssl.cnf -extensions authority_extension -days 365 -sha512 -key ssld.pem -out ssld.crt -subj "/CN=server"
+openssl pkey -pubout -in ssld.pem -out ssld.pub
+#############
+openssl genpkey -algorithm ed25519 -out ssl.pem
+openssl req -new -x509 -config /etc/ssl/openssl.cnf -extensions authority_extension -days 365 -sha512 -key ssl.pem -out ssl.crt -subj "/CN=client"
+openssl pkey -pubout -in ssl.pem -out ssl.pub
+#############
+openssl dhparam -out dhparam 1024
+#############
+

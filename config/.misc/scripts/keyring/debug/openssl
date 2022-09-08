@@ -1,0 +1,87 @@
+
+#############
+[ req ]
+distinguished_name      = req_distinguished_name
+string_mask             = utf8only
+default_md              = sha512
+encrypt_key             = no
+
+#############
+[ req_distinguished_name ]
+emailAddress            = Email Address
+emailAddress_max        = 64
+commonName              = Common Name
+commonName_max          = 64
+
+#############
+[ root_extension ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = critical,CA:true,pathlen:1
+keyUsage               = critical,digitalSignature,keyCertSign
+extendedKeyUsage       = critical,OCSPSigning
+
+#############
+[ root_ca ]
+certs             = .certs
+new_certs_dir     = .certs
+database	        = .database
+serial            = .serial
+RANDFILE          = .rand
+private_key       = root.pem
+certificate       = root.crt
+default_md        = sha512
+name_opt          = ca_default
+cert_opt          = ca_default
+preserve          = no
+unique_subject    = no
+
+#############
+[ persistent_policy ]
+countryName             = optional
+stateOrProvinceName     = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+#############
+[ persistent_extension ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = critical,CA:true,pathlen:0
+keyUsage               = critical,digitalSignature,dataEncipherment,keyCertSign
+extendedKeyUsage       = critical,OCSPSigning
+
+#############
+[ persistent_ca ]
+certs             = .certs
+new_certs_dir     = .certs
+database	        = .database
+serial            = .serial
+RANDFILE          = .random
+private_key       = persistent.pem
+certificate       = persistent.crt
+default_md        = sha512
+name_opt          = ca_default
+cert_opt          = ca_default
+preserve          = no
+unique_subject    = no
+
+#############
+[ tmp_policy ]
+countryName             = optional
+stateOrProvinceName     = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+#############
+[ tmp_extension ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = critical,CA:false
+keyUsage               = critical,digitalSignature,dataEncipherment,keyAgreement
+extendedKeyUsage       = critical,serverAuth,clientAuth,timeStamping
+

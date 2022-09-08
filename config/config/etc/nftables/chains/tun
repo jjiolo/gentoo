@@ -1,0 +1,59 @@
+
+#
+table inet filter
+chain inet filter itun
+chain inet filter otun
+flush chain inet filter itun
+flush chain inet filter otun
+#############
+table inet filter {
+
+ chain itun {
+
+  # server
+
+  udp dport {53,123}     ct state new log flags skuid prefix "input.tun.new " accept
+  tcp dport {22,80,9050} ct state new log flags skuid prefix "input.tun.new " accept
+
+  # icmp
+
+  ip protocol {icmp}   log flags skuid prefix "input.tun.icmp " accept
+  ip6 nexthdr {icmpv6} log flags skuid prefix "input.tun.icmp " accept
+
+  # drop
+
+  ct state invalid log flags skuid prefix "input.tun.invalid " drop
+                   log flags skuid prefix "input.tun.drop "    drop
+
+ }
+
+}
+#############
+table inet filter {
+
+ chain otun {
+
+  # client
+
+  udp dport {53}   skuid {nobody}            ct state new log flags skuid prefix "output.tun.new " accept
+  udp dport {123}  skuid {root,ntpd}         ct state new log flags skuid prefix "output.tun.new " accept
+
+  tcp dport {22}   skuid {user}              ct state new log flags skuid prefix "output.tun.new " accept
+  tcp dport {80}   skuid {root,user,nobody}  ct state new log flags skuid prefix "output.tun.new " accept
+  tcp dport {9050} skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.tun.new " accept
+
+  # icmp
+
+  ip protocol {icmp}   log flags skuid prefix "output.tun.icmp " accept
+  ip6 nexthdr {icmpv6} log flags skuid prefix "output.tun.icmp " accept
+
+  # drop
+
+  ct state invalid log flags skuid prefix "output.tun.invalid " drop
+                   log flags skuid prefix "output.tun.drop "    reject
+
+ }
+
+}
+#############
+

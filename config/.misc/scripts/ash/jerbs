@@ -1,0 +1,20 @@
+
+start(){ sleep "$(shuf -i 10-20 -n1)" & }
+
+set -o monitor
+
+while :;do
+
+  if ! jobs %1 2>/dev/null;then start
+elif ! jobs %2 2>/dev/null;then start
+elif ! jobs %3 2>/dev/null;then start
+elif ! jobs %4 2>/dev/null;then start
+elif ! jobs %5 2>/dev/null;then start
+elif ! jobs %6 2>/dev/null;then start
+elif ! jobs %7 2>/dev/null;then start
+  fi
+
+sleep 1
+
+done
+

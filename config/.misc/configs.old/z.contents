@@ -1,0 +1,9 @@
+
+find /binhost/rootfs/var/db/pkg -type f -name CONTENTS|grep -i ${1}|
+while read
+do
+
+ grep -i '^obj' "${REPLY}"|grep -i -e '^obj /bin/' -e '^obj /sbin/' -e '^obj /lib/' -e '^obj /lib64/' -e '^obj /usr/bin/' -e '^obj /usr/sbin/' -e '^obj /usr/lib/' -e '^obj /usr/lib64/'|grep -v '^obj /usr/lib64/pkgconfig'|cut -d ' ' -f2
+
+done
+

@@ -1,0 +1,60 @@
+
+#############
+
+monero client terminology...
+
+            account < - split multiple references to balance
+            address < - multiple addresses per account increases privacy (requires access to private view key)
+ integrated-address < - multiple addresses based on random payment ID (allows identifying incoming transactions) (requires no access to private view key)
+
+ show_transfers should list integreated-address payment id ? (couldnt prove it)
+ payments <payment_id> < - lists all payments with that id address
+
+#############
+
+ proving a payment...
+
+  show_transfers < - grab the txid of the payment
+  get_tx_key <txid> < - send txid and output to the person your verifying the payment with
+                        
+ verifying a payment...
+
+  check_tx_key <txid> <txkey> <address> < - should confirm how much monero was sent
+
+#############
+
+#############
+uses current working directory for path in config without / as a prefix...
+$HOME was ignored and created the directory
+~ was ignored and created the directory
+#############
+18080 - p2pd - syncs the block chain
+18081 - apid - trusted port connect wallets to it
+18089 - apid - restricted port connect wallets to it
+               (wont allow changing mining wallet or start/stop mining)
+#############
+
+p2pd traffic is not proxied (syncing the blockchain)
+
+ can derive from traffic which blocks were solved by monitoring unsynced blocks
+
+ all tx traffic can be forwarded over tor
+
+ trusted wallet rpc can be hosted over unix socket or localhost
+ restricted wallet rpc can be hosted over normie net or tor hidden service
+
+#############
+mainnet  18080 p2p 18081 rpc 18082 zmq
+stagenet 38080 p2p 38081 rpc 38082 zmq
+#############
+
+generates a wallet...
+
+hardware backed || passphrase protected kdf-rounds
+
+ public  key pair - view key
+ private key pair - spend key
+ mneomic < - used to generate the private keys
+
+#############
+

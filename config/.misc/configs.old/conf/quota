@@ -1,0 +1,32 @@
+#!/bin/sh
+#############
+total="$(df|awk '/storage$/{print$2}')"
+one="$((${total}/100))"
+#############
+#[ -f /storage/aquota.user ] || {
+# quotacheck -avcugm
+# setquota -at 0 0
+# setquota -au root 1 1 1 1
+# setquota -au qemu 1 1 1 1
+# setquota -au tcpdump 1 1 1 1
+# setquota -au user 1 1 1 1
+# setquota -au dhcpc 1 1 1 1
+# setquota -au dhcpd 1 1 1 1
+# setquota -au tftpd 1 1 1 1
+# setquota -au ntpd 1 1 1 1
+# setquota -au dnsc 1 1 1 1
+# setquota -au dnsd 1 1 1 1
+# setquota -au httpd 100G 100G 0 0
+# setquota -au ircc 1 1 1 1
+# setquota -au ircd 1 1 1 1
+# setquota -au torc 10M 10M 0 0
+# setquota -au tord 10M 10M 0 0
+# setquota -au p2pd 1000G 1000G 0 0
+# setquota -au nobody 4 4 1 1
+#}
+#############
+#[ -f /storage/aquota.user ] && {
+# quotacheck -avugm
+# quotaon -avug
+#}
+#############

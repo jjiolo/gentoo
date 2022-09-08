@@ -1,0 +1,69 @@
+
+#
+table inet filter
+chain inet filter inat
+chain inet filter onat
+flush chain inet filter inat
+flush chain inet filter onat
+#############
+table inet filter {
+
+ chain inat {
+
+  # server
+
+  udp dport {53,67,68,69,123,6771,9091,51820} ct state new log flags skuid prefix "input.nat.new " accept
+  tcp dport {22,80,9050,9091}                 ct state new log flags skuid prefix "input.nat.new " accept
+
+  # icmp
+
+  ip protocol {icmp}   log flags skuid prefix "input.nat.icmp " accept
+  ip6 nexthdr {icmpv6} log flags skuid prefix "input.nat.icmp " accept
+
+  # drop
+
+  ct state invalid log flags skuid prefix "input.nat.invalid " drop
+                   log flags skuid prefix "input.nat.drop "    drop
+
+ }
+
+}
+#############
+table inet filter {
+
+ chain onat {
+
+  # client
+
+  udp dport {53}    skuid {nobody}     ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {67}    skuid {root,dhcpc} ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {68}    skuid {root,dhcpd} ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {123}   skuid {root,ntpd}  ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {6771}  skuid {p2pd}       ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {9091}  skuid {p2pd}       ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {51820} udp sport {51820}  ct state new log flags skuid prefix "output.nat.new " accept
+
+  tcp dport {22}   skuid {user}              ct state new log flags skuid prefix "output.nat.new " accept
+  tcp dport {80}   skuid {root,user,nobody}  ct state new log flags skuid prefix "output.nat.new " accept
+  tcp dport {9091} skuid {p2pd}              ct state new log flags skuid prefix "output.nat.new " accept
+  tcp dport {9050} skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.nat.new " accept
+
+  tcp dport {443,6697}    skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept
+  tcp dport {465,995}     skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept
+  tcp dport {18081,18089} skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept
+
+  # icmp
+
+  ip protocol {icmp}   log flags skuid prefix "output.nat.icmp " accept
+  ip6 nexthdr {icmpv6} log flags skuid prefix "output.nat.icmp " accept
+
+  # drop
+
+  ct state invalid log flags skuid prefix "output.nat.invalid " drop
+                   log flags skuid prefix "output.nat.drop "    reject
+
+ }
+
+}
+#############
+

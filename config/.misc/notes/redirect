@@ -1,0 +1,70 @@
+
+#############
+
+far more complicated than it needed to be...
+
+ any exchanges packet capture
+ basic attempts at deduping and storing the data itself
+ creates a valid database to use as a median
+
+ version pinning server and clients
+ identifying static protocol packets
+ looking for variables in the protocol packets
+ to inject fuzzing data
+
+ distinguishing between unknown packets and authentication points
+
+ only applicable to self hosting and replying to incoming requests
+ and building up your own database over time because you arent an internet exchange
+
+#############
+
+server
+
+table nat {
+chain prerouting {
+ type nat prerouting priority 0
+ policy accept
+ udp dport != {list of services} redirect to 65534
+ tcp dport != {list of services} redirect to 65534
+}
+
+^ redirect all udp/tcp traffic to service hosted on 65534
+
+  forward all incoming requests to random ip addresses and respond with real world data
+
+  start building up data sets of basic interactions with service protocols
+
+  static packets + variable identification
+
+  authentication point identification
+
+ for 10 incoming packets
+  forward 4 incoming, to 10 random addresses log and randomly pick a response
+  pick 3 known good entries and update information about the entry
+  pick 3 unknown entries and update information about that entry
+
+ start picking random points in the protocol to derp with /dev/urandom and monitor responses
+ pretend to be a real server
+ send corrupted information to crash the client
+ send corrupted information to cause the longest timeout possible on the client
+ spam /dev/urandom at clients (basic fuzzing concepts)
+
+#############
+
+client
+
+ massscan the entire internet
+ nmap the active ports
+ attempt to identify the protocol on all ports
+
+#############
+
+^ not even remotely interesting
+  xkeyscore mitm fuzzing server and client injection points
+  for any address not already listed as owned
+
+  already did this a whole while ago after attempting public key interception
+
+#############
+

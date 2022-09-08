@@ -1,0 +1,46 @@
+#!/bin/sh -l
+#############
+umask 0007
+#############
+. /etc/self/b.init/system.mount
+. /etc/self/b.init/system.dev
+. /etc/self/b.init/system.log
+#############
+. /etc/self/b.init/system.lock ; sysctl -p /etc/sysctl.conf
+#############
+. /etc/self/b.init/storage.mount
+. /etc/self/b.init/storage.setup
+. /etc/self/b.init/storage.shared
+#############
+. /etc/self/b.init/system.network
+#############
+
+[ "$(hostname)" == "server"  ] && {
+
+ ash /etc/self/setpriv/setpriv_udhcpd
+ ash /etc/self/setpriv/setpriv_tftpd
+ ash /etc/self/setpriv/setpriv_ntpd
+ ash /etc/services/httpd/start
+ ash /etc/services/p2pd/start
+
+ dropbear -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null
+
+}
+
+#############
+
+[ "$(hostname)" == "virtual" ] && {
+
+ ash /etc/self/setpriv/setpriv_udhcpc nat virtual # echo yes | network_default
+
+ dropbear -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null
+
+ ash /etc/self/c.server/s.client 172.16.0.1
+ ash /etc/self/c.server/v.server 172.16.0.1 10.0.0.2
+
+}
+
+#############
+[ -f "${storage}/.init" ] && . "${storage}/.init" ; clear
+#############
+

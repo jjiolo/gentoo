@@ -1,0 +1,2182 @@
+
+#############
+no idea what stupid has gathered itself in here
+stuff at the bottom tends to get rewritten and kept
+stuff at the top is unordered raw sewage
+#############
+
+|-----------------|
+| [CONTENTS]      |
+|-----------------|
+| [REBUILD]       |
+|-----------------|
+| [INFORMATIONAL] |
+| [TODO]          |
+| [PROBLEMS]      |
+|-----------------|
+| [CURRENT]       |
+|-----------------|
+| [OLD]           |
+|-----------------|
+| [REFERENCE]     |
+|-----------------|
+
+#############
+
+[REBUILD]
+#############
+-------------
+ lastest - 2022:08:02 02:00:00
+-------------
+
+ * broke firefox/ffmpeg ? youtube only...
+
+-------------
+#############
+
+[INFORMATIONAL]:
+#############
+* raw pasting into st/vim is bad mode...
+* opening httpd pages is bad mode (no sanitization)
+* busybox/ip - no nexthop, no multicast, no netns
+* /bin/login sets USER HOME ; /bin/ash /init /sbin/init have no USER HOME
+* dropbear requires outbound root rules (doesnt privdrop forwarding)
+* for i in $(seq 0 64);do trap false $i;done ; exec command </dev/null &>/dev/null
+* constantly failing at static_binaries: gnupg, + anything else
+* constantly failing at musl: dns failures and multiple package build failures
+* constantly failing at wayland: < - still technically failing but learnt more
+* file(mv *match* ffs) directory(mv *match*/* /tmp/why; rmdir *match*;)
+* gcc -lto -pgo 00:18:31 +00:00:00 || gcc +lto -pgo 00:24:44 +00:06:00 || gcc +lto +pgo 00:36:48 +00:12:00
+* mkfs.ext4 -m0 - remove space reserved for root... (5% 1TB == 50GB)
+* http://reg.i2p/all
+#############
+
+[TODO]
+#############
+* vim / mutt < - only things not really full scoped
+* dnssec verified cache (optionally over tor) (still no real competition)
+* privdrop stage3 initial pull, stage3 portage update, stage3 fetch
+* acpid poweroff on lid close (${storage}/.init to increase boot speeds)
+* alsa environment variable as default soundcard ?
+* nothing to schedule netio
+* QoS - tc cake?
+#############
+
+[PROBLEMS]:
+#############
+* eselect gcc binutils on version bump ? (chroot.update + gcc-config + binutils-config)
+* ebuild scheduled for merge, causes rebuilds (doesnt install into /binhost/rootfs)
+* sysctl -w net.ipv4.ip_unprivileged_port_start={0,32768} vs inbound skuid (breaks conntrack)
+* w.scan < - literally says dont attempt to parse the output 
+* icmp doesnt ct state, forces invalid traffic
+* multicast and broadcast, force invalid traffic < - should be related ?
+* Xephyr, -auth fails silently and allows global access to :display
+* proxy dox without privesc, /shared key_fingerprints (dedicated hardware not shared)
+* transmission on boot, binds wrong interface, doesnt download without restart
+* transmission move complete doesnt check space available when transfering between block devices
+* inability to add wifi interfaces to bridges (breaks the ability to dedupe commands)
+* dwm, holding down alt+i increments the number indefinintly ?
+* obfs4proxy and meeks localhost access is a random port ? (cant preconfigure nftables)
+#############
+
+[CURRENT]
+#############
+
+bump
+
+ qemu-7.1.0
+ firefox-bin 104.0.2
+
+ vim 9.0.0312
+ curl 7.85.0
+ git 2.37.3
+ pinentry 1.2.0
+ linux-headers 5.19.3
+ audit 3.0.8
+
+#############
+
+* attempting to clean up use flags ? (package.use/z.env nearly all of them failed)
+  updated chroot.{upgrade,logs} build.{rootfs,logs} (added rootfs onlydeps to view installed packages use flags...)
+* grub background image png / tga / 8-bit jpg jpeg | fbsplash .ppm ? plymouth ?
+* pxe/udhcpd/tftpd
+  udhcpd.conf { siaddr 172.16.0.1, boot_file bootx64.efi }
+  grub.cfg { insmod efinet, net_dhcp efinet0, set root=(tftp,172.16.0.1), linux desktop, initrd client, boot }
+* dropped input: video: systemd.dev using desktop:
+* removed nobody from httpd group, basicauth works...
+* gpg.conf trust-model always (gpgme forced --enable-trust-models)
+* mutt --enable-flock (kernel has it turned on)
+* changed max number of cpus CONFIG_NR_CPUS ?
+* pci express hiararchy - safe ?
+* removed nftables NFT_OBJREF
+* turned off integrity ; removed crypto modules
+* cryptsetup needs encrypted chain generator or xts enabled
+* firefox --profile $HOME/.browser --new-instance --no-remote # easier to copy and load
+* dropped ffmpeg v4l + libv4l
+
+#############
+
+^ attempt to record a list of things actually done
+v attempt to create lists of things to actually do
+
+#############
+
+nfs notes...
+
+ up to documenting mount options...
+
+ nested mount paths can trigger inode collisions
+
+ /tmp/ /tmp/z.local - 
+
+ would need to edit rootfs
+
+ so far...
+
+ removed libtirpc as a dependency (exportd for mountd)
+ removed mount.nfs (apparently works regardless)
+ figured out what no_subtree_check actually means...
+ rpc.statd + sm-notify (nfsv4 is stateful and doesnt require stateless lock tracking...)
+ idmapd/nfsidmap (only required for gss/kerberos... apparently remaps uid to anonuid if its broken ? clearly doesnt happen)
+
+ huge timeout trying to write a file ?
+ still hangs trying to localhost 111 ?
+ couldnt prove crossmnt / (no)hide ?
+ it kept exposing every nested mount regardless...
+ ^ need to automate a script to test it
+
+ (in)secure_locks - no fucking idea bout on par with the idmap
+
+-------------
+
+udhcpd/tftpd/nfsd - test one...
+
+ udhcpd/tftpd - already verified working
+
+ insmod efinet
+ net_dhcp efinet0
+ set root(tftp,172.16.0.1)
+ linux exports/boot/vmlinuz root=/dev/nfs nfsroot=172.16.0.1:/tmp/z.local/shared/exports,vers=4 ip=dhcp
+ initrd exports/boot/initrd.img
+ boot
+
+cant export /tmp/z.local
+-------------
+/tmp         *(rw) - mounts empty subdirectory /tmp/z.local
+/tmp/z.local *(rw) - failed: no such file or directory
+-------------
+initramfs can mount any bind path ?
+mount --bind /tmp/z.local /testing/nested
+/testing/nested *(rw) - mounts properly
+-------------
+^ need to put that into words
+-------------
+
+has to be a path in the rootfs ?
+
+regardless of the rootfs being a block device mount or initramfs ?
+
+
+
+=============
+
+hide
+nohide
+crossmnt 
+
+/tmp *(rw,crossmnt)
+mount -t nfs4 172.16.0.1:/tmp/z.local /tmp/storage/mount
+mount -t nfs4 172.16.0.1:/tmp/storage /tmp/storage/mount
+
+crossmnt exposes nested mounts... also follows symlinks ?
+
+/tmp *(rw)
+/tmp/z.local *(rw)
+mount -t nfs4 172.16.0.1:/tmp/z.local /tmp/storage/mount
+
+exporting both paths allows mounting...
+
+=============
+
+ nfs-utils has enable options that always return true ?
+
+ :
+
+
+-------------
+
+udhcpd/tftpd/nfsd - minimal overhead ? looking pretty viable
+
+httpd/gitd - minimal overhead ? looking pretty viable
+
+auditd - already implemented
+
+grub - standalone uefi fairly complete
+       no screwing around with complexity in setup
+       ebuilding it to full scope any possible gain
+       stacks with udhcpd/tftpd/nfsd
+
+-------------
+
+opensmtpd is easy...
+^ rewrote ebuild and etc/service files
+  bailed setting up mx capable dns server
+dns is hard...
+^ not willing to inherit maintaining a dns server
+  none of the options satisfy my ocd or requirements
+? if avahi can blag mx records would set up shortest path to full dev env
+
+ngircd - cant passwordless oper 127.0.0.1 access (tor)
+         doesnt satisfy the ocd
+
+quota - doesnt work on tmpfs... slightly lack luster
+
+remote mount ? sshfs/fuse - sketchy security, buggy and crash/hang prone, + no reason to use it
+                            dbclient remote.com tar cC /path | tar xC /path + mpv http://
+
+-------------
+
+#############
+
+ [opensmtpd] - dns server with mx records
+
+-------------
+
+ [djbdns]
+
+ [ dnscache - /etc/dnsroots.global ]
+
+  dnscache-conf acct logacct /run/dnscache 127.0.0.1
+  IP=127.0.0.1 IPSEND=127.0.0.1 ROOT=/run/dnscache/root UID=dnsd GID=dnsd dnscache
+
+  /run/dnscache/root/
+
+   ip/127.0.0.1 - allow queries from 127.0.0.1
+         ip/127 - allow queries from 127.0.0.0/8
+      ip/172.16 - allow queries from 172.16.0.0./16
+
+       server/@ - contains /etc/dnsroots.global
+       server/@ - FORWARDONLY treats addresses as any upstream recursive cache
+   server/local - forward all requests for local to the ip address contained in the file
+
+ [ tinydns ]
+
+  tinydns-conf dnsd dnsd /run/tinydns 127.0.0.2
+  IP=127.0.0.2 ROOT=/run/tinydns UID=nobody GID=nobody tinydns
+
+  tinydns-data - turn ./data into ./data.cbd
+  tinydns-edit - data data.new add {alias,childns,host,mx,ns} hostname address
+   tinydns-get - query the local data file...
+
+  /run/tinydns/root
+   . ./add-ns      - ./tinydns-edit data data.new add ns local 127.0.0.1
+   . ./add-ns      - ./tinydns-edit data data.new add ns 127.in-arpa.arpa 1.0.0.127
+   = ./add-host    - ./tinydns-edit data data.new add host first.local 127.0.0.1
+   + ./add-alias   - ./tinydns-edit data data.new add alias second.local 127.0.0.1
+   @ ./add-mx      - ./tinydns-edit data data.new add mx mail.local 127.0.0.1
+   & ./add-childns - ./tinydns-edit data data.new add childns child.local 127.0.0.1
+
+-------------
+
+HAVE_AUTH
+HAVE_BROKEN_RTC
+HAVE_BSD_NETWORK
+HAVE_CONNTRACK
+HAVE_CRYPTOHASH
+HAVE_DBUS
+HAVE_DHCP
+HAVE_DHCP6
+HAVE_DNSSEC
+HAVE_DUMPFILE
+HAVE_GETOPT_LONG
+HAVE_IDN
+HAVE_INOTIFY
+HAVE_IPSET
+HAVE_LIBIDN2
+HAVE_LINUX_NETWORK
+HAVE_LOOP
+HAVE_LUASCRIPT
+HAVE_SCRIPT
+HAVE_SOCKADDR_SA_LEN
+HAVE_SOLARIS_NETWORK
+HAVE_TFTP
+HAVE_UBUS
+
+NO_AUTH
+NO_DHCP
+NO_DHCP6
+NO_DUMPFILE
+NO_GMP
+NO_ID
+NO_INOTIFY
+NO_LARGEFILE
+NO_LOOP
+NO_SCRIPT
+NO_TFTP
+
+^ config files horrific
+  can set it up
+  no fucking interest in maintaining that complexity
+
+-------------
+
+#############
+
+busybox httpd + git
+
+ stage3 as the target...
+
+ working directory - /tmp/storage/stage3/.git
+  root:root
+
+ bare directory - /tmp/storage/.git ?
+  root:root - read only hosting
+  root:httpd - read write hosting
+
+ tl;dr -
+
+ $USER:httpd 0770 0775
+ allows git push over http
+
+* default basicauth on /cgi-bin/ enables git push ?
+
+#############
+
+break - 
+ about:policies#errors - error running (such informative)
+ "Cookies": { "Behavior": "reject", "BehaviourPrivateBrowsing": "reject-foreign", "ExpireAtSessionEnd": true, "Locked": true },
+ "Cookies": { "Behavior": "reject", "BehaviourPrivateBrowsing": "reject-foreign", "Locked": true },
+^ ExpireAtSessionEnd causes cookie settings to be ignored ?
+  private browsing deletes cookies on close by default ?
+  removing it doesnt change existing functionality provided...
+
+#############
+
+* murdering busybox libcap patch set ? setpriv is better...
+
+* etc/services/dnsd/config/lo
+   needs to be automated
+   killing irc to mitm and inject stupidity from markov chains
+   mitm and censoring dns lookups going to localhost
+
+* nc -lu 127.0.0.1 53 | tee dns.log | nc -u 127.0.0.1 5353
+
+* turn udp support on in s_client s_server ? (just couldnt be fucked to debug it... )
+
+* qemu < - tigervnc has sticky keys with xorg-server open...
+* qemu-7.0.0 < - vnc output doesnt resize bottom of the console hangs off
+
+* find something to lock peripherals after boot (usbguard)
+* find something to replace grsec psuedo filesystem hardening (whonix permissions hardening)
+* fingerprinting dhcp clients... (changing mac addresses got old)
+
+^ root:root on portage feels safer
+  privdrop executing with the ability to edit all the source code ?
+* stage3 chroot hardening ? (it is the point of persistence breaking out is dumb ?)
+
+* keepalive - crond,monitor,udhcpd_script,udhcpc_persist
+* monitor diskio reads every drive then every block device doubling the values ? (sda && md127)
+
+* dropbear socks || wg/microsocks
+* dropbearkey doesnt allow changing embedded username@hostname ?
+
+* do the audio... find out minimum set for working
+
+* tor DisableAllSwap as none root...( didnt stderr, used address sanitizer ? shouldnt have executed at all) 
+^ test expensive/fragile without DisableAllSwap ?
+
+* FORTIFY_SOURCE=3 - glibc died, cmake died < - even with fortify=2 something with fortify=3 is bricking ./configure
+
+* -fcf-protection=full -mcet (control flow integrity)
+
+* /etc/services + net.ipv4.ip_unprivileged_port_start={0,32768} && sleep 1
+^ technically denial of service ? (was the only way to fix nftables conntrack)
+
+* herbe needs more /dev/shm/$USER splitting or doesnt work across xephyr's
+* herbe - still locks to a single user (incompatible with Xephyr)
+^ logread|grep -f file|while read ; do [ $REPLY == match ] && herbe "notification" ; done
+
+#############
+
+ usb.persistence -
+  storage.shared < - takes gnupg/public/private/sshd/user/nobody/proxy/vpn
+  usb.get - get values saved in bootfs
+  usb.put - put values into bootfs
+
+ efi.persistence -
+  storage.shared < - code duplication
+  efi.get - get values saved in efi
+  efi.put - put values into efi
+
+ old storage.bootfs ? saved public keyring into $bootfs/$hostname
+                      diskless testing needs the ability to drop private keys
+
+#############
+
+[ebuilds]
+
+6.2.0 last known working
+7.0.0 cuts of the bottom of the console in vnc output
+7.1.0 cuts of the bottom of the console in vnc output
+
+* qemu - 
+   --firmwarepath=/usr/share/qemu ?
+   --with-devices --without-default-devices (tried bricked everything, possible attack surface reduction ?)
+   --with-coroutine=BACKEND ucontext sigaltstack windows
+   --disable-plugins ? (no idea what plugins actually are)
+   --enable-capstone auto disabled enabled internal system... 
+   --disable-coroutine-pool coroutine freelist (better performance)... as in better off ? or better on defaulted to off ? guess work
+   --enable-fdt auto disabled enabled internal system (library doesnt exist in gentoo last post said internal being removed ?) libfdt
+   --enable-malloc jemalloc system tcmalloc (system ? no idea assuming extra lib dependency)
+   --enable-slirp auto disabled enabled internal system ? internal just makes sense
+   
+   kms aio io-ring membarrier 
+  xkbcommon doesnt fix sticky keys in tigervnc... only occurs after startx ?
+
+* openssl - dtls implies test itterations with s_server s_client
+
+* dropbear - max unauthed per ip 5, max unauthed clients 30, max auth tries 10
+  really easy to ddos ? (tor uses 127.0.0.1 but private address ?)
+
+* git - configure just does nothing ?
+
+* wpa_supplicant - attempt privdrop again... few options commented that imply defaults and being enabled regardless ?
+
+[configs]
+
+ mutt - alot of muttrc options i dont understand
+ vim - huge ? could full scope but still number of options i dont understand
+ firefox - huge... :policies > :config > :settings
+
+[misc]
+
+* openssl and wpa_supplicant - using /dev/{random,urandom} over getrandom syscall ?
+* iwd - experimental kernel hand off to crypto libs ? makes it more like cryptsetup/wireguard
+
+* qemu/tigervnc - sticky keys... 
+   qemu - tried libxkbcommon ? did nothing
+   tigervnc - doesnt have any related options ?
+   fltk - tried with cairo + every x11 library enabled
+
+#############
+
+* build.rootfs
+
+ installs package list to host deps only
+ installs package list to chroot nodeps
+ ^ only way to avoid pulling un needed dependencies
+ * attempts to build packages with missing dependencies cause silent failure
+ cp -a /binhost/packages /binhost/packages.first
+ cp -a /binhost/packages /binhost/packages.chroot
+ ^ backup before building
+
+#############
+
+* denial of service / stability
+
+   tmp space/inode exhaustion bricks running system ?
+   top level directory root write only
+   dhcpd:dhcpd - overwrite /run/leases till full
+   dhcpc:dhcpc - overwrite /run/udhcpc till full
+   desktop:desktop - overwrite /tmp/.X0-{auth,lock,log,log.old} till full
+   /run/services - ddns dnsd p2pd full directory write inode+space exhaustion
+                     
+   z.ephemeral ? user,nobody,proxy,desktop,ddns,dnsd,p2pd
+   full denial of service from every possible rce point
+
+* tmpfs doesnt support diskquota
+  ramfs+ext4 ?
+
+#############
+
+[cpu flags]
+
+[use flags]
+
+ libarchive lzma (fixed)
+ ffmpeg v4l threads encode
+ dbus X (firefox links to it at run time else it wouldnt even be here)
+
+ nettle gmp (gnupg forces)
+
+ gtk+ X
+ harfbuzz glib truetype (gtk+ forces)
+ cairo X glib svg (gtk+ forces)
+
+ libepoxy X (firefox ?)
+ freetype -png (firefox ?)
+
+ mesa X
+ libglvnd X
+
+#############
+
+config/portage/profile/packages
+ virtual/man doesnt depclean anything ?
+ sys-apps/man-pages removes an extra 50 packages ?
+ man-db or man-pages < - depends on systemd-tmpfiles ?
+
+^ weird dependency chain
+
+! basically -virtual/man should depclean everything...
+  couldnt figure out why ?
+
+#############
+
+[vim]
+ :h vimrc-intro
+ :h options-list
+^ only has something like a thousand variables pffft ezpz
+
+#############
+
+[services]
+-------------
+ install / chown / chmod / mk
+ (exec binary </dev/null &>/dev/null & exit)
+ su -l -s user < file
+ setpriv
+ unshare
+ chroot
+ login -f
+ env -i
+-------------
+su -l -s /bin/ash -c ' exec command </dev/null &>/dev/null & exit ' <user>
+su -l -s /bin/ash <user> << EOF # horrible \$(escape) \${characters}
+su -l -s /bin/ash <user> < /path/to/file # works without \${escapes}
+-------------
+su -l -s /bin/ash <user> < /path/to/file > /path/to/output
+dbclient -T <user>@172.16.0.1 < /path/to/file > /path/to/output
+-------------
+exec sleep 1 & echo exec with ampersand doesnt kill parent
+exec sleep 1 ; echo exec with colon does kill parent
+-------------
+setsid detaches controlling tty - breaks server daemons
+-------------
+[services uid]
+ port or relevent number
+[users uid]
+ ephemeral - implies scraping persistence /tmp/storage/home/<random> ?
+    static - x.one x.two x.three - dwm tags + gid assignment ?
+[role gid]
+ network and file access
+-------------
+/etc/services/
+ crond
+ ddns
+ dnsd
+ httpd
+ p2pd
+ sets
+-------------
+/etc/self/c.server
+ gnupg g.{setup,conf,agent}
+ dropbear s.{flush,client,server}
+ wireguard v.{flush,client,server}
+ wifi w.{scan,public,private,connect,auth}
+ xephyr {x.nobody,x.proxy}
+-------------
+/etc/self/d.client
+ dbclient - user
+ browser  - nobody/proxy
+ smtp     - nobody
+ irc      - proxy
+ p2p      - root/user/nobody/proxy
+ xmr      - nobody
+ qemu     - nobody/proxy
+ media    - user/nobody/proxy
+
+per application file access ?
+per application firewall access ? skgid (implies defining groups)
+
+-------------
+while sleep 3 ; do DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth xrandr --auto ; done
+-------------
+* offline user for mpv would still need http to stream video
+
+#############
+
+[networking]
+
+ lan/nat/tun 
+ only remote facing service is wireguard
+ lan/nat use tun as dmz bridge
+ remote can login to tun
+ local can login to tun
+ allowing controlled exposure of the dmz network
+
+ lan - strict filtering assumes network is hostile
+ nat - loose  filtering assumes network required authentication or physical presence (vm/eth/wifi)
+ tun - loose  filtering assumes network required authentication (local/remote)
+
+ forwarding rules only allow tcp out of nat
+ forwarding rules only allow terminating into wireguard
+
+ interfaces get added to lan or nat bridges
+ wifi cant connect to lan/nat bridge
+ wifi forwards to lans firewall chain
+ forces wireguard over wifi (shared passphrase isnt safe for tofu) (radius is harder to setup)
+
+-------------
+
+ system - etc/self/b.init/system.network
+busybox - etc/self/network_{ping,oneshot,default,zcip}
+busybox - etc/self/udhcpc_{ping,oneshot,default}
+busybox - etc/self/zcip_script
+busybox - etc/self/udhcpd_script
+
+^ bring up an interface and set dhcpc globally...
+  bring up an interface and record dhcpc only...
+
+#############
+
+[crypto]
+
+tpm2-tools
+---
+argon2 - cli hashing sha256 length by default
+---
+google-authenticator
+---
+gnupg(tpm2) / mutt
+ddns
+wireguard
+dropbear
+irc sasl key
+xmr
+---
+
+ftpm + sme sev
+
+gpg --edit-key user@email.com - > keytotpm
+
+^ full crypto set
+
+-------------
+(openssl enc) vs (gpg --symmetric) vs (cryptsetup open)
+-------------
+[sha512] [512 bits] [128 hex] [64 char]
+[sha256] [256 bits] [64  hex] [32 char]
+[sha1]   [40  bits] [20  hex] [20 char]
+-------------
+gnupg - refuses to change s2k for private key encryption
+gpg --symmetric <file> --s2k-mode 3 --s2k-cipher-algo AES256 --s2k-digest-algo SHA512 --s2k-count 65011712
+ssl private key encryption also has lack luster kdf
+-------------
+cryptsetup - luks only -pbkdf={argon2i,argon2id,pbkdf2} -iter-time=1000000 -pbkdf-memory=kilobytes -pbkdf-parallel=threads -pbkdf-force-itterations=LONG
+-------------
+nettle-pbkdf2
+-------------
+
+cryptsetup still uses 256 bit keys so...
+argon2 default output matches key input length
+
+#############
+
+
+
+[OLD]
+#############
+ full scope it once,
+ diff last known against newest
+ ./configure --help
+ ./{man,doc}/*
+ 1 hour upfront , 5 minutes each bump
+
+  ./z.package <package>
+  ./z.contents <package>
+  ./z.library <libpackage>
+* check the package is in any DEPENDS
+* use contents to pull library names
+* check the library is actually used in REQUIRES
+! removes old dependencies still listed
+
+* still a few dependencies that dont link to anything with libraries
+  eg x11-misc/compose-tables has locales only x11-base/xorg-server
+#############
+
+[ca-certificates]
+
+ mozilla provides certdata.txt...
+
+ https://blog.mozilla.org/security/2021/05/10/beware-of-applications-misusing-root-stores
+ - > https://hd.mozilla.org/releases/mozilla-beta/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt
+ - > https://github.com/crtsh/root_programs/tree/master/mozilla_certdata (replaced https://github.com/agl/extract-nss-root-certs)
+ - > 
+
+ https://www.ccadb.org # mozilla runs common certificate authority database 
+ - > https://ccadb-public.secure.force.com/mozilla/includedRootsPEMTxt?TrustBitsIncluded=Websites
+ ^ link to root authorities allowed to sign websites ( no code signing, no smime signing )
+   comes as a single ca-certificates.crt file
+
+-------------
+
+* end goal cert as hash name only, not symlink to random file name (far more complicated than the quick 4 line script)
+
+-------------
+
+ # scripts to install and set it up
+
+  install -d -o ${USER} -m 0700 certs && cd certs || exit 1
+
+  curl -o ca-certificates.crt https://ccadb-public.secure.force.com/mozilla/IncludedRootsPEMTxt?TrustBitsInclude=Websites
+
+  awk 'BEGIN {c=0;} /BEGIN CERT/ {c++} { print > "cert." c ".crt" }' < ca-certificates.crt
+
+  openssl rehash -v .
+
+-------------
+
+ # scripts to prove its the same as what already exists
+
+  find .                                   -type f -exec openssl x509 -noout -subject -in {} \; | sort -u > new.sort
+  find /usr/shared/ca-certificates/mozilla -type f -exec openssl x509 -noout -subject -in {} \; | sort -u > old.sort
+
+  openssl sha1 old.sort new.sort ; diff old.sort new.sort
+
+  install -d -o "${USER}" -m 0700 check && cd check || exit 1
+
+  awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "cert." c ".crt" }' < /etc/ssl/certs/ca-certificates.crt
+
+  find . -type f -exec openssl x509 -noout -subject -in {} \; | sort -u > new.sort
+
+  diff new.sort ../certs/new.sort
+
+-------------
+
+#############
+
+[multicast/broadcast]
+
+[avahi]
+/etc/{passwd,group,shadow} mdns: ddns: dnsd:
+/etc/nsswitch.conf
+/etc/nftables/port/5353
+
+avahid + fingerprint addressing...
+^ generate .gnupg .ssh .vpn .wifi
+  
+nmap + ncat
+igmp in nftables
+new,established on icmp/224.0.0.0/4
+flow control
+cli subscribe to multicast group
+^ probably means redumping nftables
+
+^ end game is not writing an ircd server
+  and having a cheap throw up irc client
+  on multicast
+
+#############
+
+[herbe]
+-------------
+
+( mpv /usr/share/sound/alsa/notifiaction.wav & )
+( herbe 'PING!' 'i can haz notifications?' 'yes please' && echo right click || echo left click & )
+
+* full screen xephyr notifications are huge
+* half screen xephyr notifications are tiny
+
+* creates /dev/shm/sem.herbe as running user...
+  prevents {desktop,user,nobody,proxy} executing after first run
+^ probably requires patching ? but its 200 locs
+  not even i would be capable of fucking that up ?
+
+#############
+
+[slock]
+-------------
+update /etc/inittab only - tty1::once:/bin/login -f root
+chown desktop:desktop /sbin/slock ; chmod 4750 /sbin/slock
+exec startx <password> (mount -o remount,rw,size=50% / ; passwd desktop $1 ; system.lock )
+slock
+^ hangs shit password lock on network access
+^ hangs shit password lock on all dac sandbox environments
+^ limits shit password to a network blocked account
+? works in theory doesnt beat acpid poweroff on lidclose
+-------------
+
+#############
+
+inotifywait \
+--monitor \
+--recursive \
+--no-dereference \
+--quiet \
+--event \
+/tmp/storage
+-------------
+inotifywait -mrPq                                                 /tmp/storage
+inotifywait -mrPq -e create -e modify -e attrib -e move -e delete /tmp/storage
+-------------
+xorg ticks print .Xauthority out every second
+firefox creates an ungodly ammount of spam
+transmission is utterly dumb
+
+#############
+tl;dr - isolated vlans arent isolated when the node you connect to them executes javascript
+#############
+
+#############
+gcc 11.1.0 man (lto/pgo/cfi/sanitizers)
+-------------
+-fsanitize
+-------------
+qemu     - asan&&ubsan (both)
+tor      - asan&&ubsan (both)
+busybox  - asan&&ubsan (had to disable both apparently full of memory leaks)
+openssl  - asan&&ubsan (had to disable asan)
+tigervnc - asan||tsan  (asan only)
+kernel - CONFIG_KASAN
+kernel - CONFIG_KCSAN
+-------------
+library only requires LD_PRELOAD=/usr/lib64/libasan.so ?
+-------------
+openssl asan breaks xorg-server... (memleaks calling xauth)
+-------------
+libasan.so
+liblsan.so
+libtsan.so
+libubsan.so
+#############
+
+#############
+|--------------------------------------------|
+|roaming - { tun && lan/wlan } { nat }       |
+|   host - { tun && lan/wlan } { nat && tun }|
+| nested -        { lan/wlan } { nat && tun }|
+|--------------------------------------------|
+| lo / lan / nat / tun / wlan0               |
+|--------------------------------------------|
+| input -                                    |
+|  icmp                                      |
+|  client established                        |
+|  server established                        |
+|  server new                                |
+|  invalid                                   |
+|  dropped                                   |
+|--------------------------------------------|
+| output -                                   |
+|  icmp                                      |
+|  server established                        |
+|  client established                        |
+|  client new                                |
+|  invalid                                   |
+|  dropped                                   |
+|--------------------------------------------|
+| forwarding -                               |
+|  nat      - > lan,wlan - new,established   |
+|  lan,wlan - > nat      - established       |
+|  tun      - > tun      - new,established   |
+|--------------------------------------------|
+#############
+
+netflow + dataflow
+
+outbound connections - flag all connections sending more data than recieved ? (implies upload)
+ inbound connections - flag all connections recieved less data then sending ? (implies upload)
+
+* reverse shell logging small recieve to large reply
+^ averaging upload to see if database dumps trigger shifts in normal over time
+
+read keepalive rpackets rbytes spackets sbytes << EOF
+$(grep 9050 /proc/net/nf_conntrack|awk '{printf$5" "$11" "$12" "$17" "$18}')
+EOF
+ratio="$((${rbytes##*=}/(${sbytes##*=}/100))"
+
+#############
+
+*** removing persistence mki ***
+
+finite scope for checking boot and persistence...
+busybox /bin/sh calls ~/.terminfo ~/.profile only
+/etc/profile deletes them before they get a chance to run
+then static binary to attest the rest of the system
+
+gets stupid really quickly - (~/.vim) (~/.browser) (~/.mpv) (~/.links) (~/.gnupg)
+
+scope locking clean boot to static busybox sh with no risk of persistent hooks... hopefully
+
+^ should allow observing the filesystem safely before accidently enabling persistence
+  (relience on none human error, ie not being dumb enough to forget checking)
+
+* calls $HOME/. regardless of /etc/passwd entry (deletes whatever $HOME/. is regardless of /etc/passwd)...
+
+* ${storage}/.init single point of contact for persistence (no weird conditional hooks in init scripts)
+
+*** removing persistence mki ***
+
+#############
+
+#############
+
+* hides the list of things expecting you to remember a secret
+  every bios/uefi password
+  every hdd/ssd/nvme cryptsetup password
+  every gnupg password
+  every dropbear password
+  every vpn password
+  every wifi password
+  every online account password
+
+^ automation implies passphrase less with priv seperation
+  usability implies one passphrase to protect the rest of them
+  compartmentalisation implies a passphrase per scope
+
+#############
+
+ biological machines are completly flawed
+ you cant defend against input / output
+ until you consume it
+ no ability to prempt the outcome it will have on you against memory
+ the more history you give it the harder it is to see
+
+ only defense and attack would be multiple layers of abstraction
+
+ cant control the population without creating unauthenticated symbology
+ cant stop anyone else abusing unauthenticated symbology without losing control
+ cant blindly follow symbology without being ignorant to the shift of normal it represents
+
+ logic loops that require defeating self preservation to expose
+ would imply you are insane if not suicidal to discover, massively reducing defection rates
+
+ entirely probable to miss correlate information into superstition
+
+ making the best assumption based on the information available and updating as more becomes available
+
+#############
+
+BUSYBOX busybox fails
+
+? sed '/match/c \\t\t\t stacks escape character against none printable characters ?/'
+  not really a fail more shit to remember when assuming default behaviour
+-------------
+(fixed 1.32.0 ish)
+httpd/cgi-bin
+hitting stop in browser
+hangs pid open on server
+fails to finish executing once the file descriptor is closed
+-------------
+pkill -x doesnt work... httpd / udhcpc both broken
+-------------
+httpd -u httpd:httpd < -
+root: ps shows httpd
+httpd: ps shows nothing
+^ mount -t proc -o hidepid=2 ?
+  httpd is dropping privs weird ?
+* started it with su -ls/bin/sh -c "httpd" httpd and it started functioning correctly ?
+  implies you could in effect hide pids from users even if its running as them ?
+  dont really get that as a scope
+-------------
+(fixed 1.33.0)
+'&|' pre fills the input buffer with the character after '|' *
+alias l='echo input buffer prefill'
+echo test &|less
+hit enter...
+echo input buffer prefill
+-------------
+
+#############
+torrent seed/leeching allows hosting based on peer review
+prevent censorship and denial of service by helping to distribute
+https/tls encrypting sucks for caching content
+signing massively reduces load
+rather than centralizing and encrypting
+would effectively allow decentralizing and signing
+#
+web of trust snapshotting content
+normie net... you fucking what ?
+wayback_machine... did they really just ?
+provider signed + peer signed + metadata from the target to be able to attest validity of the data
+
+ie news outlet, malciously releasing content to manipulate the narrative
+^ they get all the protection to do things, no one forces them to deserve it
+
+ability to download save and sign content produced,
+removing the ability for them to deny spreading missinformation after the fact
+far more accountability given incentives to supress malicious intenet and increase length of time to abuse it
+
+googles oday was always 6 month from timestamp informing vendor to public dump
+nothing to stop the vendor being malicious
+ability to contain scope hits diminishing returns
+everything up starts magically patching itself and its to late
+
+^ https/p2pd based content signing for distribution
+  instead of encrypted based content distribution
+
+#############
+uefi firmware < - display qrcode/watermark for kernel/initramfs at every boot (cheap ability to verify changes)
+#############
+rate limting logic...
+client pick a number between 0 - 100
+server pick a number between 0 - 100 (resource / weight)
+if client is higher than server throttle
+0 - soft_client - hard_client - combined
+#############
+#
+icmp/udp/tcp
+unicast   supports new/established
+multicast supports new/invalid
+broadcast supports new/invalid
+^ other wise using broadcast fails
+#
+lan   192.168.0.0/16 <assumes upstream>
+nat   172.16.0.0/12 172.31.255.255  fc00::/64
+tun   10.0.0.0/8    10.255.255.255  fd00::/64
+#
+127.0.0.0/8
+::1/128
+#
+0.0.0.0/0
+::/0
+#
+169.254.0.0/16
+fe80::/64
+#
+224.0.0.0/4
+ff00::/8
+#
+#############
+tl;dr
+* udhcpd doesnt check for address collisions, assigns based on mac if client declines the address is incremented
+* udhcpc has -a (off by default) it arpings the address then declines if it exists
+* cant prove udhcpd actually verifies the address is empty ?
+* most of the help output on udhcpd/udhcpc doesnt work
+* only controllable bottleneck is udhcpd to verify addresses not depending on clients doing it
+* flipped mac address to 00:00:00:00:00:00 on an address collision in dumpleases ?
+* dumpleases hostname is 19 characters looks like catv substitution, wikipedia states 63 characters between . with a max of 253
+#############
+0123456789
+abcdefghij
+32767 - > 65534
+dchgh:x:32767:32767::/tmp/storage/pool/32767:/bin/ash
+gffde:x:65534:65534::/tmp/storage/pool/65534:/bin/ash
+#############
+httpd/$(tr a-zA-Z0-9|head -c128)/$(tr a-zA-Z0-9|head -c 128) < nonce urls vs basicauthentication
+############
+time to learn - > time to audit - > time to maintain (less is always more)
+#############
+unpacking symlinks is still just a bad idea
+#############
+*** dont forget to bitch about oems and efi vars ***
+efivar --list
+efivar --name 00000000-0000-0000-0000-000000000000-sshd
+efivar --name 00000000-0000-0000-0000-000000000000-sshd.pub
+efivar --name 00000000-0000-0000-0000-000000000000-sshd-cert.pub
+efivar --name 00000000-0000-0000-0000-000000000000-ssh
+#############
+
+interface bond && ifenslave functionality...
+
+ifenslave bails if the interface isnt up...
+ifenslave supports <bond> <master> <slave> <slave> || -d <bond> <master> <slave>
+* all attempts to change active slave are met with permission denied ?
+* adding new interfaces works
+* removing interfaces works
+
+takes the first slave interface given
+clones its mac then sets every future interface to the same mac address
+ip link set up / down allows toggling the master
+
+#############
+htb [off]----[min]-----[max]-----[ceiling]
+low latency udp best effort ie character devices
+high latency tcp best effort ie block devices
+multiple queues equal polling with multiple disciplines
+#############
+links console only allows frames and color for single TERM=value (tty:linux, tmux:screen, desktop:st-256color)
+highest probability is tty[0-9] inside tmux... so screen default
+#############
+iw dev wlan0 set 4addr on
+brctl addif wan wlan0
+^ WDS mode
+wifi frames contain - station mac / access point mac / target mac
+#############
+raid6 bitrot recovery
+stripe0 stripe1 parity0 parity1
+^ effectively two copies of the data to verify the checksum and recover bitrot
+#############
+reduce known behavioural patterns
+#############
+
+full network view
+
+* tor updated challenge response negotiation to prevent mitm trying to handshake with the target
+  identifying protocols and dropping traffic based on it
+
+* tunnel with noise generation to prevent fingerprinting packet size and frequenecy of protocol handshakes
+
+source address as primary key per input queue,
+randomized packet padding
+randomized output order
+
+isps can tag inbound and outbound traffic based on order and packet size ( for any node on its network )
+
+shuffled padded queue, results in worst case nexthop is tagged with all possible source addresses
+
+src address on queues should be primary key (ensure unique ip addresses per shuffle)
+number of hops calculated against number of seeds and leeches
+1st hop < - mixed with 3rd hop inherits every previous relays possible ip list outright
+2nd hop < - mixed with 2nd hop allows real ip mixing ?
+3rd hop < - mixed with 1st hop allows passing off 2nd hops possible ip pool to all new connections
+
+number of seeds   == bridge/entry/guard - > relay/directory/rendevous/exit
+number of leeches == total size of possible source addresses the packet could have originated from
+
+implies low user count can only hit X amount of possible packet sources...
+^ regardless of how many times you shuffle 20 users you can take the 20 source ips and knock on all their doors...
+
+attempting to tag every route against atleast a % of possible leeches at all times
+
+total size of network vs ability to implicate % of it against every route/path through the network
+
+#############
+dhcping + timeouts output
+arpping + timeouts true||false
+ping    + timeouts true||false
+dns     + forward and reverse lookups
+ntp     + broadcast time or unicast time (uni/multi/broadcast) (local or remote time)
+pscan   + has the ability to if port open or if port closed
+nc      + has the ability to send packets over udp or tcp
+svd     + has the ability to recieve packets over udp or tcp
+^ write a custom script set for network analysis
+#############
+
+*** wtf raw format
+
+add route via interface...
+ip route add <ip>/<mask> via <interface>
+blackhole... (unreachable prohibit throw)
+ip route add blackhole 192.168.0.0/24
+metric... (lowest first)
+ip route add 192.168.0.0/24 via 192.168.0.1 metric 10
+multipath routing... (busybox wont support it?)
+ip route add 192.168.0.0/24 nexthop via 192.168.0.1 weight 1 nexthop via 192.168.0.2 weight 2
+ip route add 192.168.0.0/24 nexthop via dev wlan0 weight 1 nexthop via dev wlan1 weight 2
+
+* cached multipath routing re uses the same route so nat translation occurs
+* hashed multipath routing same logic (src & dst == hash)
+
+tos    - route by tos
+table  - /etc/iproute2/rt_table -
+proto  - /etc/iproute2/rt_proto - 
+scope  - /etc/iproute2/rt_scope - global/nowhere/host/link/site - (host lo, link real devices, link tap interfaces, global bridges ?)
+metric - 0 (default highest 32 bit number)
+
+ip route add default
+ nexthop via 172.16.0.1 dev eth0 weight 1
+ nexthop via 172.16.0.1 dev eth1 weight 1
+
+* appending metric to existing routes...
+ip route list|flush|add|del|change|append|replace|test
+add     - duplicates
+del     - deletes
+change  - duplicates
+append  - duplicates
+replace - duplicates
+test    - file exists
+
+bond:
+creates a single mac addresses and uses it through every interface
+interfaces must be on the same network
+failover mode (no multiplexing) vs switch aware (multiplexing)
+ip link add name bond0 type bond
+brctl addif bond0 wan
+
+#############
+
+*** wtf raw format
+
+remove ocsp and force fingerprint pinning in dns < - removes the need for a revoke network (massively complex)
+problem becomes ability to find and verify the most recent timestamp sign
+client view of the network
+what you have, battery,wired,rf
+listen or ping challenge response
+whats available? vs prove your XYZ?
+hotp,totp - asym crypto functionality from sym crypto
+session ticket in queue increases priority against time/attempts
+^ use session ticket to drop on abuse
+* incentivise session then use it to block
+* incentivise authentication then use it to block
+oneshot/session/authenticated top level queues
+sasl session vs sasl authentication < - click register server pins the current fingerprint to a user database
+table columns
+table rows
+distribute table columns like torrent files && p2p pull rows with encryption
+
+^ should have written that out when it was fresh
+  i still get it either way
+
+#############
+CONFIG_USB_SERIAL_CP210X < - two usb serial adaptors
+#############
+
+obfuscating and fuzzing basic assumptions
+
+assumptions of offline tracking and ability to restore
+firmware keylogger  < - cant differentiate between window changes ? cant account for mouse movement ? on screen keyboard ? grep usb-keyfs log + trailing
+firmware filesystem < - mount --bind / /mnt;tar zcvf /storage/rootfs.tar.gz .;openssl sha1 /storage/rootfs.tar.gz
+firmware kernel     < - /proc/kcore gdb elf image ? anyway to prove the kernel file is the kernel in memory ?
+firmware memory     < - no idea was already reaching with kernel
+
+management engine wifi ssid + passphrase (can rf sniff in controlled environments)
+video dumps without keylogging seek / find would be hours of analysis
+storage firmware manipulation regex and replace strings from any read / write sequence
+peripheral firmware manipulation full usb or pci bus acces entire protocol and any device as attack scope
+
+build hardware signed backups
+usb hardware signed backups
+firmware manipulation when reading from disk to memory
+
+randomize file system paths and names < - automatic targetting will fail or leave evidence
+
+multiple /dev/input devices ? and flood keystroke interupts with /dev/null output to create background noise ?
+
+search for overflows in data retention ? controlled environment offline and overflow storage assumptions crash or drop
+
+remove predictable behaviour patterns and defeat base assumptions in malware automation < - proof allows basic principles of cointel
+
+#############
+
+userland none priv rootkit...
+
+drop in highest probability of re execution $HOME/.bashrc $HOME/.bash_profile
+
+flag inotifyd on common $PATH entries for binary execution
+
+inotifyd <prog> /bin/ls /bin/find /bin/ps /bin/tcpdump /bin/wireshark 
+
+<prog> needs to pkill itself if probability of being discovered increases
+
+then wait for reexecution on the target
+
+search for whitelisted network programs .bash_history (target knowledge ssh? mysql?)
+
+phone home over nslookup for ping < - dns always works
+
+search for interpretted languages or anything with jit execution python/cython javascript
+
+search for arp to ip addresses
+
+search for bookmarks any internet history from available programs
+
+find a whitelisted domain a whitelisted command and phone home
+
+phone home
+nftables dnat all traffic to tcpsvd/udpsvd
+append file named after incoming ipaddress
+easy exfil over every port
+
+#############
+
+want a low profile programmable usb that can be dead dropped
+
+small enough to block a usb port and not be seen until after first boot or screen unlock
+
+code execution based on one time burn or exfil
+
+#############
+CONTENTS - grep -e '^dir' < - find paths
+           grep -e '^obj' < - find binaries 
+           grep -e '^sym' < - find symlinks
+DEPEND   - list of category/package
+NEEDED   - list of libraries per binary
+REQUIRES - list of all binaries
+#############
+3 images at all times
+dev           - > staging     - > prod
+single player - > multiplayer - > wan
+open          - > locked      - > live
+#############
+
+ something you know < - prompt for passphrase on cryptsetup
+ something you have < - take the first skipped block as passphrase salt
+ nuke  < - kill the something you have no ability to recover
+ panic < - return to data at rest leaving something you have in tact
+
+ iv=00000000000000000000000000000000 (32)
+key=0000000000000000000000000000000000000000000000000000000000000000 (64)
+384=d654902b550e334bb6898d5c4ab8ebe1aedc6c85368eafe28e0f89b62a74a23e1ed20abbc10c02ce321266384d444717 (96)
+   =000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 (96)
+    EFBAA4377D065A7CD0DE0A83D1825CF8A6D399210F6B6DF4799DB1DCB384E8AF7A5A1F95C3F9D1210433C58A47A556C   head -c48
+    B6851A5030955FFE184E2062825FFF13FA4D26E8EBA3058290D5718A150593384B4814273CB8FF6F8EB48AC4783B8B43A head -c49
+    24411ADAB23DEF4BC74435B3244374E2F6786B48B1AFEA4564CDECD03771CA3C73BCBA2B721F9343C44993A5A55C85DA  hexdump -n48
+    F5F858F11D80C382492D3FF6E327F577BB55AD459F9A0B34474D47ED3E0574A84AA5F2E4AB2B49B3CEAC68FDA5FC3430E hexdump -n49
+
+ max iv  32 digit
+ max key 64 digit
+ sha384  96 digit
+ head -c48 95 / head -c49 97
+ hexdump -c48 95 / hexdump -c49 97
+ one extra digit without using openssl sha384
+
+ # write uuid to disk and save the hexdump for openssl enc
+   have="$(head -c49 /dev/urandom|tee "${1}"|hexdump -ve '/1 "%02X"')"
+ # grab the secret and save the hexdump for openssl enc
+   have="$(hexdump -n49 -ve '/1 "%02X"' "${1}")"
+ # grab something you know
+   read -rp 'passphrase: ' know
+
+ printf "%s" "${have}${know}"|
+ openssl enc -e/-d -salt -md sha512 -aes-256-cbc -iv "${secret:64:32}" -K "${secret:0:64}" -in /dev/stdin -out|
+ cryptsetup --key-file - --key-size 256 --hash sha512 --cipher aes-cbc-essiv:sha256 --offset 1 open --type plain /dev/block storage
+
+ /root/bin/persistence.setup - setup encrypted persistent storage
+ /root/bin/persistence.mount - remount encryted persistent storage
+
+ /root/bin/nuke  -
+  overwrite the offset 512 byte block (depends on hardware as to it actually being overwritten)
+  poweroff...
+ /root/bin/panic - 
+  poweroff...
+  should be reboot implies having persistent boot setup which i cant automate ?
+  cant risk killing processes and attempting to umount doesnt have force
+  and risk of any pid being stuck with cwd would block the entire script
+
+#############
+
+large scale peer verified checksum verification...
+
+ tl;dr
+ pull upstreams copy of source code using GENTOO_MIRRORS=""
+
+ every user pulls from src_uri,
+ hashes the distfiles/source.tar.gz
+ checks the download they get against the distfiles.gentoo.org manifest
+
+ now have an entire distributed network of people on different equipment behind different isps behind different country laws
+
+ allows verifying source pulls from multiple parties and signing / agreeing on them
+
+ allows alerting on mitm / compromise
+
+#############
+
+if you have web portal on cleartext public wifi
+steal a mac already in use / whitelisted poof instant access without needing to go through a web portal
+
+if you have web portal on shared encrypted public wifi
+steal a mac already in use / whitelisted
+deauth the original address and use their mac address to reconnect to the network...
+implies stealing from someone that doesnt know how to spoof deauth or scan your location :D
+any ap that doesnt re force T&C signing or registration on disconnect / reconnect
+or has a long enough timeout should probably allow connecting straight to the node as another user ?
+^ would need to go through on a per implementation basis and check results
+
+or try the same mac on different bssid with shared ssid < - see if the whitelist is per device or centralized for roaming
+
+#############
+
+# firefail
+
+tl;dr - vpns are bad mkay
+
+exposes everything in netstat -tunlep with 0.0.0.0 to a random lan
+linking roaming devices signs your entire web history
+linking roaming devices doxxes your location for every device
+
+if you travel behind nat subnets you gain meta data privacy
+
+vpns completly remove meta data privacy
+vpns dont provided e2e encryption they only provide a tunnel
+your moving the first hop to a new exit node
+
+gets to log and store all traffic signed by a private key from a single point && get to mitm cleartext traffic
+
+you just lost all anonymity and gained not a single bit of security...
+
+https everywhere
+full e2e client and server authentication for any services
+remove and block all clear text traffic by default
+browser fingerprint
+create fake meta data over multiple sites / accounts
+
+if you know someone using a vpn rent the same one...
+use the same os and browser they do in a vm
+start using their name with an email provider
+start registering accounts to known data sharers and advertisers
+with that email and use as much of their info you can scrape
+you now have a fully finger printed virtual machine
+that using existing information is probably going to stamp all leaks against someone else
+^ fake doing a bad job at obfuscating data so it looks like bobs trying to use a burner through his vpn under a different name
+
+
+less is definitly less
+get fingerprinted and automatically click every advert available on everypage incease the amount of noise
+upload your own photo under stupid amounts of names and upload your own name against stupid amounts of photos
+age a load of social media accounts and try to kill facial recogonition databases by miss tagging names
+spoof photo meta data and upload from multiple different locations etc
+if you have heaps and heaps of data and dont obfuscate a greppable string to atleast make it hard you fail
+increases attack scope to people that can validate timestamps for a massive pool of information
+
+^ same as using generic objects / common names for irc nicks obfuscates search lookups
+
+#############
+
+entire work flow involves two harddrives
+
+one with all the work / configs on it
+one for ephemeral copies and testing
+
+work drive only gets ethernet plugged in to update portage, distfiles and shared files
+
+multiple offline backups to diff check against before and after giving the box internet
+
+swap out the harddrive and do all testing on the ephemeral clones with ethernet plugged in
+
+popped far to many times and had people edit config files
+doesnt cover the fact all the raw source code and binary repositories are also exposed 
+but limits the ability to edit any persistent files uploaded to github
+
+common sense dictates multiple channels
+build server with a usb modem
+desktop to run images made from it
+rce from running an image with internet cant get persistence
+
+^ bar hardware firmware
+
+#############
+
+# bootfs/keyfs signing the bootloaders/kernel/initramfs
+
+self/usb-sign
+self/usb-verify
+
+ signature - execute openssh sha512 on every file in bootfs, sha512 of that output and sign the dgst with sign.pem, save it into keyfs as checksum
+ verify    - execute openssh sha512 on every file in bootfs, verify the sha512 of that output against sign.pub
+
+* snake oil bar obscurity
+
+  if you change the public key when it boots it wont care up until asking for the passphrase of the pem key
+
+  offsite offline online
+  firesafe master key
+  usb tpm subkey
+
+#############
+
+x509 for 2fa
+
+ x509 works both directions
+ client certificate authority - client needs a short validity period
+ server certificate authority - server needs a long validity period
+
+ server listens for incoming connections signed by the client certificate authority
+ server checks the incoming certificate matches the ip or rdns of the incoming connection and is still valid
+ can add any other key:value entry to the certificate for access levels
+
+ client has access to the client certificate authority private key
+ sign the certificate with your current wan address and access required
+ everytime you logout or kill a session you need to revoke the certificate used
+
+ revoke network is needed so all unaccounted certificates cant be reused to gain access
+ if you fail to provide a revoke network at any time you cant verify any of the certificates being used
+
+ the more valid certificates available that have or havent been revoked the greater the risk someone can get entry
+ keeping the validity period as short as possible and revoking the certificate when the session is killed
+
+#############
+
+ephemeral keys...
+ so you have a single gnupg key
+ something gets you flagged someone starts full packet logging for your ip...
+ you end up with 6 months of logs
+ someone finally kicks your door in and beats you to death with a wrench
+ if your only using a single key they get all the current information you have and get the entire backlog
+
+ if your running 1 hour certificates any compramise only gets UPTO the last hour of logs and UPTO the last hour of network traffic...
+ ^ after the fact they can start signing keys and other nasty stuff...
+ run a 24 hour canary and you only have to hold out for a short period of time before you push a network wide revoke
+ then they can attempt to do whatever they want the network should propagate the revoked keys
+
+#############
+
+perfect forward secrecy with public comms vs private comms
+
+ngircd used for private messaging implies need for 4096 diffie
+server is logged and keys are popped
+decrypting logs is based on cracking diffie hellman
+
+lighttpd used for nothing but downloading public files
+server is logged and keys are popped
+cracking diffie gets nothing but cleartext already public files
+
+^ could argue enabling basic auth or any passphrase protected hosting requires huge diffie
+
+never decrypt into anything other than tmpfs
+
+#############
+
+given email has had password reset and account ownership forever
+
+running your own mail server
+
+ implies control over the dns MX record can redirect all password reset requests
+ ability to edit dns to the server sending account recovery hijack every mx record they do a lookup for and pass tls verify
+
+ random web server gets reset requests pulls your record searches for MX
+ checks the domain in the mx record has a valid ssl certificate then just sends it your password reset form...
+
+ ^ that as a sort of every web account ive ever seen shiny cleartext fuck up makes me giggle 
+
+ implied ability to inject cleartext dns gives ability to route all cleartext emails through server
+ ^ in terms of password reset forwarding to target is irreliventa
+   can spoof email from any server using spf dkim and dmark entries
+
+ mitm all mx replies allows stealing all outgoing mail ?
+
+ say dnssec is actually enabled...
+
+ webserver gets your email
+ does mx lookup
+ checks the signature
+ private key owner controls where mx points to (bar the whole trusting cert authorities)
+ commonname lookup on that record (implies trusting the entire CAdir)
+ literally forces popping a ca provider or popping a clients CAdirectory...
+
+#############
+
+generate a key pair on boot drop fingerprint into mac address
+ ^ - fingerprint pinning layer2 < - arp cache / link local dns
+  ^ - authenticated dhcp to dns handoff pinning on layer3
+
+init 1024 rsa key pair fingerprint public key set mac address
+only have XX:XX:XX:XX:XX:XX pick doubles from split sections along the mac
+basically mac isnt long enough for a secure fingerprint
+
+busybox http hosting /public_key, arping and curl public_keys
+
+udhcpd - notify_file: every dhcp request, < - doesnt have environment variables...
+         worst case...
+         dumpleases take mac,ip and hostname
+         curl hostname/public_key > /tmp/domain/udhcpd/ip*
+         check everything in dumpleases mac matches the public key
+         add hostname / ip entry into unbound
+         add fingerprint txt record
+         probably needs a decrypt challenges to prove it owns the private key
+
+ pretty much implies adding a challenge response to udhcpd.wrapper
+ to verify it owns the private key to the advertised public key then add it to unbound
+
+* can have multiple hostname entries cant have multiple ip entries
+
+implement encrypted dns as a root authority
+use dns lookup to get the address and fingerprint
+then open a tunnel regardless of protocol to the client with stunnel
+
+#############
+#############
+#############
+#############
+#############
+#############
+#############
+
+[REFERENCE]
+#############
+cryptsetup open --key-file /dev/urandom --type plain /dev/sdXYZ wipe
+dd if=/dev/zero of=/dev/mapper/wipe bs=4096 status=progress
+#############
+nmap
+ -sL      list scan
+ -sn      ping scan
+ -sV      service/version
+ -O       os detection
+ -p1-1024 port range
+ -T4      timeout
+still hasnt once managed to actually find the only other node on the subnet : / and still cant figure out why 
+#############
+kill a tcp connection the kernel sends packets out without any uid/gid tags
+which is triggering the NEW logging...
+means the tor user and group filters dont make sense...
+kernel can go rogue and send packets to places other than the socks proxy
+#############
+partitions...
+ raid       - requires same sized partition on multiple not always same sized disks...
+ gptfdisk   - partition the disks
+ mdadm      - dump them into raid
+ cryptsetup - map them against a key
+ e2fsprogs  - write a filesystem to it
+everything else is using a mkfs.ext4 on the entire internal drive - less bloat
+#############
+alias ps='ps efo pid,uid,gid,pcpu,pmem,comm --pid 2 --ppid 2 -N' # procps
+alias ps="ps -o pid,ppid,pgid,user,group,etime,comm|awk '\$1 != 2 && \$2 != 2'" # busybox
+#############
+test=nick!user@hostname
+echo "${test%?}" remove last
+echo "${test#?}" remove first
+echo "${test#*@}" == hostname
+echo "${test%!*}" == nick
+#############
+mdadm --assemble --scan 
+mdadm --assemble /dev/md/name --update=name /dev/sda1 /dev/sdb1 /dev/sdc1
+takes hostname:name as name or 127 if name is empty ? apperently
+#############
+pgrep -x init|grep -vx 1 < - kill all init bar pid1
+pkill -xn init           < - kill the last spawned init really handy 
+#############
+cmd0 < file.txt | cmd1 | ( [[ -f /etc/something ]] && cmd2 || cat ) | cmd 3
+#############
+mdadm --create /dev/md127 --name server --level=5 --chunk=4096 --raid-devices=3 /dev/vda /dev/vdb /dev/vdc
+mdadm --assemble --scan
+#############
+cryptsetup --hash sha512 --cipher aes-xts-plain64 open --type plain /dev/md127 storage #--key-file /path/to/keyfile
+#############
+find . -perm +6000 -type f < - find all setsuid 0 searches for all perms regardless
+find . -perm +4000 -type f < - find all setguid
+############## binhost < - never use it entire config boiled to down to adding this to any gentoo install
+PORTAGE_BINHOST="https://host.guestdomain/packages"
+EMERGE_DEFAULT_OPTS='--getbinpkgonly' < - only pull fail if not available
+FEATURES="binpkg-multi-instance buildpkg getbinpkg nodoc noinfo noman" < - pull and build if not available
+############# forget this far to often...
+curl -LO https://github.com/person/repo/tarball/version == repo.tar.gz
+#############
+iw dev wlan0 station dump < print actually attatched nodes not dumpleases...
+#############
+[[ -e exists ]] && echo true || echo false
+[[ -f /realfile ]] && false || echo weeeeeeeeeeeeeeeee
+[[ -d test ]] || mkdir test && cd test
+ assumed shell grabbed command and decided to execute && ||
+ executes in order first &| if hit inherits the second &|
+#############
+mdadm --create /dev/md127 --name server --level=5 --chunk=4096 --raid-devices=3 /dev/vda /dev/vdb /dev/vdc
+cryptsetup --hash sha512 --cipher aes-xts-plain64 open --type plain /dev/md127 storage
+#############
+mpv --no-video "$(ls|shuf -n1)" # albums|films|series
+while :;do mpv --no-video "$(find . -type f|shuf -n1)";done # songs in media/music
+#############
+[[ -f "${log}" ]] && { jobs %% || { tail -F /tmp/logs/syslog|while read -r;do sleep .2 && printf "%s\n" "NOTICE &SERVER :${REPLY}" >> "${input}";done & }; }
+#############
+jobs %% && {
+ rm "${log}"
+ printf "%s\n" "PRIVMSG ${reply:1} :LOGOFF" >> "${input}"
+ kill %%; } || {
+ touch "${log}"
+ printf "%s\n" "PRIVMSG ${reply:1} :LOGON" >> "${input}"
+ tail -F /tmp/logs/syslog|while read -r;do sleep .2 && printf "%s\n" "NOTICE &SERVER :${REPLY}"  >> "${input}";done &
+}
+#############
+tr -cd 'a-zA-Z0-9:\n'|while IFS=: read col0 col1 col2;do ;done
+#############
+mkdir -m 755 directory < - less lines
+#############
+nft list meters|awk '/meter/{print$2}'|while read;do nft list meter filter "${REPLY}";done|grep -e meter -e elements|tr '{},' '\n'|grep -v -e elements
+#############
+tic /st/st.info - dumps ~/.terminfo/s/{st,st-256color,st-meta,st-meta-256color}
+#############
+sed -i '8itext here' file , sed -i '1d,3d' file
+############
+test="192_168_1_1"
+echo ${test/_/.}
+echo ${test//_/.}
+############
+set colorcolumn=65
+############
+awk '{ for (i=1; i<=NF; ++i) {sum[i]+=$i; $i=sum[i] ); print $0)' # sum of columns
+awk '{ sum=0; for (i=1; i<=NF; ++i) {sum+=$i; $i=sum); print $0)' # sum of rows
+awk '{sum+=$2} END {print sum}' /proc/net/dev
+#############
+diff -r dir0 dir1 | less
+#############
+xwd + xv - request root screenshots or window screenshots view them in xv
+#############
+package="x11-wm/dwm-6.1-r1-5::gentoo";echo "${package%%-[0-9]*}"
+grep '^\[' client.build|awk '{print$4}'|sort -u|while read -r;do printf "%s\n" "${REPLY%%-[0-9]*}";done > client.packages
+#############
+testing find /var/db/pkg -type f -name REQUIRES -exec grep -H libname {} \; dependency killer
+#############
+[ -x exists ] || exit # cant test for file or directory needs to check the name isnt taken
+#############
+set colorcolumn=65
+set list
+ctrl+p replace tab...
+#############
+ip link add link eth0 name eth0.110 type vlan id 110
+brctl addif bridge eth0.110
+#############
+nmap auto skips 9100 < - feels fairly obvious this should be abused
+#############
+trap sigexit SIGEXIT
+sigquit(){ echo sigexit; }
+^ happens on program close unless sigkill
+#############
+ctrl+c SIGINT
+trap sigint SIGINT
+sigint(){ echo sigint; }
+#############
+ctrl+\ SIGQUIT
+trap sigquit SIGQUIT
+sigquit(){ echo sigquit; }
+^ same as sigterm but triggers a core dump?
+#############
+trap sigterm SIGTERM
+sigterm(){ echo sigterm; }
+kill <pid>
+^ should trigger sigterm and sigexit
+#############
+ctrl+z SIGTSTP
+trap sigtstp SIGTSTP
+sigtstp(){ echo sigtstp; }
+fg || kill -SIGCONT <pid>
+if you hijack sigtstp it hangs doesnt give the shell back and fg doesnt work ?
+would need to atleast have a minimum function to implement the above before stealing
+#############
+CONFIG_VGA_SWITCHEROO
+chown root:wheel /sys/kernel/debug/vgaswitcheroo/switch
+echo ON  > turn on disconnected gpu
+echo IGD > connect ingegrated graphics to output
+echo DIS > connect discrete graphics to output
+echo OFF > turn off disconnected gpu
+#############
+wpa_supplicant.conf
+country=GB
+iw reg set GB
+iw wlan0 set type monitor
+#############
+printf "\n%s\n\n" "message"|busybox sendmail -f user@domain.tld -S domain.tld user@domain.tld < - really need to check opensmtpd can blacklist user/domain from persistent storage and cant restart with root ?
+#############
+userland rootkit inotifyd on /proc access refork all executables to change pid to already scanned ranges
+#############
+gcc -xc -E -v
+gcc -xc++ -E -v
+#############
+until ip link set dev "${interface}" address "$(hexdump -n6 -ve '/1 "%02X:"' /dev/urandom|head -c17)";do sleep .1;done
+#############
+aplay -l
+arecord -d 10 /tmp/test.wav
+aplay test.wav
+#############
+find . -type f -name directory -exec vim -p {} +
+#############
+${key:-value} use default
+${key:=value} assign default
+${key:?[print this to stderr]} print error
+${key:+value} use alternative value
+#############
+{ IFS=: read timestamp mac ip4 ipv6 hostname cpu mem loadavg... < /file; }; echo $timestamp $mac
+#############
+until [ "${#}" == "0" ];do echo $1;shift;done
+#############
+tmux -S /tmp/socket new-session -As session (create or attach to existing session)
+#############
+vim -p file0 file1 file2 < - (tab|shift+tab) (ctrl+n|ctrl+p) switch tabs
+#############
+difference between
+. file        - executes in the current shell trap 'pkill -P $$;exit' kills the running terminal
+/bin/ash file - executes ash in the terminal running ash pkill -P $$;exit kills the sub ash not the terminal
+./file        - with TPE executes ash with script name under the current terminal shell
+PATH          - executes ash with script name under the current terminal shell
+
+should be paired with shit on . executing inline and not doing function one way variables (lets you include duplicate sections of code)
+#############
+rm /etc/mtab
+mount -o ro /
+mount -o rw /
+^ ro root mount without /etc/mtab present doesnt allow remounting anything as read write?
+  mount command refuses to run anything because it cant find /etc/mtab
+  which cant be created because read only rootfs
+  got stuck on the command line for a good 5 minutes then gave up
+#############
+screenshots - xwd and imagemagick
+xwd -frame -out window.xwd
+xwd -root -out screenshot.xwd
+convert screenshot.xwd screenshot.png
+#############
+icmpv6 type {nd-router-solicit,nd-router-advert,nd-neighbor-solicit,nd-neighbor-advert,nd-redirect} accept
+^ types needed for slaac
+#############
+find . -mmin 5 < - all files in the last five minutes
+find . -mtime 1 < - all files in the last day
+#############
+/proc/*/io requires
+ TASKSTATS
+ TASK_XACCT
+ TASK_IO_ACCOUNTING
+#############
+http://etalabs.net/sh_tricks.html
+############# rsync based network pool ?
+inotifyd on directory
+ list of headers < - dns pull domain/path seeds
+ list of clients < - peers
+  header script 
+  client script
+  want to write header 
+  want to pull headers/peers
+  can still create dead pools of leaches without wan facing
+#############
+grep '^\[' client.build|awk '{print$4}'|sort -u|while read -r;do printf "%s\n" "${REPLY%%-[0-9]*}";done > client.packages
+#############
+cat /sys/block/sda/queue/hw_sector_size
+############# devtmpfs /dev/shm fail
+devtmpfs ignores size= completly < - any global write to dev can trigger oomkiller
+cat /dev/urandom > /dev/shm/alltheram from any user causes oomkiller
+mounting -t tmpfs -o size=7% tmpfs /dev/shm
+#############
+not posix == ${var:0:2} ${var%%} ${var##} < - not dropping work arounds just look stupid; update everything else eventually
+#############
+dirty is the data in memory waiting to be written to disk
+write back is the current throughput of data from memory been written to disk
+#############
+[ -x exists ] || exit < - check anything trying to create files or directories is checking path exists
+[ -e thing ] && echo true < - never checked anything isnt fail
+#############
+sshfs -o allow_other user@domain.tld:/storage /storage/remote # root can run sshfs with nosuid mounts - creates more permissions problems
+#############
+menuconfig hit z < - turn that on by default somehow ?
+#############
+https://github.com/nsacyber/Hardware-and-Firmware-Security-Guidance
+#############
+#finding the last index of a variable based on delimeter ? < - basename / dirname with more toggles sub sets
+# echo "${test##*.}" == one
+# echo "${test#*.}" == three.two.one
+#finding the first index of a variable based on delimter < -
+# echo "${test%%.*}" == four
+# echo "${test%.*}" == four three two
+############# # things that dont
+# echo "${test##.*}" == four.three.two.one
+# echo "${test#.*}" == four.three.two.one
+# echo "${test%%*.}" == four.three.two.one
+# echo "${test%*.}" == four.three.two.one
+#############
+make oldconfig
+make menuconfig
+make all -j16 -l16
+make DESTDIR=/tmp/boot install
+make INSTALL_MOD_PATH=/tmp/modules modules_install
+#############
+#!/bin/sh
+something_in_path        < - doesnt allow exporting variables
+source something_in_path < - does allow exporting variables
+. something_in_path      < - does allow exporting variables
+* using source is the same as include
+* allows splitting files into "functions" that have global env scope
+ jump/goto rather than system calls
+#############
+exec tmux -S /path/to/socket new-session -As  'session-name' -c 'chdir'
+exec tmux -S /path/to/socket new-session -Ads 'session-name' -c 'chdir'
+#############
+tftp -gr filename 127.0.0.1 69 < - pulls remote file
+tftp -pl filename 127.0.0.1 69 < - pushes remote file
+#############
+oom_score_adj < - can set scores on oom killing fail over order range: -1000 +1000
+#############
+dropped per pid diskio < - /proc/1/io; general setup - > CPU/TASK time and stats accounting - > enable extended accounting over taskstats
+#############
+android phone settings apps - 'package installer' disable == brick...
+#############
+sigexit(){ true; }
+sigterm(){ true; }
+sigstop(){ true; }
+sigquit(){ true; }
+sigint(){ true; }
+sighup(){ true; }
+#############
+trap sigexit SIGEXIT
+trap sigterm SIGTERM
+trap sigstop SIGSTOP
+trap sigquit SIGQUIT
+trap sigint SIGINT
+trap sighup SIGHUP
+#############
+mkfifo named pipe < - blocks input when full
+#############
+make config < - if ./configure doesnt already exist
+#############
+meson build                         < - creates a build directory and populates it
+meson configure build               < - prints configure options
+meson configure build -Dprefix=/usr < - sets options
+ninja -j8 -l8 -C build              < - change to directory and build
+#############
+entire concept of defense is anyone one hop up the trace route can spoof every ip address
+#############
+removing predicatble behaviour patterns removes the ability to automate malware
+#############
+openINTEL < - active dns real time logging
+#############
+amd:
+tpm - trusted platform module
+sme - secure memory encryption
+sev - secure encrypted virtualization
+tee - trusted execution environment
+iommu - keeps segfaulting
+#############
+mknod -m 0600 /dev/nbd0 b 43 0
+#############
+echo 3 >> /proc/sys/vm/drop_caches
+#############
+loglevel=0
+earlyprintk=/dev/sr0
+#############
+yarrick/iodine
+sensepost/dns-shell
+#############
+C10k problem - old stuff on fcgi / 10k requests a second
+#############
+ip link set wan multicast {on,off} < - 
+ip link set wan arp {on,off} < -
+^ can turn arp off and setup fixed ip addresses for macs
+static mac to ip assignments ?
+#############
+$? - last commands exit status
+#############
+set this might be usefull
+printf "%s\n%s\n%s\n%s\n" "${1}" "${2}" "${3}" "${4}"
+#############
+446 bytes bootstrap
+64  bytes partition table
+2   bytes signature
+dd if=/dev/zero of=/dev/sda bs=512 count=1
+dd if=/dev/zero of=/dev/sda bs=446 count=1
+#############
+xdotool < - script keypresses
+#############
+netcat -p allows controlling source port used to establish connections...
+#############
+LD_LIBRARY_PATH=$PWD:$PWD/ ./executable --help < - worked for running self contained programs...
+#############
+du -shx
+#############
+#!/bin/sh
+#############
+. /etc/services/ircc/variables
+#############
+pgrep tmux|while read;do grep -q "${ircc_storage}" "/proc/${REPLY}/cmdline" && kill "${REPLY}";done
+#############
+%wheel ALL=(ALL) NOPASSWD: ALL
+#############
+ip protocol udp skuid nobody skgid nobody redirect to 5353
+ip protocol udp skuid nobody skgid nobody redirect to 9040
+#############
+set -o errexit
+while :;do echo outer
+while :;do echo inner
+echo continue;continue
+echo break;break
+done
+while sleep 60;do echo ping;done
+#############
+set -o errexit
+usage(){ cleanup; }
+trap usage EXIT
+thing || (failure case)
+timeout -s SIGHUP openssl s_client -connect -servername
+#############
+alias irssi='tmux -S "${HOME}/irssi/tmux" new-session -As irssi -c "${HOME}/irssi" irssi --home "${HOME}/irssi" --config "/etc/irssi.conf"'
+#############
+alias arp_scan='nmap -R -sn'
+alias service_scan='nmap -R -sV --version-intensity 9 -O --osscan-guess'
+#############
+${test/strip} # first
+${test//strip} # all
+${test/strip/replace} # first
+${test//strip/replace} # all
+#############
+git clone https://git.openwrt.org/openwrt/openwrt.git shared/.openwrt
+git clone https://erdgeist.org/gitweb/opentracker shared/.opentracker
+#############
+alias shuffle_artist='while :;do mpv --no-video "$(find ${media}/sound -type d -mindepth 1 -maxdepth 1|shuf -n1)";done'
+alias shuffle_album='while :;do mpv --no-video "$(find ${media}/sound -type d -mindepth 2 -maxdepth 2|shuf -n1)";done'
+alias shuffle_song='while :;do mpv --no-video "$(find ${media}/sound -type f|shuf -n1)";done'
+alias shuffle_film='while :;do mpv "$(find ${media}/video -type f|shuf -n1)";done'
+alias shuffle_series='while :;do mpv "$(find ${media}/video -type d -mindepth 1 -maxdepth 1|shuf -n1)";done'
+#############
+menuentry "network" { linux /kernels/qemu root=/dev/nfs rw nfsroot=192.168.1.3:/,tcp,vers=4 ip=dhcp; }
+#############
+distcc is -jobs local -load remote
+#############
+find / -type f -exec getcap 2>/dev/null {} \;
+#############
+while sleep 30;do echo ping;done
+#############
+v6="fd00::${v4//./:}/64"
+#############
+ip route add 0.0.0.0 via 1.1.1.1 dev eth0 scope link metric 100
+#############
+openssl req -text -noout -in file.csr
+openssl x509 -text -noout -in file.crt
+#############
+iw dev "${interface}" interface add "${interface}-ap" type managed
+iw dev "${interface}" interface add "${interface}-mon" type monitor
+iw dev "${interface}-ap" del
+iw dev "${interface}-mon" del
+#############
+[ -f "${keyfs}/secureboot" ] || openssl req -x509 -new -newkey rsa:2048 -sha256 -days 365 -nodes -outform der -keyout "${keyfs}/secureboot" -out "${bootfs}/public/secureboot" -subj '/CN=secureboot'
+#############
+delimeter stripping parsable outputs... printf "%s\n" "[${variable//]/.}]" can strip the closing tag and ignore any duplicate input
+#############
+#[56] [62] [nick(16):user(9):realname(50)] freenode only ?
+#nick="NICK $(tr -cd a-zA-Z</dev/urandom|head -c16)"
+#user="USER $(tr -cd a-zA-Z</dev/urandom|head -c9) 0 * :$(tr -cd a-zA-Z</dev/urandom|head -c50)"
+#############
+resource:///defaults/preferences/firefox.js < - has random things in it ?
+resource://gre/greprefs.js < - has about:config references in it
+#############
+ct state established meter nat4 { ip daddr . ip saddr counter } accept
+ct state established meter nat6 { ip6 daddr . ip6 saddr counter } accept
+ip protocol icmp accept
+ip6 nexthdr icmpv6 accept
+meter output { skuid counter }
+ip protocol icmp accept
+ip6 nexthdr icmpv6 accept
+meter input { skuid counter }
+#############
+dns (query_filter - > tls - > dnssec - > response_filter, caching server)
+#############
+for i in $(seq 0 2);do sleep ${RANDOM} & done
+sleep 1
+jobs
+sleep 1
+pkill -P $$
+sleep 1
+jobs
+#############
+timeout -s SIGPEW 3 sh -lc 'read -p interupt && interupt' || timeout
+timeout -s SIGHUP 3 sh -lc 'i_server </dev/null &>/dev/null'
+#############
+timeout -s SIGPEW 3 sh -lc 'read -p interupt && interupt' || timeout
+#############
+xz -T0 --check=crc32 > <image>
+#############
+grub-standalone: --modules "part_msdos part_gpt" # gpt partitioned storage requires early loading of modules
+#############
+dbclient 172.16.0.1 tar cC /path .|tar xC /path
+tar cC /path .|dbclient 172.16.0.1 tar xC /path
+#############
+nc -p 123 -s 172.16.0.1 -n -u 172.16.0.3 123
+nc -p 123 -s 172.16.0.3 -n -u 172.16.0.1 123
+netstat -uneap
+^ that with invalid traffic would be enough to promisc mode lan
+#############
+server extract, client send
+nc -l -p 4444|tar x .
+tar c .|nc 172.16.0.1 4444
+#
+server send, client extract
+tar c .|nc -l -p 4444
+nc 172.16.0.1 4444|tar x .
+#############
+timer(){
+unset count
+until [ "${count:-0}" -gt "${1:-300}" ];do
+ printf "%s\r" " [ ${1:-300} : ${count:-0} ] "
+ count="$((${count:-0}+1))"
+ sleep 1
+done
+}
+#############
+env -i /sbin/httpd -p 80 -u httpd:httpd -h "${service_storage}" -c "${service_storage}/config" # refuses to show pid when running ps as httpd ?
+#############
+alias serial='microcom -s 115200 /dev/ttyUSB0'
+#############
+-------------
+cheap remote desktop (requires xauth with remote host + magic cookie)
+-------------
+local: Xephyr -ac -listen tcp :13
+-------------
+remote: DISPLAY=172.16.0.1:13 dwm-guest
+-------------
+#############
+siaddr 172.16.0.1
+boot_file pxe
+#############
+emerge
+-avbkgp1 < - (ask verbose build keep get pretend oneshot)
+--update --deep
+--nodeps --onlydeps
+--emptytree
+--keep-going y
+--prefix < - set EPREFIX variable
+--regen  < - builds up metadata cache to make resolving dependencies quicker
+--prune  < - removes older versions of packages
+#############
+xrandr --output Virtual-1 --auto < - auto magically fills to current vncviewer size
+#############
+echo $((16#01)) < - prints int from hex...
+#############
+firefox
+ctrl+l < - address bar
+ctrl+q < - close everything
+ctrl+w < - close tab
+ctrl + tab < - cycle tabs
+ctrl + (page up) || (page down) < - cycle tabs hold shift to move positions
+alt + ( <- ) || ( -> )  < - back/forward page
+#############
+sysctl -n kernel.random.uuid
+#############
+qemu-nbd --port=10809 --bind=0.0.0.0 --shared=9
+ --export-name=mint --description='linux mint install'
+ --fork
+ --format=raw
+ /tmp/storage/
+qemu-wrapper -b nbd://172.16.0.1/export 
+#############
+meson install -C build --destdir /tmp/install
+#############
+arecord -l                                      # display all sound cards with capture
+ffmpeg -f v4l2 -list_formats all -i /dev/video0 # display all supported webcam resolutions
+ffmpeg -f x11grab -i :0 -frames:v 1 screenshot.jpg                                      # screenshot x11
+ffmpeg -f alsa -i hw:1 -f x11grab -i :0.0 -s 2560x1440 -r 24 /tmp/output.mp4            # record x11 and audio
+ffmpeg -f video4linux2 -i /dev/video -s 1280x720 -frames:v 1 screenshot.jpg             # screenshot webcam
+ffmpeg -f alsa -i hw:1 -f video4linux2 -i /dev/video0 -s 1280x720 -r 24 /tmp/output.mpg # record webcam and audio
+mpv udp://:4444                        # listen on port 4444 for input
+ffmpeg -f mpegts udp://remote.com:4444 # stream video to this address
+#############
+install -o 0 -g 0 -m 0644 dev/null etc/passwd
+install -o 0 -g 0 -m 0644 dev/null etc/group
+install -o 0 -g 0 -m 0644 dev/null etc/shadow
+
+users="root nobody" c="10000"
+for i in ${users}
+do
+ printf "%s\n" "${i}:x:${c}:${c}::/tmp/home/${i}:/bin/ash" >> etc/passwd
+ printf "%s\n" "${i}:x:${c}:" >> etc/group
+ printf "%s\n" "${i}:!:::::::" >> etc/shadow
+ c="$((${c}+1))"
+done
+#############
+[ "${2:0:7}" == "file://" ] && read public < "${2:7}"
+[ "${2:0:7}" == "http://" ] && public="$(curl --silent --connect-timeout 3 "${1}")"
+[ "${2:0:7}" == "ssh://"  ] && public="$(dbclient "${1##*:}" 'cat ${1%%:*}')"
+#############
+printf "\n%s\n\n%s\n\n" "[http]" "receivepack = true" > ".git/config"
+#############
+until [ -f "/tmp/nope" ] ; do [ ${count:-0} == "3" ] && break || sleep 1 ; count="$((${count:-0}+1))" ; done
+#############
+for i in /bin/* /lib/* /lib64/* /sbin/* /usr/bin/* /usr/lib/* /usr/lib64/* /usr/sbin/*
+do
+ash /usr/bin/ldd $i | grep 'not found' && printf "%s\n" "$i"
+done
+#############
+#stage3="http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-musl-hardened/"
+#match='<a href="stage3-amd64-musl-hardened-................\.tar\.xz">'
+#stage3="http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-hardened+nomultilib/"
+#match='<a href="stage3-amd64-hardened+nomultilib-................\.tar\.xz">'
+#############
+ip addr <address>/<subnet> dev <interface> brd {+,-} scope <scope> label <label>
+brd + # set broadcast address
+brd - # set broadcast address
+scope {host,link,global} # set scope
+label '<label>' # set label
+#############
+find ${PATH//:/ } -type f -exec ls -lah {} \;
+#############
+CFLAGS="${CFLAGS} -fstack-clash-protection -fstack-protector-strong --param ssp-buffer-size=4"
+#############
+* gpg --fingerprint ${HOSTNAME} 2>/dev/null | grep -m1 fingerprint | cut -d= -f2 | tr -d ' '
+#############
+
+* CONFIG_EFI && CONFIG_EFIVAR_FS
+
+*  mount -t efivarfs efivarfs /sys/firmware/efi/efivars
+
+                             99999999-9999-9999-9999-999999999999-name
+                efivar -w -n 99999999-9999-9999-9999-999999999999-name -f /path/to/file # write from file
+  efivar -e /path/to/file -n 99999999-9999-9999-9999-999999999999-name # read to file
+
+#############
+gcc
+-lthing        # search for libthing.so
+-l:libthing.a  # directly include libthing.a
+-I/usr/include # search header files in path
+#############

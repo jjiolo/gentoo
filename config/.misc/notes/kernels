@@ -1,0 +1,88 @@
+
+#############
+never managed to get modules to load at boot
+only thing preventing this being a real liveusb
+^ tried atleast 7 times in the last 5 years got no where
+#############
+
+#############
+make defconfig
+make oldconfig
+#############
+make all -j8 -l8 || { make -j8 -l8 && make modules -j8 -l8; }
+#############
+make INSTALL_HDR_PATH='/path/to/install/headers' headers_install
+make INSTALL_PATH='/path/to/install/kernel' install
+make INSTALL_MOD_PATH='/path/to/install/modules' modules_install
+#############
+
+[KERNEL]
+#############
+
+* didnt reduce alsa
+* didnt reduce amdgpu
+* didnt reduce bluetooth
+
+* didnt add tpm support
+* didnt add disk quota
+* didnt add QoS
+* didnt add vlans
+
+* didnt same page merging + madvise (qemu)
+
+* laptop sdcard reader
+
+* qemu virtio disk/net/gpu no_sound no_usb_passthrough + full networking
+^ qemu no raid/cryptsetup/tap
+
+#############
+
+debugging menu full of sanitizer stuff ?
+
+CONFIG_PAGE_TABLE_CHECK - 
+
+#############
+
+ CONFIG_SCHED_CORE - core scheduling for smt (any cpu with threads ?)
+
+               aio - 
+          io uring - 
+   madvise/fadvise - 
+        membarrier - 
+
+#############
+
+cpu_flags
+
+https://en.wikipedia.org/wiki/CPUID#EAX.3D1:_Processor_Info_and_Feature_Bits
+
+kernel/arch/x86/include/asm/cpufeatures.h
+
+^ alot of the kernel modules are opaque
+  named after intel or amd
+  with no correlation to hardware support
+
+#############
+
+[kernel]
+-------------
+
+GCC_PLUGIN_STRUCTLEAK_ - keep changing gcc plugin names ?
+
+* remove legacy framebuffer ?
+  CONFIG_SYSFB_SIMPLEFB
+  CONFIG_FB_SIMPLE
+  CONFIG_FRAMEBUFFER_CONSOLE
+  CONFIG_FB_EFI
+^ doesnt work hangs grub
+
+* CONFIG_EFI
+  CONFIG_EFIVAR_FS
+  mount -t efivarfs efivarfs /sys/firmware/efi/efivars
+  sys-libs/efivar --list
+^ works can add ed25519 keys to nvram
+
+ CONFIG_SCHED_CORE - defend against smt side channel attacks (disabling threads completly)
+
+#############
+

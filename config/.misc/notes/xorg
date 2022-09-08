@@ -1,0 +1,53 @@
+
+#############
+now with more privdrop and less y u run dis as root
+#############
+dropped all xorg/xephyr extensions bar... RENDER RANDR
+^ should disable screenshots and recording the screen (makes malware easier)
+#############
+
+[xorg]
+
+ xinit
+ \_X
+ \_monitor
+
+ dwm-host
+ \_st
+
+ Xephyr
+ dwm-guest
+ \_st
+
+startx {user,nobody,proxy}
+ x.{nobody,proxy}
+
+#############
+
+* Xorg/Xephyr
+ -listen tcp   - 0.0.0.0 bind only      (nft.logged allows rce)
+ -listen unix  - /tmp/.X11-unix/X[0-9]  (race condition on start)
+ -listen local - @/tmp/.X11-unix/X[0-9] (cant lock without xauth)
+ -auth /path/to/file
+^ xorg-server authentication,
+  cant control the address tcp binds to
+  cant control permissions on .X11-unix directory and sockets
+  forces cookie and global access by default
+
+* xauth extract - $DISPLAY | dbclient domain.tld xauth merge -
+
+#############
+
+ start Xorg as desktop
+ hang sleep infinite inside /etc/xinitrc
+  /dev/tty7 - desktop access to console
+   /dev/snd - desktop access to audio
+ /dev/input - desktop access to input
+   /dev/dri - desktop access to video
+
+ /tmp/.X0-auth - set permissions to whatever user arg1 is
+ start dwm-host on the empty hung xorg-server
+ start Xephyr/dwm-guest nested multiple times inside dwm-host
+
+#############
+

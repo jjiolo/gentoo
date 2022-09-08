@@ -1,0 +1,14 @@
+
+#############
+export LD_LIBRARY_PATH="/usr/lib64/firefox:/usr/lib64/apulse:/usr/lib64/fltk"
+#############
+
+find /bin /sbin /usr/bin /usr/sbin /lib /lib64 /usr/lib /usr/lib64 /usr/libexec -type f 2>/dev/null| while read
+do
+
+ash /usr/bin/ldd "${REPLY}" 2>/dev/null | grep -i 'not found' && printf "%s\n" "${REPLY}"
+
+done | sort -u
+
+#############
+

@@ -1,0 +1,156 @@
+
+zlib-dynamic - forces loading libz all the time ? for no real reason
+
+#############
+
+openssl-3.0.5
+
+-------------
+
+ no-cached-fetch ? left enable- 'reduce runtime memory usage' for 'introduces a significant performance penalty'
+          no-cmp ? certificate management protocol / certificate request message format (last search said related to smime)
+       no-legacy ? 
+       no-module ?
+       no-uplink ? windows crap ?
+
+-------------
+
+ perl configdata.pm --dump
+ 
+  missing
+   pic ?  (static)
+   shared ?  (cascade)
+   threads ?  (static)
+
+  added
+   secure-memory ?
+
+#############
+
+
+#############
+openssl genpkey -algorithm ed25519 -out ed25519;
+openssl ec -pubout -in ed25519 -out ed25519.pub;
+#############
+app-misc/ca-certificates depends on openssl being located at /usr/bin/openssl
+#############
+
+############# generic descriptions (got sick of searching)
+srp  - secure remote password... (openssl srp -help)
+cms  - cryptographic message syntax ? smime... (openssl cms -help)
+ct   - certificate transparency
+comp - compression support with static/dynamic zlib
+npn  - next protocol negotiation (port 443 spdy hand off ? irrelivent imo http2)
+psk  - pre shared key cipher suites
+srp  - secure remote password cipher suites
+sctp - stream control transmission protocol dtls over sctp and or dtls over udp
+srtp - secure real-time transport protocol (dtls extension)
+sse2 - cpu flags enabled in ffmpeg already
+#############
+
+locked configure options...
+
+ enable-deprecated - python
+ enable-engine     - tor
+ enable-sock       - curl mutt links wget python transmission tor
+ enable-threads    - tor
+ enable-tls        - (no-tls does not disable tls if tls1_1 tls1_2 are in use)
+ enable-dh         - curl python transmission tor
+ enable-rc4        - transmission
+ enable-scrypt     - python
+
+now works without...
+
+ enable-rmd160 < - Net-SSLeay(perl) crda
+
+ enable-blake2 < - python
+ enable-cmac   < - python
+ enable-dsa    < - python
+
+# enable-des    < - hostapd wpa_supplicant
+# enable-md4    < - hostapd wpa_supplicant
+
+ enable-bf     < - crda (uninstalled crda)
+ enable-cast   < - crda (uninstalled crda)
+
+
+#############
+
+openssl client
+
+ log every request and fingerprint every certificate in the chain
+
+ eg. curl https://domain.tld - > domain.tld:fp0:fp1:fp2:
+     openssh known_hosts tofu style
+
+worst case...
+
+ client accepts all valid certificates regardless of the fingerprint chain
+ only display changes to fingerprints related to the domain
+
+best case...
+
+ client alerts on all changes to the domains fingerprint chain
+ and forces the user to verify proceeding
+
+either way...
+
+ allows building up a profile of domains and their compitency
+ allows building up a profile on certificate providers and their compitency
+
+examples...
+
+every domain you have ever visted suddenly starts using the same certificate authority
+ someones using a popped ca to dynamically sign every requests you made
+
+single domain keeps flipping the fingerprint chain
+ cant be trusted to protect their own private keys
+
+lowest point in the chains fingerprint keeps flipping
+ probably roaming and hitting geo based round robin or anycast
+
+fingerprint changes every 4 months
+ someone using an automated lets encrypt setup
+
+^ still implies generating as much historical information as possible to predict future actions
+
+^ sharing this data globally (the proofs in the maths it cant be spoofed)
+  allows painting a larger picture of the current environment
+  to the point of reversing nation state actors and who / what they target
+
+#############
+
+cert revoke
+
+crl           < - old shit pulls the entire list in a single file doesnt scale
+oscp          < - interface to request individual certificates
+oscp stapling < - interface for clients to request a signed timestamp, proving time since last revoke check to reduce load on the ocsp server
+
+revoke server needs the ability to lookup individual certificates
+revoke server needs the ability for cert providers to request timestamps
+
+removes the need for clients to ddos the revoke server allowing the providers to distrbute validity periods
+
+#############
+
+oids - let you assign more key value pairs in -subj
+
+^ never found any software that can safely parse any of them
+
+#############
+
+HOME=.
+path=$ENV::HOME/keyring
+
+oid_section=new_oids
+
+[ new_oids ]
+one = 1.2.3.4.1
+two = 1.2.3.4.2
+
+[ ca ]
+crl = crl.pem # current crl
+crlnumber = crlnumber # current crl number
+
+#############
+

@@ -1,0 +1,24 @@
+#!/bin/sh
+#############
+cd /
+#############
+sysctl -w net.ipv4.ip_unprivileged_port_start=0
+#############
+/usr/bin/setpriv \
+ --reuid sshd --regid sshd --init-groups \
+ --inh-caps -all,+setuid,+setgid,+chown,+fowner \
+ --ambient-caps -all,+setuid,+setgid,+chown,+fowner \
+ --bounding-set -all,+setuid,+setgid,+chown,+fowner \
+ --nnp \
+ --reset-env \
+ /sbin/dropbear
+#############
+sysctl -w net.ipv4.ip_unprivileged_port_start=32768
+#############
+#
+# doesnt work...
+# requires patching dropbear, checks if not root
+# leaves capabilities in the shell
+# allowing privesc from none root users
+#
+#############

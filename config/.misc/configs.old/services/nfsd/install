@@ -1,0 +1,11 @@
+#!/bin/sh
+#############
+. /etc/services/variables nfsd
+#############
+mountpoint -q "/proc/fs/nfsd" || mount -t nfsd nfsd /proc/fs/nfsd
+#############
+[ -f "${service_storage}/exports" ] || install -o nfsd -g nfsd -m 0660 "${service_system}/files/exports" "${service_storage}/exports"
+[ -f "${service_storage}/etab"    ] || install -o nfsd -g nfsd -m 0660 /dev/null "${service_storage}/etab"
+#############
+. /etc/services/permissions nfsd nfsd 0770 0660
+#############

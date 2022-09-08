@@ -1,0 +1,81 @@
+
+#############
+
+overall goal,
+ as many external locks as possible
+ not trusting the browser if the host can do it
+
+#############
+
+[firefox]
+
+ distributions/policies.json < - hardcoded path root:root 0775
+
+ defaults/pref/autoconfig.js < - hardcoded path root:root 0775
+ -> points to
+  firefox.cfg < - hardcoded path root:root 0775
+ -> points to
+  proxy.pac < - hardcoded path root:root 0775
+
+#############
+
+[about:policies]
+
+ easier to manage list of settings...
+ fast approaching
+ to many values
+ to many uninteresting values
+ to many vague values
+
+#############
+
+ [distribution/policies.json]
+
+appautoupdate < - refers to firefox itself
+
+addons - refer to extensions themes and plugins
+
+ extensions - install into firefox itself ?
+    plugins - widevine drm content ? openh264 video calls ?
+            - can be used by websites ?
+
+                       3rdparty - policies for addons/extensions
+          AllowedDomainsForApps - domains allowed to access google workspace ?
+                   AppUpdateURL - change domain to update apps from...
+                 Authentication - SPNEGO Delegated NTLM ?
+ AutoLaunchProtocolsFromOrigins - mime type esk execution without prompt on specific domains ?
+                      Bookmarks - deprecating in favour of managedbookmarks
+                   Certificates - mac and windows only ? no plans to implement it in linux 
+                 DisableCiphers - feels bloat full list of alot of ciphers
+      EnterprisePoliciesEnabled - enable policy support on macos ? policy option to turn on or off policies sounds dumb 
+                     Extensions - auto install, auto remove, auto lock extensions
+              ExtensionSettings - control which extensions can be installed
+                ExtensionUpdate - control extension update ? such informative help output
+                    FlashPlugin - deprecated ?
+                       Handlers - mime types ? default disable all ?
+         InstallAddonsPermision - default extension install policy ? 
+                 LegacyProfiles - windows only ?
+LegacySameSiteCookieBehaviourEnabled - weh ?
+LegacySameSiteCookieBehaviourEnabledForDomainList - weh ?
+                 LocalFileLinks -
+               ManagedBookmarks -
+            ManualAppUpdateOnly -
+               PictureInPicture - 
+
+Preferences - (irrelivent when 644 locking autoconfig.js -> firefox.cfg)
+
+                          Proxy - handled in firefox.cfg
+               RequestedLocales - 
+                      SearchBar -
+                  SearchEngines -
+           SearchSuggestEnabled -
+                SecurityDevices -
+                 ShowHomeButton -
+                  SSLVersionMax -
+                  SSLVersionMin -
+                    SupportMenu -
+                  WebsiteFilter -
+                     WindowsSSO -
+
+#############
+

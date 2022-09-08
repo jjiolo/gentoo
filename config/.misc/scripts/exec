@@ -1,0 +1,73 @@
+#!/bin/sh
+#############
+usage(){
+
+cat << EOF
+
+ ${0} - ${1}
+
+  -h hosts
+  -c command
+  -s script
+  -o output:/dev/stdout
+
+EOF
+
+exit 1
+
+}
+#############
+while getopts "h:c:s:f:o:" arg ; do
+ case "${arg}" in
+  h) hosts="${OPTARG}" ;;
+  c) command="${OPTARG}" ;;
+  s) script="${OPTARG}" ;;
+  o) output="${OPTARG}" ;;
+  *) usage getopts ;;
+ esac
+done
+#############
+[ -z "${hosts}"  ] && usage "requires hosts"
+[ -z "${command}" ] && [ -z "${script}" ] && usage "requires command||script"
+[ -z "${script}" ] || [ -f "${script}" ] || usage "script does not exist"
+[ -z "${output}" ] || [ -f "${output}" ] && usage "output already exists"
+[ -z "${output}" ] && output="/dev/stdout"
+#############
+
+#
+# dbclient -user ?
+# file transfer ?
+# file transfer and execute ?
+# 
+#
+
+#############
+
+[ -f "${hosts}" ] && {
+
+for i in $(cat ${hosts}) ; do
+
+printf "\n%s\n\n" "############# ${i}" >> "${output}"
+
+[ -z "${script}"  ] || dbclient -t "${i}" < "${script}" >> "${output}"
+
+[ -z "${command}" ] || dbclient -t "${i}" < "${script}" >> "${output}"
+
+done
+
+}
+
+#############
+
+[ -f "${hosts}" ] || {
+
+printf "\n%s\n\n" "############# ${i}:" >> "${output}"
+
+[ -z "${script}"  ] || dbclient -t "${hosts}" < "${script}" >> "${output}"
+
+[ -z "${command}" ] || dbclient -t "${hosts}" < "${script}" >> "${output}"
+
+}
+
+#############
+

@@ -1,0 +1,21 @@
+#!/bin/sh
+#############
+
+ {
+
+  printf "\n\033[31m%s \033[32m%s\n\n" "############# #" "build.upgrade.onlydeps"
+  cat "/binhost/logs/build.upgrade.onlydeps"
+
+  printf "\n\033[31m%s \033[32m%s\n\n" "############# #" "build.upgrade.nodeps"
+  cat "/binhost/logs/build.upgrade.nodeps"
+
+  printf "\n\033[31m%s \033[32m%s\n\n" "############# #" "build.onlydeps"
+  cat "/binhost/logs/build.onlydeps"
+
+  printf "\n\033[31m%s \033[32m%s\n\n" "############# #" "build.nodeps"
+  cat "/binhost/logs/build.nodeps"
+
+ } | /usr/bin/less -R
+
+#############
+

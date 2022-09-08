@@ -1,0 +1,17 @@
+
+/*************/
+body{margin:3%;color:#BDBDBD;background-color:#000000;font-family:"Lucida Console", Monaco, monospace;}
+/*************/
+h2{display:none;}
+a{color:#ff9900;text-decoration:none;}
+/*************/
+thead{display:none;}
+td{padding-right:1em;}
+/*************/
+.n{text-align:right;}
+.m{text-align:center;}
+.s{text-align:center;}
+.t{display:none;}
+.foot{display:none;}
+/*************/
+

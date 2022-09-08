@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<style>
+    body{height:100%;width:100%;margin:0;padding:0;color:#BDBDBD;background-color:#000000;font-size:1.0em;}
+  a:link,a:visited,a:hover,a:active{text-decoration:none;color:#ff9900}
+  .outer{display:table;position:absolute;width:100%;height:100%;}
+ .middle{display:table-cell;margin:0 auto;vertical-align:middle;}
+  .inner{display:table;margin:0 auto;}
+ .header{display:block;float:none;text-align:center;border:none;}
+.content{display:inline-block;text-align:center;}
+ .footer{display:block;float:none;text-align:center;border:none;}
+       p{margin:0.1em;padding:0em;}
+</style>
+</head>
+
+<body>
+
+<div class='outer'><div class='middle'><div class='inner'>
+
+<fieldset class='header'></fieldset>
+
+<fieldset class='content'><legend align="center">outer</legend><table>
+<tr><td><a href='shared/contacts/self/gnupg'>gnupg</a></td></tr>
+<tr><td><a href='shared/contacts/self/public'>public</a></td></tr>
+<tr><td><a href='shared/contacts/self/private'>private</a></td></tr>
+<tr><td><a href='shared/contacts/self/wireguard'>wireguard</a></td></tr>
+</table></fieldset>
+
+<fieldset class='content'><legend align="center">inner</legend><table>
+<tr><td><a href='shared/contacts/self/sshd'>sshd</a></td><td><a href='shared/contacts/self/sshd.authorized'>authorized</a></td><td><a href='shared/contacts/self/sshd.known'>known</a></td></tr>
+<tr><td><a href='shared/contacts/self/user'>user</a></td><td><a href='shared/contacts/self/user.authorized'>authorized</a></td><td><a href='shared/contacts/self/user.known'>known</a></td></tr>
+<tr><td><a href='shared/contacts/self/nobody'>nobody</a></td><td><a href='shared/contacts/self/nobody.authorized'>authorized</a></td><td><a href='shared/contacts/self/nobody.known'>known</a></td>
+<tr><td><a href='shared/contacts/self/proxy'>proxy</a></td><td><a href='shared/contacts/self/proxy.authorized'>authorized</a></td><td><a href='shared/contacts/self/proxy.known'>known</a></td></tr>
+</table></fieldset>
+
+<fieldset class='content'><legend align="center">shared</legend><table>
+<tr><td><a href='shared/.directory/contacts'>[contacts]</a></td></tr>
+<tr><td><a href='shared/.directory/downloads'>[downloads]</a></td></tr>
+<tr><td><a href='shared/.directory/torrents'>[torrents]</a></td></tr>
+<tr><td><a href='shared/magnets'>magnets</a></td></tr>
+</table></fieldset>
+
+<fieldset class='footer'></fieldset>
+
+</div></div></div>
+
+</body>
+
+</html>
+

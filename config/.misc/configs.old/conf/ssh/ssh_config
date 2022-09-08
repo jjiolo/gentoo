@@ -1,0 +1,122 @@
+
+#############
+AddressFamily any
+Host *
+#BindAddress
+#BindInterface
+Port 22
+LogLevel INFO
+SyslogFacility USER
+BatchMode no
+EscapeChar ~
+#############
+CASignatureAlgorithms ssh-ed25519
+HostbasedKeyTypes ssh-ed25519-cert-v01@openssh.com
+HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com
+PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com,ssh-ed25519
+KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,sntrup4591761x25519-sha512@tinyssh.org
+Ciphers chacha20-poly1305@openssh.com
+MACs hmac-sha2-512
+FingerprintHash sha256
+#############
+Compression no
+#############
+
+#############
+ControlMaster auto
+ControlPath ~/%r@%h
+ControlPersist no
+#############
+
+#############
+PreferredAuthentications publickey
+PubkeyAuthentication yes
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+KbdInteractiveAuthentication no
+HostbasedAuthentication no
+EnableSSHKeysign no
+#############
+IdentityFile ~/private/ssh
+CertificateFile ~/public/ssh.crt
+GlobalKnownHostsFile ~/public/sshd
+UserKnownHostsFile ~/public/hosts
+#RevokedHostKeys ~/public/sshd.crl
+#############
+IdentitiesOnly yes
+IdentityAgent none
+StrictHostKeyChecking yes
+VerifyHostKeyDNS no
+CheckHostIP yes
+UpdateHostKeys ask
+VisualHostKey yes
+HashKnownHosts yes
+NoHostAuthenticationForLocalhost no
+AddKeysToAgent no
+#############
+
+#############
+NumberOfPasswordPrompts 3
+RekeyLimit default none
+ConnectionAttempts 1
+ConnectTimeout 7
+ServerAliveCountMax 3
+ServerAliveInterval 60
+TCPKeepAlive no
+#############
+
+#############
+RequestTTY auto
+#############
+ForwardAgent no
+ForwardX11 no
+ForwardX11Timeout 13m
+ForwardX11Trusted no
+XAuthLocation /usr/bin/xauth
+#############
+#Tunnel point-to-point
+#Tunnel ethernet
+#TunnelDevice tunnel:tunnel
+#############
+ClearAllForwardings no
+ExitOnForwardFailure yes
+GatewayPorts yes
+#LocalForward from_local:1234 to_remote:1234
+#RemoteForward from_remote:1234 to_local:1234
+#DynamicForward 127.0.0.1:9050
+#DynamicForward ::1:9050
+StreamLocalBindMask 0117
+StreamLocalBindUnlink yes
+#############
+PermitLocalCommand no
+#LocalCommand
+#RemoteCommand LANG=en_GB.UTF-8 tmux -S /tmp/ssh new-session -As ssh
+#############
+
+#############
+#Match
+#CanonicalDomains
+#CanonicalizeFallbackLocal
+#CanonicalizeHostname
+#CanonicalizeMaxDots
+#CanonicalizePermittedCNAMEs
+#GSSAPIAuthentication no
+#GSSAPIDelegateCredentials
+#HostKeyAlias
+#HostName
+#IgnoreUnknown
+#Include
+#IPQoS
+#KbdInteractiveDevices
+#PKCS11Provider
+#ProxyCommand
+#ProxyJump
+#ProxyUseFdpass
+#SecurityKeyProvider
+#SendEnv
+#SetEnv
+#User
+#############
+#SecurityKeyProvider
+#############
+

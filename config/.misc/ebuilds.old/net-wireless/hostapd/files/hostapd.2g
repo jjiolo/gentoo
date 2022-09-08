@@ -1,0 +1,55 @@
+#!/bin/sh
+#############
+# no hardware to test functionality #
+#############
+usage(){ printf "\n${0} - ${1}\n\n takes interface, ssid and passphrase\n\n";exit; }
+#############
+[ "${#}" == "3" ] || usage "no input"
+#############
+[ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
+#############
+pkill -x hostapd
+#############
+install -o root -g root -m 0600 "/dev/null" "${storage}/.wifi/hostapd"
+#############
+cat > "${storage}/.wifi/hostapd" << EOF
+
+interface=${1}
+bridge=nat
+
+hw_mode=g
+channel=11
+country_code=GB
+ieee80211n=1
+ieee80211ac=1
+wmm_enabled=1
+
+ignore_broadcast_ssid=0
+ssid=${2}
+wpa_passphrase=${3}
+
+auth_algs=1
+wpa=2
+wpa_key_mgmt=SAE WPA-PSK-SHA256 WPA-PSK
+wpa_pairwise=GCMP-256 CCMP-256 GCMP CCMP
+rsn_pairwise=GCMP-256 CCMP-256 GCMP CCMP
+
+#ieee80211w=1
+#beacon_prot=1
+#ocv=1
+
+ap_isolate=0
+
+EOF
+#############
+sysctl -w "net.ipv6.conf.${1}.autoconf=0"
+sysctl -w "net.ipv6.conf.${1}.accept_ra=0"
+#############
+ip link set down "${1}"
+ip addr flush "${1}"
+until ip link set dev "${1}" address "$(hexdump -n6 -ve '1/1 "%02X:"' /dev/urandom|head -c17)";do sleep .1;done
+ip link set up "${1}"
+#############
+hostapd -sBP "/run/hostapd.${1}" "${storage}/.wifi/hostapd"
+#############
+

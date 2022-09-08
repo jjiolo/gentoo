@@ -1,0 +1,51 @@
+#!/bin/sh
+#############
+debug(){ printf "%s\n" "debug - ${1}" ; exit 1 ; }
+#############
+unset host
+#############
+export CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe -fomit-frame-pointer -flto"
+export CFLAGS="${CFLAGS} -mindirect-branch=thunk -mfunction-return=thunk"
+export CFLAGS="${CFLAGS} -mindirect-branch-register -mindirect-branch-cs-prefix"
+export CFLAGS="${CFLAGS} -mharden-sls=all"
+export CFLAGS="${CFLAGS} -D_FORTIFY_SOURCE=2"
+export CFLAGS="${CFLAGS} -pie -fPIE -fPIC"
+export CFLAGS="${CFLAGS} -fstack-clash-protection -fstack-protector-all"
+export CXXFLAGS="${CFLAGS}"
+export LDFLAGS="-Wl,--as-needed,-z,now,-z,relro,-z,noexecstack,-z,noexecheap"
+#############
+kernel="$(basename ${1})"
+#############
+
+[ "${USER}" == "nobody" ] || debug "run as nobody"
+
+[ -d "/root/kernels" ] || debug "needs hardcoded config path"
+
+[ "${#}" == "1" ] || debug "requires path to /usr/src/linux"
+
+[ -d "/usr/src/${kernel}" ] || debug "directory does not exist"
+
+[ -d "/var/empty/${kernel}" ] && debug "directory already exists"
+
+#############
+
+install -d -o nobody -g nobody -m 0700 "/var/empty/${kernel}"
+
+for i in /root/kernels/* ; do
+
+ config="$(basename ${i})"
+
+ cp -r "/usr/src/${kernel}"      "/var/empty/${kernel}/${config}"
+ cp    "/root/kernels/${config}" "/var/empty/${kernel}/${config}/.config"
+
+ cd "/var/empty/${kernel}/${config}"
+
+ make oldconfig
+ make -j$(grep -c ^processor /proc/cpuinfo) -l$(grep -c ^processor /proc/cpuinfo)
+
+ cd -
+
+done
+
+#############
+

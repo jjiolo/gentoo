@@ -1,0 +1,54 @@
+#!/bin/sh
+#############
+. variables
+
+#############
+usage(){ printf "\n${0} - ${1}\ncreate a persistent key signed by the root certificate\n\n";exit; }
+
+#############
+read -rp 'enter root passphrase: ' root
+printf "%s" "${root}"|openssl ec -in "${root_pem}" -passin stdin -out /dev/null || usage "incorrect root passphrase"
+printf "%s" "${root}" > "${passphrase_root}"
+unset root
+
+#############
+if [[ -f "${persistent_pem}" && -f "${persistent_crt}" ]];then
+
+ fingerprint="$(openssl x509 -in "${persistent_crt}" -noout -fingerprint -sha1|cut -d "=" -f "2"|tr -d ":")"
+ expire="$(($(date --date="$(openssl x509 -in "${persistent_crt}" -noout -enddate|cut -d "=" -f "2"|head -c "-5")" +%s)-$(date +%s)))"
+ [[ "${expire}" -gt "0" ]] && expire="${expire}" || expire="expired"
+
+ unset prompt;until [[ "${prompt}" == "y" || "${prompt}" == "n" ]];do read -rp "persistent:${expire} revoke and create a new key (y|n)? " prompt;done
+ [[ "${prompt}" == "n" ]] && usage "y u no use brain..."
+
+ openssl dgst -sha512 -sign "${root_pem}" -passin file:"${passphrase_root}" -out "${revoke}/${fingerprint}.sig" "${persistent_crt}"
+ mv "${persistent_crt}" "${revoke}/${fingerprint}.crt"
+ rm "${persistent_pem}" "${tmp_pem}" "${chain}" "${checksum}" "${tmp_crt}"
+
+fi
+
+#############
+read -rp 'enter persistent passphrase: ' persistent
+printf "%s" "${persistent}" > "${passphrase_persistent}"
+openssl genpkey -algorithm ec -pkeyopt ec_paramgen_curve:"${curve}" -pass file:"${passphrase_persistent}" -aes-256-cbc -out "${persistent_pem}"
+openssl req -new -config "${openssl}" -extensions persistent_extension -key "${persistent_pem}" -out "${persistent_csr}" -passin file:"${passphrase_persistent}" -subj "/CN=persistent"
+openssl ca -batch -config "${openssl}" -name root_ca -extensions persistent_extension -policy persistent_policy -days 365 -in "${persistent_csr}" -out "${persistent_crt}" -passin file:"${passphrase_root}"
+
+#############
+cat "${root_crt}" "${persistent_crt}" > "${chain}"
+cd "${self}"
+openssl sha512 root.crt persistent.crt chain|openssl dgst -sha512 -sign "${persistent_pem}" -passin file:"${passphrase_persistent}" -out "${checksum}"
+
+#############
+#
+# entire keyring is now unsigned and unprotected
+#
+# if persistent was compramised cant trust anything in contacts to make resigning worth it requires physical kex reinit
+#
+# for i in contacts/*;do contact_sign -c "$(basename "${i}")";done
+#
+#############
+
+#############
+rm "${passphrase_root}" "${passphrase_persistent}"
+

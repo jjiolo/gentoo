@@ -1,0 +1,21 @@
+#!/bin/sh
+#############
+. /etc/services/variables smtpd
+#############
+
+[ -f "${service_storage}/smtpd.conf" ] || install -o 0 -g 0 -m 0600 "${service_system}/files/smtpd.conf" "${service_storage}"
+
+[ -f "${service_storage}/vdomains" ] || cat /proc/sys/kernel/hostname > "${service_storage}/vdomains"
+
+[ -f "${service_storage}/vusers" ] || {
+read -r hostname < /proc/sys/kernel/hostname
+printf "%s\n" "root@${hostname} public" > "${service_storage}/vusers"
+printf "%s\n" "$(tr -cd 'a-z'</dev/urandom|head -c5)@${hostname} private" >> "${service_storage}/vusers"
+printf "%s\n" "$(tr -cd 'a-z'</dev/urandom|head -c5)@${hostname} private" >> "${service_storage}/vusers"
+printf "%s\n" "$(tr -cd 'a-z'</dev/urandom|head -c5)@${hostname} private" >> "${service_storage}/vusers"
+printf "%s\n" "@${hostname} junk" >> "${service_storage}/vusers"
+}
+
+#############
+. /etc/services/permissions root root 0700 0600
+#############

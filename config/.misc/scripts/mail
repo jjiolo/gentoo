@@ -1,0 +1,21 @@
+
+#############
+
+nc 127.0.0.1 25 << EOF
+ehlo localhost
+mail from: <me@localhost>
+rcpt to: <you@localhost>
+data
+From: [me] me@localhost
+To: [you] you@localhost
+Subject: subject
+
+email message from me to you about subject
+
+
+.
+quit
+EOF
+
+#############
+

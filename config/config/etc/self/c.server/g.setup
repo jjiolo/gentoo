@@ -1,0 +1,33 @@
+#!/bin/sh
+#############
+usage(){ printf "\n${0} - ${1}\n\n -h gnupghome (${GNUPGHOME})\n -n name (${USER})\n -e email (${USER}@$(cat /proc/sys/kernel/hostname))\n -c comment ()\n\n" ; exit 1 ; }
+#############
+while getopts "h:n:e:c:" arg;do
+ case "${arg}" in
+  h) GNUPGHOME="${OPTARG}";;
+  n) name="${OPTARG}";;
+  e) email="${OPTARG}";;
+  c) comment="${OPTARG}";;
+  *) usage getopts;;
+ esac
+done
+#############
+[ -d "${GNUPGHOME}" ] && usage "GNUPGHOME already exist"
+[ -d "${GNUPGHOME}" ] || install -d -o "${USER}" -m 0700 "${GNUPGHOME}"
+[ -z "${name}" ] && name="${USER}"
+[ -z "${email}" ] && email="${USER}@$(cat /proc/sys/kernel/hostname)"
+[ -z "${comment}" ] && comment=""
+#############
+install -o "${USER}" -m 0600 "/etc/self/c.server/g.conf" "${GNUPGHOME}/gpg.conf"
+install -o "${USER}" -m 0600 "/etc/self/c.server/g.agent" "${GNUPGHOME}/gpg-agent.conf"
+#############
+printf "9\n1\n0\n${name}\n${email}\n${comment}\n"|gpg --no-tty --expert --full-generate-key --allow-freeform-uid --command-fd /dev/stdin --pinentry-mode loopback --passphrase ''
+#############
+gpg --export ${name} > "${GNUPGHOME}/public.key"
+#############
+pkill -x gpg-agent
+#############
+chown -R "${USER}:" "${GNUPGHOME}"
+find "${GNUPGHOME}" -type d -exec chmod 0700 {} \;
+find "${GNUPGHOME}" -type f -exec chmod 0600 {} \;
+#############

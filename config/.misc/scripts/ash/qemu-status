@@ -1,0 +1,8 @@
+#!/bin/sh
+#############
+pgrep qemu-system|while read -r;do
+ printf "%s"   " [ $(/bin/ps -p "${REPLY}" -opid=,user=,pcpu=,pmem=) ]"
+ printf "%s\n" " [ $(/bin/ps -p "$(pgrep qemu)" -ocmd=|grep -hoE 'cores=[0-9]+|threads=[0-9]+|-m [0-9]+|macaddr=[a-f0-9:]+|kernel [a-zA-Z0-9/]+|initrd [a-zA-Z0-9/]+|file=[a-zA-Z0-9]+|vnc [a-zA-Z0-9:/]+'|tr '\n' ' ')]"
+done
+#############
+

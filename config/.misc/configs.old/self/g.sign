@@ -1,0 +1,12 @@
+#!/bin/ash
+#############
+
+ find . -type f -exec openssl sha512 {} \; |
+ sort | 
+ grep -v -e "^SHA512(./.manifest.sign" -e "^SHA512(./.manifest.verify" -e "^SHA512(./.digest" |
+ tee .manifest.sign |
+ gpg --detach-sign --output .digest
+
+ pkill gpg-agent
+
+#############

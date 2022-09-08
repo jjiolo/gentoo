@@ -1,0 +1,15 @@
+
+#############
+
+tar zcvf keyring.tar.gz -C / \
+ /tmp/storage/.gnupg \
+ /tmp/storage/.ssh \
+ /tmp/storage/.vpn \
+ /tmp/storage/.wifi \
+ /tmp/storage/services/ddns/private /tmp/storage/services/ddns/public \
+ /tmp/storage/home/user/.gnupg /tmp/storage/home/user/.ssh \
+ /tmp/storage/home/nobody/.gnupg /tmp/storage/home/nobody/.ssh /tmp/storage/home/nobody/mail/.account \
+ /tmp/storage/home/proxy/.gnupg /tmp/storage/home/proxy/.ssh /tmp/storage/home/proxy/irc/sasl
+
+#############
+

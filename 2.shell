@@ -1,0 +1,22 @@
+
+#############
+[ "${#}" == "0" ] && user="root"
+[ "${#}" == "1" ] && user="nobody"
+#############
+
+     mountpoint -q rootfs/dev || { install -d -o 0 -g 0 -m 0700 rootfs/dev     ; mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime                        stage3 rootfs/dev;     }
+ mountpoint -q rootfs/dev/pts || { install -d -o 0 -g 0 -m 0700 rootfs/dev/pts ; mount -t devpts   -o rw,dev,nosuid,noexec,noatime,mode=0600,ptmxmode=000 stage3 rootfs/dev/pts; }
+ mountpoint -q rootfs/dev/shm || { install -d -o 0 -g 0 -m 0700 rootfs/dev/shm ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,mode=1777,size=3%    stage3 rootfs/dev/shm; }
+    mountpoint -q rootfs/proc || { install -d -o 0 -g 0 -m 0700 rootfs/proc    ; mount -t proc     -o rw,nodev,nosuid,noexec,noatime,hidepid=1            stage3 rootfs/proc;    }
+     mountpoint -q rootfs/sys || { install -d -o 0 -g 0 -m 0700 rootfs/sys     ; mount -t sysfs    -o rw,nodev,nosuid,noexec,noatime                      stage3 rootfs/sys;     }
+     mountpoint -q rootfs/tmp || { install -d -o 0 -g 0 -m 0700 rootfs/tmp     ; mount -t tmpfs    -o rw,nodev,nosuid,exec,noatime,mode=1777,size=50%     stage3 rootfs/tmp;     }
+
+    mount|grep -q rootfs/root || { install -d -o 0 -g 0 -m 0700 rootfs/root    && mount --bind config  rootfs/root;    }
+ mount|grep -q rootfs/binhost || { install -d -o 0 -g 0 -m 0700 rootfs/binhost && mount --bind binhost rootfs/binhost; }
+
+#############
+install -d -o 65534 -g 65534 -m 0700 rootfs/var/empty
+#############
+cd rootfs && chroot . /bin/busybox su -l -s /bin/ash "${user}"
+#############
+

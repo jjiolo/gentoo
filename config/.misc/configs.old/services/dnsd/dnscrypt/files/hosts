@@ -1,0 +1,16 @@
+
+127.0.0.1 localhost
+::1 localhost
+
+192.168.1.1 router.localdomain
+192.168.1.3 server.localdomain
+192.168.1.5 desktop.localdomain
+192.168.1.7 laptop.localdomain
+192.168.1.9 x200.localdomain
+
+fd00::1 router.localdomain
+fd00::3 server.localdomain
+fd00::5 desktop.localdomain
+fd00::7 laptop.localdomain
+fd00::9 x200.localdomain
+

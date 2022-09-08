@@ -1,0 +1,18 @@
+#!/bin/sh
+#############
+. /etc/services/variables dnsd
+#############
+#[ -f "${service_storage}/unbound.conf"     ] || install -o dnsd -g dnsd -m 0660 "${service_system}/files/unbound.conf"     "${service_storage}"
+#[ -f "${service_storage}/upstream"         ] || install -o dnsd -g dnsd -m 0660 "${service_system}/files/upstream"         "${service_storage}"
+#[ -f "${service_storage}/root.hints"       ] || install -o dnsd -g dnsd -m 0660 "${service_system}/files/root.hints"       "${service_storage}"
+#[ -f "${service_storage}/root.anchors"     ] || install -o dnsd -g dnsd -m 0660 "${service_system}/files/root.anchors"     "${service_storage}"
+#[ -f "${service_storage}/blacklist.ip"     ] || install -o dnsd -g dnsd -m 0660 "${service_system}/files/blacklist.ip"     "${service_storage}"
+#[ -f "${service_storage}/blacklist.domain" ] || install -o dnsd -g dnsd -m 0660 "${service_system}/files/blacklist.domain" "${service_storage}"
+#[ -f "${service_storage}/localzone"        ] || install -o dnsd -g dnsd -m 0660 "${service_system}/files/localzone"        "${service_storage}"
+#############
+[ -f "${service_storage}/stubby.yml" ] || install -o dnsd -g dnsd -m 0660 "${service_system}/files/stubby.yml" "${service_storage}"
+#############
+printf "%s\n" "nameserver 127.0.0.1" > /etc/resolv.conf
+chown root:root /etc/resolv.conf
+chmod 0644 /etc/resolv.conf
+#############

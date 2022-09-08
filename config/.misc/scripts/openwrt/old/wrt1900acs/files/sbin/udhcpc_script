@@ -1,0 +1,20 @@
+#!/bin/sh
+#############
+[ "${1}" == "bound" ] || exit
+#############
+umask 0700
+#############
+ip link set down dev "${interface}"
+ip addr flush dev "${interface}"
+ip addr add "${ip}"/"${subnet}" dev "${interface}"
+ip link set up "${interface}"
+ip route del default
+ip route add default via "${router}" dev "${interface}"
+#############
+[ -z "${dns}"    ] || printf "" > /etc/resolv.conf
+[ -z "${dns}"    ] || for i in ${dns};do printf "%s\n" "nameserver ${i}" >> /etc/resolv.conf;done
+[ -z "${ntpsrv}" ] || ntpd -qNp "${ntpsrv}"
+#############
+chown root:root /etc/resolv.conf
+chmod 0644 /etc/resolv.conf
+#############

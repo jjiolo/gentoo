@@ -1,0 +1,16 @@
+#!/bin/sh
+#############
+debug(){ printf "%s\n" "takes ip and torrent - ${1}";exit 1; }
+#############
+[ "${#}" == "2" ] || debug "no input"
+#############
+[ -e "${shared}/downloads/${2}" ] && debug "download already exists"
+[ -e "${shared}/torrents/${2}"  ] && debug "torrent already exists"
+#############
+curl --connect-timeout 3 -o "${shared}/torrents/${2}" "http://${1}/shared/torrents/${2}"
+#############
+chown "${USER}:p2pd" "${shared}/torrents/${2}"
+chmod 0644 "${shared}/torrents/${2}"
+#############
+transmission-remote 127.0.0.1 -a "${shared}/torrents/${2}"
+#############

@@ -1,0 +1,70 @@
+#!/bin/sh
+#############
+umask 077
+#############
+install -d -o root -g root -m 0700 "/dev";     mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime,size=0%             devtmpfs "/dev"
+install -d -o root -g root -m 0700 "/dev/pts"; mount -t devpts   -o ro,dev,nosuid,noexec,noatime,mode=0600           devpts   "/dev/pts"
+install -d -o root -g root -m 0700 "/dev/shm"; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,mode=1777,size=3% tmpfs    "/dev/shm"
+install -d -o root -g root -m 0700 "/proc";    mount -t proc     -o rw,nodev,nosuid,noexec,noatime                   proc     "/proc"
+install -d -o root -g root -m 0700 "/sys";     mount -t sysfs    -o rw,nodev,nosuid,noexec,noatime                   sysfs    "/sys"
+install -d -o root -g root -m 0700 "/tmp";     mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,mode=1777,size=7% tmpfs    "/tmp"
+#############
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+#############
+rm -r /etc/hotplug.d
+rm -r /etc/init.d
+rm -r /etc/modules.d
+rm -r /etc/rc.button
+rm -r /etc/rc.d
+rm -r /etc/sysctl.d
+rm -r /lib/netifd
+rm -r /lib/network
+rm -r /lib/upgrade
+rm -r /lib/wifi
+rm -r /usr/bin/jsonfilter
+rm -r /usr/lib/opkg
+rm -r /usr/lib/libjson*
+rm -r /usr/libexec
+rm -r /usr/sbin/ntpd-hotplug
+rm -r /var
+#############
+mount -o remount,ro,nosuid,noatime,size="$(df -P|awk '/^rootfs/{print$3}')k" /
+#############
+
+#############
+syslogd -C300 -StD
+klogd
+#############
+sysctl -p /etc/sysctl.conf
+#############
+ash /etc/nftables.rules
+#############
+ip addr add 127.0.0.1/8 dev lo brd + scope host
+ip route add 127.0.0.0/8 dev lo scope host
+ip link set up lo
+#############
+brctl addbr lan
+sysctl -w net.ipv4.conf.lan.rp_filter=1
+sysctl -w net.ipv4.conf.lan.drop_gratuitous_arp=1
+sysctl -w net.ipv6.conf.lan.autoconf=0
+sysctl -w net.ipv6.conf.lan.accept_ra=0
+ip link set up lan
+#############
+for i in eth0 eth1 wlan0 wlan1;do
+install -o root -g root -m 0600 "/sys/class/net/${i}/address" "/tmp/${i}"
+until ip link set dev "${i}" address "$(hexdump -n6 -ve '1/1 "%02X:"' /dev/urandom|head -c17)";do sleep .1;done
+sysctl -w net.ipv4.conf.${i}.rp_filter=1
+sysctl -w net.ipv4.conf.${i}.drop_gratuitous_arp=1
+sysctl -w net.ipv6.conf.${i}.autoconf=0
+sysctl -w net.ipv6.conf.${i}.accept_ra=0
+ip link set up "${i}"
+brctl addif lan "${i}"
+done
+hostapd -B /etc/wlan0.conf
+hostapd -B /etc/wlan1.conf
+#############
+

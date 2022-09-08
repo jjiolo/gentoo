@@ -1,0 +1,73 @@
+
+#############
+# tl;dr
+#############
+# emerge -avbk1 media-sound/bluez-alsa media-libs/sbc sys-apps/dbus sys-libs/readline net-wireless/bluez
+#############
+
+#############
+pkill dbus-daemon
+pkill bluetoothd
+pkill bluealsa
+#############
+
+system.unlock
+
+for i in packages/*;do
+
+ tar xf "${i}" -C /
+
+done
+
+cat > /etc/asound.conf << EOF
+
+defaults.bluealsa {
+ interface "hci0"
+ device "38:18:4C:22:D0:73"
+ profile "a2dp"
+}
+
+EOF
+
+chown root:root /etc/asound.conf
+chmod 0644 /etc/asound.conf
+
+grep -q ^messagebus /etc/passwd || printf "%s\n" "messagebus:x:1234:1234::/dev/null:/bin/false" >> /etc/passwd
+grep -q ^messagebus /etc/group  || printf "%s\n" "messagebus:x:1234:" >> /etc/group
+grep -q ^messagebus /etc/shadow || printf "%s\n" "messagebus:!:::::::" >> /etc/shadow
+
+system.lock
+
+#############
+[ -d /run/dbus ] || install -d -o root -g root -m 0755 /run/dbus
+[ -f /run/dbus.pid ] && rm -rf /run/dbus.pid
+#############
+
+#############
+dbus-daemon --system
+(exec /usr/libexec/bluetooth/bluetoothd &)&
+(exec /usr/bin/bluealsa &)&
+#############
+
+cat << EOF
+#############
+bluetoothctl
+list
+select <mac>
+power on
+agent on
+default-agent
+discoverable on
+pairable on
+scan on
+devices
+pair <mac>
+trust <mac>
+connect <mac>
+quit
+#############
+alsamixer -D bluealsa
+mpv --audio-device=alsa/bluealsa <file>
+#############
+EOF
+

@@ -1,0 +1,32 @@
+#!/bin/sh
+############# every time
+#kill -SIGEXIT <pid>
+sigexit(){ echo sigexit; }
+trap sigexit SIGEXIT
+############# graceful shutdown
+#kill -SIGTERM <pid>
+sigterm(){ echo sigterm; }
+trap sigterm SIGTERM
+############# stop and leave memory
+#kill -SIGSTOP <pid>
+sigstop(){ echo sigstop; }
+trap sigstop SIGSTOP
+############# continue
+#kill -SIGCONT <pid>
+sigcont(){ echo sigcont; }
+trap sigcont SIGCONT
+############# keyboard terminal interupt
+#kill -SIGQUIT <pid> || ctrl+\
+sigquit(){ echo sigquit; }
+trap sigquit SIGQUIT
+############# keyboard terminal interupt
+#kill -SIGINT <pid> || ctrl+c
+sigint(){ echo sigint; }
+trap sigint SIGINT
+############# keyboard terminal interupt - default provides better functionality - type fg to start process again || fg %2 (jobs %<job_number>)
+#kill -SIGTSTP <pid> || ctrl+z
+#sigtstp(){ echo sigtstp; }
+#trap sigtstp SIGTSTP
+#############
+for i in $(seq 0 60);do echo $i && sleep 1;done
+#############

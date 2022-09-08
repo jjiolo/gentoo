@@ -1,0 +1,4 @@
+#!/bin/sh
+#############
+udpsvd -u user:wheel -c13 -hl localhost 127.0.0.1 65535 /storage/user/udpsvd.script
+#############

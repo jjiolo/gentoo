@@ -1,0 +1,10 @@
+#!/bin/sh
+#############
+. /etc/services/vpnc/variables
+#############
+
+[ -d "${vpnc_storage}/tmp" ] || install -d -o vpnc -g vpnc -m 0660 "${vpnc_storage}/tmp"
+
+[ -f "${vpnc_storage}/openvpn.conf" ] || install -o vpnc -g vpnc -m 0660 "${vpnc_system}/files/openvpn.conf" "${vpnc_storage}"
+
+#############

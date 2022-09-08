@@ -1,0 +1,32 @@
+#!/bin/sh
+#############
+[ -d "/dev"         ] || install -d -o 0 -g 0 -m 0755 "/dev"
+[ -d "/dev/shm"     ] || install -d -o 0 -g 0 -m 1777 "/dev/shm"
+[ -d "/dev/pts"     ] || install -d -o 0 -g 0 -m 0755 "/dev/pts"
+[ -c "/dev/console" ] || mknod -m 0600 "/dev/console" c 5 1
+[ -c "/dev/null"    ] || mknod -m 0666 "/dev/null" c 1 3
+[ -c "/dev/zero"    ] || mknod -m 0666 "/dev/zero" c 1 5
+[ -c "/dev/ptmx"    ] || mknod -m 0666 "/dev/ptmx" c 5 2
+[ -c "/dev/tty"     ] || mknod -m 0666 "/dev/tty" c 5 0
+[ -c "/dev/tty1"    ] || mknod -m 0666 "/dev/tty1" c 4 1
+[ -c "/dev/tty2"    ] || mknod -m 0666 "/dev/tty2" c 4 2
+[ -c "/dev/tty3"    ] || mknod -m 0666 "/dev/tty3" c 4 3
+[ -c "/dev/tty4"    ] || mknod -m 0666 "/dev/tty4" c 4 4
+[ -c "/dev/tty5"    ] || mknod -m 0666 "/dev/tty5" c 4 5
+[ -c "/dev/tty6"    ] || mknod -m 0666 "/dev/tty6" c 4 6
+[ -c "/dev/tty7"    ] || mknod -m 0666 "/dev/tty7" c 4 7
+[ -c "/dev/tty8"    ] || mknod -m 0666 "/dev/tty8" c 4 8
+[ -c "/dev/tty9"    ] || mknod -m 0666 "/dev/tty9" c 4 9
+[ -c "/dev/random"  ] || mknod -m 0666 "/dev/random" c 1 8
+[ -c "/dev/urandom" ] || mknod -m 0666 "/dev/urandom" c 1 9
+[ -L "/dev/fd"      ] || ln -s /proc/self/fd "/dev/fd"
+[ -L "/dev/stdin"   ] || ln -s /proc/self/fd/0 "/dev/stdin"
+[ -L "/dev/stdout"  ] || ln -s /proc/self/fd/1 "/dev/stdout"
+[ -L "/dev/stderr"  ] || ln -s /proc/self/fd/2 "/dev/stderr"
+#############
+. /etc/profile ; unset ENV
+#############
+sleep 3
+#############
+exec /sbin/init # </dev/null &>/dev/null
+#############

@@ -1,0 +1,86 @@
+
+#############
+table inet filter {
+ chain forward {
+
+ type filter hook forward priority 0 ; policy drop
+
+ ct state established accept
+
+ iifname {nat} oifname {lan,wlan0} ip protocol tcp ct state new log flags skuid prefix "forward.new " accept
+
+ ip protocol {icmp}   log flags skuid prefix "forward.icmp" drop
+ ip6 nexthdr {icmpv6} log flags skuid prefix "forward.icmp" drop
+
+ ct state invalid log flags skuid prefix "forward.invalid " drop
+
+ log flags skuid prefix "forward.drop " drop
+
+ }
+}
+#############
+table inet filter {
+  chain input { 
+
+  type filter hook input priority 0 ; policy drop
+
+  ct state established accept
+
+  # ct new
+  # ct established
+  # ct count <limit>
+  # tcp dport 22 ct count 10 accept
+  # tcp dport 22 ct count over 10 reject
+
+  # limit rate over <value>/{second,minute,hour,day,week} burst <value> packets
+  # limit rate over <value> {bytes,kbytes,mbytes}/{second,minute,hour,day,week} burst <value> {bytes,kbytes,mbytes}
+
+  # ct state new my_meter { skuid . dport counter }
+
+  # set my_set { type typeof flags timeout counter comment }
+
+  # set my_set {
+  #  typeof skuid . tcp dport
+  #  flags dynamic,timeout
+  #  size 65535
+  #  timeout 1h
+  #  counter
+  # }
+
+  # meta skuid . tcp dport @my_set drop
+  # ct state new add    @my_set { skuid . tcp dport }
+  # ct state new update @my_set { skuid . tcp dport }
+
+  iifname {lo}        goto ilo
+  iifname {lan,wlan0} goto ilan
+  iifname {nat}       goto inat
+  iifname {tun}       goto itun
+
+ }
+}
+#############
+table inet filter {
+ chain output {
+
+  type filter hook output priority 0 ; policy drop
+
+  ct state established accept
+
+  oifname {lo}        goto olo
+  oifname {lan,wlan0} goto olan
+  oifname {nat}       goto onat
+  oifname {tun}       goto otun
+
+ }
+}
+#############
+# mangle
+# table inet filter {
+#  chain prerouting {
+#   type filter hook prerouting priority -300 ; policy accept ;
+#   udp dport 53 udp dport set 5353
+#   udp sport 5353 udp sport set 53
+#  }
+# }
+#############
+

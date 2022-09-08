@@ -1,0 +1,32 @@
+#!/bin/sh
+#############
+. variables
+
+#############
+usage(){ printf "\n${0} - ${1}\n-c contact\n-h help\n\n";exit; }
+
+#############
+while getopts "c:h" arg;do
+ case "${arg}" in
+  c) contact="${OPTARG}";;
+  h) usage help;;
+  *) usage help;;
+ esac
+done
+
+#############
+contact_variables "${contact}"
+
+#############
+[[ -f "${persistent_pem}"     ]] || usage "signing key does not exist"
+[[ -f "${contact_root}"       ]] || usage "contact_root does not exist"
+[[ -f "${contact_persistent}" ]] || usage "contact_persistent does not exist"
+
+#############
+if openssl verify -CAfile "${contact_root}" "${contact_root}" &>/dev/null && openssl x509 -checkend "${expire}" -noout -in "${contact_root}" &>/dev/null;then
+ if openssl verify -CAfile "${contact_root}" "${contact_persistent}" &>/dev/null && openssl x509 -checkend "${expire}" -noout -in "${contact_persistent}" &>/dev/null;then
+  cat "${contact_root}" "${contact_persistent}" > "${contact_chain}"
+  cd "${contact_directory}" && openssl sha512 root.crt persistent.crt chain|openssl dgst -sha512 -sign "${persistent_pem}" -out "${contact_checksum}"
+ else usage "requires a valid persistent certificate";fi
+else usage "requires a valid root certificate";fi
+

@@ -1,0 +1,5 @@
+#!/bin/sh
+#############
+su -s /bin/sh -c "unbound-anchor -a /storage/domain/dnsd/root.anchors" dnsd
+su -s /bin/sh -c "curl --output /storage/services/dnsd/root.hints https://www.internic.net/domain/named.cache" dnsd
+#############

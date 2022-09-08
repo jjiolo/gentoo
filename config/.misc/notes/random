@@ -1,0 +1,65 @@
+
+[RANDOM]
+#############
+[CONFERENCES]:
+https://infocon.org/cons/
+AIDE
+DISOBEY
+SEC-T
+anycon
+blackhat
+bluehat
+ccc
+defcon
+toorcon
+defendcon
+derbycon
+grrcon
+hackerhalted
+hitb
+hope security conference
+layerone ? layer something
+pwn2own
+pwnie awards
+rsa
+sha2017
+shmoocon
+showmecon
+summercon
+usenix + enigma
+youtube channel 2600
+44 con
+wisec
+#############
+[SOFTWARE]:
+nym mixnet < - anonymity network
+katzenpost < - anonymity network
+SME SEV TEE TPM (SME crashes at boot)
+git clone --depth=1 https://git.openwrt.org/openwrt/openwrt.git openwrt
+iperf/hping3         < - speed test and packet spoofing
+tpm2-tools           < - /dev/tpm
+binwalk/radre2       < - firmware analyser
+onioncat/anonet      < - bgp peer network on unused mil range
+onion balance        < - hiddenservice load balancer
+media-video/guvcview < - gtk webcam viewer
+net-wireless/gqrx    < - sdr scanner
+qrcode generator     < -
+winreducer.net
+* github.com/deadpixi/mtm < - tmux replacement ?
+nRF52840 Dongle
+defcon 27 zombie ant farm
+backdoor factory
+ctemplar...
+LD_AUDIT
+app-portage/cpuid2cpuflags
+infection monkey
+nprobe - sniff interface and generate flow data
+lokinet
+ricochet-refresh
+#############
+https://bombaster.com < - rfidtags and sensors for physical shops 8.2mhz
+https://deceptive.design < - formely dark patterns
+#############
+https://ioccc.org
+#############
+

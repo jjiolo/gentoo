@@ -1,0 +1,57 @@
+
+let skip_defaults_vim = 1
+set nocompatible
+
+set noex
+set noexrc
+set secure
+set nomodeline
+set shell=/bin/sh
+set fsync
+
+set encoding=utf-8
+
+syntax on
+filetype on
+
+let netrw_dirhistmax=0
+set viminfo="NONE"
+set nobackup
+set nowritebackup
+set noswapfile
+
+set mouse=v
+
+set whichwrap=b,s
+set backspace=indent,eol,start
+
+set history=13
+set numberwidth=3
+set number
+set ruler
+set laststatus=2
+
+set ignorecase
+set hlsearch
+set noincsearch
+set nowildmenu
+
+set nowrap
+set so=3
+set sidescroll=13
+set cmdheight=1
+
+set expandtab
+set tabstop=2
+
+set noautoindent
+set shiftwidth=2
+
+set colorcolumn=0
+colorscheme desert
+
+nmap <C-n> :tabnext<CR>
+nmap <C-p> :tabprevious<CR>
+nmap <tab> :tabnext<CR>
+nmap <S-tab> :tabprevious<CR>
+

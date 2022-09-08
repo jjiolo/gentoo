@@ -1,0 +1,27 @@
+#!/bin/sh
+#############
+# broken busybox syslogd added .000 milliseconds to all date timestamps
+#############
+## [uptime]---[oldest_log]-----[newest_log]-[epoch]
+## epoch-uptime  == total length of time the system has been up
+## newest-oldest == length of time recorded logs cover
+## oldest-uptime == how long the systems been up since the last recorded log entry
+#############
+## percentage of covered logs in relation to total uptime
+## percentage of missing logs in relation to total uptime
+#############
+  if [ -s /run/logs/syslog.2 ];then oldest="$(date --date="$(awk 'NR==1{print$1" "$2" "$3" 2022"}' /run/logs/syslog.2)" +%s)"
+elif [ -s /run/logs/syslog.1 ];then oldest="$(date --date="$(awk 'NR==1{print$1" "$2" "$3" 2022"}' /run/logs/syslog.1)" +%s)"
+elif [ -s /run/logs/syslog.0 ];then oldest="$(date --date="$(awk 'NR==1{print$1" "$2" "$3" 2022"}' /run/logs/syslog.0)" +%s)"
+elif [ -s /run/logs/syslog   ];then oldest="$(date --date="$(awk 'NR==1{print$1" "$2" "$3" 2022"}' /run/logs/syslog  )" +%s)";fi
+                                    newest="$(date --date="$(awk 'END  {print$1" "$2" "$3" 2022"}' /run/logs/syslog  )" +%s)"
+#############
+uptime="$(date --date="$(uptime -s)" +%s)"
+epoch="$(date +%s)"
+#############
+missing=$((((${oldest}-${uptime})*100)/(${epoch}-${uptime})))
+covered=$((((${newest}-${oldest})*100)/(${epoch}-${uptime})))
+#############
+printf "%s\n" "# covered:${covered}% # missing:${missing}%"
+#############
+

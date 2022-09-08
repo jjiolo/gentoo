@@ -1,0 +1,216 @@
+
+#############
+man /var/empty/mutt-2.1.5/doc/muttrc.man
+#############
+
+printf "%s\n" "message" | mutt -s subject -a file.txt -- user@domain.tld
+
+^ doesnt gpgme automagically
+  can send signed/encrypted attachments
+  can pipe signed/encrypted messages
+  doesnt decrypt/verify in mutt
+
+* does allow inline encryption without smime ?
+  or requires encrypting and attaching the -a message.sig
+
+#############
+
+smtp 465
+imap 993
+pop3 995
+
+outbound rules for 465 smtps and 995 pop3
+
+#############
+
+y - browse mailbox
+$ - sync mailbox
+shift+g - sync pop
+^ - cycle messages
+V - cycle messages
+t - tag ; shift+f - flag
+d - delete mail
+m - new mail
+p - gpgme options
+a - attach file
+v - view attachments
+
+ctrl+a - archive mail
+^ keep flagged ? moves shift+f flagged messages to archive
+
+############# muttrc
+
+SEARCH PATTERNS
+-------------
+loads of them fairly useful in commands
+~A all
+~f from
+~t to
+~c carbon copy
+~s subject
+~b body
+-------------
+
+#############
+
+[commands]
+
+(un)alias - stab complete addresses to send
+(un)group - stab complete addresses to display
+(un)alternates - alternate addresses where you recive mail ?
+(un)list - mailing lists ?
+(un)subscribe - mailing lists ?
+^followup_to - Mail-Followup-To header replying to known mailing list
+^honor_followup_to
+^ignore_list_reply_to
+
+(un)alternative_order - order to display multipart/alternative
+(un)attachments - (-|+)disposition (-|+)mime-type
+(un)auto_view - automatically convert mime type to text/plain
+(un)mime_lookup - add/remove mime types ?
+mailcap entry ? && auto_view convert mime types to text/plain
+
+bind - hotkey execution
+macro - hotkey execution
+
+unhook * (account-hook,charset-hook,iconv-hook,message-hook,folder-hook,mbox-hook,save-hook,fcc-hook,fcc-save-hook,send-hook,send2-hook,reply-hook,crypt-hook,index-format-hook,open-hook,close-hook,append-hook)
+
+color (mono)
+ attachment,body,bold,error,header,hdrdefault,inex
+ indicator,markers,message,normal,prompt,quoted
+ search,signature,status,tilde,tree,underline
+
+(un)score <pattern> <value> - add <value> to message score if pattern matches ?
+(no)spam - list of regex to allow searching for (feels like duplication for generic highlight matching ie match this redirect to trash)
+(un)subjectrx <patter> <replacement> - allow sed on subject matches ?
+
+(un)ignore - headers
+(un)hdr_order - headers
+(un)my_hdr - inject headers into composed messages
+(un)mailto_allow - modify list of allowed header fields in mailto:url (subject,body ?)
+
+mailboxes -notify -poll -label <filename> -
+
+push/exec <string> - add named string to keyboard buffer ?
+run <muttlisp> - output executed as a mutt command ?
+(un)set/reset/toggle - boolean,number,string,quadoption (quadoption yes,no,ask-yes,ask-no)
+(un)setenv - control env variables of child pids
+    source - a config file
+
+echo <message> - allow interactive start up of muttrc : / ? ask-yes,ask-no foo
+cd <directory> - change path
+
+(un)sidebar_whitelist
+
+#############
+
+[variables]
+
+set dsn_notify="failure,delay,success" # ="never"
+set dsn_return=hdrs # ="full"
+^ delivery status notification tried turning it on got nothing back ? useful tho
+
+envelope_from_address
+
+set pager_index_lines=10 (remove sidebar replace with split pane view)
+
+folder format
+
+save_name - if folder with recipients address is found save sent mail to it...
+force_name - force creating a folder for all sent mail
+
+forward -
+ attachments
+ attirubtion_intro
+ attribution_trailer
+ decode - mime
+ decrypt - passes body in cleartext
+ edit - open in vim
+ format - subject
+
+realname
+from
+hostname
+hidden_host - skip hostname part of $hostname ? when adding the domain part to addresses
+
+gecos_mask - tab completing user names ?
+
+hdrs - on/off
+header - pass original mail headers to reply vim
+header_cache - (can improve speed opening pop/imap/maildir)
+header_cache_compress - smaller (still faster than without cache ?)
+header_cache_pagesize - 16384 ? optimal defaults apparently
+header_color_partial - ? why
+maildir_header_cache_verify - check other pids have modified maildir files ? when header cache is in use
+
+help < - keybindings display
+
+threads ?
+ hide_limited - 
+ hide_missing - 
+ hide_thread_subject - 
+ hide_top_limited -
+ hide_top_missing -
+
+ history 10 - number of messages in history buffer
+ history_file ~/.mutthistory 
+ history_remove_dups
+
+ mailcap_path - which files to consult when attempting to display MIME bodies
+ mailcap_sanitize
+
+ message_cachedir ? cache copies of pulls from imap/pop
+
+crypt_autoencrypt - no:attempt to pgp encrypt outgoing messages
+crypt_autopgp - yes: mutt may automatically enable pgp encryption/signing for messages ?
+crypt_autosign - no: always attempt to cryptographically sign outgoing messages
+crypt_autosmime - yes:automatically enable smime encryption/signing for messages
+crypt_replyencrypt - yes:automatically encrypt replies to messages that are encrypted
+crypt_replysign - no:automatically sign replies to signed messages conflicts with messages that are encrypted/signed
+crypt_replysignencrypted - no: always sign encrypted replies
+crypt_timestamp - yes: include a time stamp around pgp output ?
+crypt_use_gpgme - no: helper lib instead of raw commands
+crypt_use_pka - no: gpgme backend signature foo not using it
+crypt_verify_sig yes: always attempt to verify signatures
+
+#############
+
+[mutt]
+
+mutt automatches on user@email from gnupg
+
+entire point is to remove the provider from the equation
+flip provider and require no configuration on their end
+force signing and opportunistically encrypting
+cant force other people to encrypt for you
+cant force other people to sign for you
+can only blanket ignore cleartext messages (plausible deniability till you open your mouth)
+
+^ only free service available is gmail
+  imaps://imap.gmail.com:993/INBOX
+  pops://pop.gmail.com:995
+  smtps://username@gmail.com@smtp.gmail.com:465
+  smtps://username@gmail.com@smtp.gmail.com:587
+
+* gmail doesnt delete when using pop only bins it (30 days)
+* gmail doesnt spam folder web interface > settings > filters > doesnt have the words > abcdefghjklmnopqrstuvwxyz0123456789
+
+[pop3]
+designed for single device
+force delete the other end
+pulls everything and blocks till it finishes...
+abuse spam/attachments to attack the client
+^ spoolfile=pops://pop.gmail.com allows only pulling headers
+
+[imap]
+designed for multiple devices
+allows selectively syncing folders from the other side
+better functionality at the expense of configuring the provider
+
+---
+* shift + g < - fetch mail via pop_host into spoolfile
+* press 'p' during mail to open the pgp/mime options for encryption and signing
+---
+
+#############
+

@@ -1,0 +1,17 @@
+#!/bin/sh
+#############
+install -d -o 0 -g 0 -m 0755 "/run/alpine"
+#############
+mountpoint -q /run/alpine || mount -t tmpfs -o rw,dev,nosuid,exec,noatime,mode=0755,size=50% alpine /run/alpine
+#############
+install -d -o 0 -g 0 -m 0755 "/run/alpine/etc" "/run/alpine/etc/apk"
+#############
+cat > "/run/alpine/etc/apk/repositories" << EOF
+
+https://dl-cdn.alpinelinux.org/alpine/latest-stable/main
+https://dl-cdn.alpinelinux.org/alpine/latest-stable/community
+
+EOF
+#############
+apk add --root /run/alpine --update-cache --allow-untrusted --initdb apk-tools alpine-keys ssl_client
+#############

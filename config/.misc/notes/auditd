@@ -1,0 +1,54 @@
+
+#############
+excessive syslog logging will slow things down
+#############
+ watch
+-w /path    -p rwxa -k key
+#############
+-w /etc     -p rwxa -k etc
+-w /storage -p rwxa -k storage
+-w /dev/shm -p rwxa -k shm
+-w /tmp     -p rwxa -k tmp
+#############
+any write to path (joins mounts)
+r = read
+w = write
+x = execute
+a = attributes
+auditctl -w path/to/file -p rwxa -k keyname
+auditctl -w path/to/directory -p rwxa -k keyname
+auditctl -a action,list -F arch=b64 -S syscall -F field=value -k keyname
+action {always,never}
+list {task,user,exit,exclude}
+#############
+auditd
+auditctl -e 0 -D # disable and delete
+auditctl -e 0 # disable
+auditctl -e 1 # enable
+auditctl -e 2 # enforce
+auditctl -f 1 # failure flag (0 silent, 1 printk, 2 panic)
+auditctl -l # list rules
+auditctl -R # read rules
+auditctl -C # interfield comparison
+auditctl -F # rule field
+aureport --key --summary
+ausearch --key <key>|less
+#############
+/bin/su < - -S execve -F a0="/bin/su" only takes a number
+logging on execve args ? only way to monitor busybox commands
+#############
+using -C and -F values to narrow scope provides a huge number of possible permutations
+#############
+
+#############
+
+-a always,exit -F uid=0 -F dir=/dev/shm -F dir=/tmp -F perm=wxa -F success=1
+
+-F arch=b64
+-F dir=/path/to/directory
+-F path=/path/to/file
+-F perm=rwxa (read write execute attribute)
+-F success={0,1}
+
+#############
+

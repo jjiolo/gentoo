@@ -1,0 +1,296 @@
+
+#############
+
+dropped openssh for dropbear - but its sharing this notes file
+
+currently trying to full scope openssh functionality
+
+-------------
+[dropbear]
+-------------
+
+tldr ;
+
+ doesnt
+
+ * X11 forwarding (remote access to your desktop, not overly safe as a concept)
+ * -D(ynamic port forwarding) (dbclient -L 443:google.com:443 172.16.0.1) (net-proxy/microsocks ssh forward from localhost ?) 
+ * sys-libs/zlib is slow (45mb/s cap)
+ * --enable-zlib forces it on, no -C(ompression)
+
+ does
+
+ * dropbear+rsync... ebuild+tested
+ * dropbear+sftp... ebuild+tested (remote object access)
+ * dropbear+sshfs+fuse... ebuild(s)+tested (remote mount access)
+ * nc -lks local:/dev/shm/qemu -e dbclient user@172.16.0.1 nc local:/dev/shm/qemu
+ * dbclient 172.16.0.1 tar cC /path . | tar xC /path
+ * tar cC /path . | dbclient 172.16.0.1 tar xC /path
+
+ improvements
+
+ +DEFAULT_RECV_WINDOW == 1048576 == 1024*1024
+ -RECV_MAX_PAYLOAD_LEN == 524288 == 1024*512
+ ^ one random hit suggested 0.5MB RECV_MAX_PAYLOAD_LEN doesnt do anything...
+
+* requires editing config/config/etc/self/a.chroot/build.initramfs
+  /dev/fuse permissions 0600 - > root:user 0660
+  /usr/bin/fusermount3 - > root:user 2750 
+
+* fusermount3 suid is a local root shlel
+* forced to use user:user because keys
+
+-------------
+
+sshfs -o allow_other,reconnect,auto_unmount root@172.16.0.1:/tmp/storage/stage3 /tmp/storage/stage3
+cd /tmp/storage/stage3 ; ./2.shell ; emerge -av busybox...
+
+[Errno 1] Operation not permitted: b'/busybox-1.35.0-r9999/.ipc/lock': chown('/busybox-1.35.0-r9999/.ipc/lock', -1, 0)
+
+random errors on stage3 chroot, did actually build, couldnt pin a single cpu core ?
+
+-------------
+
+* sshfs -o allow_other,reconnect,auto_umount user@host.domain:/path /path
+
+  leaves remote node uid:gid
+  allowing local uid:gid access
+  no visual difference as to wtf
+
+-o idmap=user 
+
+-o workaround= < - blindly using defaults after finding list of things that break
+   auto_umount < - wont fail or attempt to SIGKILL everything with a path open...
+   sync writes, readahead, readdir, cache, directio
+   symlinks < - nothing ever goes wrong with symlinks
+   kernel_cache < - 
+   -o uid,gid ? covered by idmap ?
+
+-o allow_{other,root} < - changes default assumptions of run time arguements
+
+* sftpd/sshfs - object access || remote mount
+
+-------------
+
+#############
+
+
+
+#############
+#
+sftp
+-q quiet
+-b batch file (read commands from file)
+-a attempt (to continue interrupted transfers rather than overwriting existing partial or complete copies of files (something about destroying mismatched data))
+-r recursively
+-p preserve modification/access times and modes
+-C enable compression
+-l limit (transmission speed)
+#
+put
+-afpR local remote
+#
+sftp -arp 172.16.0.1:/tmp/storage/shared/downloads/* /tmp/storage/shared/downloads
+#
+* doesnt follow symbolic links in recurse ?
+#
+if the file contents differs from the other copy then the resultant file is likely to be corrupt ?
+doesnt imply the ruleset order
+check file name, checksum file vs size comparison ? appends anything over ? or overwrites anything under ? doesnt imply state change
+#
+
+printf "%s\n" "put -arp ${1}"|sftp "${2}"
+^ if the file doesnt exist -attempt fails... so not viable 
+
+getting permission denied errors on -attemp with push nothing on pull...
+
+
+Couldn't stat remote file: No such file or directory
+destination file bigger or same size as source file
+
+user:user is still p2pd allows sftp backup / removal
+
+#############
+
+removed openssl as a dependency to create static binaries for ssh-keygen/ssh/sftp/sshd
+
+#############
+
+openssh built in crypto libraries only (no open/libre ssl)
+
+leave compression on server side...
+leave compression off client side...
+
+manually append -C to ssh/sshfs/sftp as needed
+
+* real remote benefits more from compressed (upto 20-30MB/s)
+* lan benefits more from uncompressed
+
+sftp test file == dd if=/dev/urandom of=test bs=4096 count=100000 390MB
+
+Cipher:
+
+chacha20-poly1305@openssh.com    == 102MB/s == 27MB/s
+
+aes256-ctr + umac64@openssh.com  == 55MB/s
+aes256-ctr + umac128@openssh.com == 52MB/s
+aes256-ctr + hmac-sha1           == 59MB/s
+aes256-ctr + hmac-sha2-512       == 54MB/s
+
+aes192-ctr + umac64@openssh.com  == 61MB/s
+aes192-ctr + umac128@openssh.com == 61MB/s
+aes192-ctr + hmac-sha1           == 65MB/s
+aes192-ctr + hmac-sha2-512       == 59MB/s
+
+aes128-ctr + umac64@openssh.com  == 65MB/s == 23MB/s
+aes128-ctr + umac128@openssh.com == 65MB/s == 25MB/s
+aes128-ctr + hmac-sha1           == 69MB/s == 25MB/s
+aes128-ctr + hmac-sha2-512       == 64MB/s == 23MB/s
+
+#############
+
+check sftp hardening
+
+sshfs -o allow_other < - currently path locked but implies nobody write as suid user
+
+#############
+
+multiplexing sessions to reduce tcp overhead
+
+sshd:  MaxSessions   13
+ssh:   ControlMaster auto
+
+#############
+
+commandline sftp
+
+sftp user@domain.tld:/path/to/remote/file /path/to/local/file
+
+printf "%s\n" "put /path/to/local/file"|sftp user@domain.tld:/path/to/remote/file
+
+#############
+
+remote desktop
+
+* current config uses Xorg without security extensions -X is disabled -Y works
+  no security extensions no support for 20 minute magic-cookie timeout
+
+ssh -Y server.localdomain firefox
+
+DISPLAY=:0 Xephyr :123 &
+DISPLAY=:123 ssh -Y server.localdomain dwm-guest
+
+#############
+
+lock remote command
+
+ssh_config RemoteCommand LANG=en_GB.UTF-8 tmux -S /tmp/.ssh new-session -As ssh # not enforced
+
+sshd_config ForceCommand LANG=en_GB.UTF-8 tmux -S /tmp/.${USER} new-session -As ssh # enforced Match filtering
+
+.ssh/authorized_keys command="" # enforced Key filtering
+
+ssh-keygen - sign command in the client certificate # enforced Key filtering
+
+#############
+
+server has the ability to fork a command returning the AuthorizedKeysFile and AuthorizedPrincipalsFile
+
+^ which would allow cheating ldap for the single service
+
+#############
+
+ssh -N server.localdomain < - port forward only backgrounds the process with no interaction
+
+ssh -D localhost:9050 server.localdomain < - ssh can replace tor for nobodies socks proxy
+
+ssh -L from:port:to:port
+       local    :remote
+ssh -R from:port:to:port
+       remote   :local
+ * from:to easier to remember L local R remote
+
+local  forwards requests from local to remote
+remote forwards requests from remote to local
+
+#############
+
+socket multiplexing 
+
+sshd_config MaxSessions X
+ssh_config  ControlMaster yes
+ssh_config  ControlPath /tmp/%h
+
+ssh -N remote.com < - start a master session
+ssh remote.com < - multiplex all further sessions through it
+
+#############
+
+stunnel with openssl is full x509 client/server with unlimited depth certifcate chaining
+
+openssh is closer to oppertunistic pinning or single depth certificate chaining
+
+multiple ways to preshare keys
+
+ known_hosts fingerprint pinning against ip/hostname
+ certificate pinning against ip/hostname
+
+* both imply a secure pre distribution to prevent mitm
+
+#############
+
+certificates
+
+server cert valid  - ssh can pin its fingerprint for future use
+server cert expire - ssh with    pinned fingerprint VALID
+server cert expire - ssh without pinned fingerprint INVALID
+
+^ a valid certificate allows secure fingerprint pinning for boxes on the network
+
+ ssh doesnt have a valid mechanism for key exhange or key revoke
+ assumes it can read a local file with pinned fingerprints
+ assumes it can read a local file with revoked ie stolen private keys
+
+to use ssh safely would imply the ability to obtain and update these files over a pre existing secure connection
+
+
+if you pre distribute the certificate authority it can use it to validate the network
+
+without pre distribution of certificate authority or known_hosts the entire thing is oppertunistic
+
+its lets pretend we arent just using telnet mode with attack surface limited to the initial connection
+
+if it isnt enforced ie fingerprint changes disconnect... it is using telnet
+
+eg. any automation that blindly accepts new certificates is using telnet or netcat at best
+
+#############
+
+* sketchy as shit needs real testing
+
+sshfs logic... with none root only
+
+* -o allow_other only lets all users on the box write to the remote storage as user ?!?!1/1!?1
+
+root - > root -o allow_other
+ full path mount with root perms on both boxes only viable for shared uid:gid, allows multiplayer
+
+root - > none_root -o allow_other
+ can mount a remote path for a fixed uid:gid and expose it to the entire local box < - implied at all times irrelivent
+
+none_root - > root
+ up to the user if it exposes the entire other box as root to local users
+
+none_root - > none_root
+ up to the user if it exposes the entire other box as locked privs to local users
+
+^ using root:root implies fully synced shared uid:gid and allows multiplayer... < - if its not synced uid:gid your going to get facerolled
+  using none_root:none_root allows exposing remote uid: write and read only to every user on the box... more locked perms far more sane
+
+is no such thing as unauthenticated upload < - at all ever denial of services gg better luck next time
+
+sftp upload into /chroot/{public,private}
+with httpd running across all public directories
+
+#############
+

@@ -1,0 +1,6 @@
+#!/bin/sh
+#############
+. /etc/services/httpd/install
+#############
+lighttpd -f "${service_storage}/lighttpd.conf"
+#############

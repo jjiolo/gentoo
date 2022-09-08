@@ -1,0 +1,6 @@
+#!/bin/sh
+#############
+for i in $(seq 30 39);do printf "\033[${i}m ${i}:testing \033[0m\n";sleep .1;done
+#############
+for i in $(seq 0 256);do printf "\033[38;5;${i}m ${i}:testing \033[0m \033[30m \033[48;5;${i}m ${i}:testing \033[0m\n";sleep .1;done
+#############

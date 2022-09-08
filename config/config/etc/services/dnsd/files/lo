@@ -1,0 +1,26 @@
+
+#############
+ system.unlock
+#############
+
+ address="127.$(shuf -i0-255 -n1).$(shuf -i0-255 -n1).$(shuf -i1-255 -n1)"
+     dns="$(shuf -i9092-51819 -n1)" dns=53
+   socks="$(shuf -i9092-51819 -n1)" socks=9050
+
+ ip link set down lo
+ ip addr flush dev lo
+ ip addr add ${address}/32 dev lo
+ ip link set up lo
+
+ ip route add ${address}/32 dev lo scope host metric 0
+
+ ip addr del 127.0.0.1 dev lo
+
+#############
+
+. /etc/services/dnsd/files/setup
+
+#############
+system.lock
+#############
+

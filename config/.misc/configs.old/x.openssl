@@ -1,0 +1,40 @@
+
+#############
+
+# find everything that uses openssl
+
+# find
+# /var/db/pkg
+# /binhost/rootfs/var/db/pkg
+# -type f
+# -name DEPEND
+# -exec grep -Hi openssl {} \;
+
+#############
+
+emerge -vC openssl
+
+ebuild /root/overlay/dev-libs/openssl/openssl-1.1.1n-r9999.ebuild manifest || exit
+
+emerge -v openssl
+
+#############
+
+emerge -v1 --keep-going y \
+ app-arch/libarchive \
+ dev-lang/python \
+ x11-base/xorg-server \
+ app-misc/c_rehash \
+ dev-libs/libevent \
+ dev-vcs/git \
+ net-misc/curl \
+ net-misc/wget \
+ net-wireless/wpa_supplicant \
+ net-wireless/hostapd \
+ net-vpn/tor \
+ mail-client/mutt \
+ net-p2p/transmission \
+ www-client/links
+
+#############
+

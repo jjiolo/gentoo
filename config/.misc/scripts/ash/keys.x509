@@ -1,0 +1,11 @@
+
+{
+for i in digest-commands digest-algorithms cipher-commands cipher-algorithms public-key-algorithms disabled;do
+printf "%s\n" "#############"
+printf "%s\n" "${i}"
+printf "%s\n" "#############"
+openssl list -${i}
+done
+printf "%s\n" "#############"
+}|less
+

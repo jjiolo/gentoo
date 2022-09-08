@@ -1,0 +1,206 @@
+
+#############
+
+[facility]
+0 kern
+1 user
+2 mail
+3 daemon
+4 auth
+5 syslog
+6 lpr
+7 news
+8 uucp
+9 cron
+10 authpriv
+11 ftp
+12 ntp
+13 security
+14 console
+15 solaris-cron
+16-23 local0-local7
+
+[severity]
+0 emergency
+1 alert
+2 critical
+3 error
+4 warning
+5 notice
+6 informational
+7 debug
+
+#############
+
+circular buffer
+ - > card counting
+ - > persistence
+ - > reacting
+
+one uid:gid pid or node for the log daemon circular buffer itself
+one uid:gid pid or node for card counting statistics
+one uid:gid pid or node for persisting logs themselves
+one uid:gid pid or node for reacting to events triggered
+
+scales from single node to multiple nodes
+
+expands into local implementation and or remote implementation
+
+multicast allows for network wide implementations, log buckets per subnet, vlan, groups of node types
+
+* problems...
+  no local  uid:gid integrity
+  no remote uid:gid integrity
+  local cant verify who wrote the logs
+  remote cant verify who wrote the logs (even with priv seperation)
+
+ manually implement `<service> </dev/null &>/run/logs/uid_locked_file`
+ implies manually polling file output far less efficient than a single log buffer sink
+
+#############
+
+card counting logs...
+
+[timestamp] [ip] [facility][severity] [tag] [msg]
+
+all programs are written with hardcoded log strings using variables to change meaning
+
+converting static log strings to numeric values
+weighting them against variable values
+
+positive messages increment counter
+negative messages decrement counter
+
+store the median every hour +total -total
+store the final values every day
+store the final values every week
+store the final values every month
+
+^ creates branches of viable implementations dependent on environment and desired outcome
+
+logic remains the same, easy visability layer
+
+^ high level overview of the entire network
+
+cant really further scope without an impelementation to map against
+
+#############
+
+* local syslog cant record uid:gid that sent the log message
+  any uid:gid can create fake log entries to mask actual events and hide proof
+  any uid:gid can spoof messages in the log and trigger monitoring/alerting api backend
+
+^ redirecting stdout/stderr to uid:gid protected fifo/files
+  implies removing /dev/log completly and only reading fifo or file input
+
+* remote syslog cant ever verify uid:gid seperation
+  can only predict the probability of the boxes integrity based on previous logs
+  can only alert on changes in frequency or size (flooding or with holding packets)
+
+^ has no real solution
+
+##############
+
+ while :; do var++ ; logger -t $var $var ; done
+
+ create buffer backlog
+
+ worst case creates a backlog and prevents realtime reaction before pivoting into none tracable persistence
+
+ best case causes the log to be dropped completly not even alerting to the possibility of none tracable persistence
+
+ ^ undefendable ddos point...
+   defense implies defeat
+
+#############
+
+rsyslog -
+
+ * auditd forwarding to syslog breaks all cli tools ?
+
+ sending to /dev/log triggers || imfile polls individually
+ client - > socket 
+  - > local  - > split_files - > log_rotate
+  - > remote - > split_files - > log_rotate
+
+ cant do files per service without forcing polling
+ cant verify dac controlled polling without disabling or locking /dev/log
+
+server
+ listen tls write to db
+ listen tls write to timestamp/ip
+ listen tls write to timestamp/ip/prograname
+
+ split rsyslogd output into combinations of
+ [timestamp] [ip] [facility][severity] [tag][msg]
+
+client -
+ logrotate circular buffer || turn off local completly
+
+-------------
+yum install rsyslog-mysql
+/usr/share/doc/rsyslog-<version>/mysql-createDB.sql (cat mysql-createDB.sql|mysql -u root -p)
+mysql -u root -p < /usr/share/doc/rsyslog-<version>/mysql-createDB.sql
+mysql -u root -p
+grant all privileges on Syslog.* to rsyslog@'localhost' identified by 'password';
+GRANT INSERT ON Syslog.* to rsyslog@localhost identified by 'passphrase';
+GRANT SELECT ON Syslog.* to rsyslog@localhost identified by 'passphrase';
+flush privileges;
+mysql -u root -p Syslog
+^ edit default rsyslogd template -
+  edit default rsyslogd database -
+<insert_list_of_matches>
+-------------
+rsyslog json template
+*.* @@logstash local ip
+-------------
+:syslogtag, isequal, "tag:" /var/log/tag.log
+& stop
+:msg,contains,"error" /var/log/error.log
+variable match_type value file & stop < - discards after logging so its not picked up twice
+*.* |fifo - write output to a named pipe
+*.* /dev/console               - write output to a tty
+*.* @udp.domain.tld            - forward via udp
+*.* @@tcp.domain.tld           - forward via tcp
+*.* :omusrmsg:root,user,nobody - forward to users
+*.* :omusrmsg:*                - forward to everyone
+*.* ~                          - discard all messages
+*.* *                          - display using wall
+pass to database, shell execution...
+filters
+traditional facility.severity
+property-based
+expression-based
+:property,[!]compare-operation, "value"
+ isequal
+ startswith
+ regex
+$template mytemplate,"match",<options>
+$template TraditionalFormat, "%timegenerated% %HOSTNAME% %syslogtag%%msg%0"
+if $programname == 'program' then /var/log/program.log & stop
+if $match == 'match' then /action ~
+[ & stop ] replaced by [ ~ ] - prevent further matching on the rule
+-------------
+$DirCreateMode
+$DirOwner
+$DirGroup
+$FileCreateMode
+$FileOwner
+$FileGroup
+-------------
+
+*.* ?template;template < - ?filename;output_format
+
+$template mytemplate,"/var/log/%HOSTNAME%/%programname%.log"
+
+*.* ?template;template
+
+yum install rsyslog-omelasticsearch
+*.* :omelasticsearch < - doesnt work
+
+^ default ommysql doesnt have a column to search by tag
+
+-------------
+
+#############
+

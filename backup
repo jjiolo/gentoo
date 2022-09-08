@@ -1,0 +1,30 @@
+
+#############
+[ "${#}" == "0" ] && {
+
+                tar zcf "${stage3}/binhost/config.tar.gz" -C "${storage}" --exclude "stage3/binhost" --exclude "stage3/rootfs" --exclude "stage3/socket" "stage3"
+        chown root:root "${stage3}/binhost/config.tar.gz"
+             chmod 0664 "${stage3}/binhost/config.tar.gz"
+
+ transmission-create -o "${stage3}/binhost/config.torrent" "${stage3}/binhost/config.tar.gz"
+        chown root:root "${stage3}/binhost/config.torrent"
+             chmod 0664 "${stage3}/binhost/config.torrent"
+
+ install -o root -g p2pd -m 0644 "${stage3}/binhost/config.tar.gz" "${shared}/downloads/config.tar.gz"
+ install -o root -g p2pd -m 0644 "${stage3}/binhost/config.torrent" "${shared}/torrents/config"
+
+}
+#############
+[ "${#}" == "1" ] && {
+
+         tar zcf "${shared}/downloads/binhost.tar.gz" -C "${stage3}" "binhost"
+ chown root:p2pd "${shared}/downloads/binhost.tar.gz"
+      chmod 0644 "${shared}/downloads/binhost.tar.gz"
+
+ transmission-create -o "${shared}/torrents/binhost" "${shared}/downloads/binhost.tar.gz"
+        chown root:p2pd "${shared}/torrents/binhost"
+             chmod 0644 "${shared}/torrents/binhost"
+
+}
+#############
+

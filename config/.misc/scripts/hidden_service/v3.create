@@ -1,0 +1,36 @@
+
+#############
+
+#
+# !!!
+# DOESNT WORK
+# !!!
+#
+# tor uses key blinding ? stores ed25519 secret as a 64 byte string
+# no idea how, what, why only know openssl does not support that format
+#
+
+#############
+install -d -o root -g root -m 0755 /tmp/hidden_service && cd /tmp/hidden_service || exit
+#############
+
+# generate openssl ed25519 secret & public
+
+openssl genpkey -algorithm ed25519 -outform DER -out openssl_secret
+openssl pkey -pubout -inform DER -in openssl_secret -outform DER -out openssl_public
+
+# generate tor ed25519 secret & public
+
+printf "== ed25519v1-secret: type0 ==\0\0\0" > hs_ed25519_secret_key
+printf "== ed25519v1-public: type0 ==\0\0\0" > hs_ed25519_public_key
+
+tail -c32 < openssl_secret >> hs_ed25519_secret_key
+tail -c32 < openssl_public >> hs_ed25519_public_key
+
+# generate raw ed25519 secret & public
+
+tail -c32 < openssl_secret > raw_secret
+tail -c32 < openssl_public > raw_public
+
+#############
+

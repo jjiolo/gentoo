@@ -1,0 +1,126 @@
+
+#############
+ip link up
+ip link down
+triggers slaac
+#############
+
+net.ipv6.conf.{all,default}.forwarding=1
+net.ipv6.conf.{all,default}.accept_ra=2
+
+accept_ra=2 - force slaac on interfaces with forwarding enabled
+
+#############
+radvd/ndisc6/rdisc6 - server and two client utitlities
+#############
+
+v4 linklocal 169.254.0.0/16
+v4 multicast 224.0.0.0/4
+v4 private address ranges 127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
+
+v6 linklocal fe80::/10
+v6 multicast ff00::/8
+v6 private address range fc00::/7 fc00::/8 fd00::/8
+
+* v6 private address range is called unique local address ULA
+
+#############
+0.0.0.0 == ::/0
+127.0.0.0/8 == ::1/128
+#############
+
+   hex mac:00:00:00:00:00:00
+binary mac:00000000:00000000:00000000:00000000:00000000:00000000
+
+   0    1    2    3    4    5    6    7    8    9    a    b    c    d    e     f
+0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110  1111
+
+0000:0000:0000:XXXX::1/48                   < - buisness
+0000:0000:0000:00XX::1/56                   < - resi
+0000:0000:0000:0000::1/64                   < - slaac
+0000:0000:0000:0000:YYYY:YYFF:FEYY:YYYY/128 < - mac addressing
+0000:0000:0000:0000:0000:0000:0000:0000/128
+
+X == /48 /56 address ranges
+Y == mac address of a /64
+FFFE == padding added to auto mac addressing
+
+# ipv6 unique local address (private address range)
+fc00::/7 1111:110X:
+fc00::/8 1111:1100:
+fd00::/8 1111:1101:
+
+# ipv6 link local address
+fe80/10 1111:1110:10XX:XXXX
+fe80/10 1111:1110:1000:XXXX
+fe90/10 1111:1110:1001:XXXX
+fea0/10 1111:1110:1010:XXXX
+feb0/10 1111:1110:1011:XXXX
+
+# ipv6 multicast address
+ff00::/8
+
+#############
+
+printf "%s\n" "fd"$(for i in 1 2 2;do hexdump -n"${i}" -ve '/1 "%02x"' /dev/urandom;printf "%s" ":";done)":1/48"
+
+#############
+
+# neigbour discovery protocol
+
+router_solicitation - ask for a router
+router_advertisement - advertise a router
+neighbor_solicitation - ask for a client
+neighbor_advertisement - advertise a client
+redirect - routers may advertise a better gateway
+
+#############
+
+ipv6 sucks...
+
+anything you talk to gets a routable ipv6 address to probe for listeners
+anything listening inbetween gets a list of routable address to scan
+
+slaac mac addresses allow tracking devices
+implies bruteforce range of all global address
+cant exactly search for devices ?
+
+can check if a device is currently located at known public wifi spots or v6 ranges
+
+bob goes here here and here scan bobs mac address against all local ipv6 addresses
+address pool for city / town against target mac is viable provided you can get the list
+
+ public wifi with ipv6 and routing enabled would expose addresses < - easy to trigger and add to wardriving maps
+*public wifi with icmp6 and ping enabled would expose addresses < - current reality
+
+ reduces the pool of people capable of masscanning the internet < - in a way ?
+ then totally increases the ability for normie level stalking devices and targets across an entire city ?
+ implementing reverse scans from services becomes viable to sell as metadata ?
+ everything that gets verified v6 address can scan services and reverse scan the internet ?
+
+everyone keeps claiming trickle down technology
+if god mode scanning is voice fingerprinting people over google now cortana amazon echo and countless always on microphones
+pleb mode is now definintly nearly the same level of tracking as telecomms providers get over nothing but wifi : /
+
+dev mode hosting a quick 0.0.0.0 instead of a 127.0.0.1 poof public visable service
+^ seen forum posts on people scanning vpns and getting all sorts of stupid now public facing web servers
+
+ logic would imply ipv4 for aslong as possible to reduce exposure
+ allowing ipv6 with a ddns or reverse tcp tracker allows roaming routable addresses
+
+ v4 outbound normal traffic
+ v6 listening and established replies only
+
+
+isps get lists of mac addresses for name registered to router
+cross correlate mac based on time at residence to create location / contact information and live tracking
+^ if you mesh isp wifi routers you can already do real time tracking of wifi mac addresses directly to google maps
+
+might not be able to masscan the entire v6 range can definintly do some stalker level creepy functionality at pleb level
+
+ if ipv6 attempts to become some magical static addressing for the masses
+ static addresses and allowing contact lists creates viable key exchange without a third party because isp have just replaced them
+ botnets no longer need to depend on reverse tcp connections or upnpd
+
+#############
+

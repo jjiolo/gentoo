@@ -1,0 +1,6 @@
+#!/bin/sh
+#############
+. /etc/services/vpnc/config
+#############
+openvpn --config "${vpnc_storage}/openvpn.conf"
+#############

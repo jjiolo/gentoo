@@ -1,0 +1,4 @@
+#!/bin/sh
+#############
+tcpsvd -u user:wheel -c13 -b13 -C3:limit -hl localhost 127.0.0.1 65535 tcpsvd.script
+#############

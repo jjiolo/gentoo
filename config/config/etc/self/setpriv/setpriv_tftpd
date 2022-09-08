@@ -1,0 +1,16 @@
+#!/bin/sh
+#############
+cd /
+#############
+
+#############
+(/usr/bin/setpriv \
+ --reuid tftpd --regid tftpd --init-groups \
+ --inh-caps -all,+net_bind_service,+sys_chroot \
+ --ambient-caps -all,+net_bind_service,+sys_chroot \
+ --bounding-set -all,+net_bind_service,+sys_chroot \
+ --nnp --reset-env \
+ /bin/udpsvd 0.0.0.0 69 /sbin/tftpd -lr /tmp/storage/shared </dev/null &>/dev/null &); sleep 1
+#############
+
+#############

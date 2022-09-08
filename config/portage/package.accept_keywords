@@ -1,0 +1,6 @@
+
+dev-lang/python -~amd64
+sys-apps/portage -~amd64
+
+net-vpn/tor -~amd64
+

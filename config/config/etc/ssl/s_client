@@ -1,0 +1,30 @@
+#!/bin/sh
+#############
+usage(){ printf "\n${0} - ${1}\n\n -h host\n -u udp\n -t tcp\n\n" ; exit ; }
+#############
+while getopts "h:ut" arg;do
+ case "${arg}" in
+  h) host="${OPTARG}" ;;
+  u) protocol="-dtls1_2" ;;
+  t) protocol="-tls1_3" ;;
+  *) usage getopts ;;
+ esac
+done
+#############
+[ -z "${host}"     ] && usage "requires host:port"
+[ -z "${protocol}" ] && usage "requires protocol"
+#############
+openssl s_client\
+ -4\
+ -connect "${host}"\
+ -key "${HOME}/.ssl/token.pem"\
+ -cert "${HOME}/.ssl/token.crt"\
+ -CAfile "${HOME}/.ssl/server.crt"\
+ -no-CAfile\
+ -no-CApath\
+ -verify 1\
+ -verify_return_error\
+ -verify_quiet\
+ -quiet\
+ ${protocol}
+#############

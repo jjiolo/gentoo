@@ -1,0 +1,14 @@
+#!/bin/sh
+#############
+usage(){ printf "\n${0} - ${1}\n\n takes firmware image and flashes main\n\n";exit; }
+#############
+[ -f "${1}" ] || usage "firmware image does not exist"
+#############
+unset prompt
+until [[ "${prompt}" == "y" || "${prompt}" == "n" ]];do read -rp "about to nuke main continue (y|n)? " prompt;done
+[ "${prompt}" == "n" ] && usage "boom"
+#############
+flash_eraseall /dev/mtd4
+flash_eraseall /dev/mtd5
+nandwrite -p /dev/mtd4 "${1}"
+#############

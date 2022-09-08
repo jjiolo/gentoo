@@ -1,0 +1,80 @@
+
+#############
+# cryptsetup --integrity hmac-sha256 # luks
+#############
+#      format <integrity_device> - format device
+# open <integrity_device> <name> - open device as <name>
+#                   close <name> - close device (remove mapping)
+#                  status <name> - show active device status
+#        dump <integrity_device> - show on-disk information
+#                  resize <name> - resize active device
+#############
+# --integrity crc32c/crc32 sha1 sha256 || hmac-sha256
+#############
+integritysetup format --integrity sha256 /dev/device
+integritysetup dump /dev/device
+integritysetup open /dev/device name
+integritysetup status name
+#############
+
+ --allow-discards - trim
+
+ --no-wipe Do not wipe device after format
+ --wipe    Wipe the end of the device after resize
+
+ --buffer-sectors=SECTORS                Buffers size
+ --bitmap-flush-time=ms                  Bitmap mode flush time
+ --bitmap-sectors-per-bit=INT            Number of 512-byte sectors per bit (bitmap mode).
+
+ --cancel-deferred                       Cancel a previously set deferred device removal
+
+ --data-device=path                      Path to data device (if separated)
+
+ --deferred                              Device removal is deferred until the last user closes it
+
+ -I,--integrity=STRING                   Data integrity algorithm
+
+ --integrity-key-file=STRING             Read the integrity key from a file
+ --integrity-key-size=BITS               The size of the data integrity key
+
+ -D,--integrity-no-journal               Disable journal for integrity device
+
+ --interleave-sectors=SECTORS            Interleave sectors
+
+ --journal-commit-time=ms                Journal commit time
+ --journal-integrity=STRING              Journal integrity algorithm
+ --journal-integrity-key-size=BITS       The size of the journal integrity key
+ --journal-integrity-key-file=STRING     Read the journal integrity key from a file
+ --journal-crypt=STRING                  Journal encryption algorithm
+ --journal-crypt-key-file=STRING         Read the journal encryption key from a file
+ --journal-crypt-key-size=BITS           The size of the journal encryption key
+ -j,--journal-size=bytes                 Journal size
+ --journal-watermark=percent             Journal watermark
+
+ -B,--integrity-bitmap-mode              Use bitmap to track changes and disable journal for integrity device
+
+ --integrity-recalculate       Recalculate initial tags automatically.
+ --integrity-recalculate-reset Reset automatic recalculate position.
+
+ -s,--sector-size=bytes Sector size
+ -t,--tag-size=bytes    Tag size (per-sector)
+
+#############
+<name> storage
+<integrity_device> /dev/nvme
+#############
+# -R,--integrity-recovery-mode Recovery mode (no journal, no tag checking)
+#############
+# --device-size=bytes Use only specified device size (ignore rest of device). DANGEROUS!
+# -b,--size=SECTORS   The size of the device
+#############
+# -q,--batch-mode           Do not ask for confirmation
+# --progress-frequency=secs Progress line update (in seconds)
+# --progress-json           Print wipe progress data in json format (suitable for machine processing)
+# -v,--verbose              Shows more detailed error messages
+# --debug                   Show debug messages
+#############
+# --integrity-legacy-padding     Use inefficient legacy padding (old kernels)
+# --integrity-legacy-hmac        Do not protect superblock with HMAC (old kernels)
+# --integrity-legacy-recalculate Allow recalculating of volumes with HMAC keys (old kernels)
+#############

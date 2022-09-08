@@ -1,0 +1,23 @@
+#!/bin/sh
+#############
+debug(){ printf "%s\n" "takes file or directory - ${1}";exit 1; }
+#############
+[ "${#}" == "1" ] || debug "no input"
+#############
+[ -f "${1}" ] || [ -d "${1}" ] || debug "no input"
+#############
+torrent="$(basename ${1})"
+#############
+[ -e "${shared}/downloads/${torrent}" ] && debug "download already exists"
+[ -e "${shared}/torrents/${torrent}"  ] && debug "torrent already exists"
+#############
+transmission-create -o "${shared}/torrents/${torrent}" "${1}"
+#############
+cp -r "${1}" "${shared}/downloads"
+#############
+chown -R "${USER}:p2pd" "${shared}/downloads/${torrent}" "${shared}/torrents/${torrent}"
+find "${shared}/downloads/${torrent}" "${shared}/torrents/${torrent}" -type d -exec chmod 0755 {} \;
+find "${shared}/downloads/${torrent}" "${shared}/torrents/${torrent}" -type f -exec chmod 0644 {} \;
+#############
+transmission-remote 127.0.0.1 -a "${shared}/torrents/${torrent}"
+#############

@@ -1,0 +1,38 @@
+#!/bin/sh
+#############
+usage(){ printf "\n${0} - ${1}\n\n takes interface\n\n" ; exit ; }
+#############
+[ "${#}" == "1" ] || usage "no input"
+[ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
+#############
+pkill -x wpa_supplicant
+#############
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#############
+sysctl -w "net.ipv6.conf.${1}.autoconf=1"
+sysctl -w "net.ipv6.conf.${1}.accept_ra=2"
+#############
+ip link set down "${1}"
+ip addr flush "${1}"
+until ip link set dev "${1}" address "$(hexdump -n6 -ve '1/1 "%02X:"' /dev/urandom|head -c17)";do sleep .1;done
+ip link set up "${1}"
+#############
+( exec wpa_supplicant -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant" </dev/null &>/dev/null & exit )
+#############
+

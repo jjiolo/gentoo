@@ -1,0 +1,283 @@
+
+#############
+
+ tor
+  AutomapHostOnResolve 1
+  127.192.0.0/10
+  fe80::/10
+
+ torsocks
+  OnionAddrRange
+  127.42.42.0/24
+
+#############
+
+ man torrc - not alot missing massive list of values, mostly sane defaults
+
+#############
+
+ safesocks 1 - ban ip address requests forcing dns (doesnt apply to tordns)
+
+#############
+
+something you have
+something you know
+out of band verification
+
+delete something you know - leverage
+delete something you have - fuck you
+
+#############
+
+two box logic...
+
+tl;dr webcam audio bluetooth wifi doxx physical location
+      most dont require privesc to use
+
+#############
+
+ multiple trustless mirrors (refereral sites)
+
+  voting protocol to verify public keys and gateway/rotating
+
+  ddosing your own escrow service to take down other links
+
+  public key, signed gateway + rotating mirror list
+
+   client - > server - unique onion addresses for all vendors and buyers...
+   server - > client - client side onion addresses to allow push notifications or polling...
+
+#############
+
+offline shopping cart...
+
+ rewriting payment apis to handle intermittent availability
+
+  more client side storage / application
+  signed list of goods from a vendor (torrent)
+  signed request to purchase + send to escrow
+
+  remove login completly (monopoly market)
+  server/client public private key pairs only
+
+  openssh to mosh < - > session cant time out and doesnt require more traffic to get the required response
+
+* futher expands into
+  vendor stores as torrents
+  escrow sites as torrent trackers
+  client / escrow && client / vendor gnupg transactions
+
+^ removes the need to register on multiple escrow sites
+  vendors hosting their own signed store fronts
+  multi party signing from escrow(tracker) to verify known vendors
+
+! the future is torrent tracker escrow services
+  venders as release groups
+  completly unauthenticated without the concepts of sessions
+  only signed and verified form posting
+
+  client api to accept and verify recieved requests dealers choice whatever wins
+
+#############
+
+ [running tor on client device]
+
+ threat model remote code execution as the user running the browser
+
+  access to anything that identifies you failed
+  access to webcam speaker microphone bluetooth wifi failed
+
+ threat model remote code execuction and privilege esculation
+
+  access to anything under any user that can identify you failed
+  access to webcam speaker microphone bluetooth wifi failed
+
+ browser fingerprints are pointless with proper hardware seperation
+ buy burner hardware only used for that profiles activities
+ second hand hardware traces uuids back to someone elses purchase and online history
+ physically disconnect webcam speaker microphone wifi bluetooth - ethernet only
+
+ run a profile you never cross with your real identity
+ browser fingerprint is as good as the public key hash you use for identification
+
+^ custom setup and software configuration files
+  that can be found online from github gitlab searches linking to identity failed
+
+* larger scale forensic linguistics, locales
+  planting misleading information (more info the last user left on the burner the better)
+
+ [buy a second router]
+
+  connect the router to public wifi with a decent antenna if you want range
+  setup a tor bridge so the public wifi is less hostile
+  vpns create a single point of failure for a warrent request allows correlating timestamps
+  even when not linked to your own identity they will end up pulling the log files in court
+
+  router change the mac address... (ethernet and wifi interfaces)
+  router running a transparent tor proxy on eth0
+  router hard dropping all traffic generated from the subnet that isnt proxied...
+  router alerting on all traffic attempts deviating from normal (eg scanning the network) (ioc)
+  router led to alert on suspect behaviour and shut down
+
+  laptop into the router static ip address no services but the transport (attack surface)
+  laptop can now without compromising the router only pass data through tor as an end point
+  laptop even as root cant compromise you
+
+! any access from the laptop to the router exposes geographically accurate information
+  correlating cctv in the area went from needle in a haystack to a police line up...
+
+ assume any access to the router itself doxxing your lat long to within 5 meters of accuracy
+ assume all hardware serial numbers are logged from manufacturing to the vendors selling them
+ only purchase second hand equipment 
+ pay someone to walk into a shop and buy your stuff in cash
+ find private sellers smaller chance of online sale history with hardware identifiers
+
+ [remote]
+
+ leave your phone at home
+ travel to public locations with high people through put
+ avoid cctv cameras and hide the hardware walking in / out
+ avoid timestamping usage log (push to a third party service that forwards on a random timer)
+
+ learn to use gnupg maintain your own private/public keys and pki information
+ use that through any network / service provider
+ never depend or rely on a service provider or third party to do it for you
+
+ physical kex or gtfo
+
+#############
+
+ [smartphones]
+
+  over the air updates
+  emergency broadcast system
+
+  anything with a ceulluar modem in is as good as dead
+  there is no return on investment trying to fight it
+
+  the internet passes your information through multiple traceroute hops
+  every one of these hops is outright malicous and trying to fuck you
+  including the first hop... 
+
+  your isp router isnt any different from your smartphone
+
+  isp gives a call center full of people
+   access to your entire internet history
+   access to the device itself
+
+  reality of fallout from remote access to smartphones
+   less people with security clearence
+   less people with training and knowledge
+   exposure to telco functionality in smartphones massively reduced
+
+^ risk given instant lat long location massively increased
+  risk given remote access to camera speaker microphone wifi and bluetooth massively increased
+  risk given history of every known associate...
+  the list gets stupid real quick (you cant win stop trying)
+
+  simplest logic phones aren't your friend
+  faraday bag + ability to roam
+  high foot traffic areas with low cctv camera usage
+  somehow blag you not being with your own radio uuid ?
+  ^ doesnt hold up all that well
+    1000 people in a cctv network using facial recogonition
+    999 people with a matching imsei number
+
+  cctv blind spots
+  leave your smartphone in a safe location
+  avoid any cctv recorded history of you parting from it
+  pull the burner from the faraday bag and use it away from your own person...
+  length of time to correlate unknown owner modems from devices around it...
+
+  ^ toilet in a football stadium pushing to encrypted smtp forwarding mixnet...
+    sort of defeats the entire point in convience ?
+    easier ways to do this in real time without using a mobile phone...
+
+  ^ toilet in a football stadium registering multiple accounts that force phone number verification...
+    would require a full list of viable targets
+    then the ability to full scope persistence on them through a proxy
+    blargh blargh
+
+  ^ market stall or shop in a high traffic through put area
+    rotating cheap throw aways is about the only viable use case for static operation
+
+    faraday bag from / to the area physically detach camera speaker/microphone
+    text only or external encryption using jackpair or alternatives
+    still easy to triangulate
+    still easy to voice recogonition
+
+ basically buy a radio for real time comms
+ and get used to forwarding e2e through it
+ treat it as any other dirty first hop
+
+-------------
+
+ gets even worse
+
+  cheapest implementation for total omnipotent oppression
+
+   presence detection 
+   automate storing timestamps it cant account for its owners acitivity
+   purposefully hiding camera
+   purposefully masking audio
+
+  you dissapear from your smart phone for more than 15 minutes
+  pull your entire contacts list + communication history
+  identify the thing youre most likely to respond to
+  shortest time to respond against highest frequency
+^ take the creepy ass facial recognition and apply it against emotional context
+
+  no response or proof of presence
+  push an alert to a database
+  store timestamp information on a server grouping people into lat long zone
+  any reported crime pull shortlist
+  of the only people not currently tagged like a fucking animal
+
+^ borderline self funding ota/ebs api you can remove the centralized database
+  and make the users pay for their own prison
+
+#############
+
+  e2e to an external gateway over a secure tunnel
+  whitenoise and random jitter entropy
+  remove the ability to correlate encrypted data
+  while :;do nc generate.random.packets.com 443 ; done
+  allows entropy from the client side in requests
+         entropy from the server side in responses
+
+  the tunnel itself with pad all real protocols with irrelivent information
+
+#############
+
+reverse botnet vs listening botnet
+
+reverse,
+ all bots need a hardcoded uuid to initiate a connection to the c&c network
+ either hardcoded into the payload or hardcoded on persistent storage
+ hijack the initial point of contact and nothing can phone home
+ reverse proxy throw up domain names on bots with the ability to listen
+ forward multiple times throught countries unaffiliated with the target country or forward through tor
+ can hijack always on services such as social media, forums or irc
+ bot boots searches always on service for uuid that can be easily made into a pattern
+ first name starts with a second name starts with f in geo location XYZ male between 30-40 smallish list of responses
+ scrape that profile for ip address nested in whatever public facing info it has
+ if it fails to connect try the next account
+ if no account exists create your own account and host an ip address there
+ ^ dynamic header node using pre existing traffic and infrastructure to hide
+ pretty much loads of ways to do it, all fail with the hardcoded uuid connection
+
+listening,
+ open a listening port on the target device on a unique high port, sit and wait for commands
+ record and randomize the listening port and initial response
+ throw off web scanners that after finding a single port can scan for it specifically
+ or after recieving an initial response can identify it
+ multiple droppers that document ip address and random port assigned
+ single encrypted list of all listening nodes
+ multiple sources so documenting botnet size is impossible unless every address is found and monitored
+ smaller scale alot of nodes behind nat
+
+cant run a buttnet without using both forms of nodes
+payload needs to support connecting to other nodes or hosting other nodes
+
+#############
+

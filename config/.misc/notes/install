@@ -1,0 +1,109 @@
+
+#############
+last: Mon Feb 28 07:37:08 UTC 2022
+#############
+
+-------------
+binhost - local only
+-------------
+  portage - download portage
+distfiles - download upstream source code
+ packages - create packages
+   rootfs - build rootfs
+   images - build initramfs
+  kernels - build kernels
+     logs - check it didnt explode
+-------------
+
+-------------
+ config - distributed
+-------------
+ .misc   < - stores things that dont get proof read or maintained copy pasta graveyard
+config   < - rootfs/root bind mount
+kernels  < - my hardware + qemu (aiming for laptop+mini endgame)
+overflow < - portage ebuild directory
+overlay  < - portage ebuild directory for stuff filling various services... (or whatever needed fixing / testing at the time sticky or copy paste graveyard)
+portage  < - gentoos portage directory, its pretty huge
+-------------
+
+_____________
+external
+_____________
+0.binhost - create local binhost repo
+ 1.rootfs - create tinderbox stage3
+  2.shell - chroot into stage3
+ 3.umount - umount chroot
+   backup - backup to config.tar.gz and binhost.tar.gz
+     qemu - boot the created media to test it
+_____________
+
+_____________
+internal
+_____________
+init usage
+chroot-update - sync portage on first run
+chroot-fetch  - pull every package on the system
+first.run     - depclean build latest gcc then rebuild the entire system
+
+normal usage
+chroot-update  - curl portage.tar.xz(.gpgsig), tar xf portage.tar.xz -C /shared/portage, gemato /shared/portage
+chroot-upgrade - full @world update, then rebuild everything against new libraries, save @system and @world to logs
+chroot-logs    - view last upgrade/preserved, full @system @world with use flags
+
+build-fetch     - emerge -Fetch all package and dependency (/shared/distfiles)
+build-rootfs    - install build dependency to host, install packages and runtime dependency to (/shared/rootfs)
+build-initramfs - create a compressed cpio of /shared/rootfs into /shared/images
+build-logs      - lists the last host install, rootfs install, full @system + use flags, full @world + use flags
+
+kernel-build  - ran as nobody takes path to /usr/src/linux then builds every config file in /root/kernels
+kernel-update - ran as root takes the kernel and resulting .config and saves them to /shared/kernels and /root/kernels
+
+usb-format - destructive mount block device
+usb-mount  - remount block device
+usb-bootfs - create static grub image, copy kernels/images
+usb-umount - umount block devices
+_____________
+
+#############
+
+[persistent binhost]
+
+        1.rootfs - unpack stage3.tar.xz
+       first.run - unpack 135 packages
+  chroot.upgrade - unpack 16 packages
+   chroot.update - resync /binhost/portage
+  chroot.upgrade - unpacks... only upgrades
+    build.rootfs - 175 packages to chroot + full or partial rootfs unpack
+ build.initramfs - writes to a compressed image
+    kernel.build - 
+
+^ literally took an hour ?
+
+  no updates
+  from copying binhost.tar.gz config.tar.gz
+  to unpacking a working stage3 chroot
+  to unpacking a working rootfs image
+
+* chroot.update git not found - forces upgrade;update;upgrade ?
+  ./0.binhost - sync externally ?
+  first.run -  force emerge -av dev-vcs/git ?
+
+* binhost.tar.gz gets dumped in ram twice
+  no idea why its even in there ?
+
+-------------
+
+./backup
+
+* cleanup binhost/distfiles ?
+  rm -rf binhost/images/.client
+  rm -rf binhost/kernels/.{server,desktop,laptop,virtual}
+  rm -rf binhost/logs/*
+* cleanup binhost/packages ?
+
+ app-portage/gentoolkit - eclean -d distfiles ; eclean packages
+ ^ pulling from /etc/portage /var/lib/portage/world
+   saved space deleting half the rootfs packages
+
+#############
+

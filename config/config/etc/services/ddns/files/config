@@ -1,0 +1,85 @@
+
+#############
+
+#User ddns
+
+ Log notice syslog
+ SyslogIdentityTag ddns
+
+ CacheDirectory /tmp/storage/services/ddns/cache
+ DataDirectory /tmp/storage/services/ddns/data
+
+ HiddenServiceNonAnonymousMode 0
+ HiddenServiceSingleHopMode 0
+
+ HiddenServiceDir /tmp/storage/services/ddns/private
+ HiddenServiceVersion 3
+ HiddenServiceNumIntroductionPoints 3
+ HiddenServiceEnableIntroDoSDefense 1
+ HiddenServiceEnableIntroDoSBurstPerSec 13
+ HiddenServiceEnableIntroDoSRatePerSec 7
+ HiddenServiceMaxStreams 3
+ HiddenServiceMaxStreamsCloseCircuit 1
+ HiddenServicePort 22 127.0.0.1:22
+
+ HiddenServiceDir /tmp/storage/services/ddns/public
+ HiddenServiceVersion 3
+ HiddenServiceNumIntroductionPoints 3
+ HiddenServiceEnableIntroDoSDefense 1
+ HiddenServiceEnableIntroDoSBurstPerSec 13
+ HiddenServiceEnableIntroDoSRatePerSec 7
+ HiddenServiceMaxStreams 3
+ HiddenServiceMaxStreamsCloseCircuit 1
+ HiddenServicePort 80 127.0.0.1:80
+
+#DNSPort        127.0.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+#SOCKSPort      127.0.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+
+#DNSPort        172.16.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+#SOCKSPort      172.16.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+
+ ControlPort    0
+ DNSPort        0
+ SOCKSPort      0
+ HTTPTunnelPort 0
+ TransPort      0
+ NATDPort       0
+
+ RunAsDaemon               1
+ ClientUseIPv4             1
+ ClientUseIPv6             1
+ Sandbox                   1
+ NoExec                    1
+#DisableAllSwap            1
+ DisableDebuggerAttachment 1
+ SafeLogging               1
+ SafeSocks                 0
+ TestSocks                 0
+
+#############
+#ReachableAddresses accept *:443
+#############
+#EntryNodes {??}
+#ExitNodes  {??}
+#############
+#ExcludeNodes {??},{AU},{CA},{NZ},{GB},{US},{DK},{FR},{NL},{NO},{DE},{BE},{IT},{SE},{ES}
+#ExcludeExitNodes {??},{AU},{CA},{NZ},{GB},{US},{DK},{FR},{NL},{NO},{DE},{BE},{IT},{SE},{ES}
+#############
+#StrictNodes 1
+#############
+
+#############
+# https://check.torproject.org
+#############
+#   email: bridges@torproject.org
+# subject: empty
+# message: get transport obfs4
+#############
+# https://bridges.torproject.org/bridges?transport=obfs4
+#############
+#Sandbox 0
+#NoExec  0
+#UseBridges 1
+#ClientTransportPlugin meek_lite,obfs2,obfs3,obfs4,scramblesuit exec /usr/bin/obfs4proxy
+#############
+

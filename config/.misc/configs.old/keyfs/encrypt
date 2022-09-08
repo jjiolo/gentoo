@@ -1,0 +1,17 @@
+#!/bin/sh
+#############
+usage(){ printf "%s\n" "takes file - ${1}";exit 1; }
+#############
+[ "${#}" == "2" ] || usage "no input"
+#############
+[ -f "${1}" ] || usage "file does not exist"
+[ -f "${1}.key" ] && usage "encrypted file key already exists"
+[ -f "${1}.enc" ] && usage "encrypted file already exists"
+#############
+ephemeral="$(openssl genpkey -algorithm ec -pkeyopt ec_paramgen_curve:secp384r1)"
+secret="$(printf "%s" "${ephemeral}"|openssl pkeyutl -derive -inkey /dev/stdin -peerkey /tmp/a.keyfs/encrypt.pub|openssl sha384|cut -d ' ' -f2)"
+openssl enc -e -base64 -salt -md sha512 -aes-256-cbc -iv "${secret:64:32}" -K "${secret:0:64}" -in "${2}" -out "${2}.enc"
+printf "%s\n" "${ephemeral}"|openssl ec -pubout -in /dev/stdin -out "${2}.key"
+unset ephemeral secret
+#############
+

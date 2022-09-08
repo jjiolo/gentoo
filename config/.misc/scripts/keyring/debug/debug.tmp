@@ -1,0 +1,10 @@
+#!/bin/sh
+#############
+[[ -f tmp.pem ]] && rm tmp*
+#############
+openssl ecparam -genkey -name brainpoolP512r1 -out tmp.pem
+openssl req -new -config openssl -extensions tmp_extension -sha512 -key tmp.pem -subj "/CN=tmp"|
+openssl ca -batch -config openssl -name persistent_ca -extensions tmp_extension -policy tmp_policy -days 1 -notext -in /dev/stdin -out tmp.crt
+openssl dgst -sha512 -sign persistent.pem -out tmp.sig tmp.crt
+cp tmp.crt tmp
+#############

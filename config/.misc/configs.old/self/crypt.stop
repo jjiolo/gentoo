@@ -1,0 +1,12 @@
+#!/bin/sh
+#############
+
+mountpoint -q "${mount}" && umount "${mount}"
+
+[ -b "/dev/mapper/mount" ] && cryptsetup close mount
+
+#############
+
+lsblk
+
+#############

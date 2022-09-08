@@ -1,0 +1,23 @@
+
+interface=wlan1
+#bridge=
+
+hw_mode=g
+channel=0
+country_code=GB
+ieee80211n=1
+ieee80211ac=1
+wmm_enabled=1
+
+ignore_broadcast_ssid=0
+ssid=private.2g
+wpa_passphrase=passphrase
+
+auth_algs=1
+wpa=2
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=GCMP CCMP
+rsn_pairwise=GCMP CCMP
+
+ap_isolate=0
+

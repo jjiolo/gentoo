@@ -1,0 +1,62 @@
+
+#############
+
+the bad...
+
+ busybox setpriv doesnt work, (build.initramfs work around over a clean install)
+
+ implementation is bloated, doesnt integrate with the whole very well
+
+the good...
+
+ util-linux +caps does work
+
+ allows privdropping services indefinintly
+
+ to large a security benifit to ignore
+
+#############
+
+[setpriv]
+-------------
+ * not using it to allow none root access, using it to restrict scope of compromise when executed by root
+ * wont set cwd
+ * wont clear environment
+ * --reset-env - HOME SHELL USER LOGNAME PATH (PATH is currently wrong, set at compile time)
+-------------
+ * etc/init - updated udhcpd and ntpd init
+ * etc/self/a.chroot/build.initramfs - added setpriv
+ * etc/self/setpriv/setpriv_{udhcpd,ntpd,udhcpc,ntpc,sshd,crond}
+-------------
+ dropbear -
+  +setuid +setgid +chown +fowner
+  sed -i '273,282d' svr-auth.c
+  sed -i '996,1007d' svr-chansession.c
+  sed -i '985,987d' svr-chansession.c
+ ^ leaves capabilities enabled on the calling shell ?
+-------------
+
+ - find a toggle to optionally...
+    prevent process from spawning capability granted processes
+    allow process to spawn capability granted processes
+
+ setpriv -
+  inheritable capabilities - set on recieving process to prevent parent over sharing ? 
+      ambient capabilities - preserved across execve (inherited by new processes ?)
+  capability bounding set  - restrict capabilities process may recieve (-all prevent inheritable or ambient capabilities being set)
+
+  setcap -   permitted - automatically permitted ?
+           inheritable -
+             effective - if set permitted raised into effective
+
+ --securebits -/+
+ noroot
+ noroot_locked
+ no_setuid_fixup
+ no_setuid_fixup_locked
+ keep_caps_locked
+
+* setpriv caps work like predefined seccomp syscall groups...
+
+#############
+

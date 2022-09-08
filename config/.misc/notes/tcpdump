@@ -1,0 +1,42 @@
+
+#############
+
+tcpdump -qtnni eth0
+
+#############
+
+tcpdump
+
+-w write to file
+-c number of packets
+
+-q quiet
+-t dont print timestamp
+-nn dont resolv addresses or ports
+
+-A ascii
+-X hex and ascii
+
+-I monitor mode
+
+-Q direction in out inout
+
+-vvv
+
+-Z drop privs user
+
+#############
+
+icmp,arp,ip,ip6,tcp,udp
+
+port 1234
+port not 1234
+
+src port not 1234
+dst port not 1234
+
+dst 127.0.0.1 and port 1234
+src 127.0.0.1 and port 1234
+
+#############
+

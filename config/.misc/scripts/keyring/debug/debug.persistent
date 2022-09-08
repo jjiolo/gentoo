@@ -1,0 +1,17 @@
+#!/bin/sh
+#############
+[[ -f persistent.pem  ]] && rm persistent*
+[[ -f tmp.pem         ]] && rm tmp*
+#############
+openssl ecparam -genkey -name brainpoolP512r1 -out persistent.pem
+openssl req -new -config openssl -extensions persistent_extension -sha512 -key persistent.pem -subj "/CN=persistent"|
+openssl ca -batch -config openssl -name root_ca -extensions persistent_extension -policy persistent_policy -days 365 -notext -in /dev/stdin -out persistent.crt
+openssl dgst -sha512 -sign root.pem -out persistent.sig persistent.crt
+cp persistent.crt persistent
+#############
+openssl ecparam -genkey -name brainpoolP512r1 -out tmp.pem
+openssl req -new -config openssl -extensions tmp_extension -sha512 -key tmp.pem -subj "/CN=tmp"|
+openssl ca -batch -config openssl -name persistent_ca -extensions tmp_extension -policy tmp_policy -days 1 -notext -in /dev/stdin -out tmp.crt
+openssl dgst -sha512 -sign tmp.pem -out tmp.sig tmp.crt
+cp tmp.crt tmp
+#############

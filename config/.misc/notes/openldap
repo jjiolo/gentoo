@@ -1,0 +1,275 @@
+
+#############
+
+never finished it, utterly horrific
+
+would pay for a nis server implementation just to avoid the complexity
+
+#############
+
+[client only]
+
+ smartcard || yubikey || tpm
+
+ gnupg + --enable-ldap
+       + gpg-agent.conf: enable-ssh-support
+       + SSH_AUTH_SOCK=/run/${USER}/S.gpg-agent.ssh
+       + gpg --list-keys --with-keygrip >> .gnupg/sshcontrol (whitelist ssh key)
+       ? comments claim authentication only and gnupg auto detecting without .gnupg/sshcontrol
+
+ bottleneck single ldap client to share gnupg and ssh keys
+
+#############
+
+[commands]
+
+ client
+  ldapsearch
+  ldapmodify
+  ldapdelete
+  ldapmodrdn
+  ldappasswd
+  ldapwhoami
+  ldappvc
+  ldapcompare
+  ldapexop
+  ldapurl
+  ldapadd
+
+ server
+  slapadd
+  slapcat
+  slapd
+  slapdn
+  slapindex
+  slapmodify
+  slappasswd
+  slaptest
+  slapauth
+  slapacl
+  slapschema
+
+#############
+
+
+
+#############
+
+backend passwd
+^ cheat the ssh/gnupg ed25519 key in the gecos field ?
+  removes :realname ?
+
+^ means no database...
+  and busybox adduser addgroup passwd add-shell remove-shell chpasswd mkpasswd/cryptpw deluser delgroup 
+
+ $USER:[thing]:$UID:$GID:$GECOS(ed25519):$HOME:$SHELL
+
+
+ backend config
+ It also instantiates itself automatically, so it is always
+ present even if not explicitly defined in the slapd.conf(5) file.
+
+#############
+
+ first page says use mdb...
+ uses ldif for every example
+
+ backend mdb
+  binary file
+ backend ldif
+  plain text file (base64 encoded file)
+
+ backend passwd
+  read /etc/passwd only (demonstration purposes)
+
+#############
+
+[x.500]
+
+ DN distinguishedName
+    contains attribute types below
+    read right to left
+
+ CN commonName
+ L localityName
+ ST stateOrProvinceName
+ O organizationName
+ OU organizationUnitName
+ C countryName
+ STREET streetAddress
+ DC domainComponent
+ UID userid
+
+ domain component
+ server.nat
+ multiple organizations
+ multiple organization units in organizations
+
+############# 
+
+ldapadd 
+ takes file.ldif to add entries to an ldap directory
+
+so back to point in using mdb if forced to ldif regardless ?
+
+tl;dr
+ldap.conf client
+slapd.conf server
+slapd.ldif configuration
+
+slapd
+-f /path/to/file -F /path/to/directory
+-h 'ldap:// ldapi://%2frun%2fslapd.sock'"
+
+slappasswd - generate a string to add to slapd.conf
+
+slapadd -b 'cn=host,cn=domain' 
+
+-n 0 < - is the config database ?
+-n 1 < - first database definition after it ?
+-n 2 < - database monitor...
+
+include things...
+set pidfile argsfile referrer
+set config database + password access (need its suffix ?
+
+access
+ to dn='cn=one,dc=two,dc=three'
+ by 
+
+ldapsearch
+ -b 'dc=directory,dc=local'
+ -D 'cn=root,dc=directory,dc=local'
+ -H ldapi://%2Frun%2Fslapd.sock
+ -W prompt password
+
+ldapsearch -b dn=monitor
+
+
+#############
+
+ldif layout...
+
+testing.ldif
+
+dn: dc=host,dc=domain
+objectClass: dcObject
+objectClass: organization
+dc: host
+o: myOrganization
+description: testing
+
+dn: cn=admin,dc=host,dc=domain
+objectClass: organizationalRole
+cn: admin
+description: administrator
+
+ldapadd -f testing.ldif -x -D "cn=admin,dc=host,dc=comain" -w secret
+
+#############
+
+c=<country>
+st=<state>
+o=<organisation>
+ou=<organistation_unit>
+cn=<common_name>
+
+dc=localdomain
+dc=hostname
+ou=...
+uid=...
+
+objectclass defines scheme rule entry must obey
+
+uid=bob,ou=users,dc=hostname,dc=domainname
+
+access control based on ldap authorization information, ip address, domain name + more ?
+
+#############
+
+slapd.conf
+
+global
+backend
+database
+
+access to * by * read
+
+idletimeout 60
+
+backend -
+asyncmeta Asynchronous Metadirectory backend
+config    Slapd configuration backend
+dnssrv    DNS SRV backend
+ldap      Lightweight Directory Access Protocol (Proxy) backend
+ldif      Lightweight Data Interchange Format backend
+mdb       Memory-Mapped DB backend
+meta      Metadirectory backend
+monitor   Monitor backend
+null      Null backend
+passwd    Provides read-only access to {{passwd}}(5)
+perl      Perl Programmable backend
+relay     Relay backend
+sock      Socket backend
+sql       SQL Programmable backend
+wt        WiredTiger backend
+
+
+back-mdb -
+ primary storage database backend
+
+doesnt need module includes --{enable,disable}-dynamic
+
+database mdb
+idlexp 16
+directory /run
+suffix "dc=hostname,dc=domain"
+rootdn "cn=mdb,dc=hostname,dc=domain"
+rootpw mdb
+maxsize 65535
+
+include ./schema/core.schema
+rootdn "cn=monitoring,cn=Monitor"
+rootpw monitoring
+
+access to dn.subtree="cn=Monitor"
+ by dn.exact="uid=Admin,dc=hostname,dc=domain" write
+ by users read
+ by * none
+
+database null
+suffix "cn=Nothing"
+bind on < - any dn in this backends suffix with any password
+
+#############
+
+[ldap.conf]
+
+URI ldap://server.nat:389
+
+BASE dc=example,dc=com
+
+DEREF never
+
+KEEPALIVE_IDLE 20
+KEEPALIVE_PROBES 3
+KEEPALIVE_INTERVAL 60
+
+NETWORK_TIMEOUT 13
+
+PORT 389
+
+REFERRALS off
+
+SIZELIMIT 0
+
+# SOCKET_BIND_ADDRESSES
+
+TIMELIMIT 0
+
+# VERSION 
+
+# TIMEOUT 
+
+#############
+

@@ -1,0 +1,8 @@
+#!/bin/sh
+#############
+while read -r;do
+ printf "%s\n" "[${PROTO}][${TCPREMOTEADDR}][${TCPLOCALADDR}][${TCPORIGDSTADDR}][${TCPCONCURRENCY}][${TCPLOCALHOST}][${TCPREMOTEHOST}]"
+ printf "%s\n" "[${TCPREMOTEADDR}${TCPLOCALADDR##*:}] ${REPLY}" >> /storage/user/tcpsvd.log
+ head -c$(shuf -i13-128 -n1) </dev/urandom
+done
+#############

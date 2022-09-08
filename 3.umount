@@ -1,0 +1,15 @@
+
+#############
+umount rootfs/dev/shm &>/dev/null
+umount rootfs/dev/pts &>/dev/null
+umount rootfs/dev     &>/dev/null
+umount rootfs/proc    &>/dev/null
+umount rootfs/sys     &>/dev/null
+umount rootfs/tmp     &>/dev/null
+#############
+umount rootfs/root    &>/dev/null
+umount rootfs/binhost &>/dev/null
+#############
+mount
+#############
+

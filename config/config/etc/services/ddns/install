@@ -1,0 +1,8 @@
+#!/bin/sh
+#############
+. /etc/services/variables ddns
+#############
+[ -f "${service_storage}/config" ] || install -o ddns -g ddns -m 0600 "${service_system}/files/config" "${service_storage}"
+#############
+. /etc/services/permissions ddns ddns 0700 0600
+#############

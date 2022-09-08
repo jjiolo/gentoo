@@ -1,0 +1,44 @@
+
+./configure\
+ --prefix=/usr\
+ --enable-silent-rules\
+ --disable-maintainer-mode\
+ --disable-dependency-tracking\
+ --enable-static\
+ --enable-shared\
+ --enable-fast-install\
+ --enable-libtool-lock\
+ --disable-win32-portable\
+ --disable-static-crypto\
+ --disable-libnl\
+ --disable-hwloc\
+ --disable-static-hwloc\
+ --enable-static-pcap\
+ --enable-static-pcre\
+ --enable-static-sqlite3\
+ --enable-largefile\
+ --disable-code-coverage\
+ --disable-valgrind\
+ --disable-asan\
+ --disable-tsan\
+\
+ --with-pic\
+ --with-aix-soname=aix\
+ --with-gnu-ld\
+ --without-xcode\
+ --with-openssl\
+ --without-gcrypt\
+ --without-airpcap\
+ --without-experimental\
+ --without-ext-scripts\
+ --with-libpcap-include=auto\
+ --with-libpcap-lib=auto\
+ --without-sqlite3\
+ --without-opt\
+ --with-cacheline-size=64\
+ --without-static-simd\
+ --without-avx512\
+ --without-duma\
+ --without-jemalloc\
+ --without-tcmalloc
+

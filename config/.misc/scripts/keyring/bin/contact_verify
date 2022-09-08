@@ -1,0 +1,31 @@
+#!/bin/sh
+#############
+. variables
+
+#############
+usage(){ printf "\n${0} - ${1}\n-c contact\n\n";exit; }
+
+#############
+while getopts "c:h" arg;do
+ case "${arg}" in
+  c) contact="${OPTARG}";;
+  h) usage help;;
+  *) usage getopts;;
+ esac
+done
+
+#############
+[[ ! -z "${contact}" && -d "${contacts}/${contact}" ]] || usage "contact does not exist"
+[[ -f root.crt       ]] || usage "root certifcate does not exist"
+[[ -f persistent.crt ]] || usage "persistent certificate does not exist"
+[[ -f chain          ]] || usage "certificate chain does not exist"
+[[ -f checksum       ]] || usage "checksum does not exist"
+
+#############
+contact_variables "${contact}"
+contact_verify || usage "${debug}"
+
+#############
+openssl x509 -in "${contact_persistent}" -noout -pubkey > "${public_key}" 2>/dev/null
+openssl sha512 root.crt persistent.crt chain|openssl -sha512 dgst -verify "${public_key}" -signature checksum &>/dev/null && printf "%s\n" "${contact}:verified" || printf "%s\n" "${contact}:fail"
+

@@ -1,0 +1,40 @@
+
+#############
+local-data: "host.guestdomain. IN A 172.16.0.1"
+local-data: "host.guestdomain. IN AAAA fd01::1"
+local-data: "host.guestdomain. IN MX 10 host.guestdomain."
+local-data: 'host.guestdomain. IN TXT "txt record"'
+local-data-ptr: "172.16.0.1 host.guestdomain."
+local-data-ptr: "fd01::1 host.guestdomain."
+#############
+
+#############
+
+local-data: "router.localdomain. IN A 192.168.1.1"
+local-data: "router.localdomain. IN AAAA fd00::1"
+local-data: "router.localdomain. IN MX 10 router.localdomain."
+local-data-ptr: "192.168.1.1 router.localdomain."
+local-data-ptr: "fd00::1 router.localdomain"
+
+local-data: "server.localdomain. IN A 192.168.1.3"
+local-data: "server.localdomain. IN MX 10 server.localdomain."
+local-data: 'server.localdomain. IN TXT "txt record"'
+local-data-ptr: "192.168.1.3 server.localdomain."
+
+local-data: "desktop.localdomain. IN A 192.168.1.5"
+local-data: "desktop.localdomain. IN MX 10 desktop.localdomain."
+local-data: 'desktop.localdomain. IN TXT "txt record"'
+local-data-ptr: "192.168.1.5 desktop.localdomain."
+
+local-data: "laptop.localdomain. IN A 192.168.1.7"
+local-data: "laptop.localdomain. IN MX 10 laptop.localdomain."
+local-data: 'laptop.localdomain. IN TXT "txt record"'
+local-data-ptr: "192.168.1.7 laptop.localdomain."
+
+local-data: "dmz.localdomain. IN A 192.168.1.9"
+local-data: "dmz.localdomain. IN MX 10 dmz.localdomain."
+local-data: 'dmz.localdomain. IN TXT "txt record"'
+local-data-ptr: "192.168.1.9 dmz.localdomain"
+
+#############
+

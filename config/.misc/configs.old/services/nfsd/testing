@@ -1,0 +1,32 @@
+
+#############
+
+[ -L /etc/exports ] || {
+
+mount -o remount,rw,nodev,suid,exec,noatime,size=50% /
+
+ln -s /run/nfsd/exports /etc/exports
+
+mount -o remount,ro,nodev,suid,exec,noatime,size=$(df -P|awk '/^rootfs/{print$3}')k /
+
+}
+
+#############
+mountpoint -q "/proc/fs/nfsd" || mount -t nfsd nfsd /proc/fs/nfsd
+#############
+[ -d "/run/nfsd" ] || install -d -o root -g root -m 0700 /run/nfsd
+#############
+[ -f "/run/nfsd/etab"  ] || install -o root -g root -m 0600 /dev/null /run/nfsd/etab
+#############
+cat > /run/nfsd/exports << EOF
+
+/    *(fsid=0,sec=sys,secure,ro,sync,wdelay,no_subtree_check,secure_locks,no_pnfs,no_acl,root_squash,no_all_squash,anonuid=2049,anongid=2049)
+/tmp *(fsid=1,sec=sys,secure,ro,sync,wdelay,no_subtree_check,secure_locks,no_pnfs,no_acl,root_squash,no_all_squash,anonuid=2049,anongid=2049)
+
+EOF
+#############
+exportfs -rv
+exportd -s /run/nfsd
+nfsd -N3 -V4 -N4.1 -N4.2 --no-udp --tcp --host 0.0.0.0 -p 2049 --syslog 8
+#############
+

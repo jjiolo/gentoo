@@ -1,0 +1,149 @@
+
+#############
+
+* could update to include basic mix net logic ?
+  currently: basic explanation of tor onion layers
+  future: mix net bots ?
+
+! old high level poc was pretty shit...
+
+#############
+ircd client rewrite
+#############
+while :;do
+ [ "${count:-0}" -gt 7 ] || count=$((${count:-0}+1))
+ sleep $((2**${count:-0}))
+done ; 001 == connect && unset count
+#############
+
+#############
+three parts - server:ngircd / client:irssi / bot:irc_client|irc_shell
+#############
+server:ngircd
+
+ force disable ptr lookups
+ passwordless oper @127.0.0.1 isnt viable when hosting over tor
+
+ ngircd:keyfile
+  reads keyfile on every request doesnt need to exist at boot
+  ~user:nick:passphrase
+  ~user:*:passphrase
+  USER username 7 localhost :hostname - cant change username without reconnecting?
+  multiple users can have the same username
+  only the password holder for said username can gain entry to private
+
+ preshared secret...
+  ~bob:*:presharedsecret
+  ~bob:*:onlysomethingbobwouldknow
+
+ oppertunistic...
+  ~newuser:*:cannowreauthenticate
+
+ dual channel
+ register request in public with oob contact point
+ send passphrase to email phone snailmail
+
+#############
+client:irssi
+
+ stopped using irssi replaced it with a script...
+
+#############
+bot:shell_script
+
+3 channels entry relay exit
+
+random shuffle 1 nick  from entry
+random shuffle 3 nicks from relay
+random shuffle 1 nick  from exit
+
+* or pick country of choice from hostmask
+
+^ pull public key from :realname string
+^ nodes host their public key over :realname
+
+  client encrypts every hop of the relay, forwards it to the entry node
+
+  client - > entry  (client, entry,  relay0)
+   entry - > relay0 (entry,  relay0, relay1)
+  relay0 - > relay1 (relay0, relay1, relay2)
+  relay1 - > relay2 (relay1, relay2, exit)
+  relay2 - > exit   (relay1, relay2, exit)
+    exit - > server (relay2, exit,   server)
+
+ every node in the chain is only aware off,
+ the sender itself and the target to forward the packet to
+
+client joins irc...
+makes a single request to an entry node
+entry node forwards the request to relay0
+relay0 forwards the request to relay1
+...
+
+server with traffic would mask input output to other nodes
+eg 3 clients request a chain network view cant link the clients to the relay nodes
+
+client would then forward its request through all 5 nodes
+
+#############
+
+never finished... (also deleted old shit scripts (there throw up shouldnt take more than 5 minutes))
+
+ counting semaphore backgrounding number of requests (would freeze input when generating output)
+ throtting output (while read ; do printf "%s\n" "${REPLY}" ; sleep .8 ; done)
+ !recover - ability to kill the node and refresh on failure
+ busybox as executable drop with built in reverse shell (minimal client with remote pull and execute to limit information leaks)
+
+updates...
+
+ openssl s_client -no-CAfile -noCApath (allows pinning certificates)
+
+#############
+
+low hanging obfuscation...
+
+ ircd on port 443
+ hide traffic behind https, match packet size and frequency to avoid fingerprinting ?
+ motd and/or channel topics as one shot execution (global||group)
+ client needs entropy in keepalive to hide from pattern matching
+ client needs entropy in replies to prevent flooding the server from group execution
+
+#############
+
+001: welcome nick!user@hostmask
+
+NICK: 431:ERR_NONICKNAMEGIVEN
+      432:ERR_ERRONEUSNICKNAME
+      433:ERR_NICKNAMEINUSE
+      436:ERR_NICKCOLLISION
+      437:ERR_UNAVAILRESOURCE
+      484:ERR_RESTRICTED
+
+USER: 461:ERR_NEEDMOREPARAMS
+      462:ERR_ALREADYREGISTRED
+
+SASL: 901:ERR_SASL
+
+############# ircd centralized logging
+
+huge piped ircd server x509 server certificates
+
+register clients sasl pinning public key fingerprints
+
+logread -f|printf "%s\n" "PRIVMSG #logs :${REPLY}" >> "${input}"
+
+bots to store to persitence
+bots to live count input and display monitoring output
+bots to react (key seperation)
+
+^ ircd is real time with no persistence (circular buffer)
+  other bots consume data to persistence
+  other bots consume data to real time statistics
+  other bots store keys to remote and execute on nodes
+
+^ allows alot of redundency in logging infrastructure
+
+* multicast logging provides better infrastructure
+
+#############
+

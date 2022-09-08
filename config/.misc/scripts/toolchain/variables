@@ -1,0 +1,112 @@
+#!/bin/sh
+#############
+m="\033[0m"
+r="\033[31m"
+g="\033[32m"
+#############
+export path="/storage/toolchain"
+#############
+export GNUPGHOME="${path}/keyring"
+#############
+export builds="${path}/builds"
+export downloads="${path}/downloads"
+export functions="${path}/functions"
+export keyring="${path}/keyring"
+export packages="${path}/packages"
+export rootfs="${path}/rootfs"
+export work="${path}/work"
+#############
+export debug=""
+export name=""
+export version=""
+export source=""
+export signature=""
+export public=""
+export build=""
+export package=""
+export link_package=""
+export link_signature=""
+export link_public=""
+#############
+#DESTDIR=""
+#-O3 -D_FORTIFY_SOURCE="2"
+#-march="x86-64"
+#-mtune="native"
+#-pipe
+#-fomit-frame-pointer
+#-pie -fPIE -fPIC
+#-fcf-protection=full
+#-fstack-protector-strong -fstack-check --param ssp-buffer-size=4 -fstack-clash-protection
+#-ftrapv -mmitigate-rop
+#LDFLAGS="-Wl,-z,relro,-z,now,-z,defs"
+#MAKEOPTS="-j$(grep -c ^processor /proc/cpuinfo)"
+#############
+#CC=""                  # C compiler command
+#CFLAGS=""              # C compiler flags
+#LDFLAGS=""             # linker flags, e.g. -L<lib dir> if you have libraries in a nonstandard directory <lib dir>
+#LIBS=""                # libraries to pass to the linker, e.g. -l<library>
+#CPPFLAGS=""            # (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if you have headers in a nonstandard directory <include dir>
+#CXX=""                 # C++ compiler command
+#CXXFLAGS=""            # C++ compiler flags
+#build_configargs=""    # additional configure arguments for build directories
+#host_configargs=""     # additional configure arguments for host directories
+#target_configargs=""   # additional configure arguments for target directories
+#AR=""                  # AR for the host
+#AS=""                  # AS for the host
+#DLLTOOL=""             # DLLTOOL for the host
+#LD=""                  # LD for the host
+#LIPO=""                # LIPO for the host
+#NM=""                  # NM for the host
+#RANLIB=""              # RANLIB for the host
+#STRIP=""               # STRIP for the host
+#WINDRES=""             # WINDRES for the host
+#WINDMC=""              # WINDMC for the host
+#OBJCOPY=""             # OBJCOPY for the host
+#OBJDUMP=""             # OBJDUMP for the host
+#READELF=""             # READELF for the host
+#CC_FOR_TARGET=""       # CC for the target
+#CXX_FOR_TARGET=""      # CXX for the target
+#GCC_FOR_TARGET=""      # GCC for the target
+#GFORTRAN_FOR_TARGET="" # GFORTRAN for the target
+#GOC_FOR_TARGET=""      # GOC for the target
+#AR_FOR_TARGET=""       # AR for the target
+#AS_FOR_TARGET=""       # AS for the target
+#DLLTOOL_FOR_TARGET=""  # DLLTOOL for the target
+#LD_FOR_TARGET=""       # LD for the target
+#LIPO_FOR_TARGET=""     # LIPO for the target
+#NM_FOR_TARGET=""       # NM for the target
+#OBJCOPY_FOR_TARGET=""  # OBJCOPY for the target
+#OBJDUMP_FOR_TARGET=""  # OBJDUMP for the target
+#RANLIB_FOR_TARGET=""   # RANLIB for the target
+#READELF_FOR_TARGET=""  # READELF for the target
+#STRIP_FOR_TARGET=""    # STRIP for the target
+#WINDRES_FOR_TARGET=""  # WINDRES for the target
+#WINDMC_FOR_TARGET=""   # WINDMC for the target
+#############
+architecture="--build=x86_64 --host=x86_64 --target=x86_64" # configure guess ?
+#############
+prefix="--prefix='/' --exec-prefix='/'"
+#############
+installation_directories="
+ --bindir='bin'\
+ --sbindir='sbin'\
+ --libexecdir='libexec'\
+ --sysconfdir='etc'\
+ --sharedstatedir='com'\
+ --localstatedir='var'\
+ --libdir='lib'\
+ --includedir='include'\
+ --oldincludedir='usr/include'\
+ --datarootdir='share'\
+ --datadir='share'\
+ --infodir='info'\
+ --localedir='locale'\
+ --mandir='man'\
+ --docdir='share/doc/package'\
+ --htmldir='share/doc/package'\
+ --dvidir='share/doc/package'\
+ --pdfdir='share/doc/package'\
+ --psdir='share/doc/package'
+"
+#############
+

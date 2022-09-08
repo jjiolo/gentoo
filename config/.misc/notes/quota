@@ -1,0 +1,38 @@
+
+#############
+
+sys-fs/quota
+
+#############
+
+mount -o usrquota,grpquota,jqfmt=vfsv0 /dev/device /path/mount
+
+-------------
+
+setup /path/.aquota.user /path/.aquota.*
+ quotacheck -a all -v verbose -u check user files -- checks and repairs /path/to/mount/.usrquota
+
+-------------
+
+setquota < - set quota from command line grace times || soft/hard block/inode limits -- takes K M G T
+ setquota -at block-grace inode-grace
+ setquota -au user block-softlimit block-hardlimit inode-softlimit inode-hardlimit
+ setquota -au user 1G 2G 0 0
+ edquota -u <user> < - open .usrquota to edit all disks for <user>
+
+-------------
+
+turn it on/off check status
+ quotaon  -ap < - print state
+ quotaon  -au < - all usrquota on
+ quotaon  -af < - all off
+
+-------------
+
+statistics
+ quotasync -a  < - sync kernel quotas to quota files to read accurate results
+ repquota -avs < - view current quota for every device human readable format
+ quotastats    < - view stats
+
+#############
+

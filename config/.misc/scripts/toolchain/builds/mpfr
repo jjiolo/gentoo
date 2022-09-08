@@ -1,0 +1,15 @@
+#!/bin/sh
+#############
+
+name="mpfr"
+version="4.0.1"
+source="mpfr-4.0.1.tar.xz"
+signature="mpfr-4.0.1.tar.xz.sig"
+checksum="mpfr-4.0.1.tar.xz.checksum"
+public_key="https://ftp.gnu.org/gnu/gnu-keyring.gpg"
+package="mpfr-4.0.1.tar.gz"
+
+link_package="https://ftp.gnu.org/gnu/mpfr/mpfr-4.0.1.tar.xz"
+link_signature="https://ftp.gnu.org/gnu/mpfr/mpfr-4.0.1.tar.xz"
+
+#############

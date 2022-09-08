@@ -1,0 +1,17 @@
+#!/bin/sh
+#############
+. /etc/services/variables httpd
+#############
+
+[ -f "${service_storage}/lighttpd.conf"    ] || install    -o httpd -g httpd -m 0660 "${service_system}/files/lighttpd.conf"    "${service_storage}"
+[ -f "${service_storage}/ssl.conf"         ] || install    -o httpd -g httpd -m 0660 "${service_system}/files/ssl.conf"         "${service_storage}"
+[ -d "${service_storage}/upload"           ] || install -d -o httpd -g httpd -m 2770                                            "${service_storage}/upload"
+
+[ -d "${service_storage}/http"             ] || install -d -o httpd -g httpd -m 2770                                            "${service_storage}/http"
+[ -f "${service_storage}/http/default.css" ] || install    -o httpd -g httpd -m 0660 "${service_system}/files/http/default.css" "${service_storage}/http"
+[ -f "${service_storage}/http/error.html"  ] || install    -o httpd -g httpd -m 0660 "${service_system}/files/http/error.html"  "${service_storage}/http"
+[ -f "${service_storage}/http/index.html"  ] || install    -o httpd -g httpd -m 0660 "${service_system}/files/http/index.html"  "${service_storage}/http"
+
+#############
+. /etc/services/permissions httpd httpd 2770 0660
+#############

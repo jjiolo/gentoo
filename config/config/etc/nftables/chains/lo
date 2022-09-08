@@ -1,0 +1,64 @@
+
+#
+table inet filter
+chain inet filter ilo
+chain inet filter olo
+flush chain inet filter ilo
+flush chain inet filter olo
+#############
+table inet filter {
+
+ chain ilo {
+
+  # new
+
+  udp dport {53}    ct state new log flags skuid prefix "input.lo.new " accept
+  tcp dport {9050}  ct state new log flags skuid prefix "input.lo.new " accept
+
+  tcp dport {22,80} ct state new log flags skuid prefix "input.lo.new " accept
+  tcp dport {9091}  ct state new log flags skuid prefix "input.lo.new " accept
+
+  # icmp
+
+  ip protocol {icmp}   log flags skuid prefix "input.lo.icmp " accept
+  ip6 nexthdr {icmpv6} log flags skuid prefix "input.lo.icmp " accept
+
+  # drop
+
+  ct state invalid log flags skuid prefix "input.lo.invalid" drop
+                   log flags skuid prefix "input.lo.drop " drop
+
+ }
+
+}
+#############
+table inet filter {
+
+ chain olo {
+
+  # client
+
+  udp dport {53} skuid {ntpd}        ct state new log flags skuid prefix "output.lo.new " accept
+  udp dport {53} skuid {root,250}    ct state new log flags skuid prefix "output.lo.new " accept
+  udp dport {53} skuid {nobody,p2pd} ct state new log flags skuid prefix "output.lo.new " accept
+
+  tcp dport {22,80} skuid {ddns}              ct state new log flags skuid prefix "output.lo.new " accept
+  tcp dport {80}    skuid {root,user,nobody}  ct state new log flags skuid prefix "output.lo.new " accept
+  tcp dport {9091}  skuid {root,user,nobody}  ct state new log flags skuid prefix "output.lo.new " accept
+  tcp dport {9050}  skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.lo.new " accept
+
+  # icmp
+
+  ip protocol {icmp}   log flags skuid prefix "output.lo.icmp " accept 
+  ip6 nexthdr {icmpv6} log flags skuid prefix "output.lo.icmp " accept
+
+  # drop
+
+  ct state invalid log flags skuid prefix "output.lo.invalid " reject
+                   log flags skuid prefix "output.lo.drop " reject
+
+ }
+
+}
+#############
+

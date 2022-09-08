@@ -1,0 +1,30 @@
+#!/bin/sh
+#############
+. ../bin/variables
+
+#############
+usage(){ printf "\n${0} - ${1}\n-i input\n-h help\n\n";exit; }
+
+#############
+while getopts "i:h" arg;do
+ case "${arg}" in
+  i) input="${OPTARG}";;
+  h) usage "verify input";;
+  *) usage "verify input";;
+ esac
+done
+
+#############
+[[ -f "${input}" ]]||usage "input does not exist"
+[[ -f "${input}.dgst" ]]||usage "input.dgst does not exist"
+
+#############
+for i in "${contacts}"/*;do
+ contact_variables "$(basename "${i}")"
+ contact_verify||continue
+ openssl x509 -in "${contact_persistent}" -noout -pubkey 2>/dev/null > "${public_key}"
+ openssl dgst -sha512 -verify "${public_key}" -signature "${input}.dgst" "${input}" &>/dev/null && { printf "${contact_name}:persistent:verified\n";return; }
+ [[ -f "${contact_tmp}" ]] && openssl x509 -in "${contact_tmp}" -noout -pubkey > "${public_key}" 2>/dev/null || return
+ openssl dgst -sha512 -verify "${public_key}" -signature "${input}.dgst" "${input}" &>/dev/null && { printf "${contact_name}:tmp:verified\n";return; }
+done
+

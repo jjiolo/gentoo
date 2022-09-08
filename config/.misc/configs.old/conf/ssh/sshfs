@@ -1,0 +1,12 @@
+#############
+ sshfs 
+#############
+ -o allow_other
+ -o default_permissions
+ -o reconnect
+ -o auto_unmount
+#############
+ domain.tld:/path
+#############
+ /path
+#############

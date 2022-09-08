@@ -1,0 +1,6 @@
+
+#############
+nft add rule ip  nat prerouting iifname nat ip protocol tcp redirect to 9040
+nft add rule ip6 nat prerouting iifname nat ip6 nexthdr tcp redirect to 9040
+#############
+

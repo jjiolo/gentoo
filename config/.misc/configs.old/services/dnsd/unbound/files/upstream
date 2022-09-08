@@ -1,0 +1,28 @@
+############ 
+
+forward-zone:
+ name: "."
+
+#getdns/stubby
+ forward-addr: 145.100.185.15@853
+ forward-addr: 2001:610:1:40ba:145:100:185:15@853
+ forward-addr: 145.100.185.16@853
+ forward-addr: 2001:610:1:40ba:145:100:185:16@853
+ forward-addr: 185.49.141.37@853
+ forward-addr: 2a04:b900:0:100::37@853
+
+#quad9
+ forward-addr: 9.9.9.9@853
+ forward-addr: 2620:fe::fe@853
+
+#cloudflare
+ forward-addr: 1.1.1.1@853
+ forward-addr: 1.0.0.1@853
+ forward-addr: 2606:4700:4700::1111@853
+ forward-addr: 2606:4700:4700::1001@853
+
+ forward-first: no
+ forward-tls-upstream: yes
+ forward-no-cache: no
+
+#############

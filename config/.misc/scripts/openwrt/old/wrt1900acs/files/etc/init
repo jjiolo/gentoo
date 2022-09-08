@@ -1,0 +1,173 @@
+#!/bin/sh
+#############
+umask 077
+#############
+
+install -d -o root -g root -m 0700 "/dev"
+mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime,size=0% devtmpfs "/dev"
+
+install -d -o root -g root -m 0700 "/dev/pts"
+mount -t devpts -o ro,dev,nosuid,noexec,noatime,mode=0600 devpts "/dev/pts"
+
+install -d -o root -g root -m 0700 "/dev/shm"
+mount -t tmpfs -o rw,nodev,nosuid,noexec,noatime,mode=1777,size=3% tmpfs "/dev/shm"
+
+ln -snf "/proc/self/fd"   "/dev/fd"
+ln -snf "/proc/self/fd/0" "/dev/stdin"
+ln -snf "/proc/self/fd/1" "/dev/stdout"
+ln -snf "/proc/self/fd/2" "/dev/stderr"
+ln -snf "/proc/mounts"    "/etc/mtab"
+
+install -d -o root -g root -m 0700 "/proc"
+mount -t proc -o rw,nodev,nosuid,noexec,noatime proc "/proc"
+mount -o remount,hidepid=2 "/proc"
+
+install -d -o root -g root -m 0700 "/sys"
+mount -t sysfs -o rw,nodev,nosuid,noexec,noatime sysfs "/sys"
+
+install -d -o root -g root -m 0700 "/tmp"
+mount -t tmpfs -o rw,nodev,nosuid,noexec,noatime,mode=1777,size=7% tmpfs "/tmp"
+
+#############
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+#############
+rm -r /etc/hotplug.d
+rm -r /etc/init.d
+rm -r /etc/modules.d
+rm -r /etc/rc.button
+rm -r /etc/rc.d
+rm -r /etc/sysctl.d
+rm -r /lib/netifd
+rm -r /lib/network
+rm -r /lib/upgrade
+rm -r /lib/wifi
+rm -r /usr/bin/jsonfilter
+rm -r /usr/lib/opkg
+rm -r /usr/lib/libjson*
+rm -r /usr/libexec
+rm -r /usr/sbin/ntpd-hotplug
+rm -r /var
+#############
+mount -o remount,ro,nosuid,noatime,size="$(df|awk 'NR==2{print$3}')k" /
+#############
+
+#############
+syslogd -C300 -SD
+klogd
+#############
+sysctl -p /etc/sysctl.conf
+#############
+
+#############
+
+ash /etc/nftables.rules
+
+#############
+
+ ip addr add 127.0.0.1/8 dev lo brd + scope host
+ ip route add 127.0.0.0/8 dev lo scope host
+ ip link set up lo
+
+#
+
+# eth1 - wan/eth
+#sysctl -w net.ipv4.conf.eth1.rp_filter=1
+#sysctl -w net.ipv4.conf.eth1.drop_gratuitous_arp=1
+#sysctl -w net.ipv6.conf.eth1.autoconf=1
+#sysctl -w net.ipv6.conf.eth1.accept_ra=2
+#ip link set up eth1
+#ip addr add 192.168.0.3/24 dev eth1
+ ip link set down eth1
+ ip addr flush dev eth1
+
+# wlan0 - wan/5g
+ sysctl -w net.ipv4.conf.wlan0.rp_filter=1
+ sysctl -w net.ipv4.conf.wlan0.drop_gratuitous_arp=1
+ sysctl -w net.ipv6.conf.wlan0.autoconf=1
+ sysctl -w net.ipv6.conf.wlan0.accept_ra=2
+ ip link set up wlan0
+ ip addr add 192.168.0.3/24 dev wlan0
+ wpa_supplicant -sBi wlan0 -c "/etc/wpa_supplicant.conf"
+
+# wlan1 - wan/2g
+#sysctl -w net.ipv4.conf.wlan1.rp_filter=1
+#sysctl -w net.ipv4.conf.wlan1.drop_gratuitous_arp=1
+#sysctl -w net.ipv6.conf.wlan1.autoconf=1
+#sysctl -w net.ipv6.conf.wlan1.accept_ra=2
+#ip link set up wlan1
+#ip addr add 192.168.0.3/24 dev wlan1
+#wpa_supplicant -sBi wlan1 -c "/etc/wpa_supplicant.conf"
+ ip link set down wlan1
+ ip addr flush dev wlan1
+
+#
+
+# lan
+ brctl addbr lan
+ sysctl -w net.ipv4.conf.lan.rp_filter=1
+ sysctl -w net.ipv4.conf.lan.drop_gratuitous_arp=1
+ sysctl -w net.ipv6.conf.lan.autoconf=0
+ sysctl -w net.ipv6.conf.lan.accept_ra=0
+ ip link set up lan
+ ip addr add 192.168.1.1/24 dev lan
+ ip addr add fd00::1/64 dev lan
+ ip addr add fe80::1/64 dev lan
+
+# eth0 - lan/switch
+ sysctl -w net.ipv4.conf.eth0.rp_filter=1
+ sysctl -w net.ipv4.conf.eth0.drop_gratuitous_arp=1
+ sysctl -w net.ipv6.conf.eth0.autoconf=0
+ sysctl -w net.ipv6.conf.eth0.accept_ra=0
+ brctl addif lan eth0
+ ip link set up eth0
+
+# eth1 - wan/interface
+#sysctl -w net.ipv4.conf.eth1.rp_filter=1
+#sysctl -w net.ipv4.conf.eth1.drop_gratuitous_arp=1
+#sysctl -w net.ipv6.conf.eth1.autoconf=0
+#sysctl -w net.ipv6.conf.eth1.accept_ra=0
+#brctl addif lan eth1
+#ip link set up eth1
+
+#
+
+# wlan0 - 5g
+#sysctl -w net.ipv4.conf.wlan0.rp_filter=1
+#sysctl -w net.ipv4.conf.wlan0.drop_gratuitous_arp=1
+#sysctl -w net.ipv6.conf.wlan0.autoconf=0
+#sysctl -w net.ipv6.conf.wlan0.accept_ra=0
+#ip link set up wlan0
+#hostapd -B /etc/hostapd.5g
+
+# wlan1 - 2g
+#sysctl -w net.ipv4.conf.wlan1.rp_filter=1
+#sysctl -w new.ipv4.conf.wlan1.drop_gratuitous_arp=1
+#sysctl -w net.ipv6.conf.wlan1.autoconf=0
+#sysctl -w net.ipv6.conf.wlan1.accept_ra=0
+#ip link set up wlan1
+#hostapd -B /etc/hostapd.2g
+
+#
+
+sleep 1
+
+#ip route add default via 192.168.0.1 dev eth1
+ ip route add default via 192.168.0.1 dev wlan0
+
+#############
+
+touch /tmp/leases
+chown root:root /tmp/leases
+chmod 600 /tmp/leases
+udhcpd -S /etc/udhcpd.conf
+
+buttons
+
+############# 
+reset
+cat /etc/banner
+

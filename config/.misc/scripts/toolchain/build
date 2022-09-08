@@ -1,0 +1,56 @@
+#!/bin/sh
+#############
+usage(){ printf "\n${0} - ${1}\n\n -p package\n -s set\n -d download\n -u unpack\n -c configure\n -C compile\n -i install\n -h help\n\n";exit; }
+##############
+die(){ printf "${1}:${debug}";exit; }
+sigint(){ printf "sigint:${debug}"; }
+sigquit(){ printf "sigquit:${debug}";exit; }
+##############
+trap die SIGTERM EXIT
+trap sigint SIGINT
+trap sigquit SIGQUIT
+##############
+
+umask 077
+#############
+while getopts "b:s:ducCih" arg;do
+ case "${arg}" in
+  p) package="${OPTARG}";;
+  s) set="${OPTARG}";;
+  d) download="true";;
+  u) unpack="true";;
+  c) configure="true";;
+  C) compile="true";;
+  i) install="true";;
+  h) usage help;;
+  *) usage getopts;;
+ esac
+done
+#############
+[ "${#}" == "0" ] && usage "no input"
+#############
+[ -z "${package}"          ] && usage "no package"
+[ -f "${builds}/${package}" ] && usage "package does not exist"
+#############
+source ./builds/
+source ./functions/download
+source ./functions/unpack
+source ./functions/configure
+source ./functions/compile
+source ./functions/install
+#############
+
+for i in $(cat ${set});do
+
+done
+
+#############
+while read -r;do
+download
+unpack
+configure
+compile
+install
+done < links.toolchain
+#############
+

@@ -1,0 +1,61 @@
+
+#############
+
+#User dnsd
+
+ Log notice syslog
+ SyslogIdentityTag dnsd
+
+ CacheDirectory /tmp/storage/services/dnsd/cache
+ DataDirectory /tmp/storage/services/dnsd/data
+
+ ControlPort    0
+
+ DNSPort        127.0.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+ SOCKSPort      127.0.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+
+ DNSPort        172.16.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+ SOCKSPort      172.16.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+
+ HTTPTunnelPort 0
+ TransPort      0
+ NATDPort       0
+
+ RunAsDaemon               1
+ ClientUseIPv4             1
+ ClientUseIPv6             1
+ Sandbox                   1
+ NoExec                    1
+#DisableAllSwap            1
+ DisableDebuggerAttachment 1
+ SafeLogging               1
+ SafeSocks                 0
+ TestSocks                 0
+
+#############
+#ReachableAddresses accept *:443
+#############
+#EntryNodes {??}
+#ExitNodes  {??}
+#############
+#ExcludeNodes {??},{AU},{CA},{NZ},{GB},{US},{DK},{FR},{NL},{NO},{DE},{BE},{IT},{SE},{ES}
+#ExcludeExitNodes {??},{AU},{CA},{NZ},{GB},{US},{DK},{FR},{NL},{NO},{DE},{BE},{IT},{SE},{ES}
+#############
+#StrictNodes 1
+#############
+
+#############
+# https://check.torproject.org
+#############
+#   email: bridges@torproject.org
+# subject: empty
+# message: get transport obfs4
+#############
+# https://bridges.torproject.org/bridges?transport=obfs4
+#############
+#Sandbox 0
+#NoExec  0
+#UseBridges 1
+#ClientTransportPlugin meek_lite,obfs2,obfs3,obfs4,scramblesuit exec /usr/lib64/firefox/TorBrowser/Tor/PluggableTransports/obfs4proxy
+#############
+

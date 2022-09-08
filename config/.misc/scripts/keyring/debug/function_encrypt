@@ -1,0 +1,34 @@
+#!/bin/sh
+#############
+. ../bin/variables
+
+#############
+usage(){ printf "\n${0} - ${1}\n-i input\n-r root\n-p persistent\n-t tmp\n-h help\n\n";exit; }
+
+#############
+while getopts "i:rpth" arg;do
+ case "${arg}" in
+  i) input="${OPTARG}";;
+  r) key="../contacts/self/root.crt";;
+  p) key="../contacts/self/persistent.crt";;
+  t) key="../contacts/self/tmp.crt";;
+  h) usage "encrypt input";;
+  *) usage "encrypt input";;
+ esac
+done
+
+#############
+[[ -z "${key}"       ]] && usage "requires an encryption key"
+[[ -f "${input}"     ]] || usage "input does not exist"
+[[ -f "${input}.key" ]] && usage "input.key already exists"
+[[ -f "${input}.enc" ]] && usage "input.enc already exists"
+
+#############
+openssl x509 -pubkey -noout -in "${key}" > "${public_key}"
+ephemeral="$(openssl genpkey -algorithm ec -pkeyopt ec_paramgen_curve:brainpoolP512r1)"
+printf "%s" "${ephemeral}"|openssl ec -pubout -in /dev/stdin -out "${input}.key"
+secret="$(printf "%s" "${ephemeral}"|openssl pkeyutl -derive -inkey /dev/stdin -peerkey "${public_key}"|openssl sha384|cut -d' ' -f2)"
+openssl enc -e -salt -base64 -md sha512 -aes-256-cbc -iv "${secret:64:32}" -K "${secret:0:64}" -in "${input}" -out "${input}.enc"
+[[ -f "${input}.dgst" && ! -f "${input}.sig" ]] && 
+openssl enc -e -salt -base64 -md sha512 -aes-256-cbc -iv "${secret:64:32}" -K "${secret:0:64}" -in "${input}.dgst" -out "${input}.sig"
+

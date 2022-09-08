@@ -1,0 +1,14 @@
+#!/bin/sh
+#############
+
+name="linux"
+version="4.20.8"
+source="linux-4.20.8.tar.xz"
+signature="linux-4.20.8.tar.xz.sign"
+checksum="linux-4.20.8.tar.xz.checksum"
+package="linux-4.20.8.tar.gz"
+
+link_package="https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.20.8.tar.xz"
+link_signature="https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.20.8.tar.xz"
+
+#############

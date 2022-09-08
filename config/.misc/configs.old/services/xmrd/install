@@ -1,0 +1,9 @@
+#!/bin/sh
+#############
+. /etc/services/variables xmrd
+#############
+[ -f "${service_storage}/xmrd.conf" ] || install -o xmrd -g xmrd -m 0660 "${service_system}/files/xmrd.conf" "${service_storage}"
+[ -f "${service_storage}/xmrc.conf" ] || install -o xmrd -g xmrd -m 0660 "${service_system}/files/xmrc.conf" "${service_storage}"
+#############
+. /etc/services/permissions xmrd xmrd 0770 0660
+#############

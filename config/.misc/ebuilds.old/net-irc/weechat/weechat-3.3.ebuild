@@ -1,0 +1,68 @@
+#############
+EAPI=7
+#############
+DESCRIPTION="Portable and multi-interface IRC client"
+HOMEPAGE="https://weechat.org/"
+SRC_URI="https://weechat.org/files/src/${P}.tar.xz"
+#############
+LICENSE="GPL-3"
+SLOT="0/${PV}"
+KEYWORDS="amd64"
+IUSE=""
+RDEPEND="
+dev-libs/gmp
+dev-libs/libgcrypt
+dev-libs/libgpg-error
+dev-libs/libtasn1
+dev-libs/libunistring
+dev-libs/nettle
+dev-libs/openssl
+net-libs/gnutls
+net-misc/curl
+sys-libs/glibc
+sys-libs/ncurses
+sys-libs/zlib
+"
+DEPEND="${RDEPEND}"
+#############
+src_configure(){
+cmake \
+-DCMAKE_BUILD_TYPE:STRING=Release \
+-DCMAKE_INSTALL_PREFIX:PATH=/usr \
+-DENABLE_ALIAS:BOOL=OFF \
+-DENABLE_BUFLIST:BOOL=OFF \
+-DENABLE_CHARSET:BOOL=OFF \
+-DENABLE_CODE_COVERAGE:BOOL=OFF \
+-DENABLE_DOC:BOOL=OFF \
+-DENABLE_ENCHANT:BOOL=OFF \
+-DENABLE_EXEC:BOOL=OFF \
+-DENABLE_FIFO:BOOL=OFF \
+-DENABLE_FSET:BOOL=OFF \
+-DENABLE_GUILE:BOOL=OFF \
+-DENABLE_HEADLESS:BOOL=OFF \
+-DENABLE_IRC:BOOL=ON \
+-DENABLE_JAVASCRIPT:BOOL=OFF \
+-DENABLE_LARGEFILE:BOOL=ON \
+-DENABLE_LOGGER:BOOL=OFF \
+-DENABLE_LUA:BOOL=OFF \
+-DENABLE_MAN:BOOL=OFF \
+-DENABLE_NCURSES:BOOL=ON \
+-DENABLE_NLS:BOOL=OFF \
+-DENABLE_PERL:BOOL=OFF \
+-DENABLE_PHP:BOOL=OFF \
+-DENABLE_PYTHON:BOOL=OFF \
+-DENABLE_PYTHON2:BOOL=OFF \
+-DENABLE_RELAY:BOOL=OFF \
+-DENABLE_RUBY:BOOL=OFF \
+-DENABLE_SCRIPT:BOOL=OFF \
+-DENABLE_SCRIPTS:BOOL=OFF \
+-DENABLE_SPELL:BOOL=OFF \
+-DENABLE_TCL:BOOL=OFF \
+-DENABLE_TESTS:BOOL=OFF \
+-DENABLE_TRIGGER:BOOL=OFF \
+-DENABLE_TYPING:BOOL=OFF \
+-DENABLE_XFER:BOOL=OFF
+}
+#############
+src_install(){ default ; }
+#############

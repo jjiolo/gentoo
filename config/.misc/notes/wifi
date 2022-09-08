@@ -1,0 +1,107 @@
+
+network={
+ ssid="ssid"
+ mode=2
+ key_mgmt=WPA-PSK
+ psk="passphrase"
+ frequency=2437
+}
+
+01 2412
+02 2417
+03 2422
+04 2427
+05 2432
+06 2437
+07 2442
+08 2447
+09 2452
+10 2457
+11 2462
+12 2467
+13 2472
+14 2484
+
+#############
+iw dev wlan0 set 4addr on
+brctl addbr lan
+brctl addif lan wlan0
+wpa_supplicant -sBi wlan0 -c /tmp/.wpa_supplicant
+#############
+
+ sae_password= allows assigning multiple vlans based on nothing but password filtering 
+
+ turned off hostapd vlan support nothing currently supported it 
+
+#############
+
+ 5g automatic channel selection refused to work
+
+#############
+
+SAE testing
+
+hostapd.conf
+sae_password=passphrase|mac=ff:ff:ff:ff:ff:ff|vlanid=01|id=identifier
+
+wpa_supplicant.conf
+psk=
+sae_password=
+
+^ couldnt find psk equivilent without forcing radius
+
+* further more
+wpa_psk_file=/etc/users (mac psk < - space delimeted sae claims ff: wildcard blog claimed 00:)
+00:00:00:00:00:00 passphrase
+00:00:00:00:00:00 passphrase vlan.100
+
+* implied wpa2 would allow per passphrase vlan but couldnt find any reference to an example ?
+
+dynamic_vlan=1 (optional) 2 (required)
+
+#############
+
+wpa_key_mgmt SAE WPA-PSK-SHA256 WPA-PSK
+key_mgmt     SAE WPA-PSK-SHA256 WPA-PSK
+
+ieee80211w=2 force
+ieee80211w=1 use
+ieee80211w=0 disable
+cvs=1
+
+pmf < - protected management frames (ieee80211w above)
+ocv < - operating channel verification (cvs above)
+
+^ doesnt work
+
+#############
+
+ 80211a  deprecated
+ 80211b  wep only
+----------------------------------------------------------------
+|80211g |54MB   2.4GHz                      |20MHz  |          |
+|80211n |300MB  2.4GHz 5.0GHz               |40MHz  |3 antennas|
+|80211ac|866MB  2.4GHz 5.0GHz               |160MHz |4 antennas|
+|80211ax|3.5GHz 2.4GHz 5.0GHz 6.0GHZ        |160MHz |8 antennas|
+|80211ad|7.0GHz                      60.0GHZ|2160MHz|          |
+----------------------------------------------------------------
+
+^ usb2/usb3 split somewhere in there...
+  usb2 capping at 150mbs
+
+#############
+
+couldnt get wpa_supplicant priv_seperation to work !bail
+
+wpa_priv -Bc/tmp/wpa_supplicant nl80211:wlan0
+
+wpa_supplicant -Bi wlan0 -c /tmp/wpa_supplicant.conf -C /tmp/wpa_supplicant/wlan0 -G wheel -Dprivsep
+
+#############
+
+wpa_supplicant can operate in hotspot mode making it a weaker version of hostapd...
+
+^ that with multiplexed interface would be good for red teaming
+
+#############
+

@@ -1,0 +1,162 @@
+
+#############
+
+ transmission-daemon - doesnt attempt to connect if ping fails
+    transmission-gtk - doesnt care
+
+   transmission-show - displays web-seeds
+ transmission-create - doesnt support web-seeds
+
+#############
+
+ dropped opentracker for transmission lpd (multicast)
+
+#############
+
+ limits
+ global peer
+ torrent peer
+
+ restricted to file descriptors ?
+
+ 2000 maximum peers
+ 1000 leeches
+ 1000 seeds
+ or random distribution ?
+
+#############
+
+transmission - thirdparty directory is old as fuck...
+
+transmission
+https://github.com/transmission/transmission/releases/download/3.00/transmission-3.00.tar.xz
+
+libb64 -
+identical upstream and fork
+thirdparty mismatch
+https://downloads.sourceforge/project/libb64/libb64/libb64/libb64-1.2.1.zip
+https://github.com/transmission/libb64/archive/Release-1.2.1.tar.gz
+
+dht -
+identical upstream and fork
+thirdparty mismatch
+https://github.com/jech/dht/archive/dht-0.26.tar.gz
+https://github.com/transmission/dht/archive/dht-0.26.tar.gz
+
+libnatpmp -
+patched upstream in 2012 ? last upstream release 2015
+thirdparty mismatch
+http://miniupnp.free.fr/files/libnatpmp-20150609.tar.gz
+https://github.com/transmission/libnatpmp/archive/master.tar.gz
+
+libutp -
+https://github.com/bittorrent/libutp < - upstream claims its unstable and recommends bundling it with your own library
+https://github.com/transmission/libutp < - upstream fork
+thirdparty/libutp < - ancient ?
+
+^ all of those are disabled in the settings file
+
+-------------
+
+updated since the above was true ?
+
+configure -
+ offers the ability to external b64 / dht / natpmp
+ only allows enable or disable of utp
+
+cmake - 
+ offers the ability to system b64 / dht / event2? / upnpc / natpmp / utp
+
+* configure doesnt support qt ?
+  cmake does support qt ?
+* configure forces external miniupnpc
+* configure forces external libnatpmp
+
++ gentoo does   have an external libb64
+- gentoo doesnt have an external libdht
+- gentoo doesnt have an external libutp
+
+? assumption keep using configure
+
+#############
+tracker urls
+http://tracker.tld:6969/announce
+http://tracker.tld:6969/scrape
+http://tracker.tld:6969/scrape?info_hash=
+http://tracker.tld:6969/stats?mode=everything
+#############
+
+bencoding...
+
+strings  == 4:test      == test
+integers == i3e         == 3
+list     == l3:one3:twoe == [one,two]
+dict     == d3:one3:twoe == {one:two} (keys must be strings)
+
+mixed    == d3:onel3:two5:threeee == {'one':['two','three']}
+
+#############
+
+p2pd - operntracker+transmission
+
+opentracker4
+opentracker6
+transmission
+
+dht < - uses a hardcoded domain to bootstrap initial peers then maintains lists of seeders/leechers over clients
+pex < - peer exchanged lists of seeders/leechers (reduces load on the tracker after initial bootstrap)
+lpd < - uses multicast to tell everying on the lan what kinky furry pron your hosting... (generally a bad idea)
+
+/announce:checksum
+/scrape:checksum
+
+transmission-create -t http://tracker.tld:6969/announce /path/to/torrent
+transmission-remote -a torrent
+
+transmission-remote -t{all,1,2,3}
+transmission-remote -it --info-trackers
+transmission-remote -ip --info-peers
+transmission-remote -if --info-files
+transmission-remote -ip --info-pieces
+transmission-remote -s   # start
+transmission-remote -S   # stop
+transmission-remote -as  # enable  alt speed
+transmission-remote -AS  # disable alt speed
+transmission-remote -asd # alt speed down
+transmission-remote -asu # alt speed up
+transmission-remote -r   # remove torrents
+
+transmission-show -s torrent < - ask trackers how many seeds are present
+
+watch -tn3 transmission-remote 127.0.0.1 -l # prints current torrents info every 3 seconds
+
+while read;do transmission-remote 127.0.0.1 -a "${REPLY}";done < /tmp/magnets # read magnet links line by line from a file into transmission
+
+#############
+transmission only supports http:// not udp:// trackers
+#############
+
+http tracker protocol request
+ curl spareproject.uk.to:6969/announce?
+  info_hash=REQUIRED&
+  peer_id=REQIORED&
+  ip=OPTIONAL&
+  port=REQUIRED&
+  uploaded=REQUIRED&
+  downloaded=REQUIRED&
+  left=REQUIRED&
+  event=OPTIONAL{started,stopped,completed}
+  numwant=OPTIONAL&
+
+http tracker protocol response
+ failure_reason=OPTIONAL
+ interval=REQUIRED
+ complete=OPTIONAL
+ incomplete=OPTIONAL
+ peers=REQIURED
+  peer_id=REQUIRED
+  ip=REQUIRED
+  port=REQUIRED
+
+#############
+

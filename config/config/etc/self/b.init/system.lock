@@ -1,0 +1,11 @@
+
+#############
+size="$(df -P|awk '/^rootfs/{print$3}')k"
+#############
+mount -o remount,ro,nodev,suid,exec,noatime,size="${size}" /
+#############
+nft -f /etc/nftables.locked
+#############
+sysctl -w net.ipv4.ip_unprivileged_port_start=32768
+#############
+

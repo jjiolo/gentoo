@@ -1,0 +1,11 @@
+#!/bin/sh
+#############
+usage(){ printf "%s\n" "takes rootfs and initramfs full paths (from - > to) - ${1}" ; exit 1 ; }
+#############
+[ "${#}" == "2" ] || usage "no input"
+#############
+[ -d "${1}" ] || usage "rootfs does not exist"
+[ -e "${2}" ] && usage "initramfs already exists"
+#############
+cd "${1}" && find . -print0 | cpio -ovH newc | gzip > "${2}"
+#############

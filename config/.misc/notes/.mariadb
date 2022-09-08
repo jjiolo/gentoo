@@ -1,0 +1,157 @@
+#############
+explain ; into outfile 'file' fields terminated by ','
+#############
+master-master-master
+every node gets an offset
+all new writes are staggered allowing a single file
+/insert race conditions
+#############
+master-slave-slave
+hanging multiple slaves from a master increases the latency per box
+daisy chaining slaves from a master reduces the latency per box
+#############
+server_offset
+binlog < - file used to sync slaves
+relaylog < - file slave reads
+#############
+write input updates binlog gtid
+relaylog updates binlog gtid
+#############
+sharding - column vs row split
+#############
+mariadb as rsyslogd backend -
+needs a default script set for lookups
+index lookup server side safe values
+grep lookup rows after seleting timeframe/host
+#############
+change master <connection> to master_host=, master_user=, master_password=
+flush relay logs <connection>
+master_pos_wait <connection>
+reset slave <connection>
+show relaylog <connection> events
+show slave <connection> status
+show all slaves status
+start slave
+stop all slaves
+stop slave <connection>
+stop all slaves
+#############
+show all slaves status;
+show master logs;
+#############
+multi master
+auto-increment-offset
+SET GLOBAL gtid_ignore_duplicates=ON;
+#############
+syncing the user auth table across all nodes ?
+implies fixed user creds and permissions across all boxes... not overly flexible
+#############
+multiple db servers with full table sync or duplicate master/master/master per tables across more nodes ?
+#############
+
+ mysql_install_db --user=mysql
+ mysql_secure_installation
+
+ mysql -u root -p --execute ""
+ install plugin unix_socket soname 'auth_socket';
+ update mysql.user set plugin='unix_socket' where User='root';
+ update mysql.user set Password='' where User='root';
+ create user mysql identified via 'unix_socket';
+ grant all on *.* to mysql;
+ update mysql.user set Grant_priv='Y' where User='mysql';
+ grant replication slave on *.* to 'slave'@'%' identified by 'passphrase';
+
+ read-only
+  grant select, show_view on *.* to user;
+
+ create database database0;
+ use database0;
+ create table table0 (id int(13) not null auto_increment, data varchar(32) not null, primary key (id));
+ insert into table0 (data) values (test);
+ update table0 set data='changed' where id='1';
+ delete from table0 where id='11';
+ drop table table0;
+ drop database database0;
+
+ mysql --user --password --execute --database
+ select user();
+ show databases;
+ use <database>;
+ create <database>;
+ show tables;
+ describe <table>;
+ show index from <table>;
+ show full processlist;
+ show open tables;
+
+#############
+
+ master/master all tables...
+
+ datadir = master.info
+ logdir = relay.info
+
+ change master to master_host="", master_user="", master_password="" < - can be set regardless of running slave
+
+ master/master -
+ flush tables with read lock;
+ show master status;
+ stop slave;
+ change master to master_log_file='', master_log_pos='';
+ start slave;
+ unlock tables;
+ show slave status;
+
+ master/slave -
+
+ mysqldump --opt --user root --all-databases --master-data > database.sql (includes CHANGE MASTER TO MASTER_LOG_FILE='bin.000000', MASTER_LOG_POS=1234;)
+ ^ implies the entry already exists ?
+ mysql --user root <database> < datebase.sql (list of statements to recreate a table... create table if not exists, drop table if exists)
+ ^ implies seperate mysql.user and doesnt remove existing data
+
+ mysqldump --opt --all-databases --master-data > database.sql (can only sync mysql.user across master master)
+ mysqldump --opt --databases mysql database0 database1 database2 --master-data > database.sql (cant sync mysql.user to slaves)
+
+#############
+
+/etc/my.cnf
+
+ [mysql]
+
+  pager=less -SFX
+
+  auto-vertical-output
+
+ [mysqld]
+
+  datadir =
+
+  socket = 
+  bind-address = 
+
+  server-id = 
+
+  log-bin = 
+  log-bin-index = 
+  log-slave-updates = 
+
+  log-error = 
+  log-slow-queries = 
+
+  relay-log = 
+  relay-log-index = 
+  relay-log-info-file = 
+
+  auto_increment_increment = 
+  auto_increment_offset = 
+
+  symbolic_links = 0
+
+  replicate-ignore-db=mysql
+  binlog-ignore-db=mysql
+
+  binlog-do-db=
+  binlog-do-db=
+
+#############
+

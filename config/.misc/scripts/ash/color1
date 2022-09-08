@@ -1,0 +1,9 @@
+#!/bin/sh
+#############
+
+while :;do
+
+ printf "\033[38;5;$(shuf -i0-256 -n1)m$(tr -cd 'a-zA-Z0-9'</dev/urandom|head -c1)\033[0m"
+
+done
+

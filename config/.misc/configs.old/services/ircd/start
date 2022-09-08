@@ -1,0 +1,8 @@
+#!/bin/sh
+#############
+. /etc/services/ircd/install
+#############
+ngircd --config "${service_storage}/ngircd.conf"
+#############
+renice +10 -u "ircd"
+#############

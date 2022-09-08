@@ -1,0 +1,14 @@
+#!/bin/sh
+#############
+
+ install -d -o 0 -g 0 -m 0775 "/binhost/portage" && cd "/binhost/portage"
+
+ umask 0022
+
+ [ -d ".git" ] && git pull
+
+ [ -d ".git" ] || git clone --depth=1 https://anongit.gentoo.org/git/repo/gentoo.git /binhost/portage
+
+ umask 0077
+
+#############

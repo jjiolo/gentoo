@@ -1,0 +1,158 @@
+
+#############
+
+[chroot hardening]
+
+ delete busybox binary after stand alone shell loads
+ exec prefers applets < - refer to /proc/self/exe before trying PATH
+ standalone shell < - refer to /proc/self/exe before trying PATH
+ rm -rf /bin/busybox ; exec <service> </dev/null &>/dev/null
+ leaves the program running in a chroot with no other commands available
+
+#############
+busybox with unix_sockets - nc -lks local:/dev/shm/socket -e dbclient user@172.16.0.1 nc local:/dev/shm/socket
+#############
+
+[login/password management utilities]
+
+ support shadow passwords
+
+ use internal password and group functions rather than system functions 
+  use internal shadow password functions
+
+ use internal crypt functions
+  enable sha256/512 crypt functions
+
+ ^ links to glibc even if its not used ?
+   ie use built in over external || remove built in and external
+
+ ! couldnt figure it out so enabled anything
+   prefering internal libs over linking externally...
+
+#############
+0 0 1 1 * year
+0 0 1 * * month
+0 0 * * 0 week
+0 0 * * * day
+0 * * * * hour
+* * * * * minute
+m h d m w
+i o a o e
+n u y n e
+u r   t k
+t     h
+e
+#############
+
+#############
+taskset   - lock processes to cores
+nice      - runs a program with modified scheduling priority
+renice    - alters the scheduling priority of one or more running processes
+ionice    - set program io scheduling class and priority
+chrt      - manipulate real-time attributes of a process
+choom     - echo 123 > /proc/1/oom_score_adj -999 unlikerly to be killed 1000 likely to be killed
+#############
+
+-------------
+
+ [tasket]
+
+  taskset -p <hexmask> <pid>
+  taskset    <hexmask> <prog> <args>
+
+  cat /proc/$$/status | grep -e Cpus_allowed
+
+-------------
+
+ [nice/renice]
+
+     ulimits -e {0-39} # scheduling priority
+ renice -n +1 -u $USER # incrementing allowed                 (reduces  scheduling priority)
+ renice -n -1 -u $USER # decrementing allowed upto ulimits -e (increase scheduling priority)
+
+------------- 
+
+ [ionice]
+
+ ionice -p <pid> < - display priority
+
+ ionice -c 1 -n {0-7} -p $$ < - root only real time
+ ionice -c 2 -n {0-7} -p $$ < - none root best effort
+ ionice -c 3          -p $$ < - none root idle
+
+ defaults to best-effort priority 4
+
+ if unassigned derives priority from process nice level
+
+ io_priority = nice + 20 / 5
+
+-------------
+
+ [chrt]
+
+     RR chrt -pr (1-99) -p $$ NICE: -   PRIORITY: 1(41) 99(139) root only
+   FIFO chrt -pf (1-99) -p $$ NICE: -   PRIORITY: 1(42) 99(139) root only
+  OTHER chrt -po (0)    -p $$ NICE: -20 PRIORITY: 0(39)         none root
+  BATCH chrt -pb (0)    -p $$ NICE: -20 PRIORITY: 0(39)         none root
+   IDLE chrt -pi (0)    -p $$ NICE: -   PRIORITY: 0(39)         none root
+
+  ulimits -r 30 # realtime priority
+ chrt -pr 29 $$ # true
+ chrt -pr 31 $$ # fail
+
+^ realtime priority allows changing rr || fifo from 1-99 (auto appending +39 from nice)
+
+-------------
+
+ [choom]
+
+  display and adjust oom-killer score
+
+  echo 123 > /proc/1/oom_score_adj
+
+  -999 unlikely to be killed
+  1000 likely to be killed
+
+#############
+
+[ busybox_init ]
+
+ /init - > /etc/inittab - > /etc/init - > /etc/profile
+
+     umask - sanity check
+ variables - global
+       PS1 - unique to ${USER} shell prompt
+       set - control default shell options
+   ulimits - default pid limits unique to ${USER}
+    renice - default nice levels unique to ${USER}
+   aliases - global
+ functions - global
+
+   root:
+desktop: input:/dev/input video:/dev/dri
+   toor: audio:/dev/snd
+
+#############
+
+[busybox]
+
+ runparts
+ uevent - listen for device creation
+ acpid - listen for hardware interupts from devices
+
+ mkswap swapon swapoff
+ hdparm
+ rfkill
+
+ findfs LABEL=testing || mount LABEL=testing
+^ implies handling || false
+
+#############
+
+* drop chrt and not using realtime or priority over 39 ?
+* drop ionice ?
+  allows single user to prioritise its own pids ?
+  allows single user to steal diskio from other users ?
+^ or only competing inside its own nice level restrcitions
+
+#############

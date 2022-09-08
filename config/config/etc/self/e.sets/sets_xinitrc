@@ -1,0 +1,9 @@
+
+#############
+
+setxkbmap gb &
+
+exec sleep infinity
+
+#############
+

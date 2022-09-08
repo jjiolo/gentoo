@@ -1,0 +1,15 @@
+#!/bin/sh
+#############
+
+name="gmp"
+version="6.1.2"
+source="gmp-6.1.2.tar.xz"
+signature="gmp-6.1.2.tar.xz.sig"
+checksum="gmp-6.1.2.tar.xz.checksum"
+public_key="https://ftp.gnu.org/gnu/gnu-keyring.gpg"
+package="gmp-6.1.2"
+
+link_package="https://ftp.gnu.org/gnu/gmp/gmp-6.1.2.tar.xz"
+link_signature="https://ftp.gnu.org/gnu/gmp/gmp-6.1.2.tar.xz"
+
+#############

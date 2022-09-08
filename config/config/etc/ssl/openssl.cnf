@@ -1,0 +1,63 @@
+
+#############
+[ req ]
+distinguished_name = req_distinguished_name
+string_mask        = utf8only
+default_md         = sha512
+encrypt_key        = no
+#############
+[ req_distinguished_name ]
+commonName       = Common Name
+commonName_max   = 64
+emailAddress     = Email Address
+emailAddress_max = 64
+#############
+[ authority_extension ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = critical,CA:true,pathlen:0
+keyUsage               = critical,keyCertSign
+#############
+[ certificate_extension ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = critical,CA:false
+keyUsage               = critical,keyAgreement,keyEncipherment
+#############
+[ certificate_policy ]
+countryName             = optional
+stateOrProvinceName     = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+#############
+[ ssl ]
+certs          = ${ENV::HOME}/.ssl/.certs
+new_certs_dir  = ${ENV::HOME}/.ssl/.certs
+database       = ${ENV::HOME}/.ssl/.database
+serial         = ${ENV::HOME}/.ssl/.serial
+RANDFILE       = ${ENV::HOME}/.ssl/.rand
+certificate    = ${ENV::HOME}/.ssl/ssl.crt
+private_key    = ${ENV::HOME}/.ssl/ssl.pem
+default_md     = sha512
+name_opt       = ca_default
+cert_opt       = ca_default
+preserve       = no
+unique_subject = no
+#############
+[ ssld ]
+certs          = ${ENV::HOME}/.ssl/.certs
+new_certs_dir  = ${ENV::HOME}/.ssl/.certs
+database       = ${ENV::HOME}/.ssl/.database
+serial         = ${ENV::HOME}/.ssl/.serial
+RANDFILE       = ${ENV::HOME}/.ssl/.rand
+certificate    = ${ENV::HOME}/.ssl/ssld.crt
+private_key    = ${ENV::HOME}/.ssl/ssld.pem
+default_md     = sha512
+name_opt       = ca_default
+cert_opt       = ca_default
+preserve       = no
+unique_subject = no
+#############
+

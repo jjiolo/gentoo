@@ -1,0 +1,104 @@
+#!/bin/sh
+#############
+umask 077
+
+############# cleanup
+
+rm -r /etc/modules-boot.d
+rm -r /etc/modules.d
+rm -r /etc/rc.d
+rm -r /etc/sysctl.d
+
+rm -r /lib/network
+
+rm -r /usr/bin
+
+rm -r /usr/lib/opkg
+
+rm -r /var
+
+############# ulimit
+ulimit -f 14680064  # file size (blocks)
+ulimit -t unlimited # cpu time (seconds)
+ulimit -d unlimited # data seg size (kb)
+ulimit -s 8192      # stack size (kb)
+ulimit -c 0         # core file size (blocks)
+ulimit -m unlimited # resident set size (kb)
+ulimit -l 64        # locked memory (kb)
+ulimit -p 23        # processes
+ulimit -n 1024      # file descriptors
+ulimit -v unlimited # address space (kb)
+ulimit -w unlimited # locks
+ulimit -e 0         # scheduling priority
+ulimit -r 0         # real-time priority
+
+############# filesystem
+mount -t proc -o rw,nodev,nosuid,noexec,noatime,hidepid=2 proc /proc
+mount -o remount,hidepid=2 /proc
+mount -t sysfs -o rw,nodev,nosuid,noexec,noatime sysfs /sys
+mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime,size=0 devtmpfs /dev
+mkdir -p /dev/pts
+mount -t devpts -o ro,dev,nosuid,noexec,noatime,mode=0600 devpts /dev/pts
+mount -t tmpfs -o rw,nodev,nosuid,noexec,noatime,size=7% tmpfs /tmp
+#############
+mount -o remount,ro,nosuid,noatime,size="$(df|awk 'NR==2{print$3}')k" /
+
+############# # modules - hahahahahahahahahahahaha seriously tho
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+for i in /lib/modules/$(uname -r)/*;do insmod $i;done
+
+############# logs
+syslogd -SDC1000
+klogd
+
+############# # sysctl
+sysctl -p /etc/sysctl.conf
+
+############# # network
+
+echo 'openwrt' > /proc/sys/kernel/hostname
+echo 'localdomain' > /proc/sys/kernel/domainname
+
+ip link set up eth0
+swconfig dev rtl8366rb set reset
+swconfig dev rtl8366rb set enable_vlan 1
+swconfig dev rtl8366rb vlan 1 set ports '2 3 4 5t'
+swconfig dev rtl8366rb vlan 2 set ports '0 5t'
+swconfig dev rtl8366rb vlan 3 set ports '1 5t'
+swconfig dev rtl8366rb set apply
+vconfig add eth0 1
+vconfig add eth0 2
+vconfig add eth0 3
+
+sysctl -p /etc/sysctl.conf # reapply rules to new interfaces
+
+nft -f /etc/nftables.rules
+
+ip addr add 127.0.0.1/8 dev lo brd + scope host
+ip route add 127.0.0.0/8 dev lo scope host
+ip link set up lo
+
+ip link set up eth0.1
+ip addr add 192.168.1.1/24 dev eth0.1
+ip addr add fd01::1/64 dev eth0.1
+
+ip link set up eth0.2
+ip addr add 192.168.0.193/24 dev eth0.2
+
+ip link set up eth0.3
+ip addr add 192.168.3.1/24 dev eth0.3
+ip addr add fd03::1/64 dev eth0.3
+
+ip route add default via 192.168.0.1
+
+############# # services
+radvd -C /etc/radvd.conf -u radvd -p /tmp/radvd.pid
+telnetd -b 192.168.3.1:23 -f /etc/banner -l /sbin/ffs
+
+############# # gpio
+printf "%s\n" "7" > /sys/class/gpio/export
+buttons
+

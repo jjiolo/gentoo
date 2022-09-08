@@ -1,0 +1,33 @@
+#!/bin/sh
+#############
+. variables
+
+#############
+usage(){ printf "\n${0} - ${1}\n-i input\n-r root\n-p persistent\n-t tmp\n-h help\n\n";exit; }
+
+#############
+while getopts "i:rpth" arg;do
+ case "${arg}" in
+  i) input="${OPTARG}";;
+  r) key="root";;
+  p) key="persistent";;
+  t) key="tmp";;
+  h) usage "sign input";;
+  *) usage "sign input";;
+ esac
+done
+
+#############
+[[ -z "${key}" ]] && usage "requires a signing key"
+[[ -f "${input}" ]] || usage "input does not exist"
+[[ -f "${input}.dgst" ]] && usage "input.dgst already exists"
+
+#############
+contact_variables "self"
+contact_verify||usage "${debug}"
+
+#############
+[[ "${key}" == "root"       ]] && { openssl dgst -sha512 -sign "${root_pem}"       -out "${input}.dgst" "${input}" || rm "${input}.dgst"; }
+[[ "${key}" == "persistent" ]] && { openssl dgst -sha512 -sign "${persistent_pem}" -out "${input}.dgst" "${input}" || rm "${input}.dgst"; }
+[[ "${key}" == "tmp"        ]] &&   openssl dgst -sha512 -sign "${tmp_pem}"        -out "${input}.dgst" "${input}"
+

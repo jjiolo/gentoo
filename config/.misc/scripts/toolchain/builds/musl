@@ -1,0 +1,15 @@
+#!/bin/sh
+#############
+
+name="musl"
+version="1.1.21"
+source="musl-1.1.21.tar.gz"
+signature="musl-1.1.21.tar.gz.asc"
+checksum="musl-1.1.21.tar.gz.checksum"
+public_key="https://www.musl-libc.org/musl.pub"
+package="musl-1.1.21.tar.gz"
+
+link_package="https://musl-libc.org/releases/musl-1.1.21.tar.gz"
+link_signature="https://musl-libc.org/releases/musl-1.1.21.tar.gz"
+
+#############

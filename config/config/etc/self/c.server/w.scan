@@ -1,0 +1,34 @@
+#!/bin/sh
+#############
+usage(){ printf "\n${0} - ${1}\n\n takes interface\n\n" ; exit ; }
+#############
+[ "${#}" == "1" ] || usage "no input"
+[ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
+#############
+export BSS="BSS" SSID=" SSID" CHANNEL=" CHANNEL" SIGNAL=" SIGNAL" AUTH=" AUTH"
+#############
+ip link set up "${1}"
+#############
+iw dev "${1}" scan | while read -r;do
+
+ [ "${REPLY:0:4}" == "BSS " ] && {
+
+  until [ "${#BSS}" -gt "16" ];do BSS="${BSS} ";done
+  until [ "${#SSID}" -gt "31" ];do SSID="${SSID} ";done
+  until [ "${#CHANNEL}" -gt "12" ];do CHANNEL="${CHANNEL} ";done
+  until [ "${#SIGNAL}" -gt "12" ];do SIGNAL="${SIGNAL} ";done
+
+  printf "%s\n" "${BSS:0:17}:${SSID:0:32}:${CHANNEL:0:13}:${SIGNAL:0:13}:${AUTH}"
+
+  unset BSS SIGNAL CHANNEL AUTH;
+
+ }
+
+ [ "${REPLY:0:4}" == "BSS " ] && BSS="${REPLY:4:17}"
+ [ "${REPLY:1:6}" == "SSID: " ] && SSID="${REPLY##*:}"
+ [ "${REPLY:1:18}" == "DS Parameter set: " ] && CHANNEL="${REPLY##*:}"
+ [ "${REPLY:1:8}" == "signal: " ] && SIGNAL="${REPLY##*:}"
+ [ "${REPLY:5:23}" == "Authentication suites: " ] && AUTH="${AUTH}${REPLY##*:}"
+
+done
+#############

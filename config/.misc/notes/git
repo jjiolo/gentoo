@@ -1,0 +1,203 @@
+
+#############
+
+ [busybox httpd + git]
+
+  # setup bare repository and working directory
+   git init --bare /srv/git
+   git clone --depth=1 file:///srv/git $HOME/git
+   echo first >> $HOME/git/README.md
+   GIT_DIR=$HOME/git/.git git add -A
+   GIT_DIR=$HOME/git/.git git commit -m first
+   GIT_DIR=$HOME/git/.git git push
+
+  # add git-http-backend to any .git executable
+   httpd.conf - *.git:/usr/libexec/git-core/git-http-backend
+
+  # basic_auth (allows git push with REMOTE_USER AUTH_TYPE)
+   httpd.conf - /cgi-bin/project.git:root:password
+
+  # allow git push (none authenticated)
+   printf "\n%s\n\n%s\n\n" "[http]" "receivepack = true" > .git/config
+
+  # create project.git
+   install -o root -g root -m 0600 /dev/null webroot/cgi-bin/project.git
+
+  # start httpd
+  env -i GIT_PROJECT_ROOT=/srv/git GIT_HTTP_EXPORT_ALL= /sbin/httpd -p 80 -h webroot -c config
+
+  # remote access
+  git clone http://root:password@127.0.0.1/cgi-bin/project.git
+  echo second >> project/README.md
+  git add -A
+  git commit -m second
+  git push
+
+ [variables]
+
+  GIT_DIR --git-dir=/tmp/git
+  GIT_PROJECT_ROOT
+  GIT_HTTP_EXPORT_ALL - export all directories
+  .git/git-daemon-export-ok - export directories with magic file
+
+-------------
+dumb_http - mv .git/hooks/post-update.sample .git/hooks/post-update
+-------------
+
+gitweb - tar xf git.tar.gz && cd git/gitweb && make gitweb && make install-gitweb
+
+-------------
+
+umask 0022 ; git init --bare /tmp/git ; umask 0077
+
+printf "%s\n" "chmod -R 0755 /tmp/git" >> /tmp/git/hooks/post-update
+
+* strict umask leaves git in no read at all state ?
+
+-------------
+
+#############
+
+ [multiplayer]
+
+  /tmp/storage/.git gitd:gitd 1775 -
+
+  gitd group can create new repositories as user:project_group || user:gitd
+
+  3 admins with gitd write
+  3 admins with project write
+  3 underlings with read only and patch submission
+
+  public 
+
+   1775 - 
+   0755 -
+
+  private
+
+   1770 -
+   0750 -
+
+#############
+=============
+git hooks
+=============
+commit
+ pre-commit
+ prepare-commit
+ commit-msg
+ post-commit
+email
+ format-patch
+ applypatch-msg
+ pre-applypatch
+ post-applypatch
+other
+ pre-rebase
+ post-rewrite
+ post-checkout
+ post-merge
+ pre-push
+server
+ pre-receive
+ update
+ post-receive
+=============
+find . -type f -exec openssl sha512 {} \; | sort | gpg --detach-sign --output /tmp/manifest
+find . -type f -exec openssl sha512 {} \; | sort | gpg --verify /tmp/manifest -
+=============
+#############
+
+[cheat sheet]
+
+#############
+
+git init --bare "/tmp/git/bare"
+
+git clone --depth=1 "file:///tmp/git/bare" "/tmp/git/working_directory"
+
+#############
+
+### git clone ( git fetch && git merge )
+git clone --depth 1 ssh:// http:// file://                    # shallow clone master
+git clone --depth 1 ssh:// http:// file:// -b <branch>        # shallow clone branch
+git clone --depth 1 ssh:// http:// file:// --no-single-branch # shallow clone all branches
+
+### git pull ( git fetch && git merge )
+git stash      # hide changes
+git pull
+git stash list # view saved edits
+git stash pop  # add changes
+git stash drop # delete changes
+
+### git fetch
+git fetch
+git fetch --depth 1 --all
+
+### git merge
+git merge
+
+### git push
+git push -all # push all local branches to the remote repository
+
+#############
+git add . -u          # add files and update (removes deleted)
+git commit -m message # make new commit from added files
+git push              # push new commit to upstream
+#############
+git log     # commit history
+git status  # files added since last commit
+git diff    # diff since last commit
+#############
+git reset --hard origin/master # revert back to master
+git reset --hard <commit>      # revert back to given commit
+git reset --hard               # revert back to last commit
+#############
+git remote -v             # list all remote repositories
+git branch -a             # list all branches
+git tag -l                # list all tags
+git fetch remote <branch> # fetch branch from upstream
+git branch new_branch     # create new branch
+git checkout new_branch   # point HEAD to new_branch
+git add . -u              # add files to branch
+git commit -m 'branch'    # commit the branch
+git checkout master       # revert to master
+git merge new_branch      # merge branch into master
+git -d origin new_branch  # delete the new branch
+git push -d new_branch    # delete remote branch
+#############
+
+### git rebase
+git rebase
+
+^ assuming ability to merge multiple diff checksums into a single checksum ?
+
+#############
+
+### git tags
+### alias to commit hash
+### directory full of tags that reference a specific commit
+### changing branch should still show tags if they exist in that specific branch ?
+### eg branch, add, commit, create_tag, revert to master, tag exists for none existing commit
+
+git fetch --all --tags --prune # pull all tags
+
+git tag v0.0.1 # create a new tag (for current HEAD commit hash)
+git tag v0.0.2 -am 'annotate the release'
+
+git tag -l             # view tags
+git checkout tag/<tag> # change head to tagged commit
+
+git push origin v0.0.2 # push tag upstream
+git push origin --tags # push all tags upstream
+
+#############
+
+# force sync upstream
+
+  git fetch --all
+
+  git reset --hard origin/master
+
+#############
+

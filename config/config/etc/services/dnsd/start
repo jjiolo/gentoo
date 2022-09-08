@@ -1,0 +1,10 @@
+#!/bin/sh
+#############
+. /etc/services/dnsd/install
+#############
+sysctl -w net.ipv4.ip_unprivileged_port_start=0
+su -l -s /bin/ash -c "exec dnsd -f ${service_storage}/config </dev/null &>/dev/null & exit" dnsd ; sleep 1
+sysctl -w net.ipv4.ip_unprivileged_port_start=32768
+#############
+renice -10 -u "dnsd"
+#############

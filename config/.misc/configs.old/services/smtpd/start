@@ -1,0 +1,23 @@
+#!/bin/sh
+#############
+. /etc/services/smtpd/install
+#############
+install -d -o 0    -g 0    -m 0711 "${service_storage}"
+install -d -o 25   -g 25   -m 0700 "${service_storage}/inbox"
+install -d -o 2525 -g 0    -m 0700 "${service_storage}/incoming"
+install -d -o 0    -g 2525 -m 0770 "${service_storage}/offline"
+install -d -o 2525 -g 0    -m 0700 "${service_storage}/purge"
+install -d -o 2525 -g 0    -m 0700 "${service_storage}/queue"
+install -d -o 2525 -g 0    -m 0700 "${service_storage}/temporary"
+#############
+install -d -o 0 -g 0 -m 0700 "${service_storage}/inbox/public"
+install -d -o 0 -g 0 -m 0700 "${service_storage}/inbox/private"
+install -d -o 0 -g 0 -m 0700 "${service_storage}/inbox/junk"
+#############
+smtpd -f "${service_storage}/smtpd.conf"
+#############
+until [ -S "${service_storage}/smtpd.sock" ] ; do sleep .3 ; done
+#############
+renice +10 -u "smtpd"
+renice +10 -u "smtpq"
+#############

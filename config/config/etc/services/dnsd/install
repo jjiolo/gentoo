@@ -1,0 +1,12 @@
+#!/bin/sh
+#############
+. /etc/services/variables dnsd
+#############
+[ -f "${service_storage}/config" ] || install -o dnsd -g dnsd -m 0600 "${service_system}/files/config" "${service_storage}"
+#############
+printf "%s\n" "nameserver 127.0.0.1" > /etc/resolv.conf
+chown root:root /etc/resolv.conf
+chmod 0664 /etc/resolv.conf
+#############
+. /etc/services/permissions dnsd dnsd 0700 0600
+#############

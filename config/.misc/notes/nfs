@@ -1,0 +1,257 @@
+
+fucked ?
+
+ notes say (no)crossmnt and (no)hide dont apply to nfsv4...
+
+^ total bollox...
+
+  first test included hide and nocrossmnt then left 
+
+
+#############
+
+ net-fs/nfs-utils
+ dev-libs/libevent
+ sys-libs/glibc
+
+ net-libs/libtirpc - mountd (not installed, required to build)
+ sys-apps/keyutils - nfsidmap (not installed, required to build)
+
+#############
+
+[kernel]
+
+ networking options
+  CONFIG_IP_PNP - ip: kernel level autoconfiguration
+  CONFIG_IP_PNP_DHCP - ip: dhcp support
+  CONFIG_DNS_RESOLVER - dns resolver support
+
+ file systems 
+  CONFIG_NETWORK_FILESYSTEMS - network file systems
+  CONFIG_NFS_FS - nfs client support
+  CONFIG_NFS_V4 - nfs client support for nfs version 4
+  CONFIG_ROOT_NFS - root file system on nfs
+  CONFIG_NFS_DISABLE_UDP_SUPPORT - nfs: disable nfs udp protocol support
+  CONFIG_NFSD - nfs server support
+  CONFIG_NFSD_V4 - nfs server support for nfs version 4
+
+ file systems
+  CONFIG_FSCACHE - general filesystem local caching manager
+  CONFIG_NFS_FSCACHE - provide nfs client caching support
+
+ root=/dev/nfs nfsroot=172.16.0.1:/,vers=4,<options> ip=dhcp
+ /proc/net/pnp
+ /proc/net/ipconfig/ntp_servers
+
+#############
+
+ mount -t nfsd nfsd /proc/fs/nfsd
+ install -d -o root -g root -m 0700 /dev/null /run/nfsd
+ install    -o root -g root -m 0600 /dev/null /run/nfsd/etab
+ install    -o root -g root -m 0600 /dev/null /run/nfsd/exports
+
+ exportfs -rv
+ exportd -s /run/nfsd
+ nfsd -N3 -V4 -N4.1 -N4.2 --no-udp --tcp --port 2049 --syslog 4
+
+ mount -t nfs4 domain.tld:/path /path
+
+#############
+
+[binaries]
+
+          nfsd* - main binary to start/stop nfs in the kernel
+       exportd* - v4 only version of mountd (authentication checks incoming ip and path against etab)
+      exportfs* - reads exports into etab and updates kernel export table
+
+        nfsconf - reads nfs.conf and prints it back out ?
+        nfsstat - display statistics kept about nfs client and server activity
+      showmount - show mount information for targer ip/host (v3 only)
+
+     rcp.mountd - checks incoming ip and path against etab (rmtab and mountstat are v3 only)
+      rpc.statd - monitor reboots and handle file locking (nfsv4 is stateful doesnt require it)
+      sm-notify - monitor reboots and handle file locking (nfsv4 is stateful doesnt require it)
+     rcp.idmapd - converts uid gid to names (claims only needed server side v4) (assuming gss/kerberos related)
+       nfsidmap - converts uid gid to names (client side version of rpc.imapd v4) (assuming gss/kerberos related)
+
+      nfsrahead - intended to be used with udev ? sets read ahead size
+
+         rpcgen - assuming nfs2 / nfs3 (compiles a c like language into executables ?)
+       rpcdebug - set and clear nfs and rpc kernel debug flags
+
+     mountstats - python script ?
+      nfsdclnts - python script ?
+      nfsiostat - python script ?
+         rpcctl - python script ?
+    start-statd - shell script ?
+
+[files]
+
+ exports - list of paths and addresses to export
+ idmapd.conf - unused ?
+ nfs.conf - unused ? (mostly [command] seperate lists of default config options)
+
+#############
+
+ [exportfs]
+
+man exportfs.8 - command
+man exports.5 - file
+
+-d --debug <all|auth|call|general|parse>
+-a (export or unexport all directories in /etc/exports)
+-o (options list see below)
+-i (ignore /etc/exports (add export via cli only))
+-r (reexport all directories, sync exports with etab)
+-u (unexport one or more directories)
+-f (flush everything out of the kernels export table)
+-v (verbose)
+-s (display current export list (/etc/exports))
+
+ exportfs -av  # add entries in exports to etab
+ exportfs -rv  # sync exports with etab (removes old entries)
+ exportfs -auv # remove exports from etab
+
+^ possibility of stale entries in etab not visable in exports...
+
+ /etc/exports
+
+ /exports *(options)
+ /exports localhost(options)
+ /exports 127.0.0.1(options)
+ /exports 127.0.0.0/8(options)
+ /exports 127.0.0.1,127.0.0.1(options)
+
+options:
+
+ defaults: sec=sys,secure,ro,sync,wdelay,hide,no_subtree_check,root_squash,no_all_squash
+
+    fsid=0 sec=sys,secure,rw,sync,wdelay,no_subtree_check,secure_locks,no_pnfs,no_acl,root_squash,no_all_squash,anonuid=2049,anongid=2049
+
+              -------------
+                sec - =sys default unless using gss/kerberos versions
+              -------------
+         (in)secure - force ports below 1024
+              ro/rw - read/write
+            (a)sync - allow replies from cache before syncing to storage
+        (no_)wdelay - (sync only) delay disk writes, reduce sync operations required
+           (no)hide - hide nested mounts from parent path (not relevent to nfsv4)
+       (no)crossmnt - set on parent path to unhide nested mounts (not relevent to nfsv4)
+ (no_)subtree_check - check path on sub directory mounts to prevent access to the parent path
+   (in)secure_locks - authentication of locking requests (NLM v2/v3 only) (nfsv4 is stateful)
+    fsid=num|0|uuid - / requires fsid=0, tmpfs requires fsid=[1-9], block devices use the filesystem uuid 
+         mountpoint - only export if path is mounted
+         nordirplus - nfsv3 only
+              -------------
+    refer=path@host[+host][:path@host[+host]] < - redirect an export to alternate locations
+ replicas=path@host[+host][:path@host[+host]] < - client asks for a list of alternate locations
+              -------------
+          (no_)pnfs - v4.1 bypass the server and perform i/o directly to the storage devices
+     security_label - v4.2 xattr ?
+              -------------
+           (no_)acl - disable or enable access control lists ? (missing from man page) (nfsv4 enables posix_acl in the kernel ?)
+              -------------
+   (no_)root_squash - map remote clients root:root to anonuid:anongid
+    (no_)all_squash - map remote clients to anonuid:anongid
+            anonuid - =2049 uid for remote clients
+            anongid - =2049 gid for remote clients
+              -------------
+
+#############
+
+ [options]
+
+ mount -t nfs4 -o <options> 127.0.0.1:/path /path
+
+ mount -t nfs4 -o vers=4,hard,nosoftreval,timeo=600
+
+ nfsv4 only
+
+        proto - ={tcp,tcp6,rdma,rdma6}
+ minorversion - ={1} ( vers=4.1 || vers=4,minorversion=1 )
+         port - ={2049}
+          cto - close to open cache coherence semantics ?
+        nocto - 
+   clientaddr - 
+    migration - 
+  nomigration - 
+
+      nfsvers - =4 nfs version used to contact the server
+         vers - =4 nfs version used to contact the server
+         soft - defaults hard, recovery behaviour, stop retransmitting after 'retrans' been sent
+         hard - defaults hard, recovery behaviour, indefinitely retransmit requests
+    softreval - defaults nosoftreval, allow cache access (if server doesnt reply)
+  nosoftreval - defaults nosoftreval, dont allow cache access (if server doesnt reply)
+         intr - ignored
+       nointr - ignored
+        timeo - =600 time in deciseconds 1/10th of a second, (length of time client waits before retrying an nfs request)
+      retrans - =2 number of times the client retries a request before recovery action
+        rsize - =1048576 (max_size) =4096 (min_size) rounded down to the nearest multiple of 1024, auto negotiates largest value client/server support
+        wsize - =1048576 (max_size) =4096 (min_size) rounded down to the nearest multiple of 1024, auto negotiates largest value client/server support
+           ac - defaults ac, client can cache file attributes
+         noac - defaults ac, client can not cache file attributes + force writes to be synchronous (providing greater cache coherence)
+     acregmin - =3 (seconds) minimum time to cache file attributes before requesting attribute information
+     acregmax - =60 (seconds) maximum time to cache file attributes before requesting attribute information
+     acdirmin - =30 (seconds) minimum time to cache dir attributes before requesting attribute information
+     acdirmax - =60 (seconds) maximum time to cache dir attributes before requesting attribute information
+      actimeo - =X (seconds) set a default min/max for files and directories
+           fg - defaults to fg, close on mount failure
+           bg - defaults to fg, keep attempting to mount
+     nconnect - =X (no_default) =16 (max) number of tcp connections allowed between client/server
+  max_connect - =X (no_default) =16 (max) number of tcp connections allowed between client and a cluster of servers
+     rdirplus - defaults rdirplus, used to read small directories 
+   nordirplus - defaults rdirplus, used to read small directories
+        retry - =2 (fg) =10000 (bg) =0 (exit immediately) number of minutes the mount command is retried for
+          sec - =sys default unless using gss/kerberos, auto negotiated by client/server if omitted
+   sharecache - defaults sharecache, share export cache when mounted multiple times
+ nosharecache - defaults sharecache, seperate export cache when mounted multiple times
+     resvport - defaults resvport, use a port below 1024 to connect
+   noresvport - defaults resvport, use a port above 1024 to connect
+  lookupcache - =all (default) ={none,pos,positive} cache positive or negative path exists or only cache postitive path exists or dont cache any replies related to path existing
+          fsc - defaults nofsc, enable read only data page cache (CONFIG_FSCACHE,CONFIG_NFS_FSCACHE)
+        nofsc - defaults nofsc, disable read only data page cache (CONFIG_FSCACHE,CONFIG_NFS_FSCACHE)
+       sloppy - tolerate sloppy mount options rather than fail
+
+#############
+
+#############
+
+ [nfsd]
+
+ -d --debug
+ -H --host <address|hostname> (lock to address rather than 0.0.0.0)
+ -p --port <port> (attempts to read /etc/services unless set)
+ -r --rdma <port> (attempts to read /etc/services unless set)
+ -N <2|3|4|4.0|4.1|4.2> (disable specific versions)
+ -s --syslog < - log to syslog
+ -t --tcp
+ -T --no-tcp
+ -u --udp
+ -U --no-udp
+ -V <2|3|4|4.0|4.1|4.2> (enable specific versions)
+ -L --lease-time <10-3600> (keepalive)
+ -G --grace-time (lock file release)
+ <nproc>
+
+ nproc 0 turns off
+ nproc 4 turns on with 4 kernel threads
+
+ nfsd -N3 -V4 -N4.1 -N4.2 --no-udp --tcp --host 0.0.0.0 --port 2049 --syslog $(grep -c MHz /proc/cpuinfo)
+
+#############
+
+ [exportd]
+
+ -d --debug
+ -l --log-auth
+ -i --cache-use-ipaddr
+ -T --ttl
+ -f --foreground
+ -t --num-threads
+ -g --manage-gids
+ -s --state-directory-path
+
+ exportd -s /run/nfsd
+
+#############
+

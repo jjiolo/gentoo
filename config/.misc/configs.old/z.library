@@ -1,0 +1,3 @@
+
+find /binhost/rootfs/var/db/pkg -type f -name REQUIRES -exec grep -Hi ${1} {} \;|cut -d ' ' -f1 # search for library
+

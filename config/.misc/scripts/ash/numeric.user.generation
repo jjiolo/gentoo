@@ -1,0 +1,52 @@
+
+#############
+map(){
+
+ unset uid map username
+
+ [ -z "${1}" ] && uid="$(shuf -i32767-65534 -n1)" || uid="${1}"
+
+ map="abcdefghij"
+
+ for i in 0 1 2 3 4;do
+
+ for o in 0 1 2 3 4 5 6 7 8 9;do
+
+  [ "${uid:$i:1}" == "${o}" ] && username="${username}${map:${o}:1}" && break
+
+ done
+
+ done
+
+ printf "%s\n" "${username}"
+
+}
+#
+addguest(){
+
+unset uid username cookie auth
+
+[ -z "${1}" ] && return 1 || uid="${1}"
+[ -z "${2}" ] && return 1 || username="${2}"
+
+grep "^${username}" /etc/passwd || {
+printf "%s\n" "${username}:x:${uid}:${uid}::/tmp/storage/guest/${username}:/bin/ash" >> /etc/passwd
+printf "%s\n" "${username}:x:${uid}:user,nobody" >> /etc/group
+printf "%s\n" "${username}:!:::::::" >> /etc/shadow
+}
+
+install -d -o "root"        -g "root"   -m 0775 "/tmp/storage/guest"
+install -d -o "${username}" -g "nobody" -m 0770 "/tmp/storage/guest/${username}"
+
+cookie="$(hexdump -n16 -ve '1/1 "%02x"' /dev/urandom)" # 64 bit
+auth="/tmp/storage/guest/${username}/desktop"
+install -o "${username}" -g "${username}" -m 0660 /dev/null "${auth}"
+printf "%s\n" "add :${uid} . ${cookie}"|xauth -nqf "${auth}"
+
+chown -R "${username}:${username}" "/tmp/storage/guest/${username}"
+find "/tmp/storage/guest/${username}" -type d -exec chmod 0770 {} \;
+find "/tmp/storage/guest/${username}" -type f -exec chmod 0660 {} \;
+
+}
+#############
+

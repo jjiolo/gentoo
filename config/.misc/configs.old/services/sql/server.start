@@ -1,0 +1,6 @@
+#!/bin/sh
+#############
+. /etc/services/mysqld/config
+#############
+(mysqld --skip-grant-tables --datadir=/storage/services/mysqld --tmpdir=/tmp/services/mysqld --socket=/tmp/services/mysqld/socket --bind-address=0.0.0.0 --port=3306 --user=mysqld &) </dev/null &>/dev/null &
+#############

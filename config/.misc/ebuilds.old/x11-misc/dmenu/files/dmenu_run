@@ -1,0 +1,4 @@
+#!/bin/sh
+#############
+find /bin /sbin /usr/bin /usr/sbin -exec basename {} \;|sort -u|dmenu "${@}"|"${SHELL:-"/bin/sh"}" &
+#############
