@@ -1,5 +1,7 @@
 #!/bin/sh
 #############
+# dtls doesnt support ed25519 #
+#############
 usage(){ printf "\n${0} - ${1}\n\n -p port\n -u udp\n -t tcp\n\n" ; exit ; }
 #############
 while getopts "p:ut" arg;do
@@ -14,18 +16,17 @@ done
 [ -z "${port}"     ] && usage "requires port"
 [ -z "${protocol}" ] && usage "requires protocol"
 #############
-openssl s_server\
- -4\
- -accept ${port}\
- -key "${HOME}/.ssl/service.pem"\
- -cert "${HOME}/.ssl/service.crt"\
- -CAfile "${HOME}/.ssl/client.crt"\
- -no-CAfile\
- -no-CApath\
- -Verify 1\
- -verify_return_error\
- -verify_quiet\
- -quiet\
- -dhparam "${HOME}/.ssl/dhparam"\
- ${protocol}
+openssl s_server -4 \
+-accept ${port} \
+-key "${HOME}/.ssl/service.pem" \
+-cert "${HOME}/.ssl/service.crt" \
+-CAfile "${HOME}/.ssl/client.crt" \
+-no-CAfile \
+-no-CApath \
+-Verify 1 \
+-verify_return_error \
+-verify_quiet \
+-quiet \
+-dhparam "${HOME}/.ssl/dhparam" \
+${protocol}
 #############

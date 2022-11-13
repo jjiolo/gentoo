@@ -46,6 +46,9 @@ table inet filter {
   ip protocol {tcp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept
   ip protocol {udp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept
 
+  ip protocol {tcp} skuid {i2pd} ct state new log flags skuid prefix "output.lan.new " accept
+  ip protocol {udp} skuid {i2pd} ct state new log flags skuid prefix "output.lan.new " accept
+
   tcp dport {443,6697}    skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {465,995}     skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {18081,18089} skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept

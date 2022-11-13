@@ -1,5 +1,7 @@
 
 #############
+[255|231|219|195|189|165|153|129|0]
+#############
 no idea what stupid has gathered itself in here
 stuff at the bottom tends to get rewritten and kept
 stuff at the top is unordered raw sewage
@@ -26,16 +28,34 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2022:08:02 02:00:00
+ lastest - 2022:11:07 23:00:00
 -------------
 
- * broke firefox/ffmpeg ? youtube only...
+ * race condition in emerge -F lockfiles ? four pids erroring out on the same package pull...
+
+ * build.rootfs - x11 libraries are randomly failing with collision detection ?
+                  built without collision twice ?
+                  3 different libraries assuming build order being random ?
+
+ * first implementation of i2pd...
+
+ * meson update is building with a single core ?
+ * qemu lto-wrapper broke ?
+
+ * qemu usb passthrough regressed and now doesnt work...
+ ^ tried 6.2 was still broken ?
+
+ * emerge --depclean went from 92 packages to 84 ? (still want a toolchain/portage only profile target)
 
 -------------
 #############
 
 [INFORMATIONAL]:
 #############
+* mkp224o.ebuild - https://github.com/cathugger/mkp224o/archive/tags/v1.6.1.tar.gz
+* pkg_postinst isnt recorded in CONTENTS
+* first.run should revdep rebuild, then depclean...
+* sysctl -w kernel.yama.ptrace_scope=3 CONFIG_SECURITY CONFIG_SECURITY_YAMA
 * raw pasting into st/vim is bad mode...
 * opening httpd pages is bad mode (no sanitization)
 * busybox/ip - no nexthop, no multicast, no netns
@@ -48,18 +68,19 @@ stuff at the top is unordered raw sewage
 * file(mv *match* ffs) directory(mv *match*/* /tmp/why; rmdir *match*;)
 * gcc -lto -pgo 00:18:31 +00:00:00 || gcc +lto -pgo 00:24:44 +00:06:00 || gcc +lto +pgo 00:36:48 +00:12:00
 * mkfs.ext4 -m0 - remove space reserved for root... (5% 1TB == 50GB)
-* http://reg.i2p/all
+* keepalive points - crond,monitor,udhcpd_script,udhcpc_persist  ntpd ?
+* dropbear socks || wg/microsocks nc -lks local:/path -e dbclient user@host nc local:/path
 #############
 
 [TODO]
 #############
 * vim / mutt < - only things not really full scoped
+* vim - :h vimrc-intro || :h option-list
 * dnssec verified cache (optionally over tor) (still no real competition)
 * privdrop stage3 initial pull, stage3 portage update, stage3 fetch
 * acpid poweroff on lid close (${storage}/.init to increase boot speeds)
 * alsa environment variable as default soundcard ?
-* nothing to schedule netio
-* QoS - tc cake?
+* nothing to schedule netio - QoS - tc cake?
 #############
 
 [PROBLEMS]:
@@ -76,43 +97,24 @@ stuff at the top is unordered raw sewage
 * transmission move complete doesnt check space available when transfering between block devices
 * inability to add wifi interfaces to bridges (breaks the ability to dedupe commands)
 * dwm, holding down alt+i increments the number indefinintly ?
+* tor geoip file edit to create full network view ?
 * obfs4proxy and meeks localhost access is a random port ? (cant preconfigure nftables)
+* openssl dtls support doesnt support ed25519 (cant test the ebuild with current scripts)
+* qemu < - tigervnc has sticky keys with xorg-server open...
+* qemu-7.{0,1}.0 < - vnc output doesnt resize bottom of the console hangs off
+* monitor diskio reads every drive then every block device doubling the values ? (sda && md127)
 #############
 
 [CURRENT]
 #############
 
-bump
+[tracking changes]
 
- qemu-7.1.0
- firefox-bin 104.0.2
+ sh .diff - prints diff for every directory (using /etc/config.tar.gz)
 
- vim 9.0.0312
- curl 7.85.0
- git 2.37.3
- pinentry 1.2.0
- linux-headers 5.19.3
- audit 3.0.8
-
-#############
-
-* attempting to clean up use flags ? (package.use/z.env nearly all of them failed)
-  updated chroot.{upgrade,logs} build.{rootfs,logs} (added rootfs onlydeps to view installed packages use flags...)
-* grub background image png / tga / 8-bit jpg jpeg | fbsplash .ppm ? plymouth ?
-* pxe/udhcpd/tftpd
-  udhcpd.conf { siaddr 172.16.0.1, boot_file bootx64.efi }
-  grub.cfg { insmod efinet, net_dhcp efinet0, set root=(tftp,172.16.0.1), linux desktop, initrd client, boot }
-* dropped input: video: systemd.dev using desktop:
-* removed nobody from httpd group, basicauth works...
-* gpg.conf trust-model always (gpgme forced --enable-trust-models)
-* mutt --enable-flock (kernel has it turned on)
-* changed max number of cpus CONFIG_NR_CPUS ?
-* pci express hiararchy - safe ?
-* removed nftables NFT_OBJREF
-* turned off integrity ; removed crypto modules
-* cryptsetup needs encrypted chain generator or xts enabled
-* firefox --profile $HOME/.browser --new-instance --no-remote # easier to copy and load
-* dropped ffmpeg v4l + libv4l
+ proof read or gtfo,
+ to much half arsed shit compounding over time
+ proof reads are harder than doing partial updates properly
 
 #############
 
@@ -121,280 +123,246 @@ v attempt to create lists of things to actually do
 
 #############
 
-nfs notes...
+ lenovo hold down escape and function and hit power on...
 
- up to documenting mount options...
+ flushes tamper proof detection
+ flushes checksum failures from cmos/nvram ?
 
- nested mount paths can trigger inode collisions
+ all the google results are flooded with lenovo.com domains
 
- /tmp/ /tmp/z.local - 
+ claiming theres no hotkey to flush caches, lel ?
 
- would need to edit rootfs
+#############
 
- so far...
+ -------------
 
- removed libtirpc as a dependency (exportd for mountd)
- removed mount.nfs (apparently works regardless)
- figured out what no_subtree_check actually means...
- rpc.statd + sm-notify (nfsv4 is stateful and doesnt require stateless lock tracking...)
- idmapd/nfsidmap (only required for gss/kerberos... apparently remaps uid to anonuid if its broken ? clearly doesnt happen)
+ downgrading firefox to extended support release
 
- huge timeout trying to write a file ?
- still hangs trying to localhost 111 ?
- couldnt prove crossmnt / (no)hide ?
- it kept exposing every nested mount regardless...
- ^ need to automate a script to test it
+ -------------
 
- (in)secure_locks - no fucking idea bout on par with the idmap
+ google search parameters
+ https://google.com/ncr - set no country redirect cookie
+ https://google.com/preferences - force regional results
+ https://www.google.com?cr=countryXX
+ https://www.google.com/search?cr=countryXX&q=%s
+ manually setting ?cr=countryXX persists across all interaction
+
+ /usr/lib64/firefox/distribution/policies.json - "searchengine": { },
+
+ firefox-bin - > firefox-esr
+
+ -------------
+
+ policies.json
+ inability to display updates...
+ inability to save passwords...
+
+ -------------
+
+#############
+
+ [i2pd]
+
+ configure(){ - > src_configure(){
+
+ ntcp2 stopped segfaulting...
+ ^ tested it for 2 days, then it started segfaulting again totes legit
+
+ ssu2 opens up 0.0.0.0:1 ? (intercepting icmp echo ?)
+
+ udp out and tcp out ? random ports are harder to block
+
+ -------------
+ net-vpn/i2pd
+ dev-libs/boost
+
+ etc/services/i2pd
+ etc/sites.eep
+ overlay/www-client/firefox/files/proxy.pac
+ etc/{passwd,group,shadow}
+ etc/nftables/chains/lo - into 53 80 4447
+ etc/nftables/chains/lan - out 443 8443 tcp and all udp
+ -------------
+
+ really bad first implementation
+
+ ./does_this_work_yet - addressbook/addresses.csv takes ages, less from persistence
+                        trying vanity.i2p domains (fails)
+                        trying .b32.i2p domains implies storing reg.i2p stats.i2p identguy.i2p (etc/sites.eep)
+
+ tor syslog output 100% 
+ vs
+ any works or doesnt work from logs ?
+ (enabled webconsole - creation success rate && client tunnels: XX)
+
+ net.ipv4.ip_unprivileged_port_start doesnt work ?
+ takes ages (shorter on persistence already has a cache + floodfill nodes)
+
+ doesnt survive disconnects ? tor started coming back eventually... sometimes
+
+#############
+
+[transmission 4.0.0 beta changes]
+
+ transmission-create 
+  -r --source <source> set the source for private trackers
+  -w --webseed <url> add a webseed url
+  --anonymize omit creation_date and created_by info
+
+ transmission-deamon
+  --default-trackers <list> trackers for public torrents to use automatically
+  --log-level <level> must be critical, error, warn, info, debug or trace
+
+ transmission-edit
+  -s --source <source> set the source
+
+ transmission-remote
+  -bwg --bandwidth-group <group> set the current torrents bandwidth group
+  -nwg --no-bandwidth-group reset the current torrents bandwidth group
+  -lg --list-groups show bandwidth groups with their parameters
+  -ids --print-ids print the current torrents ids
+  -j --json return rpc response as a json string
+  --unix-socket <path> use a unix domain socket
+  --rename <name> rename torrents root folder or a file
+  --path <path> provide path for rename functions
+  --torrent-done-seeding-script <file> a script to run when a torrent finishes seeding
+  --no-torrent-done-seeding-script dont run the done-seeding script torrents peers
+
+ transmission-show
+  -d --header show only the header section
+  -i --info show only info section
+  -t --trackers show only trackers section
+  -f --files show only file list
+  -D --no-header do not show header section
+  -I --no-info do not show info section
+  -T --no-trackers do not show trackers section
+  -F --no-files do not show files section
+  -b --bytes show file sizes in bytes
+
+ settings.conf
+  announce-ip
+  announce-ip-enabled
+  anti-brute-force-enabled
+  anti-brute-force-threshold
+  default-trackers
+  peer-congestion-aglorithm
+  rpc-socket-mode
+  script-torrent-added-enabled
+  script-torrent-added-filename
+  script-torrent-done-seeding-enabled
+  script-torrent-done-seeding-filename
+  tcp-enabled
+
+^ looks awesome 
+
+#############
+
+ * tiny-curl ? test it with git / transmission ?
+
+ * stage3 - dtach if mounted && dtach when mounted
+            (can be executed more than once ?)
+
+ * dtach + mtm usability over dbclient ? doesnt allow forcing a command unless in known_hosts ? s.client s.server 
+
+ * dtach cant recreate socket ? SIGHUP ignored SIGUSR1 terminates running process
+ * identify dtach from PS1
+ * identify mtm from PS1 - $MTM
+
+ * mutt smtp still exposes ip/hostname in headers ?
+
+ i2pd - busybox binaries download rpm2cpio i2pd.rpm - > cpio cpio -idF i2pd.cpio
+        i2pd-el9.rpm - has compatible libraries + system filesystem program_options date_time
+        allows testing local build with known working binary and config ?
+
+#############
+
+ lsw && xev
+
+ id="$(lsw|awk '/Xephyr.*:13/{print$1}')"
+ 
+ xev -display :0 -id "${id}" -1 -event structure | while read ; do DISPLAY=:13 XAUTHORITY=/tmp/.X13-auth xrandr ; done
+
+#############
+
+ [udhcpc_script fuzzer]
+
+ udpsvd||netcat dhcpd server
+
+ env -i /bin/udpsvd -v 0.0.0.0 67 /tmp/storage/services/sets/udpsvd.dhcpd
+
+ env -i /bin/nc -nubv -lk -s 0.0.0.0 -p 67 -e /tmp/storage/services/sets/dhcpd
+
+ env -i /bin/nc -nubv -s 0.0.0.0 -p 68 0.0.0.0 67
+
+ ^ listen on 0.0.0.0:67
+   bind to 0.0.0.0:68 then connect to 0.0.0.0:67
+   forces all outgoing dhcp requests from port 68 to 67 and from port 67 to 68
+
+ octal format xxd vs od (busybox versions)
+
+ od -An -b < - creates an octal stream of input ?
 
 -------------
 
-udhcpd/tftpd/nfsd - test one...
-
- udhcpd/tftpd - already verified working
-
- insmod efinet
- net_dhcp efinet0
- set root(tftp,172.16.0.1)
- linux exports/boot/vmlinuz root=/dev/nfs nfsroot=172.16.0.1:/tmp/z.local/shared/exports,vers=4 ip=dhcp
- initrd exports/boot/initrd.img
- boot
-
-cant export /tmp/z.local
--------------
-/tmp         *(rw) - mounts empty subdirectory /tmp/z.local
-/tmp/z.local *(rw) - failed: no such file or directory
--------------
-initramfs can mount any bind path ?
-mount --bind /tmp/z.local /testing/nested
-/testing/nested *(rw) - mounts properly
--------------
-^ need to put that into words
--------------
-
-has to be a path in the rootfs ?
-
-regardless of the rootfs being a block device mount or initramfs ?
-
-
-
-=============
-
-hide
-nohide
-crossmnt 
-
-/tmp *(rw,crossmnt)
-mount -t nfs4 172.16.0.1:/tmp/z.local /tmp/storage/mount
-mount -t nfs4 172.16.0.1:/tmp/storage /tmp/storage/mount
-
-crossmnt exposes nested mounts... also follows symlinks ?
-
-/tmp *(rw)
-/tmp/z.local *(rw)
-mount -t nfs4 172.16.0.1:/tmp/z.local /tmp/storage/mount
-
-exporting both paths allows mounting...
-
-=============
-
- nfs-utils has enable options that always return true ?
-
- :
-
-
--------------
-
-udhcpd/tftpd/nfsd - minimal overhead ? looking pretty viable
-
-httpd/gitd - minimal overhead ? looking pretty viable
-
-auditd - already implemented
-
-grub - standalone uefi fairly complete
-       no screwing around with complexity in setup
-       ebuilding it to full scope any possible gain
-       stacks with udhcpd/tftpd/nfsd
-
--------------
-
-opensmtpd is easy...
-^ rewrote ebuild and etc/service files
-  bailed setting up mx capable dns server
-dns is hard...
-^ not willing to inherit maintaining a dns server
-  none of the options satisfy my ocd or requirements
-? if avahi can blag mx records would set up shortest path to full dev env
-
-ngircd - cant passwordless oper 127.0.0.1 access (tor)
-         doesnt satisfy the ocd
-
-quota - doesnt work on tmpfs... slightly lack luster
-
-remote mount ? sshfs/fuse - sketchy security, buggy and crash/hang prone, + no reason to use it
-                            dbclient remote.com tar cC /path | tar xC /path + mpv http://
+udhcpc_scripts - cat ^[ allows escape characters
+              printf ^[ allows escape characters
+^ fail can overwrite the output to hide variables
+  unquoted variables for broadcast
+  depends on busybox to sanitize the input from dhcp
 
 -------------
 
 #############
 
- [opensmtpd] - dns server with mx records
+ [dnsd.log]
 
--------------
+ udpsvd -v 0.0.0.0 53 /bin/nc -nubv -o /run/dnsd.log -lk -s 0.0.0.0 -p 53
 
- [djbdns]
+ ???
 
- [ dnscache - /etc/dnsroots.global ]
+ udpsvd -v 0.0.0.0 4444 /bin/script
 
-  dnscache-conf acct logacct /run/dnscache 127.0.0.1
-  IP=127.0.0.1 IPSEND=127.0.0.1 ROOT=/run/dnscache/root UID=dnsd GID=dnsd dnscache
+ ^ couldnt ever read stdin on a delimeter ?
 
-  /run/dnscache/root/
+ udpsvd -v 0.0.0.0 4444 /bin/nc -nv -lk -s 0.0.0.0 -p 4444 
 
-   ip/127.0.0.1 - allow queries from 127.0.0.1
-         ip/127 - allow queries from 127.0.0.0/8
-      ip/172.16 - allow queries from 172.16.0.0./16
-
-       server/@ - contains /etc/dnsroots.global
-       server/@ - FORWARDONLY treats addresses as any upstream recursive cache
-   server/local - forward all requests for local to the ip address contained in the file
-
- [ tinydns ]
-
-  tinydns-conf dnsd dnsd /run/tinydns 127.0.0.2
-  IP=127.0.0.2 ROOT=/run/tinydns UID=nobody GID=nobody tinydns
-
-  tinydns-data - turn ./data into ./data.cbd
-  tinydns-edit - data data.new add {alias,childns,host,mx,ns} hostname address
-   tinydns-get - query the local data file...
-
-  /run/tinydns/root
-   . ./add-ns      - ./tinydns-edit data data.new add ns local 127.0.0.1
-   . ./add-ns      - ./tinydns-edit data data.new add ns 127.in-arpa.arpa 1.0.0.127
-   = ./add-host    - ./tinydns-edit data data.new add host first.local 127.0.0.1
-   + ./add-alias   - ./tinydns-edit data data.new add alias second.local 127.0.0.1
-   @ ./add-mx      - ./tinydns-edit data data.new add mx mail.local 127.0.0.1
-   & ./add-childns - ./tinydns-edit data data.new add childns child.local 127.0.0.1
-
--------------
-
-HAVE_AUTH
-HAVE_BROKEN_RTC
-HAVE_BSD_NETWORK
-HAVE_CONNTRACK
-HAVE_CRYPTOHASH
-HAVE_DBUS
-HAVE_DHCP
-HAVE_DHCP6
-HAVE_DNSSEC
-HAVE_DUMPFILE
-HAVE_GETOPT_LONG
-HAVE_IDN
-HAVE_INOTIFY
-HAVE_IPSET
-HAVE_LIBIDN2
-HAVE_LINUX_NETWORK
-HAVE_LOOP
-HAVE_LUASCRIPT
-HAVE_SCRIPT
-HAVE_SOCKADDR_SA_LEN
-HAVE_SOLARIS_NETWORK
-HAVE_TFTP
-HAVE_UBUS
-
-NO_AUTH
-NO_DHCP
-NO_DHCP6
-NO_DUMPFILE
-NO_GMP
-NO_ID
-NO_INOTIFY
-NO_LARGEFILE
-NO_LOOP
-NO_SCRIPT
-NO_TFTP
-
-^ config files horrific
-  can set it up
-  no fucking interest in maintaining that complexity
-
--------------
+ nc cant end with -lk -e ? removes the ability to listen on and forward to ?
 
 #############
 
-busybox httpd + git
+ * qemu usb pass through no longer works ? in lsusb wont register a sound card
 
- stage3 as the target...
+ * v.client v.server - save .vpn/config nothing to actually reuse it ? v.{server,client,flush,restore?}
 
- working directory - /tmp/storage/stage3/.git
-  root:root
+ * system.lock - triggers auditd (ausearch -i)
 
- bare directory - /tmp/storage/.git ?
-  root:root - read only hosting
-  root:httpd - read write hosting
+ * broke ddns key generation turning on socks and dns : /
+ * tftpd -l cant write log files ?
+ * something keeps deleting /etc/portage
 
- tl;dr -
+ * /init /etc/inittab /etc/init /etc/profile - debug output ?
 
- $USER:httpd 0770 0775
- allows git push over http
+ * monero / ca-certificates updates - forced to delete manifest
 
-* default basicauth on /cgi-bin/ enables git push ?
+* pkill -x /sbin/<thing> needs pkill -x <thing> ? (only matching wrappers)
+  ^ fucks up accidently killing partial matches... (probably worse ?)
 
-#############
+* vim sucks
+* git sucks
+* nftables notes suck
 
-break - 
- about:policies#errors - error running (such informative)
- "Cookies": { "Behavior": "reject", "BehaviourPrivateBrowsing": "reject-foreign", "ExpireAtSessionEnd": true, "Locked": true },
- "Cookies": { "Behavior": "reject", "BehaviourPrivateBrowsing": "reject-foreign", "Locked": true },
-^ ExpireAtSessionEnd causes cookie settings to be ignored ?
-  private browsing deletes cookies on close by default ?
-  removing it doesnt change existing functionality provided...
+* httpd/gitd - sort of implemented (didnt test new build)
+             - missing services/httpd/start GIT_PROJECT_ROOT=/tmp/storage/.git GIT_HTTPD_EXPORT_ALL=
 
-#############
+* grub ebuild ? finishes off udhcpd/tftpd/grub kernel/initramfs/nfsd
 
-* murdering busybox libcap patch set ? setpriv is better...
-
-* etc/services/dnsd/config/lo
-   needs to be automated
-   killing irc to mitm and inject stupidity from markov chains
-   mitm and censoring dns lookups going to localhost
-
-* nc -lu 127.0.0.1 53 | tee dns.log | nc -u 127.0.0.1 5353
-
-* turn udp support on in s_client s_server ? (just couldnt be fucked to debug it... )
-
-* qemu < - tigervnc has sticky keys with xorg-server open...
-* qemu-7.0.0 < - vnc output doesnt resize bottom of the console hangs off
-
-* find something to lock peripherals after boot (usbguard)
-* find something to replace grsec psuedo filesystem hardening (whonix permissions hardening)
-* fingerprinting dhcp clients... (changing mac addresses got old)
-
-^ root:root on portage feels safer
-  privdrop executing with the ability to edit all the source code ?
-* stage3 chroot hardening ? (it is the point of persistence breaking out is dumb ?)
-
-* keepalive - crond,monitor,udhcpd_script,udhcpc_persist
-* monitor diskio reads every drive then every block device doubling the values ? (sda && md127)
-
-* dropbear socks || wg/microsocks
-* dropbearkey doesnt allow changing embedded username@hostname ?
-
-* do the audio... find out minimum set for working
+* FORTIFY_SOURCE=3 - glibc died, cmake died < - even with fortify=2 something with fortify=3 is bricking ./configure
+* -fcf-protection=full -mcet (control flow integrity)
 
 * tor DisableAllSwap as none root...( didnt stderr, used address sanitizer ? shouldnt have executed at all) 
 ^ test expensive/fragile without DisableAllSwap ?
 
-* FORTIFY_SOURCE=3 - glibc died, cmake died < - even with fortify=2 something with fortify=3 is bricking ./configure
-
-* -fcf-protection=full -mcet (control flow integrity)
-
-* /etc/services + net.ipv4.ip_unprivileged_port_start={0,32768} && sleep 1
-^ technically denial of service ? (was the only way to fix nftables conntrack)
-
-* herbe needs more /dev/shm/$USER splitting or doesnt work across xephyr's
-* herbe - still locks to a single user (incompatible with Xephyr)
-^ logread|grep -f file|while read ; do [ $REPLY == match ] && herbe "notification" ; done
+* herbe needs /dev/shm/$USER splitting (doesnt support multiplayer) (logread|grep -f file|while read ; do herbe "notifcation" ; done
 
 #############
 
@@ -413,122 +381,7 @@ break -
 
 #############
 
-[ebuilds]
-
-6.2.0 last known working
-7.0.0 cuts of the bottom of the console in vnc output
-7.1.0 cuts of the bottom of the console in vnc output
-
-* qemu - 
-   --firmwarepath=/usr/share/qemu ?
-   --with-devices --without-default-devices (tried bricked everything, possible attack surface reduction ?)
-   --with-coroutine=BACKEND ucontext sigaltstack windows
-   --disable-plugins ? (no idea what plugins actually are)
-   --enable-capstone auto disabled enabled internal system... 
-   --disable-coroutine-pool coroutine freelist (better performance)... as in better off ? or better on defaulted to off ? guess work
-   --enable-fdt auto disabled enabled internal system (library doesnt exist in gentoo last post said internal being removed ?) libfdt
-   --enable-malloc jemalloc system tcmalloc (system ? no idea assuming extra lib dependency)
-   --enable-slirp auto disabled enabled internal system ? internal just makes sense
-   
-   kms aio io-ring membarrier 
-  xkbcommon doesnt fix sticky keys in tigervnc... only occurs after startx ?
-
-* openssl - dtls implies test itterations with s_server s_client
-
-* dropbear - max unauthed per ip 5, max unauthed clients 30, max auth tries 10
-  really easy to ddos ? (tor uses 127.0.0.1 but private address ?)
-
-* git - configure just does nothing ?
-
-* wpa_supplicant - attempt privdrop again... few options commented that imply defaults and being enabled regardless ?
-
-[configs]
-
- mutt - alot of muttrc options i dont understand
- vim - huge ? could full scope but still number of options i dont understand
- firefox - huge... :policies > :config > :settings
-
-[misc]
-
-* openssl and wpa_supplicant - using /dev/{random,urandom} over getrandom syscall ?
-* iwd - experimental kernel hand off to crypto libs ? makes it more like cryptsetup/wireguard
-
-* qemu/tigervnc - sticky keys... 
-   qemu - tried libxkbcommon ? did nothing
-   tigervnc - doesnt have any related options ?
-   fltk - tried with cairo + every x11 library enabled
-
-#############
-
-* build.rootfs
-
- installs package list to host deps only
- installs package list to chroot nodeps
- ^ only way to avoid pulling un needed dependencies
- * attempts to build packages with missing dependencies cause silent failure
- cp -a /binhost/packages /binhost/packages.first
- cp -a /binhost/packages /binhost/packages.chroot
- ^ backup before building
-
-#############
-
-* denial of service / stability
-
-   tmp space/inode exhaustion bricks running system ?
-   top level directory root write only
-   dhcpd:dhcpd - overwrite /run/leases till full
-   dhcpc:dhcpc - overwrite /run/udhcpc till full
-   desktop:desktop - overwrite /tmp/.X0-{auth,lock,log,log.old} till full
-   /run/services - ddns dnsd p2pd full directory write inode+space exhaustion
-                     
-   z.ephemeral ? user,nobody,proxy,desktop,ddns,dnsd,p2pd
-   full denial of service from every possible rce point
-
-* tmpfs doesnt support diskquota
-  ramfs+ext4 ?
-
-#############
-
-[cpu flags]
-
-[use flags]
-
- libarchive lzma (fixed)
- ffmpeg v4l threads encode
- dbus X (firefox links to it at run time else it wouldnt even be here)
-
- nettle gmp (gnupg forces)
-
- gtk+ X
- harfbuzz glib truetype (gtk+ forces)
- cairo X glib svg (gtk+ forces)
-
- libepoxy X (firefox ?)
- freetype -png (firefox ?)
-
- mesa X
- libglvnd X
-
-#############
-
-config/portage/profile/packages
- virtual/man doesnt depclean anything ?
- sys-apps/man-pages removes an extra 50 packages ?
- man-db or man-pages < - depends on systemd-tmpfiles ?
-
-^ weird dependency chain
-
-! basically -virtual/man should depclean everything...
-  couldnt figure out why ?
-
-#############
-
-[vim]
- :h vimrc-intro
- :h options-list
-^ only has something like a thousand variables pffft ezpz
-
-#############
+ dont need yama if nothing shares a dac context
 
 [services]
 -------------
@@ -583,8 +436,8 @@ setsid detaches controlling tty - breaks server daemons
  irc      - proxy
  p2p      - root/user/nobody/proxy
  xmr      - nobody
- qemu     - nobody/proxy
  media    - user/nobody/proxy
+ qemu     - nobody/proxy
 
 per application file access ?
 per application firewall access ? skgid (implies defining groups)
@@ -593,40 +446,271 @@ per application firewall access ? skgid (implies defining groups)
 while sleep 3 ; do DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth xrandr --auto ; done
 -------------
 * offline user for mpv would still need http to stream video
+^ private address ranges only ?
 
 #############
 
-[networking]
+* ddns or dnsd - dnsd/files/{lo,setup}
 
- lan/nat/tun 
- only remote facing service is wireguard
- lan/nat use tun as dmz bridge
- remote can login to tun
- local can login to tun
- allowing controlled exposure of the dmz network
+  current
 
- lan - strict filtering assumes network is hostile
- nat - loose  filtering assumes network required authentication or physical presence (vm/eth/wifi)
- tun - loose  filtering assumes network required authentication (local/remote)
+  ash /etc/services/dnsd/files/lo # was always assumed to be executed first...
+  edit /tmp/storage/services/ddns/config # hidden services into 172.16.0.1, dns/socks into 0.0.0.0
+  edit /etc/nftables/chains/nat # tcp dport {22,80} skuid {ddns} ct state new log flags skuid prefix "output.nat.new " accept
+  storage.{setup,shared} # if public/private address change
 
- forwarding rules only allow tcp out of nat
- forwarding rules only allow terminating into wireguard
+ ^ easy to do, still works after the fact
 
- interfaces get added to lan or nat bridges
- wifi cant connect to lan/nat bridge
- wifi forwards to lans firewall chain
- forces wireguard over wifi (shared passphrase isnt safe for tofu) (radius is harder to setup)
+#############
+
+[automate]
 
 -------------
 
- system - etc/self/b.init/system.network
-busybox - etc/self/network_{ping,oneshot,default,zcip}
-busybox - etc/self/udhcpc_{ping,oneshot,default}
-busybox - etc/self/zcip_script
-busybox - etc/self/udhcpd_script
+ didnt work out ?
 
-^ bring up an interface and set dhcpc globally...
-  bring up an interface and record dhcpc only...
+ endgame was automating new portage/sets entries
+
+ package has libs installed that arent used gets flagged?
+ package has binaries installed that arent used does not get flagged?
+
+ eg x11-misc/compose-tables - no binaries or libraries
+
+-------------
+
+ emerge --root /run/console --nodeps @console
+ emerge --root /run/desktop --nodeps @desktop
+
+ ldd + db/pkg/category/package
+
+ find $PATH $LIB -type f -exec sh /usr/bin/ldd {} 2>/dev/null \; # installed
+
+ find /var/db/pkg -type f -name REQUIRES -exec cat {} \; | tr ' ' '\n' | sort -u # required
+
+ diff installed required
+  + required not installed ?
+  - installed not required ?
+
+ diff required installed
+  + installed not required ?
+  - required not installed ?
+
+ diff installed required | grep '^+' > needed
+ diff installed required | grep '^-' > not_needed
+
+ * insert magic to remove -/+ from the file or ${i:1} triggers { } matching in find
+
+ for i in $(cat not_needed) ; do find /run/desktop/var/db/pkg -type f -name CONTENTS -exec grep -Hi $i {} \; ; done
+
+ * doesnt fix things like x11-misc/composetables ?
+ ^ package with only config files in it...
+
+-------------
+
+* automate creating sets/<binary>
+* automate reducing packages in sets/<binary>
+
+* emerge --root /run/<binary> -avbk <binary>
+
+ needs to split DEPEND and REQUIRES ?
+
+ DEPEND can overshoot needed packages
+ REQUIRES packages needed to link at run time ?
+
+-------------
+
+#############
+
+ [normal stage3 vs hardened stage3]
+
+ gcc -Q -v # prints out configured with
+           # prints out default gcc options
+
+ gcc -Q --help=target # prints out ?
+
+ diff normal hardened
+
+ + --enable-esp # isnt documented in configure ?
+                # search returned nothing
+
+#############
+
+ localhost interface...
+  ip link down lo # doesnt flush route
+  ip route add lo # doesnt require the interface to be up
+  ip link up lo   # automatically creates addresses (while ignoring route)
+  ip addr add lo  # doesnt automatically create routes
+
+ eth interface...
+  ip link down eth0 # does flush route
+  ip route add eth0 # does require the interface to be up
+  ip link up eth0   # doesnt create addresses
+  ip addr add eth0  # does automatically create routes
+
+#############
+
+ [opensmtpd] - dns server with mx records
+
+-------------
+
+ [djbdns]
+
+ [ dnscache - /etc/dnsroots.global ]
+
+  dnscache-conf acct logacct /run/dnscache 127.0.0.1
+  IP=127.0.0.1 IPSEND=127.0.0.1 ROOT=/run/dnscache/root UID=dnsd GID=dnsd dnscache
+
+  /run/dnscache/root/
+
+   ip/127.0.0.1 - allow queries from 127.0.0.1
+         ip/127 - allow queries from 127.0.0.0/8
+      ip/172.16 - allow queries from 172.16.0.0./16
+
+       server/@ - contains /etc/dnsroots.global
+       server/@ - FORWARDONLY treats addresses as any upstream recursive cache
+   server/local - forward all requests for local to the ip address contained in the file
+
+ [ tinydns ]
+
+  tinydns-conf dnsd dnsd /run/tinydns 127.0.0.2
+  IP=127.0.0.2 ROOT=/run/tinydns UID=nobody GID=nobody tinydns
+
+  tinydns-data - turn ./data into ./data.cbd
+  tinydns-edit - data data.new add {alias,childns,host,mx,ns} hostname address
+   tinydns-get - query the local data file...
+
+  /run/tinydns/root
+   . ./add-ns      - ./tinydns-edit data data.new add ns local 127.0.0.1
+   . ./add-ns      - ./tinydns-edit data data.new add ns 127.in-arpa.arpa 1.0.0.127
+   = ./add-host    - ./tinydns-edit data data.new add host first.local 127.0.0.1
+   + ./add-alias   - ./tinydns-edit data data.new add alias second.local 127.0.0.1
+   @ ./add-mx      - ./tinydns-edit data data.new add mx mail.local 127.0.0.1
+   & ./add-childns - ./tinydns-edit data data.new add childns child.local 127.0.0.1
+
+^ really really simplistic
+  very little overhead to setup/audit/maintain
+  old incomplete patching and not a lot of love
+
+-------------
+
+ * does technically work for testing ? and theres really not alot to it
+
+-------------
+
+#############
+
+[ebuilds]
+
+6.2.0 last known working
+7.0.0 cuts of the bottom of the console in vnc output
+7.1.0 cuts of the bottom of the console in vnc output
+
+* qemu - 
+
+   --firmwarepath=/usr/share/qemu ?
+
+   --with-devices --without-default-devices (tried bricked everything, possible attack surface reduction ?)
+
+   --enable-capstone auto disabled enabled internal system... 
+
+   --with-coroutine=BACKEND ucontext sigaltstack windows
+   --disable-coroutine-pool coroutine freelist (better performance)... as in better off ? or better on defaulted to off ? guess work
+
+   --disable-plugins ? (no idea what plugins actually are)
+
+   --enable-fdt auto disabled enabled internal system (library doesnt exist in gentoo last post said internal being removed ?) libfdt
+   --enable-malloc jemalloc system tcmalloc (system ? no idea assuming extra lib dependency)
+   --enable-slirp auto disabled enabled internal system ? internal just makes sense
+   
+   additional kernel modules - kms aio io-ring membarrier
+
+   xkbcommon doesnt fix sticky keys in tigervnc... only occurs after startx ?
+
+* openssl - dtls implies test itterations with s_server s_client
+
+* dropbear - max unauthed per ip 5, max unauthed clients 30, max auth tries 10
+  really easy to ddos ? (tor uses 127.0.0.1 but private address ?)
+
+* git - configure just does nothing ?
+
+* wpa_supplicant - attempt privdrop again... few options commented that imply defaults and being enabled regardless ?
+
+[configs]
+
+ vim - huge ? could full scope but still number of options i dont understand
+ mutt - alot of muttrc options i dont understand
+ firefox - huge... :policies > :config > :settings
+
+[misc]
+
+* openssl and wpa_supplicant - using /dev/{random,urandom} over getrandom syscall ?
+* iwd - experimental kernel hand off to crypto libs ? makes it more like cryptsetup/wireguard
+
+* qemu/tigervnc - sticky keys... 
+   qemu - tried libxkbcommon ? did nothing
+   tigervnc - doesnt have any related options ?
+   fltk - tried with cairo + every x11 library enabled
+
+#############
+
+* build.rootfs
+
+ installs package list to host deps only
+ installs package list to chroot nodeps
+ ^ only way to avoid pulling un needed dependencies
+ * attempts to build packages with missing dependencies cause silent failure
+ cp -a /binhost/packages /binhost/packages.first
+ cp -a /binhost/packages /binhost/packages.chroot
+ ^ backup before building
+
+#############
+
+* denial of service / stability
+
+   tmp space/inode exhaustion bricks running system ?
+   top level directory root write only
+   dhcpd:dhcpd - overwrite /run/leases till full
+   dhcpc:dhcpc - overwrite /run/udhcpc till full
+   desktop:desktop - overwrite /tmp/.X0-{auth,lock,log,log.old} till full
+   /run/services - ddns dnsd p2pd full directory write inode+space exhaustion
+                     
+   z.ephemeral ? user,nobody,proxy,desktop,ddns,dnsd,p2pd
+   full denial of service from every possible rce point
+
+* tmpfs doesnt support diskquota
+  ramfs+ext4 ?
+
+#############
+
+[use flags]
+
+BLARGH
+
+ @revdep rebuild 
+
+ nettle gmp (gnupg forces)
+
+ gtk+ X
+ harfbuzz glib truetype (gtk+ forces)
+ cairo X glib svg (gtk+ forces)
+
+ libepoxy X (firefox ?)
+ freetype -png (firefox ?)
+
+ mesa X
+ libglvnd X
+
+#############
+
+config/portage/profile/packages
+ virtual/man doesnt depclean anything ?
+ sys-apps/man-pages removes an extra 50 packages ?
+ man-db or man-pages < - depends on systemd-tmpfiles ?
+
+^ weird dependency chain
+
+! basically -virtual/man should depclean everything...
+  couldnt figure out why ?
 
 #############
 
@@ -743,6 +827,31 @@ argon2 default output matches key input length
   diff new.sort ../certs/new.sort
 
 -------------
+
+#############
+
+[networking]
+
+ lan - strict filtering assumes network is hostile
+ nat - loose  filtering assumes network required authentication or physical presence (vm/eth/wifi)
+ tun - loose  filtering assumes network required authentication (local/remote)
+
+ interfaces get added to lan or nat bridges
+ eth defaults to nat
+ wlan defaults to lan
+ wifi cant connect to lan/nat bridge
+ wifi forwards to lans firewall chain
+ forces wireguard over wifi (shared passphrase isnt safe for tofu) (radius is harder to setup)
+ 
+ lan/nat/tun
+ only remote facing service is wireguard
+ lan/nat use tun as dmz bridge
+ remote can login to tun
+ local can login to tun
+ allowing controlled exposure of the dmz network
+
+ forwarding rules only allow tcp out of nat
+ forwarding rules only allow terminating into wireguard
 
 #############
 
@@ -2180,3 +2289,7 @@ gcc
 -l:libthing.a  # directly include libthing.a
 -I/usr/include # search header files in path
 #############
+cp -a /path/.* pulls everything (including hidden files)
+chmod 644 /path/.* sets the directory to 644 and locks the lot of it
+#############
+

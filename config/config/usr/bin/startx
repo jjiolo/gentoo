@@ -6,7 +6,7 @@
 #############
 [ -z "${1}" ] && user="user" || user="${1}"
 #############
-grep -q "^${user}" /etc/passwd || exit
+grep -q "^${user}:" /etc/passwd || exit
 #############
 install -o desktop -g desktop -m 0640 /dev/null /tmp/.X0-log
 install -o desktop -g desktop -m 0640 /dev/null /tmp/.X0-log.old

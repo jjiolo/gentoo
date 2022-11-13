@@ -9,14 +9,38 @@
  CacheDirectory /tmp/storage/services/dnsd/cache
  DataDirectory /tmp/storage/services/dnsd/data
 
+#HiddenServiceNonAnonymousMode 0
+#HiddenServiceSingleHopMode 0
+
+#HiddenServiceDir /tmp/storage/services/dnsd/private
+#HiddenServiceVersion 3
+#HiddenServiceNumIntroductionPoints 3
+#HiddenServiceEnableIntroDoSDefense 1
+#HiddenServiceEnableIntroDoSBurstPerSec 13
+#HiddenServiceEnableIntroDoSRatePerSec 7
+#HiddenServiceMaxStreams 3
+#HiddenServiceMaxStreamsCloseCircuit 1
+#HiddenServicePort 22 127.0.0.1:22
+
+#HiddenServiceDir /tmp/storage/services/dnsd/public
+#HiddenServiceVersion 3
+#HiddenServiceNumIntroductionPoints 3
+#HiddenServiceEnableIntroDoSDefense 1
+#HiddenServiceEnableIntroDoSBurstPerSec 13
+#HiddenServiceEnableIntroDoSRatePerSec 7
+#HiddenServiceMaxStreams 3
+#HiddenServiceMaxStreamsCloseCircuit 1
+#HiddenServicePort 80 127.0.0.1:80
+
+ DNSPort   127.0.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+ SOCKSPort 127.0.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+
+ DNSPort   172.16.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+ SOCKSPort 172.16.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+
+#DNSPort        0
+#SOCKSPort      0
  ControlPort    0
-
- DNSPort        127.0.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
- SOCKSPort      127.0.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
-
- DNSPort        172.16.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
- SOCKSPort      172.16.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
-
  HTTPTunnelPort 0
  TransPort      0
  NATDPort       0
@@ -56,6 +80,6 @@
 #Sandbox 0
 #NoExec  0
 #UseBridges 1
-#ClientTransportPlugin meek_lite,obfs2,obfs3,obfs4,scramblesuit exec /usr/lib64/firefox/TorBrowser/Tor/PluggableTransports/obfs4proxy
+#ClientTransportPlugin meek_lite,obfs2,obfs3,obfs4,scramblesuit exec /usr/bin/obfs4proxy
 #############
 

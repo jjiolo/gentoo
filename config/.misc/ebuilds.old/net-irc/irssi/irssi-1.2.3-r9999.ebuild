@@ -1,7 +1,4 @@
 #############
-# make spitting out directory no doesnt exist...
-# something doesnt disable properly
-#############
 EAPI=7
 #############
 DESCRIPTION="A modular textUI IRC client with IPv6 support"

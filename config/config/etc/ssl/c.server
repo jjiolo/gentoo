@@ -10,5 +10,5 @@ install -d -o "${USER}" -m 0700 "${HOME}/.ssl" && cd "${HOME}/.ssl" || usage "ho
 #############
 openssl genpkey -algorithm ed25519 -out service.pem
 openssl req -new -config /etc/ssl/openssl.cnf -extensions certificate_extension -sha512 -key service.pem -out service.csr -subj "/CN=${1}"
-openssl ca -batch -config /etc/ssl/openssl.cnf -name ssld -extensions certificate_extension -policy certificate_policy -days 1 -notext -in service.csr -out service.crt
+openssl ca -batch -config /etc/ssl/openssl.cnf -name server -extensions certificate_extension -policy certificate_policy -days 1 -notext -in service.csr -out service.crt
 #############

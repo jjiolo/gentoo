@@ -13,7 +13,7 @@ RDEPEND=""
 DEPEND="
 ${RDEPEND}
 dev-libs/glib[static-libs]
-dev-libs/libpcre[static-libs]
+dev-libs/libpcre2[static-libs]
 dev-libs/libusb[static-libs]
 media-libs/libjpeg-turbo[static-libs]
 media-libs/libpng[static-libs]
@@ -24,6 +24,7 @@ x11-libs/pixman[static-libs]
 "
 #############
 src_configure(){
+
 ./configure --static \
 --prefix=/usr \
 --target-list=x86_64-softmmu \
@@ -35,7 +36,7 @@ src_configure(){
 --block-drv-ro-whitelist=file,raw \
 --enable-block-drv-whitelist-in-tools \
 --disable-plugins \
---enable-lto \
+--disable-lto \
 --disable-cfi \
 --disable-cfi-debug \
 --disable-coroutine-pool \

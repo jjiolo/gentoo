@@ -1,8 +1,12 @@
 
 #############
-never managed to get modules to load at boot
-only thing preventing this being a real liveusb
+
+  only thing preventing this being a real liveusb
+  module loading at boot...
 ^ tried atleast 7 times in the last 5 years got no where
+
+? fairly sure it just enables all eth and wifi
+
 #############
 
 #############
@@ -19,27 +23,36 @@ make INSTALL_MOD_PATH='/path/to/install/modules' modules_install
 [KERNEL]
 #############
 
-* didnt reduce alsa
-* didnt reduce amdgpu
-* didnt reduce bluetooth
-
 * didnt add tpm support
 * didnt add disk quota
 * didnt add QoS
 * didnt add vlans
 
-* didnt same page merging + madvise (qemu)
-
-* laptop sdcard reader
+* didnt same page merging + madvise + membarrier + aio + io_uring (qemu)
 
 * qemu virtio disk/net/gpu no_sound no_usb_passthrough + full networking
 ^ qemu no raid/cryptsetup/tap
 
+  laptop
+* reduce bluetooth
+* sdcard reader
+
 #############
 
-debugging menu full of sanitizer stuff ?
+kernel alsa...
 
-CONFIG_PAGE_TABLE_CHECK - 
+  CONFIG_SND_PCM_TIMER
+  CONFIG_SND_USB
+  CONFIG_SND_USB_AUDIO
+  minimum implementation
+
+  CONFIG_SND_PCI
+  CONFIG_SND_HDA_INTEL
+ +CONFIG_SND_HDA_CODEC_<hardware>
+  minimum for onboard soundcard
+
+  CONFIG_SND_CTL_INPUT_VALIDATION
+  harden sound card drivers
 
 #############
 

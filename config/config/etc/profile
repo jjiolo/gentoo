@@ -16,7 +16,7 @@ export stage3="${storage}/stage3"
 export ENV="/etc/profile"
 export LANG="en_GB.UTF-8"
 export PATH="/bin:/sbin:/usr/bin:/usr/sbin"
-export PATH="${PATH}:/etc/self/a.chroot:/etc/self/b.init:/etc/self/c.server:/etc/self/d.client:/etc/self/e.sets:/etc/self/setpriv"
+export PATH="${PATH}:/etc/self/a.chroot:/etc/self/b.init:/etc/self/c.server:/etc/self/d.client:/etc/self/e.sets:/etc/self/f.setpriv"
 export EDITOR="vim" PAGER="less" LESSHISTFILE="/dev/null"
 #############
 export GNUPGHOME="${HOME}/.gnupg"
@@ -85,18 +85,20 @@ renice +20 -u nobody  2>/dev/null
 renice +20 -u proxy   2>/dev/null
 
 renice +0  -u audio   2>/dev/null
+renice +0  -u video   2>/dev/null
 renice +0  -u desktop 2>/dev/null
+renice +10 -u qemu    2>/dev/null
 
 renice -10 -u ddns    2>/dev/null
 renice -10 -u dnsd    2>/dev/null
 renice -10 -u dhcpd   2>/dev/null
 renice -10 -u dhcpc   2>/dev/null
+renice -10 -u tftpd   2>/dev/null
 renice -10 -u ntpd    2>/dev/null
 
 renice +10 -u httpd   2>/dev/null
 renice +10 -u p2pd    2>/dev/null
-
-renice +10 -u qemu    2>/dev/null
+renice +10 -u i2pd    2>/dev/null
 #############
 
 #############
@@ -146,9 +148,8 @@ renice +10 -u qemu    2>/dev/null
 #############
 
 #############
-ntpc(){ ntpd -dnqN -p 0.pool.ntp.org -p 1.pool.ntp.org -p 2.pool.ntp.org -p 3.pool.ntp.org ; }
 alsa(){ sed -i -e "s/defaults.ctl.card ./defaults.ctl.card ${1}/" -e "s/defaults.pcm.card ./defaults.pcm.card ${1}/" /run/alsa.conf ; }
-deps(){ ldd "$(which ${1})"|while read ; do find /var/db/pkg -name CONTENTS -exec grep -l ${REPLY%% *} {} \; ; done ; }
+deps(){ ldd "$(which ${1})" | while read ; do find /var/db/pkg -name CONTENTS -exec grep -l ${REPLY%% *} {} \; ; done ; }
 #############
 
 #############

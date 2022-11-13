@@ -10,6 +10,13 @@ umount rootfs/tmp     &>/dev/null
 umount rootfs/root    &>/dev/null
 umount rootfs/binhost &>/dev/null
 #############
-mount
+
+#############
+printf "%s\n" "#############"
+mount | cut -c "0-$(x86_64-pc-linux-gnu-tput cols)"
+printf "%s\n" "#############"
+mount | grep -q stage3/rootfs/binhost && printf "\e[31m%s\e[0m\n" "binhost still mounted" || printf "\e[32m%s\e[0m\n" "binhost umounted"
+mount | grep -q stage3/rootfs/root && printf "\e[31m%s\e[0m\n" "config  still mounted" || printf "\e[32m%s\e[0m\n" "config  umounted"
+printf "%s\n" "#############"
 #############
 

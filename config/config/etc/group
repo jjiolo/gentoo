@@ -5,6 +5,7 @@ nobody:x:2:user
 proxy:x:3:user
 
 audio:x:5:nobody
+video:x:7:nobody
 desktop:x:9:
 qemu:x:11:user,nobody,proxy
 
@@ -17,4 +18,5 @@ ntpd:x:123:user
 
 httpd:x:80:user
 p2pd:x:9091:user,nobody
+i2pd:x:10123:user
 

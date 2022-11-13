@@ -93,9 +93,7 @@
 
 #define MAX_UNAUTH_PER_IP 5
 #define MAX_UNAUTH_CLIENTS 30
-
 #define MAX_AUTH_TRIES 10
-
 #define UNAUTH_CLOSE_DELAY 0
 
 #define DROPBEAR_PIDFILE "~/.ssh/pid"

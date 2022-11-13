@@ -1,68 +1,52 @@
 
 #############
 
- dynamic sets vs meters - old meters functionality updated syntax
+# blargh
 
+ # ct new
+ # ct established
+ # ct count <limit>
+ # tcp dport 22 ct count 10 accept
+ # tcp dport 22 ct count over 10 reject
 
-sets...
+ # limit rate over <value>/{second,minute,hour,day,week} burst <value> packets
+ # limit rate over <value> {bytes,kbytes,mbytes}/{second,minute,hour,day,week} burst <value> {bytes,kbytes,mbytes}
 
- force define: set { typeof <type> . <type> . <type> }
- force duplicate: add/update @set { <type> . <type> . <type> }
-^ cant mix types ? point in duplicating it
-  meters auto creates the set from type...
-  sets auto pulling type from match ?
+ # ct state new my_meter { skuid . dport counter }
 
- meters automagiced
- sets forces defining
+ # set my_set { type typeof flags timeout counter comment }
 
-old meters
+ # set my_set {
+ #  typeof skuid . tcp dport
+ #  flags dynamic,timeout
+ #  size 65535
+ #  timeout 1h
+ #  counter
+ # }
 
-<match> meter mymeter { <match> . <match> . <match> ...
- timeout
- counter
- ct count
- ratelimit bytes
- ratelimit packets
+ # meta skuid . tcp dport @my_set drop
+ # ct state new add    @my_set { skuid . tcp dport }
+ # ct state new update @my_set { skuid . tcp dport }
 
-<match> add myadd { <match> 
-<match> update myupdate { <match> 
- timeout
- counter
-
-add - add it to the set and let it timeout
-update - update it in the set and refresh timeout
-
-blargh...
-
- matching against a type concatination from a set...
- counters/limit
- allow creating maps...
-
- meta skuid 
-
-[counters]
-[sets]
-[meters]
-[limits]
- nft list limits
- nft list limit <type> <table> <limit>
- tcp dport 80 limit name "httpd" accept 
+# mangle
+# table inet filter {
+#  chain prerouting {
+#   type filter hook prerouting priority -300 ; policy accept ;
+#   udp dport 53 udp dport set 5353
+#   udp sport 5353 udp sport set 53
+#  }
+# }
 
 #############
 
-nft add table raw
-nft add chain ip raw prerouting { type filter hook prerouting priority -1000 ;
-nft add rule ip raw prerouting tcp dport 80 notrack
-nft add rule ip raw prerouting tcp sport 8080 notrack
-nft add rule ip raw prerouting tcp dport 80 tcp dport set 8080
-nft add rule ip raw prerouting tcp sport 8080 tcp sport set 80
-}
-
-^ mangle redirect/dnat/snat/masquerade esk
-
 #############
 
- forcing root only binds on all whitelisted ports
+=============
+# locking inbound to specific uid/gid
+# locking inbound behind root execution (race condition)
+=============
+
+ root only binds
 
   sysctl -w net.ipv4.ip_unprivileged_port_start=0
   sysctl -w net.ipv4.ip_unprivileged_port_start=32768
@@ -77,11 +61,73 @@ vs
          new - creates the row cant check skuid skgid
  established - queries for row can  check skuid skgid
 
-* contrack automates packets with no skuid skgid tag
-^ breaking inbound and outbound conntrack connections
+* conntrack automatic replies have no uid gid
+^ hangs inbound and outbound connections
+
+vs
+
+ libcap
+
+  start pid with +net_bind_service
+  leaves firewall locked
+  exposes running pid to rebinds
+  doesnt expose uid gid to rebinds
+
+^ technically safer ?
 
 #############
 
+#############
+
+ dynamic sets vs meters - old meters functionality updated syntax
+
+sets...
+
+     define - set { typeof <type> . <type> . <type> }
+  duplicate - add/update @set { <type> . <type> . <type> }
+
+     add - add it to the set and let it timeout
+  update - update it in the set and refresh timeout
+
+^ cant mix types ?
+
+meters...
+
+ <match> meter mymeter { <type> . <type> . <type> } accept/reject
+ timeout
+ counter
+ ct count
+ ratelimit bytes
+ ratelimit packets
+
+^ meters auto creates the set from type
+
+[counters]
+[sets]
+[meters]
+[limits]
+ nft list limits
+ nft list limit <type> <table> <limit>
+ tcp dport 80 limit name "httpd" accept 
+
+#############
+
+=============
+# [mangle] - never needed it ?
+=============
+
+nft add table raw
+nft add chain ip raw prerouting { type filter hook prerouting priority -1000 ; policy accept }
+nft add rule ip raw prerouting tcp dport 80 notrack
+nft add rule ip raw prerouting tcp sport 8080 notrack
+nft add rule ip raw prerouting tcp dport 80 tcp dport set 8080
+nft add rule ip raw prerouting tcp sport 8080 tcp sport set 80
+
+#############
+
+=============
+# old ingress blacklist and script + timeout set for mac addresses
+=============
 #############
 set v4 { type ipv4_addr ; flags interval,timeout ; timeout 1h ; }
 set v6 { type ipv4_addr ; flags interval,timeout ; timeout 1h ; }
@@ -105,6 +151,10 @@ set mac { type ether_addr ; timeout 1h ; }
 chain input  { type filter hook input  priority 0 ; policy accept ; set update ether saddr @mac ; }
 chain output { type filter hook output priority 0 ; policy accept ; set update ether daddr @mac ; }
 #############
+
+=============
+# should be the start ?
+=============
 
  <table> - <address types>
  netdev  - match interface
@@ -145,6 +195,7 @@ chain output { type filter hook output priority 0 ; policy accept ; set update e
 
 #############
 
+
 table <type> <name> {
 
   chain <name> {
@@ -157,6 +208,11 @@ table <type> <name> {
  }
 
 }
+
+-------------
+
+nft add table <type> <table>
+nft add chain <type> <table> <chain> { type <type> hook <hook> priority 0 ; policy {accept,drop,queue,continue,return} ; }
 
 #############
 

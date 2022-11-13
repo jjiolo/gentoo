@@ -3,7 +3,7 @@
 
  install -d -o 0 -g 0 -m 0775 "/binhost/portage" && cd "/binhost/portage"
 
- umask 0022
+ umask 0002
 
  [ -d ".git" ] && git pull
 

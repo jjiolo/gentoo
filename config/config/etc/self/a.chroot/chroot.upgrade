@@ -5,7 +5,7 @@
 emerge --color y --tree --verbose ${pretend} --buildpkg --usepkg --update --deep --newuse --keep-going y @system | tee "/binhost/logs/chroot.upgrade.system"
 emerge --color y --tree --verbose ${pretend} --buildpkg --usepkg --update --deep --newuse --keep-going y @world | tee "/binhost/logs/chroot.upgrade.world"
 #############
-emerge --color y --tree --verbose ${pretend} --buildpkg --usepkg --update --deep --newuse --keep-going y @preserved-rebuild | tee "/binhost/logs/chroot.preserved"
+emerge --color y --tree --verbose ${pretend} --buildpkg --usepkg --update --deep --newuse --keep-going y @preserved-rebuild | tee "/binhost/logs/chroot.upgrade.preserved"
 #############
 emerge --color y --verbose --pretend --nodeps --emptytree @system | tee "/binhost/logs/chroot.system"
 emerge --color y --verbose --pretend          --emptytree @world | tee "/binhost/logs/chroot.world"

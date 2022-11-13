@@ -16,9 +16,9 @@
  [ -f "${shared}/contacts/self/public" ] || onion="$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)"
 
 #############
-export LD_PRELOAD='/usr/lib64/libtorsocks.so'
+#export LD_PRELOAD='/usr/lib64/libtorsocks.so'
 #############
-server='libera75jm6of4wxpxt4aynol3xjmbtxgfyjpu34ss4d7r7q2v5zrpyd.onion:6697'
+#server='libera75jm6of4wxpxt4aynol3xjmbtxgfyjpu34ss4d7r7q2v5zrpyd.onion:6697'
 #############
 account="spare"
 nick="NICK $(tr -cd 'a-zA-Z'</dev/urandom|head -c13)"
@@ -62,7 +62,9 @@ done &
 
 #############
 
-openssl s_client -noservername -connect "${server}" -cert "sasl" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet -verify_hostname 'palladium.libera.chat' <&3 |
+#openssl s_client -noservername -connect "${server}" -cert "sasl" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet -verify_hostname 'palladium.libera.chat' <&3 |
+
+openssl s_client -noservername -connect irc.libera.chat:6697 -cert "sasl" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet <&3 |
 tr -cd '[:alnum:]:!@#\n ' | 
 while read -r sender type target message ; do [ "${sender:0:6}" == ":Guest" ] && { [ -z "${message}" ] || message="herp derp" ; }
 
@@ -122,9 +124,10 @@ done &
 #############
 
 wait
+
 #############
-pkill sleep
-sleep "$(shuf -i3-13 -n1)"
-exec i.server
+#pkill sleep
+#sleep "$(shuf -i3-13 -n1)"
+#exec i.server
 #############
 

@@ -18,6 +18,8 @@ table inet filter {
   tcp dport {22,80} ct state new log flags skuid prefix "input.lo.new " accept
   tcp dport {9091}  ct state new log flags skuid prefix "input.lo.new " accept
 
+  tcp dport {4447,7070}  ct state new log flags skuid prefix "input.lo.new " accept
+
   # icmp
 
   ip protocol {icmp}   log flags skuid prefix "input.lo.icmp " accept
@@ -46,6 +48,10 @@ table inet filter {
   tcp dport {80}    skuid {root,user,nobody}  ct state new log flags skuid prefix "output.lo.new " accept
   tcp dport {9091}  skuid {root,user,nobody}  ct state new log flags skuid prefix "output.lo.new " accept
   tcp dport {9050}  skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.lo.new " accept
+
+  udp dport {53} skuid {i2pd} ct state new log flags skuid prefix "output.lo.new " accept
+  tcp dport {80} skuid {i2pd} ct state new log flags skuid prefix "output.lo.new " accept
+  tcp dport {4447,7070} skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.lo.new " accept
 
   # icmp
 

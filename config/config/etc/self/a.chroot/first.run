@@ -2,7 +2,8 @@
 #############
 # portage
 # binutils
-# gcc libtool
+# gcc
+# libtool
 # linux-headers linux-firmware
 # glibc
 # gnupg gpgme
@@ -34,8 +35,12 @@ emerge --color y --tree --verbose --buildpkg --usepkg --oneshot dev-libs/openssl
 #############
 emerge --color y --depclean ; emerge -C perl-core/Encode perl-core/CPAN # clean up temporary blockers
 #############
-emerge --color y --tree --verbose --buildpkg --usepkg --update --deep --newuse --emptytree --keep-going y @installed 2>&1 | tee "/binhost/logs/rebuild.installed"
+emerge --color y --tree --verbose --buildpkg --usepkg --update --deep --newuse --emptytree --exclude gcc --keep-going y @installed 2>&1 | tee "/binhost/logs/rebuild.installed"
 #############
 perl-cleaner --all | tee "/binhost/logs/rebuild.perlcleaner"
+#############
+
+#############
+for i in /binhost/logs/rebuild.* ; do less -RS "${i}" ; done
 #############
 

@@ -26,13 +26,13 @@ read -rsp 'passphrase > ' passphrase
 uuid="$(hexdump -n32 -ve '1/1 "%02x"' "${1}")"
 threads="$(($(grep -c MHz /proc/cpuinfo)*2))"
 #############
-printf "%s" "${passphrase}"|argon2 "${uuid}" -id -t 3 -m 12 -p "${threads}" -r |
+printf "%s" "${passphrase}" | argon2 "${uuid}" -id -t 3 -m 12 -p "${threads}" -r |
 cryptsetup --key-file - --hash sha256 --cipher aes-cbc-essiv:sha256 --key-size 256 --offset 1 open --type plain "${1}" storage || usage "cryptsetup failed"
 #############
 
-[ "${#}" == "1" ] && { fsck.ext4 -pvf "/dev/mapper/storage" ; fsck.ext4 "/dev/mapper/storage" -pv || usage "fsck failed"; }
+[ "${#}" == "1" ] && { fsck.ext4 -pvf "/dev/mapper/storage" ; fsck.ext4 -pv "/dev/mapper/storage" || usage "fsck failed" ; }
 
-[ "${#}" == "2" ] && { mkfs.ext4 -L storage "/dev/mapper/storage" || usage "mkfs failed"; }
+[ "${#}" == "2" ] && { mkfs.ext4 -m 0 -L storage "/dev/mapper/storage" || usage "mkfs failed" ; }
 
 #############
 

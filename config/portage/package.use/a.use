@@ -8,7 +8,7 @@ app-arch/unzip -bzip2 -unicode
 app-arch/xz-utils -extra-filters -nls -threads
 app-arch/zip -bzip2 -crypt -unicode
 app-arch/zstd -threads
-app-crypt/gnupg -bzip2 -nls -readline -smartcard -ssl
+app-crypt/gnupg -bzip2 -nls -readline -smartcard -ssl -tofu
 app-crypt/gpgme -cxx
 app-crypt/libb2 -openmp
 app-crypt/pinentry -ncurses
@@ -36,7 +36,7 @@ dev-libs/expat -unicode
 dev-libs/glib -elf -mime
 dev-libs/gmp -asm -cxx
 dev-libs/libevent -clock-gettime ssl -threads
-dev-libs/libgcrypt -asm
+dev-libs/libgcrypt -asm -getentropy
 dev-libs/libgpg-error -nls
 dev-libs/libnl -debug -threads
 dev-libs/libpcre -bzip2 -cxx -readline -recursion-limit -zlib
@@ -69,10 +69,10 @@ media-libs/harfbuzz -cairo glib -graphite -introspection truetype -icu
 media-libs/libepoxy X -egl
 media-libs/libglvnd X
 media-libs/libpng -apng
-media-libs/mesa -classic -dri3 -egl gallium -gbm -gles2 -libglvnd -llvm -nptl -zstd pic -wayland
+media-libs/mesa -gles2 -llvm -proprietary-codecs -zstd
 media-sound/alsa-utils -libsamplerate -nls
-media-video/ffmpeg -bzip2 -dav1d -encode -gnutls -gpl -hardcoded-tables -iconv -postproc -threads -v4l -zlib X alsa pic network
-media-video/mpv -egl -iconv -libass -lua -opengl -uchardet -xv -zlib cli
+media-video/ffmpeg -bzip2 -dav1d -encode -gnutls -gpl -hardcoded-tables -iconv -postproc -v4l -zlib X alsa network pic threads
+media-video/mpv -egl -iconv -libass -libplacebo -lua -opengl -uchardet -xv -zlib cli
 net-analyzer/nmap ipv6 -nls -nse -ssl -ncat
 net-analyzer/tcpdump -drop-root -samba -smi -ssl
 net-dns/dnscrypt-proxy -filecaps
@@ -135,7 +135,7 @@ sys-fs/cryptsetup -argon2 -luks1_default -nls -udev static
 sys-fs/dosfstools -compat -iconv
 sys-fs/e2fsprogs -nls -threads
 sys-fs/eudev -hwdb -kmod
-sys-fs/lvm2 -readline -thin -udev device-mapper-only static
+sys-fs/lvm2 -lvm -readline -thin -udev static
 sys-fs/mdadm -udev
 sys-kernel/linux-firmware redistributable
 sys-kernel/linux-headers headers-only

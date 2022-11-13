@@ -37,14 +37,13 @@ static const Layout layouts[] = {
 #define MODKEY Mod1Mask
 #define TAGKEYS(KEY,TAG) { MODKEY, KEY, view, {.ui = 1 << TAG} }, { MODKEY|ShiftMask, KEY, tag, {.ui = 1 << TAG} },
 /*************/
-static char dmenumon[2] = "0";
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *termcmd[]  = { "st", NULL };
 static const char *nobody[]   = { "links", "-g", "-no-connect", NULL };
 static const char *proxy[]    = { "links", "-g", "-no-connect", "-socks-proxy", "127.0.0.1:9050", "-only-proxies", "1", NULL };
 static const char *browser[]  = { "browser", NULL };
 /*************/
-static Key keys[] = {
+static const Key keys[] = {
  { MODKEY|ShiftMask, XK_Return,    spawn,          {.v = termcmd } },
  { MODKEY|ShiftMask, XK_BackSpace, spawn,          {.v = nobody } },
  { MODKEY|ShiftMask, XK_equal,     spawn,          {.v = proxy } },
@@ -74,7 +73,7 @@ static Key keys[] = {
  { MODKEY|ShiftMask, XK_q,         quit,           {0} },
 };
 /*************/
-static Button buttons[] = {
+static const Button buttons[] = {
  { ClkClientWin,  MODKEY, Button1, movemouse,      {0} },
  { ClkClientWin,  MODKEY, Button3, resizemouse,    {0} },
  { ClkTagBar,     0,      Button1, view,           {0} },

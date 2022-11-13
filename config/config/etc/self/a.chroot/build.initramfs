@@ -6,8 +6,8 @@ chroot . /bin/busybox --install -s
 #############
 cp -af /root/config/* .
 #############
-install -o root -g root -m 0664 "/binhost/config.tar.gz"  "etc/config.tar.gz"
-install -o root -g root -m 0664 "/binhost/config.torrent" "etc/config.torrent"
+install -o 0 -g 0 -m 0664 "/binhost/config.tar.gz"  "etc/config.tar.gz"
+install -o 0 -g 0 -m 0664 "/binhost/config.torrent" "etc/config.torrent"
 #############
 
 # delete unused files
@@ -99,6 +99,7 @@ rm -r usr/libexec/at-spi-bus-launcher
 rm -r usr/libexec/at-spi2-registryd
 rm -r usr/libexec/dbus-bash-completion-helper
 rm -r usr/libexec/dbus-daemon-launch-helper
+rm -r usr/libexec/gio-launch-desktop
 #
 rm -r usr/share/aclocal
 rm -r usr/share/applications
@@ -189,7 +190,7 @@ find . -perm -4000 -exec chmod u-s {} \;
 find . -perm -2000 -exec chmod g-s {} \;
 find . -perm -1000 -exec chmod -t {} \;
 #
-chown -R root:root .
+chown -R 0:0 .
 find . -type d -exec chmod 0775 {} \;
 find . -type f -exec chmod 0664 {} \;
 #
@@ -208,7 +209,7 @@ chmod 4750 bin/sudo
 #
 cd /binhost/rootfs && find . -print0|busybox cpio -ovH newc|gzip > /binhost/images/client
 #
-chown -R root:root /binhost/images /binhost/kernels
+chown -R 0:0 /binhost/images /binhost/kernels
 find /binhost/images /binhost/kernels -type d -exec chmod 0775 {} \;
 find /binhost/images /binhost/kernels -type f -exec chmod 0664 {} \;
 #############

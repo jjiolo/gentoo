@@ -1,4 +1,4 @@
 #!/bin/sh
 #############
-pkill httpd
+pkill -x /sbin/httpd
 #############

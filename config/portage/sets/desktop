@@ -1,8 +1,4 @@
 
-media-libs/alsa-lib
-media-sound/alsa-utils
-sys-libs/ncurses
-
 app-crypt/libmd
 dev-libs/expat
 dev-libs/libbsd

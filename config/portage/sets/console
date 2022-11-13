@@ -1,5 +1,6 @@
 
-net-fs/nfs-utils
+net-vpn/i2pd
+dev-libs/boost
 
 app-crypt/argon2
 app-crypt/cryptsetup

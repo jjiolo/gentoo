@@ -1,6 +1,22 @@
 
 #############
 
+last build attempt...
+
+ grep '#' Makefile
+ grep '#' configure
+ ^ prints actual comments ? (./configure --help is full of shit)
+
+ INSTALL_SYMLINKS=YesPlease
+ SKIP_DASHED_BUILT_INS=YesPlease
+ ^ jsmin cssmin --disable is setting no as the path to a file and enabling it ?
+
+ stage3/bare    0775
+ stage3/working 0700
+ stage3/binhost 0775
+
+#############
+
  [busybox httpd + git]
 
   # setup bare repository and working directory

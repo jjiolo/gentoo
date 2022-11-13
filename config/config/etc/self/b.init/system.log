@@ -1,13 +1,17 @@
 
 #############
 
+pkill -x auditd
 pkill -x syslogd
 pkill -x klogd
-pkill -x auditd
 
 #############
 
 install -d -o 0 -g 1 -m 0750 /run/logs
+
+#############
+
+auditd # auditctl -R /etc/audit/audit.rules
 
 #############
 
@@ -20,10 +24,6 @@ umask 0002
 syslogd -O /run/logs/syslog -s999 -b3 -StD
 klogd
 umask 0077
-
-#############
-
-auditd # ; auditctl -R /etc/audit/audit.rules
 
 #############
 

@@ -31,7 +31,7 @@ done
 
 #############
 
-chown -R root:root /root/kernels /binhost/kernels
+chown -R 0:0 /root/kernels /binhost/kernels
 chmod 0644 /root/kernels/* /binhost/kernels/*
 
 #############

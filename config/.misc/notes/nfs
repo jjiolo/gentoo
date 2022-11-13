@@ -1,13 +1,4 @@
 
-fucked ?
-
- notes say (no)crossmnt and (no)hide dont apply to nfsv4...
-
-^ total bollox...
-
-  first test included hide and nocrossmnt then left 
-
-
 #############
 
  net-fs/nfs-utils
@@ -55,6 +46,9 @@ fucked ?
  nfsd -N3 -V4 -N4.1 -N4.2 --no-udp --tcp --port 2049 --syslog 4
 
  mount -t nfs4 domain.tld:/path /path
+
+ * need default mount options
+   need preferred mount options
 
 #############
 
@@ -170,11 +164,11 @@ options:
         proto - ={tcp,tcp6,rdma,rdma6}
  minorversion - ={1} ( vers=4.1 || vers=4,minorversion=1 )
          port - ={2049}
-          cto - close to open cache coherence semantics ?
-        nocto - 
-   clientaddr - 
-    migration - 
-  nomigration - 
+          cto - defaults cto, close to open cache coherence ?
+        nocto - defaults cto, 
+   clientaddr - ipv4 or ipv6 address used for nfsv4 server callback requests ? (v4.1 v4.2 use the established tcp connection only required for v4.0)
+    migration - defaults to nomigration, identification string compatible with nfsv4 transparent state migration ?
+  nomigration - defaults to nomigration, 
 
       nfsvers - =4 nfs version used to contact the server
          vers - =4 nfs version used to contact the server

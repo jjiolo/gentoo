@@ -47,7 +47,7 @@ ip link set up "${interface}"
 
 #############
 
- install -d -o 0 -g 0 -m 0700 "/run/udhcpc" "/run/udhcpc/${interface}"
+ install -d -o 0 -g 0 -m 0775 "/run/udhcpc" "/run/udhcpc/${interface}"
 
  printf "%s\n" "${broadcast##* }" > "/run/udhcpc/${interface}/broadcast"
            printf "%s\n" "${dns}" > "/run/udhcpc/${interface}/dns"
@@ -59,8 +59,8 @@ ip link set up "${interface}"
           printf "%s\n" "${mask}" > "/run/udhcpc/${interface}/mask"
         printf "%s\n" "${ntpsrv}" > "/run/udhcpc/${interface}/ntpsrv"
 
- find /run/udhcpc -type d -exec chmod 0755 {} \;
- find /run/udhcpc -type f -exec chmod 0644 {} \;
+ find /run/udhcpc -type d -exec chmod 0775 {} \;
+ find /run/udhcpc -type f -exec chmod 0664 {} \;
 
 #############
 

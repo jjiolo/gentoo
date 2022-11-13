@@ -156,8 +156,6 @@ emerge --quickpkg-direct y --root /run/system @system
 
 #############
 
-(needs to go in notes/portage)
-
 package install
  delete old version
  install new version

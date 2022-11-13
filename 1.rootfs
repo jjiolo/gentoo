@@ -13,7 +13,7 @@ install -d -o 0 -g 0 -m 0755 "rootfs"
 
 /bin/busybox tar xf "binhost/stage3.tar.xz" -C "rootfs"
 
-install -o root -g root -m 0755 "/bin/busybox" "rootfs/bin/busybox"
+install -o 0 -g 0 -m 0755 "/bin/busybox" "rootfs/bin/busybox"
 
 cd "rootfs" || exit 1
 

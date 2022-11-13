@@ -14,11 +14,11 @@ DEPEND="${RDEPEND}"
 
 #############
 src_configure() {
-cp -a "${FILESDIR}/config" "${S}/.config"
-cp -a "${FILESDIR}/scripts" "${S}/embed"
+ cp -a "${FILESDIR}/config" "${S}/.config"
+ cp -a "${FILESDIR}/scripts" "${S}/embed"
 
 
-make -j1 -s oldconfig >/dev/null
+ make -j1 -s oldconfig >/dev/null
 }
 #############
 src_install() {

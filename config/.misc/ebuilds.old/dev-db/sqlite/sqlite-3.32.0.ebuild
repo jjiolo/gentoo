@@ -7,7 +7,7 @@ SRC_URI=""
 #############
 LICENSE="public-domain"
 SLOT="3"
-KEYWORDS="" # amd64"
+KEYWORDS=""
 IUSE=""
 RDEPEND=""
 DEPEND="${RDEPEND}"
@@ -49,6 +49,6 @@ src_configure(){
 --without-readline-inc
 }
 #############
-#src_install(){ true; }
+src_install(){ default ; }
 #############
 

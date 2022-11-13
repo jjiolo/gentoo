@@ -4,7 +4,7 @@ debug(){ printf "%s\n" "takes endpoint and/or grep filter - ${1}" ; exit 1 ; }
 #############
 [ "${#}" == "1" ] || [ "${#}" == "2" ] || debug "no input"
 #############
-curl --silent --connect-timeout 3 "http://${1}/shared/.directory/films" |
+curl --silent --connect-timeout 3 "http://${1}/shared/.directory/a.films" |
 sed "s/^/http:\/\/${1}\//" |
 grep -i "${2}" |
 shuf |

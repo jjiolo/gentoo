@@ -6,7 +6,7 @@
  export CFLAGS="${CFLAGS} -mharden-sls=all"
 #export CFLAGS="${CFLAGS} -D_FORTIFY_SOURCE=2"
 #export CFLAGS="${CFLAGS} -pie -fPIE -fPIC"
-#export CFLAGS="${CFLAGS} -fstack-clash-protection -fstack-protector-all"
+#export CFLAGS="${CFLAGS} -fstack-protector-all -fstack-clash-protection"
 #export CXXFLAGS="${CFLAGS}"
 #export LDFLAGS="-Wl,--as-needed,-z,now,-z,relro,-z,noexecstack,-z,noexecheap"
 #############

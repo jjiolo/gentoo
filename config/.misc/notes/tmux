@@ -54,6 +54,8 @@ tmux removal -
 
 [problems]
 
+ dtach cant restore deleted unix sockets...
+
  vncviewer (console)
   (ctrl \) - remapping to nothing ?
   (ctrl #) - remapping to detach 

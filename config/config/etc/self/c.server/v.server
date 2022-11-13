@@ -15,7 +15,6 @@ debug(){ printf "%s\n" "takes endpoint, address and or public key file - ${1}";e
 ip link del tun
 ip link add tun type wireguard
 wg set tun listen-port 51820 private-key "${storage}/.vpn/wireguard"
-sysctl -w "net.ipv6.conf.tun.autoconf=0" &>/dev/null
 sysctl -w "net.ipv6.conf.tun.accept_ra=0" &>/dev/null
 ip addr add "${2}/8" broadcast 10.255.255.255 dev tun
 ip addr add "fd00::${2//./:}/64" dev tun
@@ -25,3 +24,6 @@ wg set tun peer "${peer}" persistent-keepalive 60 endpoint "${1}:51820" allowed-
 #############
 wg showconf tun > "${storage}/.vpn/config"
 #############
+v.flush
+#############
+

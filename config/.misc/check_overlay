@@ -8,7 +8,7 @@
 find /root/overflow /root/overlay -name '*.ebuild' -exec basename {} \; | while read
 do
 
-grep "${REPLY::-7}" /binhost/logs/build.nodeps /binhost/logs/chroot.world | grep -q -e ::overlay -e ::overflow &&
+grep "${REPLY::-7}" /binhost/logs/build.onlydeps /binhost/logs/build.nodeps /binhost/logs/chroot.world | grep -q -e ::overlay -e ::overflow &&
  printf "%s\e[32m%s\e[0m\n" "${REPLY::-7}: " "pass" ||
  printf "%s\e[31m%s\e[0m\n" "${REPLY::-7}: " "fail" 
 

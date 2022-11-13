@@ -1,15 +1,15 @@
 
 #############
-# /tmp/storage/shared | .directory | archive | contacts | downloads | torrents | magnets |
+# | /tmp/storage/shared | .directory | archive | contacts | downloads | torrents | magnets |
 #############
 
 # .directory
 
 cd "${storage}" || exit
 
-find "shared/archive/music"  -type f -print0 2>/dev/null | sort > "${shared}/.directory/music"
-find "shared/archive/series" -type f -print0 2>/dev/null | sort > "${shared}/.directory/series"
-find "shared/archive/films"  -type f -print0 2>/dev/null | sort > "${shared}/.directory/films"
+find "shared/archive/music"  -type f -print0 2>/dev/null | sort > "${shared}/.directory/a.music"
+find "shared/archive/series" -type f -print0 2>/dev/null | sort > "${shared}/.directory/a.series"
+find "shared/archive/films"  -type f -print0 2>/dev/null | sort > "${shared}/.directory/a.films"
 find "shared/contacts"       -type f -print0 2>/dev/null | sort > "${shared}/.directory/contacts"
 find "shared/downloads"      -type f -print0 2>/dev/null | sort > "${shared}/.directory/downloads"
 find "shared/torrents"       -type f -print0 2>/dev/null | sort > "${shared}/.directory/torrents"
@@ -42,14 +42,14 @@ install -o 0 -g 0 -m 0664 "${services}/ddns/public/hostname" "public"
 printf "%s%s\n" "$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)" ".onion" > "private"
 
 dropbearkey -y -f "${storage}/.ssh/sshd" 2>/dev/null | grep "^ssh-ed25519" | cut -d' ' -f1,2 > "sshd"
-install -o 0 -g 0 -m 0600 "${storage}/.ssh/authorized_keys" "sshd.authorized"
-install -o 0 -g 0 -m 0600 "${storage}/.ssh/known_hosts" "sshd.known"
+install -o 0 -g 0 -m 0664 "${storage}/.ssh/authorized_keys" "sshd.authorized"
+install -o 0 -g 0 -m 0664 "${storage}/.ssh/known_hosts" "sshd.known"
 
 for i in user nobody proxy
 do
  dropbearkey -y -f "${storage}/home/${i}/.ssh/ssh" 2>/dev/null | grep "^ssh-ed25519" | cut -d' ' -f1,2 > "${i}"
- install -o 0 -g 0 -m 0600 "${storage}/home/${i}/.ssh/authorized_keys" "${i}.authorized"
- install -o 0 -g 0 -m 0600 "${storage}/home/${i}/.ssh/known_hosts" "${i}.known"
+ install -o 0 -g 0 -m 0664 "${storage}/home/${i}/.ssh/authorized_keys" "${i}.authorized"
+ install -o 0 -g 0 -m 0664 "${storage}/home/${i}/.ssh/known_hosts" "${i}.known"
 done
 
 wg pubkey < "${storage}/.vpn/wireguard" > "wireguard"
@@ -102,9 +102,9 @@ wc -l "${shared}/.directory/contacts"
 wc -l "${shared}/.directory/downloads"
 wc -l "${shared}/.directory/torrents"
 printf "%s\n" "#############"
-wc -l "${shared}/.directory/music"
-wc -l "${shared}/.directory/series"
-wc -l "${shared}/.directory/films"
+wc -l "${shared}/.directory/a.music"
+wc -l "${shared}/.directory/a.series"
+wc -l "${shared}/.directory/a.films"
 printf "%s\n" "#############"
 
 #############

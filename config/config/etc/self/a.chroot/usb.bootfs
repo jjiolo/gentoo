@@ -4,7 +4,10 @@ install -d -o 0 -g 0 -m 0700 "${bootfs}" "${bootfs}/EFI" "${bootfs}/EFI/boot" "$
 #############
 [ -d "/binhost" ] && cd "${bootfs}" || exit
 #############
+printf "%s\n" "#############" ; mountpoint /tmp/a.bootfs
+#############
 
+printf "%s\n" "#############"
 printf "%s\n" "creating standalone grub binary"
 
 cat > "grub.cfg" << EOF
@@ -25,7 +28,7 @@ menuentry "net_server"  { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.
 menuentry "net_desktop" { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/desktop ; initrd downloads/bootfs/client ; }
 menuentry "net_laptop"  { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/laptop ; initrd downloads/bootfs/client ; }
 
-menuentry "diskless" { linux /kernels/laptop root=/dev/nfs nfsroot=172.16.0.1:/,vers=4 ip=dhcp; }
+menuentry "diskless" { linux downloads/bootfs/desktop root=/dev/nfs nfsroot=172.16.0.1:/,vers=4 ip=dhcp; }
 
 EOF
 
@@ -54,11 +57,12 @@ done
 #############
 
 printf "%s\n" "installing config"
+printf "%s\n" "#############"
 
 install -o 0 -g 0 -m 0600 "/binhost/config.tar.gz" "."
 install -o 0 -g 0 -m 0600 "/binhost/config.torrent" "."
 
 #############
-sync
+sync ; ls -lah --group-directories-first /tmp/a.bootfs ; printf "%s\n" "#############"
 #############
 

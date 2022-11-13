@@ -17,9 +17,9 @@ umask 0007
 
 [ "$(hostname)" == "server"  ] && {
 
- ash /etc/self/setpriv/setpriv_udhcpd
- ash /etc/self/setpriv/setpriv_tftpd
- ash /etc/self/setpriv/setpriv_ntpd
+ ash /etc/self/f.setpriv/setpriv_udhcpd
+ ash /etc/self/f.setpriv/setpriv_tftpd
+ ash /etc/self/f.setpriv/setpriv_ntpd
  ash /etc/services/httpd/start
  ash /etc/services/p2pd/start
 
@@ -31,7 +31,7 @@ umask 0007
 
 [ "$(hostname)" == "virtual" ] && {
 
- ash /etc/self/setpriv/setpriv_udhcpc nat virtual # echo yes | network_default
+ ash /etc/self/f.setpriv/setpriv_udhcpc nat virtual # echo yes | network_default
 
  dropbear -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null
 

@@ -89,17 +89,20 @@ cat > "etc/init" << EOF
 
  chown desktop:desktop /dev/tty7
 
+ chown -R root:toor /dev/snd
+ find /dev/snd -type d -exec chmod 0750 {} \;
+ find /dev/snd -type c -exec chmod 0660 {} \;
+
+ chown -R root:toor /dev/video*
+ chmod -R 0660 /dev/video*
+
  chown -R root:desktop /dev/dri
- find /dev/dri -type d -exec chmod 1750 {} \;
+ find /dev/dri -type d -exec chmod 0750 {} \;
  find /dev/dri -type c -exec chmod 0660 {} \;
 
  chown -R root:desktop /dev/input
- find /dev/input -type d -exec chmod 1750 {} \;
+ find /dev/input -type d -exec chmod 0750 {} \;
  find /dev/input -type c -exec chmod 0660 {} \;
-
- chown -R root:toor /dev/snd
- find /dev/snd -type d -exec chmod 1750 {} \;
- find /dev/snd -type c -exec chmod 0660 {} \;
 
  ln -s /proc/self/fd   "/dev/fd"
  ln -s /proc/self/fd/0 "/dev/stdin"

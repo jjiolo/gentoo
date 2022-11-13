@@ -1,16 +1,11 @@
 
 #############
 
-* tune2fs -m 0 /dev/block
-
-  5% of 2.7tb equates to an extra 135gb of space
+* tune2fs -m 0 /dev/block # 5% of 2.7tb equates to an extra 135gb of space
 
 #############
 
- man md.4
- man mdadm.8.in
-
-#############
+ man md.4 mdadm.8.in
 
  write hole | last written
 

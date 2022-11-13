@@ -1,14 +1,14 @@
 #!/bin/sh
 #############
-debug(){ printf "%s\n" "debug - ${1}" ; exit 1 ; }
+usage(){ printf "%s\n" "takes interface and or hostname - ${1}" ; exit 1 ; }
 #############
-[ "${#}" == "1" ] || [ "${#}" == "2" ] || debug "takes interface &| hostname"
+[ "${#}" == "1" ] || [ "${#}" == "2" ] || usage "no input"
 #############
-[ -d "/sys/class/net/${1}" ] || debug "interface does not exist"
+[ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
 #############
 [ -z "${2}" ] || hostname="-xhostname:${2}"
 #############
-pkill udhcpc
+pkill -x /sbin/udhcpc
 #############
 ip link set up "${1}"
 #############

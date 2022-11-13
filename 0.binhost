@@ -2,7 +2,7 @@
 #############
  install -d -o 0 -g 0 -m 0775 binhost && cd binhost || exit 1
 #############
- install -d -o 250 -g 250 -m 0775 portage
+ install -d -o 0   -g 0   -m 0775 portage
  install -d -o 250 -g 250 -m 0775 distfiles
  install -d -o 0   -g 0   -m 0775 packages
  install -d -o 0   -g 0   -m 0775 rootfs
@@ -59,6 +59,4 @@
   rm -rf "${GNUPGHOME}"
 
 # EOF
-
-#############
 

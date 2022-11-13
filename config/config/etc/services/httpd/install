@@ -3,17 +3,17 @@
 . /etc/services/variables httpd
 #############
 
-[ -f "${service_storage}/config"  ] || install -o 0 -g 80 -m 0640 "${service_system}/files/config" "${service_storage}"
-
-[ -f "${service_storage}/error" ] || install -o 0 -g 80 -m 0640 "${service_system}/files/error"  "${service_storage}"
-
 [ -d "${service_storage}/webroot" ] || install -d -o 0 -g 80 -m 0640 "${service_storage}/webroot"
+
+[ -f "${service_storage}/config" ] || install -o 0 -g 80 -m 0640 "${service_system}/files/config" "${service_storage}/config"
+
+[ -f "${service_storage}/error" ] || install -o 0 -g 80 -m 0640 "${service_system}/files/error" "${service_storage}/error"
 
 #############
 
 [ -d "${service_storage}/webroot/cgi-bin" ] || install -d -o 0 -g 80 -m 0640 "${service_storage}/webroot/cgi-bin"
 
-[ -f "${service_storage}/webroot/index" ] || install -o 0 -g 80 -m 0640 "${service_system}/files/index"  "${service_storage}/webroot"
+[ -f "${service_storage}/webroot/index" ] || install -o 0 -g 80 -m 0640 "${service_system}/files/index" "${service_storage}/webroot/index"
 
 [ -L "${service_storage}/webroot/shared" ] || ln -sf "${shared}" "${service_storage}/webroot/shared"
 

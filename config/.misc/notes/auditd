@@ -31,8 +31,8 @@ auditctl -l # list rules
 auditctl -R # read rules
 auditctl -C # interfield comparison
 auditctl -F # rule field
-aureport --key --summary
-ausearch --key <key>|less
+aureport --key --summary (-i --interpret)
+ausearch --key <key>|less (-i --interpret)
 #############
 /bin/su < - -S execve -F a0="/bin/su" only takes a number
 logging on execve args ? only way to monitor busybox commands

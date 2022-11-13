@@ -32,15 +32,15 @@
  HiddenServiceMaxStreamsCloseCircuit 1
  HiddenServicePort 80 127.0.0.1:80
 
-#DNSPort        127.0.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
-#SOCKSPort      127.0.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+#DNSPort   127.0.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+#SOCKSPort 127.0.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
 
-#DNSPort        172.16.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
-#SOCKSPort      172.16.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+#DNSPort   172.16.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
+#SOCKSPort 172.16.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr IPv6Traffic
 
- ControlPort    0
  DNSPort        0
  SOCKSPort      0
+ ControlPort    0
  HTTPTunnelPort 0
  TransPort      0
  NATDPort       0

@@ -1,6 +1,0 @@
-#!/bin/sh
-#############
-. /etc/services/vpnd/variables
-#############
-pkill -x openvpn
-#############

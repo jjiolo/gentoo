@@ -19,9 +19,11 @@ debug(){ printf "%s\n" "takes endpoint, address and or public key file - ${1}";e
 
 
 
-
 #############
 wg set tun peer "${peer}" persistent-keepalive 60 endpoint "${1}:51820" allowed-ips "${2},fd00::${2//./:}"
 #############
 wg showconf tun > "${storage}/.vpn/config"
 #############
+v.flush
+#############
+
