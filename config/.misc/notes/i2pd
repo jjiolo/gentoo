@@ -1,0 +1,112 @@
+
+#############
+
+[ moved from notes... ]
+
+ -------------
+ [i2pd]
+ -------------
+ config/portage/sets/console
+  net-vpn/i2pd
+  dev-libs/boost
+
+ etc/services/i2pd
+ etc/sites.eep
+ overlay/www-client/firefox/files/proxy.pac
+ etc/{passwd,group,shadow}
+ etc/nftables/chains/lo - into 53 80 4447
+ etc/nftables/chains/lan - out 443 8443 tcp and all udp
+ -------------
+
+ really bad first implementation
+
+ ntcp2 segfaulting...
+
+ tor syslog output 100%
+
+ ./does_this_work_yet - addressbook/addresses.csv takes ages, less from persistence
+                        trying vanity.i2p domains (fails)
+                        trying .b32.i2p domains implies etc/sites.eep
+
+ (enabled webconsole - creation success rate && client tunnels: XX)
+
+ doesnt survive disconnects...
+
+ tor started coming back eventually, sometimes
+
+ net.ipv4.ip_unprivileged_port_start ; sleep 1 doesnt work (on the first attempt only)
+
+ -------------
+
+ ! ${services}/i2pd/destinations/<address.b32.i2p> !
+ ^ creates the address name for tunnels.conf...
+ ? single key - implies same address to multiple ports...
+ ? multiple key - address per port...
+
+ -------------
+
+
+
+
+
+[ moved from notes... ]
+
+#############
+
+ [i2pd]
+
+* requires -/+ 60 second ntp sync... (tor had -/+ 5 minutes)
+
+* connects to reseed servers (hardcoded in the binary)
+
+* pulls initial list of peers and updates netDB
+
+* 
+
+-------------
+* good tunnel creation success rate 15 - 40 % (larger is better) (127.0.0.1:7070)
+-------------
+
+#############
+
+high level config ?
+
+        [http] false (not really useful)
+   [httpproxy] true (does i2pd and normie net)
+  [socksproxy] true (doesnt i2pd and normie net) (can i2pd or forward to SOCKSPort)
+         [sam] false (local proxy port for applications?)
+         [bob] false (deprecated for sam)
+        [i2cp] false (local proxy port for applications?)
+  [i2pcontrol] false (same as tor controlPort?)
+        [upnp] false (compiles without it less attack surface)
+ [addressbook] true (allows vanity names sharing addressbook/addresses.csv as a hosts file)
+       [ntcp2] false (authenticated key agreement protocol, causes segfaults...)
+        [ssu2] false (resistance to censorship and identification, forces listening on 0.0.0.0:1 ?)
+
+#############
+
+ tunnels.conf -
+ [my-eepsite]
+  type = http
+  host = 127.0.0.1
+  port = 80
+  keys = keys/my-eep.dat
+  inbound.length = 3
+  outbound.length = 3
+
+#############
+
+ [floodfill.router.info]
+
+ bootstrapping without reseed servers...
+
+ reseed servers - used to fill netDB with initial peers
+
+ in case default reseed servers are blocked
+
+ obtain router.info file out of band
+
+ i2pd --reseed.floodfill=/path/to/router.info
+
+#############
+

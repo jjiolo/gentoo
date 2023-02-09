@@ -1,5 +1,11 @@
 
 #############
+* server needs audio for exercise music
+#############
+* kvm werror
+* FORCE_NR_CPUS
+* device drivers - > x86-platform-specific-device-drivers ? huge
+#############
 
   only thing preventing this being a real liveusb
   module loading at boot...

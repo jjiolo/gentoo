@@ -1,0 +1,23 @@
+#!/bin/sh
+#############
+pkill -x /sbin/udhcpd
+#############
+sysctl -w net.ipv4.ip_unprivileged_port_start=0
+#############
+
+install -o 67 -g 67 -m 0600 /dev/null /run/leases
+
+cd / ; caps="-all,+net_raw"
+
+/usr/bin/setpriv \
+ --reuid dhcpd --regid dhcpd --init-groups --nnp --reset-env \
+ --inh-caps ${caps} --ambient-caps ${caps} --bounding-set ${caps} \
+ /sbin/udhcpd -S </dev/null &>/dev/null
+
+sleep 1
+
+#############
+sysctl -w net.ipv4.ip_unprivileged_port_start=32768
+#############
+renice -10 -u dhcpd
+#############

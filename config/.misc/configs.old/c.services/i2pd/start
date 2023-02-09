@@ -1,0 +1,14 @@
+#!/bin/sh
+#############
+. /etc/services/i2pd/install
+#############
+sysctl -w net.ipv4.ip_unprivileged_port_start=0
+su -l -s /bin/ash -c "exec /sbin/i2pd --datadir '${service_storage}' </dev/null &>/dev/null & exit" i2pd
+#sysctl -w net.ipv4.ip_unprivileged_port_start=32768
+#############
+renice -10 -u "i2pd"
+#############
+
+printf "%s\n" "wait till its bound ports... then execute system.lock (yes i know its bad)"
+
+#############

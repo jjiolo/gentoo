@@ -34,24 +34,28 @@ table inet filter {
 
   # client
 
-  udp dport {123} skuid {root,ntpd} ct state new log flags skuid prefix "output.lan.new " accept
   udp dport {51820} udp sport {51820} ct state new log flags skuid prefix "output.lan.new " accept
 
-  tcp dport {443}    skuid {root} ct state new log flags skuid prefix "output.lan.new " accept # 0.binhost
-  tcp dport {80,443} skuid {250}  ct state new log flags skuid prefix "output.lan.new " accept # chroot.update
+# udp dport {53}  skuid {root,ntpd} ct state new log flags skuid prefix "output.lan.new " accept
+  udp dport {123} skuid {root,ntpd} ct state new log flags skuid prefix "output.lan.new " accept
 
   ip protocol {tcp} skuid {ddns} ct state new log flags skuid prefix "output.lan.new " accept
   ip protocol {tcp} skuid {dnsd} ct state new log flags skuid prefix "output.lan.new " accept
 
-  ip protocol {tcp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept
   ip protocol {udp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept
+  ip protocol {tcp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept
 
-  ip protocol {tcp} skuid {i2pd} ct state new log flags skuid prefix "output.lan.new " accept
-  ip protocol {udp} skuid {i2pd} ct state new log flags skuid prefix "output.lan.new " accept
-
-  tcp dport {443,6697}    skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {465,995}     skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {443}         skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {6697}        skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {18081,18089} skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
+
+  tcp dport {465,995}     skuid {smtp} ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {443}         skuid {http} ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {6697}        skuid {irc}  ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {18081,18089} skuid {xmr}  ct state new log flags skuid prefix "output.lan.new " accept
+
+  tcp dport {443} skuid {root,250} ct state new log flags skuid prefix "output.lan.new " accept # 0.binhost chroot.update
 
   # icmp
 
@@ -60,7 +64,7 @@ table inet filter {
 
   # drop
 
-  ct state invalid log flags skuid prefix "output.lan.invalid " drop
+  ct state invalid log flags skuid prefix "output.lan.invalid " reject
                    log flags skuid prefix "output.lan.drop " reject
 
  }

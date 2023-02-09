@@ -1,5 +1,7 @@
 
 #############
+# https://monero.fail
+#############
 # https://moneroworld.com
 # node.moneroworld.com:18089
 # opennode.xmr-tw.org:18089
@@ -40,6 +42,7 @@ kdf-rounds=256
 #no-dns=
 #offline=
 #extra-entropy=
+#allow-mismatched-daemon-version=
 #wallet-file=wallet
 #generate-new-wallet=wallet
 #generate-from-device=
@@ -55,7 +58,6 @@ kdf-rounds=256
 #restore-multisig-wallet=
 #non-deterministic=
 #electrum-seed=
-#allow-mismatched-daemon-version=
 #restore-height=
 #restore-date=
 #do-not-relay=

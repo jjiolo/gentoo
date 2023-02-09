@@ -48,11 +48,12 @@
 
  root only binds
 
-  sysctl -w net.ipv4.ip_unprivileged_port_start=0
-  sysctl -w net.ipv4.ip_unprivileged_port_start=32768
+  sysctl -w net.ipv4.ip_unprivileged_port_start=0 # off
+  sysctl -w net.ipv4.ip_unprivileged_port_start=32768 # on
 
 * creates a race condition on any system change
 ^ ephemeral set it up once and leave it or reboot
+^ all firewall rules only open ports below 32768...
 
 vs
 
@@ -62,18 +63,11 @@ vs
  established - queries for row can  check skuid skgid
 
 * conntrack automatic replies have no uid gid
-^ hangs inbound and outbound connections
+^ hangs inbound and outbound connections spamming conntrack
 
-vs
+=============
 
- libcap
-
-  start pid with +net_bind_service
-  leaves firewall locked
-  exposes running pid to rebinds
-  doesnt expose uid gid to rebinds
-
-^ technically safer ?
+ netstat -tunlep ?
 
 #############
 

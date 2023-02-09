@@ -11,37 +11,31 @@
  install -d -o 0   -g 0   -m 0775 logs
 #############
 
-# su -l -s /bin/sh portage << EOF
+#############
 
  stage3="https://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-nomultilib-openrc/"
  match='<a href="stage3-amd64-nomultilib-openrc.................\.tar\.xz">'
- file="$(curl -sL --connect-timeout 3 ${stage3}|grep -o "${match}"|cut -d'"' -f2)"
+ file="$(curl --connect-timeout 3 -sL ${stage3}|grep -o "${match}"|cut -d'"' -f2)"
 
  printf "%s\n" "#############"
  printf "%s\n" "${stage3}"
  printf "%s\n" "${match}"
- printf "%s\n" "${stage3}${file}"
+ printf "%s\n" "${file}"
  printf "%s\n" "#############"
 
- [ -f "stage3.tar.xz" ] || curl --connect-timeout 3 -Lo "stage3.tar.xz" "${stage3}${file}"
  [ -f "stage3.sig"    ] || curl --connect-timeout 3 -Lo "stage3.sig"    "${stage3}${file}.asc"
+ [ -f "stage3.tar.xz" ] || curl --connect-timeout 3 -Lo "stage3.tar.xz" "${stage3}${file}"
 
  chown 0:0 stage3.*
  chmod 0664 stage3.*
 
 #############
 
- [ -d "portage/.git" ] || {
-
- umask 0002
- git clone --depth=1 https://anongit.gentoo.org/git/repo/gentoo.git portage
- umask 0077
-
- }
+ [ -d "portage/.git" ] || { umask 0002 ; git clone --depth=1 https://anongit.gentoo.org/git/repo/gentoo.git portage ; umask 0077 ; }
 
 #############
 
- [ -f ".gentoo-release.asc" ] || curl -L --connect-timeout 3 https://dev.gentoo.org/~mgorny/dist/openpgp-keys/gentoo-release.asc.20220101.gz | gunzip > .gentoo-release.asc
+ [ -f ".gentoo-release.asc" ] || curl --connect-timeout 3 -L https://dev.gentoo.org/~mgorny/dist/openpgp-keys/gentoo-release.asc.20220101.gz | gunzip > .gentoo-release.asc
 
   date
 
@@ -58,5 +52,5 @@
 
   rm -rf "${GNUPGHOME}"
 
-# EOF
+#############
 

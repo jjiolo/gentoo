@@ -1,5 +1,5 @@
 #############
-EAPI=8
+EAPI="8"
 #############
 DESCRIPTION="Emulates the detach feature of screen"
 HOMEPAGE="https://github.com/crigler/dtach"

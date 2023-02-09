@@ -1,0 +1,19 @@
+#!/bin/sh
+#############
+pkill -x /bin/udpsvd
+#############
+
+cd / ; caps="-all,+net_bind_service,+sys_chroot"
+
+(
+/usr/bin/setpriv \
+ --reuid tftpd --regid tftpd --init-groups --nnp --reset-env \
+ --inh-caps ${caps} --ambient-caps ${caps} --bounding-set ${caps} \
+ /bin/udpsvd 0.0.0.0 69 /sbin/tftpd -lr /tmp/storage/shared </dev/null &>/dev/null &
+)
+
+sleep 1
+
+#############
+renice -10 -u tftpd
+#############

@@ -1,55 +1,40 @@
 
 app-accessibility/at-spi2-core -introspection
-app-admin/sudo -nls -pam -sendmail
-app-arch/gzip pic
-app-arch/libarchive -acl -bzip2 -e2fsprogs -iconv -lzma -threads -xattr -zlib
-app-arch/tar -acl -nls minimal
-app-arch/unzip -bzip2 -unicode
-app-arch/xz-utils -extra-filters -nls -threads
-app-arch/zip -bzip2 -crypt -unicode
-app-arch/zstd -threads
-app-crypt/gnupg -bzip2 -nls -readline -smartcard -ssl -tofu
+app-arch/libarchive -bzip2 -e2fsprogs -iconv -lzma
+app-arch/tar minimal
+app-arch/unzip -bzip2
+app-arch/xz-utils -extra-filters
+app-arch/zip -bzip2 -crypt
+app-crypt/gnupg -bzip2 -readline -smartcard -ssl -tofu
 app-crypt/gpgme -cxx
 app-crypt/libb2 -openmp
 app-crypt/pinentry -ncurses
-app-crypt/rhash -nls -ssl
-app-editors/nano -ncurses -nls -spell -unicode minimal
-app-editors/vim -acl -nls
-app-editors/vim-core -acl -nls
+app-crypt/rhash -ssl
+app-editors/nano -ncurses -spell minimal
+app-editors/vim -crypt
 app-misc/pax-utils -man
-app-portage/gemato -blake2 -bzip2 -gpg -rsync-verify
-app-portage/portage-utils -nls -openmp -qmanifest -qtegrity
-app-shells/bash -net -nls mem-scramble
-app-text/opensp -nls
+app-portage/gemato -gpg
+app-portage/portage-utils -openmp -qmanifest -qtegrity
+app-shells/bash -net mem-scramble
 dev-db/sqlite -readline secure-delete
-dev-embedded/libftdi -cxx
 dev-lang/perl -gdbm minimal
-dev-lang/python -ensurepip -gdbm -ipv6 -readline -sqlite -ncurses ssl xml
-dev-lang/rust -jemalloc -system-llvm
-dev-lang/swig -pcre
+dev-lang/python -ensurepip -gdbm -ncurses -readline -sqlite ssl
 dev-lang/tcl -threads
-dev-lang/yasm -nls
 dev-libs/atk -introspection
-dev-libs/boost -bzip2 -nls -threads -zlib
-dev-libs/elfutils -bzip2 -nls -utils
+dev-libs/elfutils -bzip2 -utils
 dev-libs/expat -unicode
 dev-libs/glib -elf -mime
-dev-libs/gmp -asm -cxx
-dev-libs/libevent -clock-gettime ssl -threads
+dev-libs/gmp -asm -cpudetection -cxx
+dev-libs/libevent -clock-gettime -threads ssl
 dev-libs/libgcrypt -asm -getentropy
-dev-libs/libgpg-error -nls
-dev-libs/libnl -debug -threads
-dev-libs/libpcre -bzip2 -cxx -readline -recursion-limit -zlib
-dev-libs/libpcre2 -bzip2 -pcre16 -readline -recursion-limit -unicode -zlib
-dev-libs/librelp -gnutls -ssl
-dev-libs/libxml2 -ftp -ipv6 -python -readline
+dev-libs/libnl -debug
+dev-libs/libpcre -bzip2 -cxx -readline -zlib
+dev-libs/libpcre2 -bzip2 -pcre16 -readline -zlib unicode
+dev-libs/libxml2 -ftp -python -readline
 dev-libs/libxslt -crypt
 dev-libs/nettle -asm gmp
 dev-libs/nss -utils
-dev-libs/openssl -asm -bindist -sslv3 -tls-heartbeat -zlib
-dev-libs/popt -nls
-dev-perl/File-Which -pwhich
-dev-perl/libwww-perl -ssl
+dev-libs/openssl -asm
 dev-perl/Net-HTTP minimal
 dev-perl/Net-SSLeay minimal
 dev-perl/Path-Tiny minimal
@@ -57,114 +42,82 @@ dev-perl/Try-Tiny minimal
 dev-perl/XML-LibXML minimal
 dev-perl/YAML-Tiny minimal
 dev-perl/libintl-perl minimal
+dev-perl/libwww-perl -ssl
+dev-python/pydantic -native-extensions
 dev-util/cmake -ncurses
-dev-util/pkgconf -pkg-config
-dev-util/pkgconfig internal-glib
 dev-util/strace static
-dev-vcs/git -blksha1 -gpg -iconv -nls -pcre -perl -python -threads -webdav
+dev-vcs/git -blksha1 -gpg -iconv -pcre -perl -webdav
 gnome-base/gsettings-desktop-schemas -introspection
-gnome-base/librsvg -introspection -vala -tools
+gnome-base/librsvg -introspection -vala
 media-libs/freetype -adobe-cff -bzip2 -cleartype-hinting png
-media-libs/harfbuzz -cairo glib -graphite -introspection truetype -icu
-media-libs/libepoxy X -egl
+media-libs/harfbuzz -cairo -graphite -introspection glib truetype
+media-libs/libepoxy -egl
 media-libs/libglvnd X
-media-libs/libpng -apng
 media-libs/mesa -gles2 -llvm -proprietary-codecs -zstd
-media-sound/alsa-utils -libsamplerate -nls
-media-video/ffmpeg -bzip2 -dav1d -encode -gnutls -gpl -hardcoded-tables -iconv -postproc -v4l -zlib X alsa network pic threads
-media-video/mpv -egl -iconv -libass -libplacebo -lua -opengl -uchardet -xv -zlib cli
-net-analyzer/nmap ipv6 -nls -nse -ssl -ncat
+media-sound/alsa-utils -libsamplerate
+media-video/ffmpeg -bzip2 -dav1d -encode -gnutls -gpl -iconv -postproc -zlib X alsa network pic threads
+media-video/mpv -drm -egl -iconv -libmpv -libplacebo -lua -uchardet -xv -zlib
+net-analyzer/nmap -nse -ssl 
 net-analyzer/tcpdump -drop-root -samba -smi -ssl
-net-dns/dnscrypt-proxy -filecaps
-net-firewall/nftables -doc -gmp -modern_kernel -readline
-net-fs/nfs-utils -ipv6 -libmount -nfsidmap -nfsv4 -uuid
-net-libs/gnutls -cxx -idn -nls -openssl -tls-heartbeat -zlib
+net-firewall/nftables -gmp -modern_kernel -readline
+net-libs/gnutls -cxx -idn -openssl -tls-heartbeat -zlib
 net-libs/libssh2 -zlib
-net-libs/nghttp2 -cxx -threads
-net-libs/nodejs -npm -snapshot -ssl -system-ssl
-net-misc/curl ipv6 progress-meter
-net-misc/iputils -arping -filecaps -ipv6 -nls -ssl
-net-misc/openssh -pam -scp -ssl
-net-misc/rsync -acl -iconv -ipv6 -ssl -xattr
-net-misc/wget ipv6 -nls -pcre -zlib
-net-vpn/tor -man -seccomp -server
+net-misc/curl -adns -ftp -http2 -imap -pop3 -smtp -tftp ssl
+net-misc/iputils -arping -filecaps
+net-misc/openssh -pam -ssl
+net-misc/rsync -iconv -ssl
+net-misc/wget -pcre -zlib -gnutls
+net-vpn/tor -man -server
 net-vpn/wireguard-tools -wg-quick
-net-wireless/wpa_supplicant -fils -hs2-0 -readline
-sys-apps/acl -nls
-sys-apps/attr -nls
-sys-apps/baselayout -split-usr
-sys-apps/coreutils -acl -nls -split-usr
+net-wireless/wpa_supplicant -crda -fils -hs2-0 -mbo -mesh -readline
+sys-apps/coreutils -openssl
 sys-apps/debianutils -installkernel
-sys-apps/dbus -X
-sys-apps/diffutils -nls
 sys-apps/file -bzip2 -zlib
-sys-apps/findutils -nls
-sys-apps/gawk -nls -readline
+sys-apps/gawk -readline
 sys-apps/gptfdisk -ncurses
-sys-apps/grep -nls -pcre
-sys-apps/help2man -nls
-sys-apps/hwids -net -pci -usb udev
-sys-apps/iproute2 -iptables -ipv6 minimal
-sys-apps/kbd -nls -pam
-sys-apps/kmod -lzma -ssl -tools -zlib
+sys-apps/grep -egrep-fgrep -pcre
+sys-apps/iproute2 -iptables minimal
+sys-apps/kbd -pam
+sys-apps/kmod -lzma -zlib -zstd
 sys-apps/less -pcre -unicode
-sys-apps/man-db -manpager -nls -zlib
-sys-apps/man-pages -nls
-sys-apps/net-tools -arp -hostname -ipv6 -nls
+sys-apps/man-db -manpager -zlib
+sys-apps/net-tools -arp -hostname -ipv6
 sys-apps/openrc -ncurses -netifrc -pam -unicode
 sys-apps/pciutils -kmod -udev -zlib
-sys-apps/portage -build -native-extensions -rsync-verify
+sys-apps/portage -native-extensions -rsync-verify
 sys-apps/sandbox -nnp
-sys-apps/sed -acl -nls -forced-sandbox
-sys-apps/shadow -acl -cracklib -nls -pam -su -xattr
-sys-apps/texinfo -nls -standalone
-sys-apps/util-linux caps -cramfs -hardlink -logger -ncurses -nls -pam -readline -su -suid -unicode
-sys-auth/pambase minimal -cracklib -nullok -passwdqc -sha512
+sys-apps/shadow -pam
+sys-apps/texinfo -standalone
+sys-apps/util-linux -cramfs -hardlink -logger -ncurses -pam -readline -su -suid caps
+sys-auth/pambase -nullok -passwdqc -sha512 minimal
 sys-boot/grub -fonts -themes nls
 sys-devel/bc -readline
-sys-devel/binutils -cxx -gold -nls -plugins
-sys-devel/bison -nls
-sys-devel/clang -static-analyzer
-sys-devel/clang-runtime -compiler-rt -openmp -sanitize
-sys-devel/flex -nls
-sys-devel/gcc -custom-cflags -fortran -lto -nls nptl openmp -pch -pgo -vtv
-sys-devel/gettext -acl -cxx -ncurses -nls -openmp
+sys-devel/binutils -plugins
+sys-devel/gcc -fortran default-stack-clash-protection default-znow
+sys-devel/gdb -python -server
+sys-devel/gettext -cxx -ncurses -openmp
 sys-devel/llvm -libffi -ncurses
-sys-devel/make -nls
 sys-fs/cryptsetup -argon2 -luks1_default -nls -udev static
-sys-fs/dosfstools -compat -iconv
-sys-fs/e2fsprogs -nls -threads
-sys-fs/eudev -hwdb -kmod
-sys-fs/lvm2 -lvm -readline -thin -udev static
+sys-fs/dosfstools -iconv
+sys-fs/e2fsprogs -tools
+sys-fs/lvm2 -readline -udev static
 sys-fs/mdadm -udev
 sys-kernel/linux-firmware redistributable
 sys-kernel/linux-headers headers-only
-sys-libs/binutils-libs -nls
-sys-libs/cracklib -nls -zlib
-sys-libs/e2fsprogs-libs -nls
-sys-libs/gdbm -berkdb -nls -readline
-sys-libs/glibc -compile-locales static-pie -multiarch custom-cflags
-sys-libs/libcap -pam static-libs
+sys-libs/cracklib -zlib
+sys-libs/gdbm -berkdb -readline
+sys-libs/glibc -multiarch
+sys-libs/libcap -pam
 sys-libs/ncurses -cxx -minimal unicode
-sys-libs/pam -cracklib -filecaps -nls
-sys-libs/readline -unicode
-sys-libs/timezone-data -nls
-sys-process/procps -kill -ncurses -nls -unicode
-sys-process/psmisc -ipv6 -nls
-virtual/ffmpeg -encode
+sys-libs/pam -filecaps
+sys-process/procps -kill -ncurses
 virtual/perl-libnet -ssl
-www-client/firefox bindist hardened -screenshot -system-av1 -system-harfbuzz -system-icu -system-jpeg -system-libevent -system-libvpx -system-sqlite -system-webp
-x11-apps/xauth -ipv6
-x11-base/xorg-server -elogind -glamor -ipv6 -libglvnd -suid kdrive minimal udev xephyr
-x11-libs/cairo X svg glib
+x11-base/xorg-server -elogind -suid minimal udev xephyr
+x11-libs/cairo glib X
 x11-libs/fltk -opengl -threads -xft -xinerama
 x11-libs/gdk-pixbuf -introspection
 x11-libs/gtk+ -introspection
-x11-libs/libICE -ipv6
-x11-libs/libSM -ipv6 -uuid
-x11-libs/libX11 -ipv6
-x11-libs/libXfont2 -bzip2 -ipv6
-x11-libs/libXmu -ipv6
+x11-libs/libSM -uuid
+x11-libs/libXfont2 -bzip2
 x11-libs/libpciaccess -zlib
-x11-libs/libxcb xkb
 x11-libs/pango -introspection

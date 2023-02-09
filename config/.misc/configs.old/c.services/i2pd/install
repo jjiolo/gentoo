@@ -1,0 +1,9 @@
+#!/bin/sh
+#############
+. /etc/services/variables i2pd
+#############
+[ -f "${service_storage}/i2pd.conf" ] || install -o i2pd -g i2pd -m 0600 "${service_system}/files/i2pd.conf" "${service_storage}/i2pd.conf"
+[ -f "${service_storage}/tunnels.conf" ] || install -o i2pd -g i2pd -m 0600 "${service_system}/files/tunnels.conf" "${service_storage}/tunnels.conf"
+#############
+. /etc/services/permissions i2pd i2pd 0700 0600
+#############

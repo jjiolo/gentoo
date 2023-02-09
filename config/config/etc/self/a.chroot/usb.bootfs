@@ -33,6 +33,7 @@ menuentry "diskless" { linux downloads/bootfs/desktop root=/dev/nfs nfsroot=172.
 EOF
 
 grub-mkstandalone -O "x86_64-efi" --output "EFI/boot/bootx64.efi" "boot/grub/grub.cfg=grub.cfg"
+#grub-mkstandalone -O "x86_64-efi" --output "EFI/boot/bootx64.efi" --compress xz "boot/grub/grub.cfg=grub.cfg"
 
 rm -rf grub.cfg
 

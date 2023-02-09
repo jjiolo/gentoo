@@ -1,0 +1,22 @@
+
+#############
+[ -f "blacklist" ] && exit 1
+#############
+
+printf "%s\n" "#############"
+
+cat > "blacklist" << EOF
+
+127.0.0.1 localhost local lo
+192.168.0.1 lan
+172.16.0.1 nat
+10.0.0.1 tun
+
+EOF
+
+curl --connect-timeout 3 "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts" | grep '^0.0.0.0' | awk '{print$1" "$2}' >> blacklist
+
+printf "%s\n" "#############"
+
+#############
+

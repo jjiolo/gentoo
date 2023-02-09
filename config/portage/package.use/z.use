@@ -1,3 +1,5 @@
 
-sys-apps/systemd-utils -acl -kmod -tmpfiles -udev
+sys-apps/systemd-utils -kmod -tmpfiles -udev
+
+
 

@@ -12,8 +12,10 @@ table inet filter {
 
   # server
 
-  udp dport {53,123}     ct state new log flags skuid prefix "input.tun.new " accept
-  tcp dport {22,80,9050} ct state new log flags skuid prefix "input.tun.new " accept
+  udp dport {53}   ct state new log flags skuid prefix "input.tun.new " accept
+  tcp dport {9050} ct state new log flags skuid prefix "input.tun.new " accept
+  tcp dport {22}   ct state new log flags skuid prefix "input.tun.new " accept
+  tcp dport {80}   ct state new log flags skuid prefix "input.tun.new " accept
 
   # icmp
 
@@ -23,7 +25,7 @@ table inet filter {
   # drop
 
   ct state invalid log flags skuid prefix "input.tun.invalid " drop
-                   log flags skuid prefix "input.tun.drop "    drop
+                   log flags skuid prefix "input.tun.drop " drop
 
  }
 
@@ -36,11 +38,10 @@ table inet filter {
   # client
 
   udp dport {53}   skuid {nobody}            ct state new log flags skuid prefix "output.tun.new " accept
-  udp dport {123}  skuid {root,ntpd}         ct state new log flags skuid prefix "output.tun.new " accept
-
+  udp dport {53}   skuid {smtp,http,irc,xmr} ct state new log flags skuid prefix "output.tun.new " accept
+  tcp dport {9050} skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.tun.new " accept
   tcp dport {22}   skuid {user}              ct state new log flags skuid prefix "output.tun.new " accept
   tcp dport {80}   skuid {root,user,nobody}  ct state new log flags skuid prefix "output.tun.new " accept
-  tcp dport {9050} skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.tun.new " accept
 
   # icmp
 
@@ -49,8 +50,8 @@ table inet filter {
 
   # drop
 
-  ct state invalid log flags skuid prefix "output.tun.invalid " drop
-                   log flags skuid prefix "output.tun.drop "    reject
+  ct state invalid log flags skuid prefix "output.tun.invalid " reject
+                   log flags skuid prefix "output.tun.drop " reject
 
  }
 

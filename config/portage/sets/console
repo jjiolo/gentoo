@@ -1,7 +1,4 @@
 
-net-vpn/i2pd
-dev-libs/boost
-
 app-crypt/argon2
 app-crypt/cryptsetup
 app-crypt/gnupg

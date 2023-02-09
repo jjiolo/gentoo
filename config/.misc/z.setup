@@ -1,0 +1,7 @@
+
+#############
+ [ -d /run/console ] || emerge --root /run/console -avbk --nodeps @console
+#############
+ [ -d /run/desktop ] || emerge --root /run/desktop -avbk --nodeps @desktop
+#############
+

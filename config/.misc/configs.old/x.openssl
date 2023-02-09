@@ -8,13 +8,14 @@
 # /binhost/rootfs/var/db/pkg
 # -type f
 # -name DEPEND
-# -exec grep -Hi openssl {} \;
+# -exec grep -Hi openssl {} \; |
+# less -S
 
 #############
 
 emerge -vC openssl
 
-ebuild /root/overlay/dev-libs/openssl/openssl-1.1.1n-r9999.ebuild manifest || exit
+#ebuild /root/overlay/dev-libs/openssl/openssl-1.1.1n-r9999.ebuild manifest || exit
 
 emerge -v openssl
 
@@ -24,15 +25,19 @@ emerge -v1 --keep-going y \
  app-arch/libarchive \
  dev-lang/python \
  x11-base/xorg-server \
- app-misc/c_rehash \
+ app-misc/ca-certificates \
  dev-libs/libevent \
  dev-vcs/git \
  net-misc/curl \
  net-misc/wget \
+ \
  net-wireless/wpa_supplicant \
- net-wireless/hostapd \
+ xorg-server \
+ app-misc/ca-certificates \
  net-vpn/tor \
+ dev-libs/libevent \
  mail-client/mutt \
+ dev-vcs/git \
  net-p2p/transmission \
  www-client/links
 

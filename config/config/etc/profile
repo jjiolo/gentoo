@@ -16,7 +16,9 @@ export stage3="${storage}/stage3"
 export ENV="/etc/profile"
 export LANG="en_GB.UTF-8"
 export PATH="/bin:/sbin:/usr/bin:/usr/sbin"
-export PATH="${PATH}:/etc/self/a.chroot:/etc/self/b.init:/etc/self/c.server:/etc/self/d.client:/etc/self/e.sets:/etc/self/f.setpriv"
+export PATH="${PATH}:/etc/self/a.chroot:/etc/self/b.init"
+export PATH="${PATH}:/etc/self/c.server:/etc/self/d.client"
+export PATH="${PATH}:/etc/self/e.sets:/etc/self/f.setpriv"
 export EDITOR="vim" PAGER="less" LESSHISTFILE="/dev/null"
 #############
 export GNUPGHOME="${HOME}/.gnupg"
@@ -39,7 +41,7 @@ user="\[\e[01;32m\]" box="\[\e[01;30m\]" path="\[\e[01;34m\]" reset="\[\e[0m\]"
 #############
 [ "$(stat -c %i /)" == "1" ] || box="\[\e[01;37m\]"
 #############
-export PS1="${user}[\u]${reset}${box}[\h]${reset}${path}[\w]${reset} "
+export PS1="${user}[\u]${reset}${box}[\h]${reset}${path}[\w][${SHLVL}]${reset} "
 #############
 unset user box path reset
 
@@ -98,7 +100,12 @@ renice -10 -u ntpd    2>/dev/null
 
 renice +10 -u httpd   2>/dev/null
 renice +10 -u p2pd    2>/dev/null
-renice +10 -u i2pd    2>/dev/null
+
+renice +20 -u smtp    2>/dev/null
+renice +20 -u http    2>/dev/null
+renice +20 -u irc     2>/dev/null
+
+renice +20 -u xmr     2>/dev/null
 #############
 
 #############
@@ -143,7 +150,7 @@ renice +10 -u i2pd    2>/dev/null
 
  alias mpv="mpv --sid=no"
 
- alias tmux="dtach -A ${HOME}/socket mtm -t st-256color"
+ alias tmux="dtach -A ${HOME}/socket mtm -t mtm-256color"
 
 #############
 

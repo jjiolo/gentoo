@@ -6,7 +6,7 @@
               chown 0:0 "${stage3}/binhost/config.tar.gz"
              chmod 0664 "${stage3}/binhost/config.tar.gz"
 
- transmission-create -o "${stage3}/binhost/config.torrent" "${stage3}/binhost/config.tar.gz"
+ transmission-create -o "${stage3}/binhost/config.torrent" -w "http://172.16.0.1/shared/downloads/config.tar.gz" "${stage3}/binhost/config.tar.gz"
               chown 0:0 "${stage3}/binhost/config.torrent"
              chmod 0664 "${stage3}/binhost/config.torrent"
 
@@ -21,7 +21,7 @@
     chown 0:9091 "${shared}/downloads/binhost.tar.gz"
       chmod 0644 "${shared}/downloads/binhost.tar.gz"
 
- transmission-create -o "${shared}/torrents/binhost" "${shared}/downloads/binhost.tar.gz"
+ transmission-create -o "${shared}/torrents/binhost" -w "http://172.16.0.1/shared/downloads/binhost.tar.gz" "${shared}/downloads/binhost.tar.gz"
            chown 0:9091 "${shared}/torrents/binhost"
              chmod 0644 "${shared}/torrents/binhost"
 

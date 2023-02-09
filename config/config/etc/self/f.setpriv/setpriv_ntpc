@@ -1,0 +1,11 @@
+#!/bin/sh
+#############
+
+cd / ; caps="-all,+sys_time"
+
+/usr/bin/setpriv \
+ --reuid ntpd --regid ntpd --init-groups --nnp --reset-env \
+ --inh-caps ${caps} --ambient-caps ${caps} --bounding-set ${caps} \
+ /sbin/ntpd -dnqN -p 0.pool.ntp.org -p 1.pool.ntp.org -p 2.pool.ntp.org -p 3.pool.ntp.org
+
+#############

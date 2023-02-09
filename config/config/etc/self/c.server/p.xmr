@@ -1,0 +1,48 @@
+#!/bin/sh
+#############
+debug(){ printf "%s\n" "debug - ${1}" ; exit 1 ; }
+#############
+[ -f "/tmp/.X0-lock"  ] || debug "xorg server not running"
+[ -f "/tmp/.X18081-lock" ] && debug "Xephyr server already running"
+#############
+install -o desktop -g xmr -m 0640 "/dev/null" "/tmp/.X18081-auth"
+printf "%s\n" "add :18081 . $(hexdump -n16 -ve '1/1 "%02x"' /dev/urandom)"|xauth -nqf "/tmp/.X18081-auth"
+chown desktop:xmr "/tmp/.X18081-auth"
+chmod 0640 "/tmp/.X18081-auth"
+#############
+su -l -s /bin/ash desktop << EOF
+DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth \
+exec Xephyr \
+-extension 'Generic Event Extension' \
+-extension 'MIT-SHM' \
+-extension 'XTEST' \
+-extension 'XINERAMA' \
+-extension 'XFIXES' \
++extension 'RENDER' \
++extension 'RANDR' \
+-extension 'COMPOSITE' \
+-extension 'DAMAGE' \
+-extension 'MIT-SCREEN-SAVER' \
+-extension 'DOUBLE-BUFFER' \
+-extension 'RECORD' \
+-extension 'DPMS' \
+-extension 'X-Resource' \
+-extension 'XVideo' \
+-extension 'XVideo-MotionCompensation' \
+-s 0 -auth /tmp/.X18081-auth \
+-nolisten tcp -nolisten unix -listen local \
+-resizeable -no-host-grab \
+:18081 </dev/null &>/dev/null & exit
+EOF
+#############
+until [ -f "/tmp/.X18081-lock" ];do sleep .1;done
+#############
+
+#############
+su -l -s /bin/ash -c "DISPLAY=:18081 XAUTHORITY=/tmp/.X18081-auth exec dwm-guest </dev/null &>/dev/null & exit" xmr
+#############
+su -l -s /bin/ash -c "DISPLAY=:18081 XAUTHORITY=/tmp/.X18081-auth exec st </dev/null &>/dev/null & exit" xmr
+#############
+renice +20 -u "xmr"
+#############
+

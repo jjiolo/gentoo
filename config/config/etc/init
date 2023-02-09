@@ -23,7 +23,7 @@ umask 0007
  ash /etc/services/httpd/start
  ash /etc/services/p2pd/start
 
- dropbear -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null
+ sshd -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null
 
 }
 
@@ -31,9 +31,9 @@ umask 0007
 
 [ "$(hostname)" == "virtual" ] && {
 
- ash /etc/self/f.setpriv/setpriv_udhcpc nat virtual # echo yes | network_default
+ ash /etc/self/f.setpriv/setpriv_udhcpc nat virtual
 
- dropbear -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null
+ sshd -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null
 
  ash /etc/self/c.server/s.client 172.16.0.1
  ash /etc/self/c.server/v.server 172.16.0.1 10.0.0.2

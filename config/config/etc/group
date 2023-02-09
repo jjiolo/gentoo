@@ -1,22 +1,26 @@
 
 root:x:0:
 user:x:1:
-nobody:x:2:user
-proxy:x:3:user
+nobody:x:2:
+proxy:x:3:
 
 audio:x:5:nobody
 video:x:7:nobody
 desktop:x:9:
-qemu:x:11:user,nobody,proxy
+qemu:x:11:
 
-ddns:x:5353:user
-dnsd:x:53:user
-dhcpd:x:67:user
-dhcpc:x:68:user
-tftpd:x:69:user
-ntpd:x:123:user
+ddns:x:5353:
+dnsd:x:53:
+dhcpd:x:67:
+dhcpc:x:68:
+tftpd:x:69:
+ntpd:x:123:
 
-httpd:x:80:user
+httpd:x:80:
 p2pd:x:9091:user,nobody
-i2pd:x:10123:user
+
+smtp:x:465:
+http:x:443:
+irc:x:6697:
+xmr:x:18081:
 

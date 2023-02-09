@@ -6,7 +6,7 @@
 #############
 [ -z "${1}" ] && user="user" || user="${1}"
 #############
-grep -q "^${user}:" /etc/passwd || exit
+grep -q "^${user}:" /etc/passwd || exit 1
 #############
 install -o desktop -g desktop -m 0640 /dev/null /tmp/.X0-log
 install -o desktop -g desktop -m 0640 /dev/null /tmp/.X0-log.old
@@ -17,10 +17,8 @@ chmod 0640 /tmp/.X0-auth
 #############
 
 su -l -s /bin/ash desktop << EOF
-DISPLAY=:0 \
-XAUTHORITY=/tmp/.X0-auth \
-exec xinit /etc/xinitrc -- \
-/usr/bin/X \
+DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth \
+exec xinit /etc/xinitrc -- /usr/bin/X -s 0 \
 -extension 'Generic Event Extension' \
 -extension 'MIT-SHM' \
 -extension 'XTEST' \
@@ -37,9 +35,8 @@ exec xinit /etc/xinitrc -- \
 -extension 'X-Resource' \
 -extension 'XVideo' \
 -extension 'XVideo-MotionCompensation' \
--s 0 -auth /tmp/.X0-auth \
 -nolisten tcp -nolisten unix -listen local \
--logfile /tmp/.X0-log \
+-auth /tmp/.X0-auth -logfile /tmp/.X0-log \
 vt7 :0 </dev/null &>/dev/null & exit
 EOF
 

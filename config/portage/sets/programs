@@ -42,6 +42,7 @@ media-libs/harfbuzz
 media-libs/libass
 media-libs/libpng
 x11-libs/libXScrnSaver
+x11-libs/libXpresent
 
 media-video/ffmpeg
 x11-libs/libXv

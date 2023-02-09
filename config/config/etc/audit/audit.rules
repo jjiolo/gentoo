@@ -26,7 +26,12 @@
 
 #-a always,exit -F arch=b64 -F uid=80    -S execve -k httpd_exec
 #-a always,exit -F arch=b64 -F uid=9091  -S execve -k p2pd_exec
-#-a always,exit -F arch=b64 -F uid=10123 -S execve -k i2pd_exec
+
+#-a always,exit -F arch=b64 -F uid=465   -S execve -k smtp_exec
+#-a always,exit -F arch=b64 -F uid=443   -S execve -k http_exec
+#-a always,exit -F arch=b64 -F uid=6697  -S execve -k irc_exec
+
+#-a always,exit -F arch=b64 -F uid=18081 -S execve -k xmr_exec
 
 #############
 
@@ -55,7 +60,12 @@
 
 #-a always,exit -F arch=b64 -F uid=80    -F dir=/tmp -F perm=wxa -k httpd_disk
 #-a always,exit -F arch=b64 -F uid=9091  -F dir=/tmp -F perm=wxa -k p2pd_disk
-#-a always,exit -F arch=b64 -F uid=10123 -F dir=/tmp/ -F perm=wxa -k i2pd_disk
+
+#-a always,exit -F arch=b64 -F uid=465   -F dir=/tmp -F perm=wxa -k smtp_disk
+#-a always,exit -F arch=b64 -F uid=443   -F dir=/tmp -F perm=wxa -k http_exec
+#-a always,exit -F arch=b64 -F uid=6697  -F dir=/tmp -F perm=wxa -k irc_exec
+
+#-a always,exit -F arch=b64 -F uid=18081 -F dir=/tmp -F perm=wxa -k xmr_exec
 
 #############
 -a always,exit -F arch=b64 -S mount,umount2 -k mount

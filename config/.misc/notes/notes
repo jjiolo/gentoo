@@ -1,14 +1,11 @@
 
 #############
-[255|231|219|195|189|165|153|129|0]
+[0|129|153|165|189|195|219|231|255]
 #############
 no idea what stupid has gathered itself in here
 stuff at the bottom tends to get rewritten and kept
 stuff at the top is unordered raw sewage
 #############
-
-|-----------------|
-| [CONTENTS]      |
 |-----------------|
 | [REBUILD]       |
 |-----------------|
@@ -22,39 +19,38 @@ stuff at the top is unordered raw sewage
 |-----------------|
 | [REFERENCE]     |
 |-----------------|
-
 #############
 
 [REBUILD]
 #############
 -------------
- lastest - 2022:11:07 23:00:00
+ lastest - 2023:01:02 22:50:00
 -------------
 
- * race condition in emerge -F lockfiles ? four pids erroring out on the same package pull...
+ * transmission beta
+ * tigervnc beta
 
- * build.rootfs - x11 libraries are randomly failing with collision detection ?
-                  built without collision twice ?
-                  3 different libraries assuming build order being random ?
+-------------
 
- * first implementation of i2pd...
+ * app-alternatives - make.conf FEATURES='-collision-protect'
+ ^ remove after its in stage3
 
- * meson update is building with a single core ?
- * qemu lto-wrapper broke ?
+ * qemu usb passthrough doesnt work...
 
- * qemu usb passthrough regressed and now doesnt work...
- ^ tried 6.2 was still broken ?
+-------------
 
- * emerge --depclean went from 92 packages to 84 ? (still want a toolchain/portage only profile target)
-
+ * gcc +hardened
+ * glibc -custom_cflags
+ ^ make.conf -D_FORTIFY_SOURCE=3
+   
 -------------
 #############
 
 [INFORMATIONAL]:
 #############
-* mkp224o.ebuild - https://github.com/cathugger/mkp224o/archive/tags/v1.6.1.tar.gz
 * pkg_postinst isnt recorded in CONTENTS
-* first.run should revdep rebuild, then depclean...
+* man: sys-boot/efibootmgr - > sys-libs/efi-var - > mandoc ./file.1 | less -S
+* mkp224o.ebuild - https://github.com/cathugger/mkp224o/archive/tags/v1.6.1.tar.gz
 * sysctl -w kernel.yama.ptrace_scope=3 CONFIG_SECURITY CONFIG_SECURITY_YAMA
 * raw pasting into st/vim is bad mode...
 * opening httpd pages is bad mode (no sanitization)
@@ -99,9 +95,11 @@ stuff at the top is unordered raw sewage
 * dwm, holding down alt+i increments the number indefinintly ?
 * tor geoip file edit to create full network view ?
 * obfs4proxy and meeks localhost access is a random port ? (cant preconfigure nftables)
-* openssl dtls support doesnt support ed25519 (cant test the ebuild with current scripts)
+* openssl dtls doesnt support ed25519
+* openssl pkeyutl doesnt support ed25519
 * qemu < - tigervnc has sticky keys with xorg-server open...
 * qemu-7.{0,1}.0 < - vnc output doesnt resize bottom of the console hangs off
+* qemu < - libusb stopped working completly ?
 * monitor diskio reads every drive then every block device doubling the values ? (sda && md127)
 #############
 
@@ -123,248 +121,296 @@ v attempt to create lists of things to actually do
 
 #############
 
- lenovo hold down escape and function and hit power on...
+grub - uses TARGET_CFLAGS="-Os -march=x86-64 ${TARGET_CFLAGS}"
+       ^ package.env/z.env grub grub doesnt need to exist
+       ^ package.env/a.env x11-libs/cairo noexecheap doesnt need to exist
 
- flushes tamper proof detection
- flushes checksum failures from cmos/nvram ?
+* uses CPPFLAGS instead of CXXFLAGS ?
 
- all the google results are flooded with lenovo.com domains
-
- claiming theres no hotkey to flush caches, lel ?
-
-#############
-
- -------------
-
- downgrading firefox to extended support release
-
- -------------
-
- google search parameters
- https://google.com/ncr - set no country redirect cookie
- https://google.com/preferences - force regional results
- https://www.google.com?cr=countryXX
- https://www.google.com/search?cr=countryXX&q=%s
- manually setting ?cr=countryXX persists across all interaction
-
- /usr/lib64/firefox/distribution/policies.json - "searchengine": { },
-
- firefox-bin - > firefox-esr
-
- -------------
-
- policies.json
- inability to display updates...
- inability to save passwords...
-
- -------------
+^ overflow/sys-boot/grub - still bails on couldnt find memdisk
+                           even with portage CFLAGS
+                           needs patches...
 
 #############
 
- [i2pd]
-
- configure(){ - > src_configure(){
-
- ntcp2 stopped segfaulting...
- ^ tested it for 2 days, then it started segfaulting again totes legit
-
- ssu2 opens up 0.0.0.0:1 ? (intercepting icmp echo ?)
-
- udp out and tcp out ? random ports are harder to block
-
- -------------
- net-vpn/i2pd
- dev-libs/boost
-
- etc/services/i2pd
- etc/sites.eep
- overlay/www-client/firefox/files/proxy.pac
- etc/{passwd,group,shadow}
- etc/nftables/chains/lo - into 53 80 4447
- etc/nftables/chains/lan - out 443 8443 tcp and all udp
- -------------
-
- really bad first implementation
-
- ./does_this_work_yet - addressbook/addresses.csv takes ages, less from persistence
-                        trying vanity.i2p domains (fails)
-                        trying .b32.i2p domains implies storing reg.i2p stats.i2p identguy.i2p (etc/sites.eep)
-
- tor syslog output 100% 
- vs
- any works or doesnt work from logs ?
- (enabled webconsole - creation success rate && client tunnels: XX)
-
- net.ipv4.ip_unprivileged_port_start doesnt work ?
- takes ages (shorter on persistence already has a cache + floodfill nodes)
-
- doesnt survive disconnects ? tor started coming back eventually... sometimes
+desktop attack surface...
+* xinitrc - monitor runs with desktop:desktop ?
+* herbe - run as desktop ontop of nested xephyr ?
 
 #############
 
-[transmission 4.0.0 beta changes]
+ [e2fsprogs]
 
- transmission-create 
-  -r --source <source> set the source for private trackers
-  -w --webseed <url> add a webseed url
-  --anonymize omit creation_date and created_by info
+  metadata_csum_seed - store metadata checkum seed in superblock (change uuid on a mounted filesystem)
 
- transmission-deamon
-  --default-trackers <list> trackers for public torrents to use automatically
-  --log-level <level> must be critical, error, warn, info, debug or trace
-
- transmission-edit
-  -s --source <source> set the source
-
- transmission-remote
-  -bwg --bandwidth-group <group> set the current torrents bandwidth group
-  -nwg --no-bandwidth-group reset the current torrents bandwidth group
-  -lg --list-groups show bandwidth groups with their parameters
-  -ids --print-ids print the current torrents ids
-  -j --json return rpc response as a json string
-  --unix-socket <path> use a unix domain socket
-  --rename <name> rename torrents root folder or a file
-  --path <path> provide path for rename functions
-  --torrent-done-seeding-script <file> a script to run when a torrent finishes seeding
-  --no-torrent-done-seeding-script dont run the done-seeding script torrents peers
-
- transmission-show
-  -d --header show only the header section
-  -i --info show only info section
-  -t --trackers show only trackers section
-  -f --files show only file list
-  -D --no-header do not show header section
-  -I --no-info do not show info section
-  -T --no-trackers do not show trackers section
-  -F --no-files do not show files section
-  -b --bytes show file sizes in bytes
-
- settings.conf
-  announce-ip
-  announce-ip-enabled
-  anti-brute-force-enabled
-  anti-brute-force-threshold
-  default-trackers
-  peer-congestion-aglorithm
-  rpc-socket-mode
-  script-torrent-added-enabled
-  script-torrent-added-filename
-  script-torrent-done-seeding-enabled
-  script-torrent-done-seeding-filename
-  tcp-enabled
-
-^ looks awesome 
+  orphan_file - tune2fs -O orphan_file /dev/block (speed up parallel file deletion?)
 
 #############
 
- * tiny-curl ? test it with git / transmission ?
+* drop gnutls, that was needed for openssl ?
 
- * stage3 - dtach if mounted && dtach when mounted
-            (can be executed more than once ?)
+* cairo noexecheap - no longer needed...
 
- * dtach + mtm usability over dbclient ? doesnt allow forcing a command unless in known_hosts ? s.client s.server 
+grub built without grub ? cant remember if it needs building ?
+ do laptop reboots later
+ can test stuff ?
 
- * dtach cant recreate socket ? SIGHUP ignored SIGUSR1 terminates running process
- * identify dtach from PS1
- * identify mtm from PS1 - $MTM
+#############
+test removal of sys-apps/shadow ? (can remember re adding it at some point)
+test removal of app-admin/eselect ? (dont actually use it)
+#############
 
- * mutt smtp still exposes ip/hostname in headers ?
+pulling /etc/resolv.conf values
 
- i2pd - busybox binaries download rpm2cpio i2pd.rpm - > cpio cpio -idF i2pd.cpio
-        i2pd-el9.rpm - has compatible libraries + system filesystem program_options date_time
-        allows testing local build with known working binary and config ?
+intercepting traffic to address only
+
+while sleep 15 ; do echo "nameserver $(shuf -n1 /etc/dns)" > /etc/resolv.conf ; done
+
+intercepting firefox by path...
+/usr/lib64/firefox/firefox-bin
+^ hard dropping connections to onion sites
+/tmp/storage/services/sets/firefox/firefox-bin
+^ ignored completly instantly reloads
+
+echo 0.0.0.0 domain.tld >> /etc/hosts
+
+nslookup domain.tld - brings back error message
+
+nslookup domain.tld 8.8.8.8 - returns A/AAAA records
+
+getent hosts domain.tld
+^ ignores /etc/hosts values
+  ignores /etc/nsswitch.conf
+  pulls ipv6 addresses first regardless of etc/hosts ?
+
+^ breaking tooling to cache and intercept dns requests
+  offline online first requests work
+  until it figures out tor hasnt connected
 
 #############
 
- lsw && xev
-
- id="$(lsw|awk '/Xephyr.*:13/{print$1}')"
- 
- xev -display :0 -id "${id}" -1 -event structure | while read ; do DISPLAY=:13 XAUTHORITY=/tmp/.X13-auth xrandr ; done
+transmission-remote -x # pex
+transmission-remote --dht # distributed hash tables
+transmission-remote -AS # no alt speed
+transmission-remote -D # no downlimit
+transmission-remote -HL # no honor session limits
+transmission-remote -nwg # no bandwidth group
 
 #############
 
- [udhcpc_script fuzzer]
+ add user jail:jail for no network access
+ ^ fix x.{user,nobody,proxy,jail}
+       p.{smtp,http,irc,xmr}
 
- udpsvd||netcat dhcpd server
+ * test grub with ohffs... ?
 
- env -i /bin/udpsvd -v 0.0.0.0 67 /tmp/storage/services/sets/udpsvd.dhcpd
+ * busybox 1.36.0 < - bump 
 
- env -i /bin/nc -nubv -lk -s 0.0.0.0 -p 67 -e /tmp/storage/services/sets/dhcpd
+ * sets.blacklist < - update /etc/hosts ?
 
- env -i /bin/nc -nubv -s 0.0.0.0 -p 68 0.0.0.0 67
+#############
 
- ^ listen on 0.0.0.0:67
-   bind to 0.0.0.0:68 then connect to 0.0.0.0:67
-   forces all outgoing dhcp requests from port 68 to 67 and from port 67 to 68
+  first attempt at p.{smtp,http,irc,xmr}
 
- octal format xxd vs od (busybox versions)
+* everything gets an ssh key... 
+  user - > everything
+  storage.setup && s.{client,server,flush}
+^ setup.shared - > httpd index ?
 
- od -An -b < - creates an octal stream of input ?
+#############
+* vncviewer cutting off console kills cli install's
+#############
+
+busybox
+sha1 0 fast 3 slow
+sha1 hardware acceleration
+sha256 hardware acceleration
+
+loop_configure - new one, old one, or try new fail old ?
+
+  tsort - topological sort
+seedrng - seed kernel rng from file
+   tree - list files and directories in a tree structure
+          absolute path to config script for ipv6
+          sleep builtin to ash
+
+#############
+
+[services]
+-------------
+
+ root
+  user - dbclient + stage3
+  nobody - http/p2p + media(audio,video)
+  proxy - proxy only
+  jail - no internet
+   smtp - 
+   http - 
+   irc - 
+   xmr - 
+
+* cant watch mpv in Xephyr...
+
+root:
+user:
+nobody:
+proxy:
+jail:
+
+smtp:
+http:
+irc:
+xmr:
 
 -------------
 
-udhcpc_scripts - cat ^[ allows escape characters
-              printf ^[ allows escape characters
-^ fail can overwrite the output to hide variables
-  unquoted variables for broadcast
-  depends on busybox to sanitize the input from dhcp
+ xinit
+  X
+  monitor
 
+ dwm-{host,guest}
+  st
+
+ ash -l -s /bin/sh [-c 'command'] <user> [< file] [<< EOF]
+  (exec binary </dev/null &>/dev/null & exit) &
+   su -l -s /bin/sh [-c 'command'] <user> [< file] [<< EOF]
+   setpriv --nnp --reuid --regid --init-groups --ambient-caps --inh-caps --bounding-set --reset-env
+   env -i
+   chroot
+   login -f
+   dtach/mtm
+   dbclient
+
+ install / chown / chmod / mk{,nod,fifo,dir,temp}
+
+* su -c 'exec &' acts as a subshell wrapper ?
+  with & detaches from terminal ? 
+  without & hangs the terminal ?
+
+  su -l -s /bin/sh -c 'exec command &' <user>
+  su -l -s /bin/sh -c 'command' <user> </dev/null &>/dev/null
+
+  exec sleep 1 & echo exec with ampersand doesnt kill parent
+  exec sleep 1 ; echo exec with colon does kill parent
+
+-------------
+su -l -s /bin/ash -c 'exec command </dev/null &>/dev/null & exit ' <user>
+su -l -s /bin/ash <user> << EOF # horrible \$(escape) \${characters}
+su -l -s /bin/ash <user> < /path/to/file # works without \${escapes}
+-------------
+su -l -s /bin/ash <user> < /path/to/file > /path/to/output
+dbclient -T <user>@172.16.0.1 < /path/to/file > /path/to/output
+-------------
+setsid detaches controlling tty - breaks server daemons
+-------------
+/etc/services/
+ crond
+ ddns
+ dnsd
+ httpd
+ p2pd
+ sets
+-------------
+ a.chroot b.init (c.keys)
+ c.server d.client
+ e.setpriv
+ f.sets
+-------------
+/etc/self/c.server
+ gnupg g.{setup,conf,agent}
+ dropbear s.{flush,client,server}
+ wireguard v.{flush,client,server}
+ wifi w.{scan,public,private,connect,auth}
+ xephyr {x.nobody,x.proxy}
+ xephyr {p.smtp,p.http,p.irc,p.xmr}
+ d.{smtp,http,irc,xmr} dtach -A $HOME/socket mtm -t mtm-256color
+-------------
+/etc/self/d.client
+ dbclient - user
+ smtp     - nobody,smtp
+ http     - root,nobody,proxy,http
+ p2p      - root,user,nobody
+ irc      - nobody,irc
+ xmr      - nobody,xmr
+ media    - nobody
+ qemu     - user/nobody/proxy
+-------------
+ Xephyr is really slow for video
+ offline user for media
+ online user http/p2p for media
+-------------
+per application file access
+per application firewall access
+access to all system binaries
+-------------
+while sleep 3 ; do DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth xrandr --auto ; done
+-------------
+lsw && xev -
+ id="$(lsw|awk '/Xephyr.*:13/{print$1}')" ;
+ xev -display :0 -id "${id}" -1 -event structure | 
+ while read ; do DISPLAY=:13 XAUTHORITY=/tmp/.X13-auth xrandr ; done
 -------------
 
 #############
 
- [dnsd.log]
+* p2pd - unix sockets dont work yet
+* tigervnc and cryptsetup and qemu ? proof read
+* ip -6 route < already has entries for fc00 fd00 private address ranges ?
 
- udpsvd -v 0.0.0.0 53 /bin/nc -nubv -o /run/dnsd.log -lk -s 0.0.0.0 -p 53
+* udhcpc_{default,oneshot,ping}
 
- ???
-
- udpsvd -v 0.0.0.0 4444 /bin/script
-
- ^ couldnt ever read stdin on a delimeter ?
-
- udpsvd -v 0.0.0.0 4444 /bin/nc -nv -lk -s 0.0.0.0 -p 4444 
-
- nc cant end with -lk -e ? removes the ability to listen on and forward to ?
-
-#############
-
- * qemu usb pass through no longer works ? in lsusb wont register a sound card
-
- * v.client v.server - save .vpn/config nothing to actually reuse it ? v.{server,client,flush,restore?}
-
- * system.lock - triggers auditd (ausearch -i)
-
- * broke ddns key generation turning on socks and dns : /
- * tftpd -l cant write log files ?
  * something keeps deleting /etc/portage
 
  * /init /etc/inittab /etc/init /etc/profile - debug output ?
+ 
+ * tftpd -l cant write log files ?
+ 
+ * qemu usb pass through no longer works ?
+
+ * v.client v.server - save .vpn/config nothing to actually reuse it ? v.{server,client,flush,restore?}
+
+ * dtach cant recreate socket ? SIGHUP ignored SIGUSR1 terminates running process
+ * identify dtach from PS1 - shlvl ?
+ * identify mtm from PS1 - $MTM
+ * usability over dbclient ? (force command authorized_keys - "command='dtach -A $HOME/socket mtm -t st-256color' sha-ed25519 <hash> user@domain")
+
+ * mutt smtp still exposes ip/hostname in headers ? (sending From username $(date) as  well ?)
 
  * monero / ca-certificates updates - forced to delete manifest
 
 * pkill -x /sbin/<thing> needs pkill -x <thing> ? (only matching wrappers)
   ^ fucks up accidently killing partial matches... (probably worse ?)
 
-* vim sucks
-* git sucks
-* nftables notes suck
+ * httpd/gitd - services/httpd/start GIT_PROJECT_ROOT=/tmp/storage/.git GIT_HTTPD_EXPORT_ALL=
 
-* httpd/gitd - sort of implemented (didnt test new build)
-             - missing services/httpd/start GIT_PROJECT_ROOT=/tmp/storage/.git GIT_HTTPD_EXPORT_ALL=
+ * grub ebuild ? finishes off udhcpd/tftpd/grub kernel/initramfs/nfsd
 
-* grub ebuild ? finishes off udhcpd/tftpd/grub kernel/initramfs/nfsd
+ * FORTIFY_SOURCE=3 - glibc died, cmake died < - even with fortify=2 something with fortify=3 is bricking ./configure
+ * -fcf-protection=full -mcet (control flow integrity)
 
-* FORTIFY_SOURCE=3 - glibc died, cmake died < - even with fortify=2 something with fortify=3 is bricking ./configure
-* -fcf-protection=full -mcet (control flow integrity)
+ * tor DisableAllSwap as none root...( didnt stderr, used address sanitizer ? shouldnt have executed at all) 
+ ^ test expensive/fragile without DisableAllSwap ?
 
-* tor DisableAllSwap as none root...( didnt stderr, used address sanitizer ? shouldnt have executed at all) 
-^ test expensive/fragile without DisableAllSwap ?
+ * herbe needs /dev/shm/$USER splitting (doesnt support multiplayer) (logread|grep -f file|while read ; do herbe "notifcation" ; done
 
-* herbe needs /dev/shm/$USER splitting (doesnt support multiplayer) (logread|grep -f file|while read ; do herbe "notifcation" ; done
+ * tiny-curl - test git / transmission ?
 
 #############
+dropbear without -r /path/to/key refuses to start
+* Early exit: Bad buf_getptr
+^ ChangeLog said ~ worked in key paths ?
+^ tried without ~
+^ tried without symlink
+#############
+
+storage.bootfs -
+$storage/{.gnupg,.ssh,.vpn,.wifi}
+$services/ddns/{public,private}
+$home/{user,nobody,proxy}/.ssh
+$home/irc/irc
+$home/http/.browser
+$home/smtp/mail
+$home/xmr/monero
 
  usb.persistence -
   storage.shared < - takes gnupg/public/private/sshd/user/nobody/proxy/vpn
@@ -376,77 +422,204 @@ udhcpc_scripts - cat ^[ allows escape characters
   efi.get - get values saved in efi
   efi.put - put values into efi
 
- old storage.bootfs ? saved public keyring into $bootfs/$hostname
-                      diskless testing needs the ability to drop private keys
+-------------
+
+ init: mount bootfs
+
+  # install bootfs to host
+
+  install -d $shared/downloads/bootfs
+  cp bootx64.efi/client/{laptop,desktop,server,virtual}
+
+  # install bootfs keys to host
+
+  install -d $shared/contacts/$hostname
+  cp gnupg/ssh/vpn/wifi ddns irc/mail/monero
+
+  # install host keys to bootfs
+
+  install -d $bootfs/contacts/$hostname
+  cp gnupg/ssh/vpn/wifi ddns irc/mail/monero
+
+-------------
 
 #############
 
- dont need yama if nothing shares a dac context
+ openssl genpkey -algorithm ed25519 -out key.pem
+ openssl pkey -pubout -in key.pem -out key.pub
 
-[services]
--------------
- install / chown / chmod / mk
- (exec binary </dev/null &>/dev/null & exit)
- su -l -s user < file
- setpriv
- unshare
- chroot
- login -f
- env -i
--------------
-su -l -s /bin/ash -c ' exec command </dev/null &>/dev/null & exit ' <user>
-su -l -s /bin/ash <user> << EOF # horrible \$(escape) \${characters}
-su -l -s /bin/ash <user> < /path/to/file # works without \${escapes}
--------------
-su -l -s /bin/ash <user> < /path/to/file > /path/to/output
-dbclient -T <user>@172.16.0.1 < /path/to/file > /path/to/output
--------------
-exec sleep 1 & echo exec with ampersand doesnt kill parent
-exec sleep 1 ; echo exec with colon does kill parent
--------------
-setsid detaches controlling tty - breaks server daemons
--------------
-[services uid]
- port or relevent number
-[users uid]
- ephemeral - implies scraping persistence /tmp/storage/home/<random> ?
-    static - x.one x.two x.three - dwm tags + gid assignment ?
-[role gid]
- network and file access
--------------
-/etc/services/
- crond
- ddns
- dnsd
- httpd
- p2pd
- sets
--------------
-/etc/self/c.server
- gnupg g.{setup,conf,agent}
- dropbear s.{flush,client,server}
- wireguard v.{flush,client,server}
- wifi w.{scan,public,private,connect,auth}
- xephyr {x.nobody,x.proxy}
--------------
-/etc/self/d.client
- dbclient - user
- browser  - nobody/proxy
- smtp     - nobody
- irc      - proxy
- p2p      - root/user/nobody/proxy
- xmr      - nobody
- media    - user/nobody/proxy
- qemu     - nobody/proxy
+ openssl pkeyutl
+  -sign -inkey key.pem
+  -rawin -in file
+  -out file.sig
 
-per application file access ?
-per application firewall access ? skgid (implies defining groups)
+ openssl pkeyutl
+  -rawin -in file
+  -verify -sigfile file.sig
+  -pubin -inkey key.pub
+
+ openssl pkeyutl
+  -derive
+  -inkey me.private
+  -peerkey you.public
+ ^ doesnt work...
+
+ openssl s_server -dtls1_2
+ openssl s_client -dtls1_2
+ ^ doesnt work...
+
+  end game,
+  root - > server - > certificate
+           client - > certificate
 
 -------------
-while sleep 3 ; do DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth xrandr --auto ; done
+ openssl pkeyutl -kdf TLS1-PRF -kdflen 64 -digest sha512
 -------------
-* offline user for mpv would still need http to stream video
-^ private address ranges only ?
+
+^ added kdf to key derive ?
+
+#############
+
+ [pxe]
+
+  grub/linux/initrd
+  grub/linux/rootfs
+  grub/linux/nfsroot
+
+ * net-fs/nfs-utils
+   net-libs/libtirpc
+   sys-apps/keyutils
+
+ ^ sys-boot/grub - error memdisk, drops into recovery shell ?
+
+  * firmware checksum grub with embedded public key ?
+
+    grub-mkstandalone -k --pubkey
+    boot/internal/path=/tmp/external/path
+
+#############
+
+ console has the wrong key layout
+ host has mtm-256color
+ chroot does not have mtm-256color
+ ^^ cant do dev from tmux(dtach+mtm)
+  (exec showkey > /run/logs/keylogger &)&
+  dumpkmap - get keyboard map
+  loadkmap - set keyboard map
+
+#############
+
+ tor - libevent error operation not permitted while writing response to port
+       creates dropped udp spt=53 dpt=51898
+     ^ assuming 60 second conntrack timeout ?
+       dns isnt up, tor allows longer to fail, linux cleans conntrack
+
+#############
+
+ busybox
+  doesnt need
+   libcrypt
+   libm
+   librt
+  needs
+   libresolv
+
+ ^ login/password management utilities - internal crypt stuff removed dependencies
+
+ ? more than nslookup using libresolv... (it uses internal code?)
+
+ ^ qemu silently linking to glibc for alot of libraries...
+
+#############
+
+ i.{input,client,server}
+
+ busybox && openssl s_client
+
+ ^ shortest path to network enabled shell
+
+ ^ removed all external calls
+
+ udpsvd tcpsvd nc
+ s_server s_client
+ anycast unicast multicast broadcast
+ while read sender type target message -r ; do 
+
+#############
+
+  muttrc is fucking brutal
+  easy to fake emails
+^ set encode_from="yes"
+
+  pop_authenticators="user" < - allows login without sasl
+  smtp_authenticators="login" < - still forces sasl...
+
+  drop sendmail from mutt
+  sendmail with sasl plain base64 without cyrus-sasl ?
+
+* complexity for user hand off is to high (cant full scope it)
+
+#############
+
+[transmission 4.0.0 beta changes]
+
+ new bugs...
+
+  every other start, fails to bind ports properly and hangs ?
+
+  umask 022, no longer sets permissions properly ?
+   - partial downloads using global umask ?
+   - 
+ usability...
+
+  magnets owned by root:root 0664
+  p2pd:p2pd 0664 ?
+  drop magnet links ?
+
+ alias tt stopped working awhile ago ?
+ everything over a certain length is killed off (properly)
+
+ making /tmp/storage/shared/torrents the watch directory ? might make more sense
+
+
+ new...
+
+ * transmission-4.0.0 will work with openssl-3.0.0...
+ * no longer starts if peer port matches rpc port
+   works if started random (breaks nat peer port 9091 assumption)
+
+ * transmission-show -s hangs with webseeds ?
+ * transmission-show -s hangs without private,tracker,webseed ?
+ * transmission-edit - cant edit webseeds ?
+ * transmission-edit - cant edit private,webseeds ?
+  ^ transmission-edit -s set the source ?
+  ^ transmission-create -r source for private trackers ?
+
+ transmission-show - wont display the source
+ ^^ trackers/webseeds require http://domain.tld/path/to/file
+
+ * rpc-socket works with 0750
+   umask adding 0022 rewrites to 022 ?
+
+ * rpc from 127.0.0.1:9091 - > unix:/path/to/p2pd.socket ?
+ * unix:/tmp/socket - doesnt work ?
+   transmission-remote --unix-socket /tmp/socket fails ?
+   transmission-remote unix:/tmp/socket fails ?
+   transmission-remote /tmp/socket fails ?
+ ^ was hoping to have that enabled /shrug (works without)
+
+ * peer-socket-tos default ? turns into "le"
+
+ * disabled tcp completly ? (webseeds use libcurl?)
+
+ * transmission-remote allows setting alt-speed on or off...
+   transmission-daemon forces it to start off...
+   ^ used to settings.json variable at runtime (dont really care?)
+
+ * no webseed is capping at 65 ?
+ * used to cap at 8000 ?
+
+ ? difference between default-trackers and announce-ip ?
 
 #############
 
@@ -700,6 +873,8 @@ BLARGH
  mesa X
  libglvnd X
 
+ libpcre2 unicode ?
+
 #############
 
 config/portage/profile/packages
@@ -777,6 +952,31 @@ argon2 default output matches key input length
 
 * still a few dependencies that dont link to anything with libraries
   eg x11-misc/compose-tables has locales only x11-base/xorg-server
+#############
+
+ -------------
+ firefox-bin - > firefox-esr
+ -------------
+ google search parameters
+ https://google.com/ncr - set no country redirect cookie
+ https://google.com/preferences - force regional results
+ https://www.google.com?cr=countryXX
+ https://www.google.com/search?cr=countryXX&q=%s
+ manually setting ?cr=countryXX persists across all interaction
+ /usr/lib64/firefox/distribution/policies.json - "searchengine": { },
+ -------------
+ * no country redirect doesnt allow
+   searching for busybox everywhere
+   shows only a handful of things from somewhere
+   instead of everything from everywhere
+   massively debilitating
+ -------------
+ * 50x the number of requests
+   50x search?key=value parameters
+   combining first page of search results
+ ^ was suppose to be an easy fix, now total shit
+ -------------
+
 #############
 
 [ca-certificates]

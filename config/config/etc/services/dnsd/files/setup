@@ -12,15 +12,12 @@
  [ -f firefox.cfg ] || install -o root -g root -m 0600 /usr/lib64/firefox/firefox.cfg firefox.cfg
 
  sed "s/127.0.0.1/${address}/" torsocks > /etc/torsocks
-
  sed "s/127.0.0.1/${address}/" proxy.pac > /usr/lib64/firefox/proxy.pac
  sed "s/127.0.0.1/${address}/" firefox.cfg > /usr/lib64/firefox/firefox.cfg
 
  [ -d /tmp/storage/services/sets/firefox ] && {
-
   sed "s/127.0.0.1/${address}/" proxy.pac > /tmp/storage/services/sets/firefox/proxy.pac
   sed "s/127.0.0.1/${address}/" firefox.cfg > /tmp/storage/services/sets/firefox/firefox.cfg
-
  }
 
 #############
@@ -34,18 +31,6 @@
  [ -f dnsd.config ] || install -o root -g root -m 0600 /etc/services/dnsd/files/config dnsd.config
 
  sed "s/127.0.0.1/0.0.0.0/" dnsd.config | grep -v 172.16.0.1 > /etc/services/dnsd/files/config
-
-#############
-
- # ddns
-
- [ -f ddns.install ] || install -o root -g root -m 0600 /etc/services/ddns/install ddns.install
-
- sed "s/127.0.0.1/${address}/" ddns.install > /etc/services/ddns/install
-
- [ -f ddns.config ] || install -o root -g root -m 0600 /etc/services/ddns/files/config ddns.config
-
- # ???
 
 #############
 

@@ -2,7 +2,7 @@
 #############
 [ "${1}" == "config" ] || return 0
 #############
-[ -z "${interface}" ] || [ -z "${ip}" ] && return 1
+[ -z "${interface}" ] || [ -z "${ip}" ] && return 0
 #############
 cat << EOF
 #############

@@ -1,0 +1,31 @@
+#!/bin/sh
+#############
+defaults="-nodefaults -daemonize -runas qemu -chroot /var/empty -sandbox on -k en-gb -L /usr/share/qemu"
+#############
+cpu="-cpu host -smp 2,sockets=1,cores=2 -enable-kvm" mem="-m 4G" gpu="-vga virtio"
+#############
+network="-netdev tap,id=nd0,script=/etc/qemu-lan,downscript=no"
+network="-netdev tap,id=nd0,script=/etc/qemu-nat,downscript=no"
+#############
+interface="-device virtio-net-pci,netdev=nd0,mac=52:54:00:XX:XX:XX"
+#############
+network="-netdev user,id=nd0,ipv4=on,host=172.20.10.1,net=172.20.10.0/24,ipv6=on,ipv6-host=fc00::172:20:10:1,ipv6-net=fc00::/64"
+network="-netdev user,id=nd0,ipv4=on,host=192.168.0.1,net=192.168.0.0/24,ipv6=on,ipv6-host=fc00::192:168:0:1,ipv6-net=fc00::/64"
+#############
+kernel="-kernel XXX -append root=/dev/vda"
+initrd="-initrd XXX"
+boot="-drive if=virtio,index=0,format=raw,media=cdrom,file=XXX"
+file="-drive if=virtio,index=1,format=raw,media=disk,file=XXX"
+extra="-drive if=virtio,index=2,format=raw,media=disk,file=XXX"
+#############
+vnc="-display none -vnc unix:/dev/shm/qemu"
+#############
+qemu-system-x86_64 ${defaults} ${cpu} ${mem} ${gpu} ${network} ${interface} ${kernel} ${initrd} ${boot} ${file} ${extra} ${vnc} ${usb}
+#############
+#usb="-device qemu-xhci"
+#usb="${usb} -usb -device usb-host,vendorid=0x1b1c,productid=0x0a4a" # usb audio wifi
+#usb="${usb} -usb -device usb-host,vendorid=0x1b1c,productid=0x0a41" # usb audio cable
+#usb="${usb} -usb -device usb-host,vendorid=0x1b1c,productid=0x0a3b" # usb soundcard
+#usb="${usb} -usb -device usb-host,vendorid=0x04f2,productid=0xb681" # usb webcam (laptop)
+#usb="${usb} -usb -device usb-host,vendorid=0x148f,productid=0x5372" # usb wifi (laptop)
+#############

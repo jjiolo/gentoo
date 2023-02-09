@@ -1,0 +1,13 @@
+#!/bin/sh
+#############
+unpack(){
+
+#############
+# atomic control of source tarball into work
+#############
+
+ [ "${link_package}" == "" ] || [ ! -f "${downloads}/${source}" ] || tar xf "${downloads}/${source}" -C "${work}/${build}"
+
+
+}
+#############

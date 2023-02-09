@@ -1,7 +1,7 @@
 
 #############
 
-timeout -s SIGTERM 3 sh -c 'read -p interupt && /bin/sh -li'
+grep -q "laptop" /proc/cmdline && /bin/sh -l || timeout -s SIGTERM 3 sh -c 'read -p interupt && /bin/sh -l'
 
 [ -b "/dev/storage" ] && use="/dev/storage"
 [ -b "/dev/mapper/storage" ] && use="/dev/mapper/storage"

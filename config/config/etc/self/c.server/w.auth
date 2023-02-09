@@ -2,6 +2,7 @@
 #############
 usage(){ printf "\n${0} - ${1}\n\n takes interface, ssid, identity and passphrase\n\n" ; exit ; }
 #############
+[ "${USER}" == "root" ] || usage "requires root"
 [ "${#}" == "4" ] || usage "no input"
 [ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
 #############

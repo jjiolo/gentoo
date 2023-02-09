@@ -4,9 +4,9 @@
 alias tor bridges@torproject.org
 
 alias one one@one.com
-alias two two@two.com
+alias two two <two@two.com>
 
-alias group one@one.com two@two.com
+alias group one@one.com, two <two@two.com>
 
 #############
 

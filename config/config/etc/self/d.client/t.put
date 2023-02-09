@@ -1,6 +1,6 @@
 #!/bin/sh
 #############
-debug(){ printf "%s\n" "takes file or directory - ${1}";exit 1; }
+debug(){ printf "%s\n" "takes file or directory - ${1}" ; exit 1 ; }
 #############
 [ "${#}" == "1" ] || debug "no input"
 #############
@@ -11,7 +11,7 @@ torrent="$(basename ${1})"
 [ -e "${shared}/downloads/${torrent}" ] && debug "download already exists"
 [ -e "${shared}/torrents/${torrent}"  ] && debug "torrent already exists"
 #############
-transmission-create -o "${shared}/torrents/${torrent}" "${1}"
+transmission-create -o "${shared}/torrents/${torrent}" -w "http://172.16.0.1/shared/downloads/${1}" --anonymize "${1}"
 #############
 cp -r "${1}" "${shared}/downloads"
 #############

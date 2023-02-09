@@ -1,0 +1,39 @@
+
+#############
+#
+# basic output display slaac settings
+# optional arguements toggle accept_ra per interface ?
+#
+#      arg0 - printf interfaces + accept_ra only ?
+#      arg1 - enable interface
+# arg1 arg2 - disable interface
+#
+#
+#############
+
+printf "%s\n" "#############"
+
+printf "%s\n" "[interfaces]"
+
+printf "%s\n" "#############"
+
+#############
+
+for i in /sys/class/net/*
+
+do
+
+basename="$(basename $i)"
+
+read accept_ra < "/proc/sys/net/ipv6/conf/${basename}/accept_ra"
+
+printf "%s%s\n" "${basename}: " "${accept_ra}"
+
+done
+
+#############
+
+printf "%s\n" "#############"
+
+#############
+

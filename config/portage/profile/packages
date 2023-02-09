@@ -1,9 +1,9 @@
 
 #
 -*net-misc/iputils
--*sys-apps/elfix
--*sys-apps/net-tools
 -*sys-apps/iproute2
+-*sys-apps/net-tools
+-*net-misc/rsync
 -*sys-apps/kbd
 -*sys-apps/kmod
 -*sys-process/procps
@@ -23,7 +23,7 @@
 dev-vcs/git
 #
 sys-fs/dosfstools
-sys-boot/grub
+sys-boot/grub::gentoo
 sys-kernel/linux-headers
 sys-kernel/linux-firmware
 dev-libs/libudev-zero

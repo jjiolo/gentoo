@@ -1,0 +1,48 @@
+#!/bin/sh
+#############
+debug(){ printf "%s\n" "debug - ${1}" ; exit 1 ; }
+#############
+[ -f "/tmp/.X0-lock"  ] || debug "xorg server not running"
+[ -f "/tmp/.X6697-lock" ] && debug "Xephyr server already running"
+#############
+install -o desktop -g irc -m 0640 "/dev/null" "/tmp/.X6697-auth"
+printf "%s\n" "add :6697 . $(hexdump -n16 -ve '1/1 "%02x"' /dev/urandom)"|xauth -nqf "/tmp/.X6697-auth"
+chown desktop:irc "/tmp/.X6697-auth"
+chmod 0640 "/tmp/.X6697-auth"
+#############
+su -l -s /bin/ash desktop << EOF
+DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth \
+exec Xephyr \
+-extension 'Generic Event Extension' \
+-extension 'MIT-SHM' \
+-extension 'XTEST' \
+-extension 'XINERAMA' \
+-extension 'XFIXES' \
++extension 'RENDER' \
++extension 'RANDR' \
+-extension 'COMPOSITE' \
+-extension 'DAMAGE' \
+-extension 'MIT-SCREEN-SAVER' \
+-extension 'DOUBLE-BUFFER' \
+-extension 'RECORD' \
+-extension 'DPMS' \
+-extension 'X-Resource' \
+-extension 'XVideo' \
+-extension 'XVideo-MotionCompensation' \
+-s 0 -auth /tmp/.X6697-auth \
+-nolisten tcp -nolisten unix -listen local \
+-resizeable -no-host-grab \
+:6697 </dev/null &>/dev/null & exit
+EOF
+#############
+until [ -f "/tmp/.X6697-lock" ];do sleep .1;done
+#############
+
+#############
+su -l -s /bin/ash -c "DISPLAY=:6697 XAUTHORITY=/tmp/.X6697-auth exec dwm-guest </dev/null &>/dev/null & exit" irc
+#############
+su -l -s /bin/ash -c "DISPLAY=:6697 XAUTHORITY=/tmp/.X6697-auth exec st </dev/null &>/dev/null & exit" irc
+#############
+renice +20 -u "irc"
+#############
+

@@ -3,6 +3,266 @@
 man /var/empty/mutt-2.1.5/doc/muttrc.man
 #############
 
+torsocks ; m.start
+
+^ google application password allows pop and smtp over tor now...
+
+  gmail automatically appends a Received from header...
+
+  leaks hostname ?
+  leaks the incoming address as seen by gmail
+
+  multiple line output destroying tui ?
+
+-------------
+
+* didnt really look at spam or scoring...
+
+-------------
+
+* mutt doesnt add bcc headers to message ?
+  write_bcc... ie makes normal cc then sends seperately to not be in the list
+
+* set wrap=width ?
+      and set highlight in vim to that width
+      would force a normal length for everything
+      (ignored when coding)
+ wrap_headers recommends 78 characters ?
+
+* strict_threads - groups by like subjects can cause problems with duplicate subjects
+
+* mbox vs maildir
+  mbox - directory traversal, to isolate parsing messages individually
+  maildir - no directory traversal, single file parsing every message
+
+* if from= isnt set it pulls $USER and hostname.domainname
+  use_domain=yes - turns of appending local hostname or not ?
+* if from isnt set it pulls the $USER
+  and realname takes the gecos field value
+  if hostname isnt set, it takes the local value and domain ?
+^ probably need to test it
+  set shell="" || taken from $USER /etc/passwd entry...
+? use_from=no ? dont pass a From: header in a message ?
+
+
+* appends "From nobody $(date)" in all messages ?
+  used as delimeter when reading mail
+
+* encode_from=yes - Maildir format uses 'From $USER $(date)' as a delimeter 
+^ if you can color spoof gpg headers its impossible to check without opening the file in vim
+
+* signature '^-- \n'
+^ color highlights anything underneath it ? ie assumes end of message 
+  attack surface for fake headers with color encoding ?
+
+ autocrypt - 
+ autocrypt_acct_format -
+ autocrypt_dir - 
+ autocrypt_reply - 
+ ^ defense against passive surveillance
+
+* b bounce - sends message to given email address then prompts y/n ?
+* f forward - allows editing message before sending to given email address ?
+
+* check_new - background polls the file itself ?
+  waste of time with built in imap/pop
+
+* gpg -s -e -r recipient file.txt
+^ includes the signature in wrapper
+  exposes who the message is signed for... (defeats the point in mix nets?)
+  doesnt expose who signed the message ?
+^ envelopes and messages + encryption/signing nesting
+  envelope_from_address - manually set envolope sender for outgoing messages
+  use_envelope_from -
+^ has a header for envelope or From and used to decide whom to reply to...
+^ need to full scope
+^ protected_headers - can encrypt subject ? or learn not to use it (feels like attack surface)
+
+* dsn - delivery status notification failure,delay,success
+  dsn_notify="failure,delay,success"
+  dsn_return="full"
+^ sounds good requires shift+g after every message ?
+
+* fcc - file carbon copy... used with 'record=+sent' 'copy=yes'
+
+* attachment menu - pressing t tags files, then enter adds all of them...
+
+* mime_forward - force attachments when forwarding...
+                 else
+                 if its text it just inlines them
+                 if its blob it prompts to attach 
+                 forward-decodes by default
+                 forward-decrypted by default
+                 include_encrypted - removes prompt and inlines not text
+                 include_onlyfirst - only first attachment in reply ?
+
+* pipe_decode
+  pipe_weed
+  pipe_sep
+  pipe_split
+  controls decoding messages (ie converting mime types ? implies execution)
+  filtering headers how its delimtered if its all files or single file to external command
+
+? anything with decode in seems related to execution
+  anything with pipe in definintly implies external execution
+^ reducing and securing the number of execution points so it just doesnt happen
+
+* include_encrypted - used to decrypt then re attach replies to attackers with encrypted messages ?
+  can enabled it and test ?
+  assuming encrypt to self with a previous encrypted message attached ?
+  then reply decrypts it attaches and sends back
+
+* local_date_header - local time zone or utc (to prevent location leaks?)
+
+* sig_dashes=yes - adds the '-- \n' signature delimeter...
+  sig_on_top=no - because doing the wrong thing doesnt piss other people off ?
+
+* threads - reply_regexp
+  Re
+  Re[1]
+  Re[2]:
+^ matches re upto [numbering?] and with optional colon: followed by space or tab
+  any thread doesnt work thats the regex string to fix it ? 
+
+* reverse_alias - allows converting complex email string back to alias name ?
+                  could be useful for nonce generated stuff
+
+* draft files ? probably useful to aid in automation...
+^ but cli wrapping sed file | mutt -s $var -- $email loops ?
+
+* rfc2047 - allows encoding ?
+            dump characters behind filters ?
+            allow bad expansions of file names ?
+            filesystem or shell reserved character injection ?
+^ is an old encoding standard... ie should be legacy then removed
+  on by default but then makes the muttrc look horrific ?
+
+* sort = date < - prefer threads
+  sort-aux = date
+  ^ how to sort two matching entries
+    or when threaded how to sort thread grouping
+    date default is sensible
+* sort-browser = date
+  sort-browser-mailboxes = date
+^ - how the built in file browser is ordered
+
+[unknowns]
+
+* load of stuff with collapse in it ? 
+  and jumping to new messages? just want it off
+
+* smileys - regexp to stop From: ] being interpretted as faces?
+
+* simple search - takes none variable searches and turns them into it ?
+  search uses ~b expansion to indicate searching body...
+  ~subject ~sender etc etc
+  simple expands to something dumb
+
+* sendmail - path to sendmail ? dont have it... still works tho...
+
+* send_charset - us-ascii:iso-8859-1:utf-8 ?
+  sends a default charset and i have no real idea what that means
+
+* commands / variables - score ?
+  can automate spam ?
+  can automate priority ?
+  assuming complex regex to sort large mailboxes
+  incrementing fotw spam from addresses or the content it shills to group multiple addresses ?
+^ can use the upstreams report/flag and keep mutt less complicated ?
+  never used mutt under duress from spam to actively test it
+
+* text_flowed
+  reflow_space_quotes
+  reflow_text
+  reflow_wrap
+^ format=flowed, text_flowed off by default rest irrelivent
+  prefer indent_string... 
+
+* read_inc=10 < - get a large mailbox and run a search ? prints where its up to every X
+
+* T - allows toggling quotes... no idea how to write a quote in an email
+
+* pop_authenticators ? 
+   user,apop,... any sasl authenticator ?
+   needing cyrus-sasl to base64 username:password is fucking horrific complexity
+
+* header weeding ? ie i care about these only so the wtf wall of text is hidden ?
+
+* message_cachedir - caches messages from pop ? even tho it syncs them to the spoolfile ? sense ?
+
+* ispell - would imply vim can support it ?
+
+! ignore_linear_whitespace ? prevent Mime-encoded subject: from being divided into multiple lines
+^ screw with message display ? allowing spoofing ?
+
+* digest_collapse="yes" # recieved-attachments menu
+
+* escape=~ < - escape character to use for functions in the built in editor ?
+               line editor is the bottom row : or <m> entering email subject
+
+followup_to -
+honor_followup-to -
+  used with list/subscribe ?
+  two emails to seperate personal from mailing lists...
+^ followup_to attempts to prevent mailing the sender and the list ?
+  ignore_list_reply_to
+  list reply - list only
+  group reply - sender and list
+  reply_to - ask-yes, user :reply-to header over From: 
+
+^^ all of that with nothing set defaults to
+   ask reply-to ie the mailing list
+   and ignore From ie the sender to the list
+
+^ long term plan is to ignore it completly ?
+  learn what it does by default use it sensibly
+
+* idn_decode - same as puny code ? means you cant spoof domains
+  idn_encode - fairly sure its all compiled out
+^ raw fuzzing binary input shouldnt care about displaying characters...
+  can only read english, dont have a lot of fucks to give about squigly speak
+^ need to check it isnt security related
+
+#############
+
+-------------
+[mutt]
+-------------
+
+mutt automatches on user@email from gnupg
+
+entire point is to remove the provider from the equation
+flip provider and require no configuration on their end
+force signing and opportunistically encrypting
+cant force other people to encrypt for you
+cant force other people to sign for you
+can blanket ignore cleartext messages (plausible deniability till you open your mouth)
+
+^ only free service available is gmail
+  imaps://imap.gmail.com:993/INBOX
+  pops://pop.gmail.com:995
+  smtps://username@gmail.com@smtp.gmail.com:465
+  smtps://username@gmail.com@smtp.gmail.com:587
+
+* gmail doesnt delete when using pop only bins it (30 days)
+* gmail doesnt spam folder web interface > settings > filters > doesnt have the words > abcdefghjklmnopqrstuvwxyz0123456789
+
+-------------
+
+[pop3]
+designed for single device
+force delete the other end
+pulls everything and blocks till it finishes...
+abuse spam/attachments to attack the client
+^ spoolfile=pops://pop.gmail.com allows only pulling headers
+
+[imap]
+designed for multiple devices
+allows selectively syncing folders from the other side
+better functionality at the expense of configuring the provider
+
+-------------
+
 printf "%s\n" "message" | mutt -s subject -a file.txt -- user@domain.tld
 
 ^ doesnt gpgme automagically
@@ -13,30 +273,36 @@ printf "%s\n" "message" | mutt -s subject -a file.txt -- user@domain.tld
 * does allow inline encryption without smime ?
   or requires encrypting and attaching the -a message.sig
 
+-------------
+
 #############
 
 smtp 465
 imap 993
 pop3 995
 
-outbound rules for 465 smtps and 995 pop3
-
 #############
 
+q - back
+
 y - browse mailbox
-$ - sync mailbox
 shift+g - sync pop
+
 ^ - cycle messages
 V - cycle messages
-t - tag ; shift+f - flag
+
+t - tag
+F - flag
+
+$ - sync mailbox
 d - delete mail
+u - undelete mail
+
 m - new mail
 p - gpgme options
 a - attach file
 v - view attachments
-
-ctrl+a - archive mail
-^ keep flagged ? moves shift+f flagged messages to archive
+C - copy message + ? (copy message to archive)
 
 ############# muttrc
 
@@ -58,12 +324,14 @@ loads of them fairly useful in commands
 (un)alias - stab complete addresses to send
 (un)group - stab complete addresses to display
 (un)alternates - alternate addresses where you recive mail ?
+
 (un)list - mailing lists ?
 (un)subscribe - mailing lists ?
 ^followup_to - Mail-Followup-To header replying to known mailing list
 ^honor_followup_to
 ^ignore_list_reply_to
 
+[mime]
 (un)alternative_order - order to display multipart/alternative
 (un)attachments - (-|+)disposition (-|+)mime-type
 (un)auto_view - automatically convert mime type to text/plain
@@ -106,19 +374,6 @@ cd <directory> - change path
 
 [variables]
 
-set dsn_notify="failure,delay,success" # ="never"
-set dsn_return=hdrs # ="full"
-^ delivery status notification tried turning it on got nothing back ? useful tho
-
-envelope_from_address
-
-set pager_index_lines=10 (remove sidebar replace with split pane view)
-
-folder format
-
-save_name - if folder with recipients address is found save sent mail to it...
-force_name - force creating a folder for all sent mail
-
 forward -
  attachments
  attirubtion_intro
@@ -131,7 +386,7 @@ forward -
 realname
 from
 hostname
-hidden_host - skip hostname part of $hostname ? when adding the domain part to addresses
+hidden_host
 
 gecos_mask - tab completing user names ?
 
@@ -172,45 +427,6 @@ crypt_timestamp - yes: include a time stamp around pgp output ?
 crypt_use_gpgme - no: helper lib instead of raw commands
 crypt_use_pka - no: gpgme backend signature foo not using it
 crypt_verify_sig yes: always attempt to verify signatures
-
-#############
-
-[mutt]
-
-mutt automatches on user@email from gnupg
-
-entire point is to remove the provider from the equation
-flip provider and require no configuration on their end
-force signing and opportunistically encrypting
-cant force other people to encrypt for you
-cant force other people to sign for you
-can only blanket ignore cleartext messages (plausible deniability till you open your mouth)
-
-^ only free service available is gmail
-  imaps://imap.gmail.com:993/INBOX
-  pops://pop.gmail.com:995
-  smtps://username@gmail.com@smtp.gmail.com:465
-  smtps://username@gmail.com@smtp.gmail.com:587
-
-* gmail doesnt delete when using pop only bins it (30 days)
-* gmail doesnt spam folder web interface > settings > filters > doesnt have the words > abcdefghjklmnopqrstuvwxyz0123456789
-
-[pop3]
-designed for single device
-force delete the other end
-pulls everything and blocks till it finishes...
-abuse spam/attachments to attack the client
-^ spoolfile=pops://pop.gmail.com allows only pulling headers
-
-[imap]
-designed for multiple devices
-allows selectively syncing folders from the other side
-better functionality at the expense of configuring the provider
-
----
-* shift + g < - fetch mail via pop_host into spoolfile
-* press 'p' during mail to open the pgp/mime options for encryption and signing
----
 
 #############
 

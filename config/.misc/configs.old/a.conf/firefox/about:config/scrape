@@ -1,0 +1,11 @@
+
+#############
+install -o "${USER}" -m 0600 "/dev/null" "config/prefs.js"
+#############
+ash ./scrape.devtools >> "config/prefs.js"
+ash ./scrape.telemetry >> "config/prefs.js"
+ash ./scrape.domains >> "config/prefs.js"
+#############
+cat a.prefs >> "config/prefs.js"
+#############
+

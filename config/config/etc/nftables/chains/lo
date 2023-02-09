@@ -10,15 +10,14 @@ table inet filter {
 
  chain ilo {
 
-  # new
+  # server
 
-  udp dport {53}    ct state new log flags skuid prefix "input.lo.new " accept
-  tcp dport {9050}  ct state new log flags skuid prefix "input.lo.new " accept
+  udp dport {53}   ct state new log flags skuid prefix "input.lo.new " accept
+  tcp dport {9050} ct state new log flags skuid prefix "input.lo.new " accept
+  tcp dport {22}   ct state new log flags skuid prefix "input.lo.new " accept
+  tcp dport {80}   ct state new log flags skuid prefix "input.lo.new " accept
 
-  tcp dport {22,80} ct state new log flags skuid prefix "input.lo.new " accept
-  tcp dport {9091}  ct state new log flags skuid prefix "input.lo.new " accept
-
-  tcp dport {4447,7070}  ct state new log flags skuid prefix "input.lo.new " accept
+  tcp dport {9091} ct state new log flags skuid prefix "input.lo.new " accept
 
   # icmp
 
@@ -40,18 +39,20 @@ table inet filter {
 
   # client
 
-  udp dport {53} skuid {ntpd}        ct state new log flags skuid prefix "output.lo.new " accept
-  udp dport {53} skuid {root,250}    ct state new log flags skuid prefix "output.lo.new " accept
-  udp dport {53} skuid {nobody,p2pd} ct state new log flags skuid prefix "output.lo.new " accept
+  udp dport {53}    skuid {ntpd}              ct state new log flags skuid prefix "output.lo.new " accept
 
+  udp dport {53}    skuid {nobody}            ct state new log flags skuid prefix "output.lo.new " accept
+  udp dport {53}    skuid {smtp,http,irc,xmr} ct state new log flags skuid prefix "output.lo.new " accept
+
+  udp dport {53}    skuid {p2pd}              ct state new log flags skuid prefix "output.lo.new " accept
+
+  udp dport {53}    skuid {root,250}          ct state new log flags skuid prefix "output.lo.new " accept # 0.binhost chroot.update
+
+  tcp dport {9050}  skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.lo.new " accept
   tcp dport {22,80} skuid {ddns}              ct state new log flags skuid prefix "output.lo.new " accept
   tcp dport {80}    skuid {root,user,nobody}  ct state new log flags skuid prefix "output.lo.new " accept
-  tcp dport {9091}  skuid {root,user,nobody}  ct state new log flags skuid prefix "output.lo.new " accept
-  tcp dport {9050}  skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.lo.new " accept
 
-  udp dport {53} skuid {i2pd} ct state new log flags skuid prefix "output.lo.new " accept
-  tcp dport {80} skuid {i2pd} ct state new log flags skuid prefix "output.lo.new " accept
-  tcp dport {4447,7070} skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.lo.new " accept
+  tcp dport {9091} skuid {root,user,nobody} ct state new log flags skuid prefix "output.lo.new " accept
 
   # icmp
 

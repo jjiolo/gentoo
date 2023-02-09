@@ -16,43 +16,38 @@
  [ -f "${shared}/contacts/self/public" ] || onion="$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)"
 
 #############
-#export LD_PRELOAD='/usr/lib64/libtorsocks.so'
-#############
-#server='libera75jm6of4wxpxt4aynol3xjmbtxgfyjpu34ss4d7r7q2v5zrpyd.onion:6697'
-#############
 account="spare"
+#############
 nick="NICK $(tr -cd 'a-zA-Z'</dev/urandom|head -c13)"
 user="USER ${onion:0:9} 0 0 :${onion:9:47}~"
 #############
-regain="PRIVMSG NickServ :regain ${account}"
-#############
 mode="MODE ${account} +iuwQR"
+#############
+regain="PRIVMSG NickServ :regain ${account}"
 #############
 channels="JOIN #libera,#gentoo-chat"
 channels="${channels},#linux,#networking,#security"
 channels="${channels},#gentoo,#archlinux,#debian"
 channels="${channels},#gentoo-bugs,#gentoo-dev,#gentoo-security"
 #############
-red="\e[31m" green="\e[32m" yellow="\e[33m" blue="\e[34m" purple="\e[35m" cyan="\e[36m" white="\e[37m" grey="\e[38m" reset="\e[0m"
+red="\e[31m" green="\e[32m" yellow="\e[33m" blue="\e[34m"
+purple="\e[35m" cyan="\e[36m" white="\e[37m" grey="\e[38m"
+#############
+reset="\e[0m"
+
 #############
 
-  [ -f "sasl"  ] || exit
+  [ -f "sasl"  ] || exit 1
  [ -f ".ping"  ] && rm ".ping"
   [ -e "input" ] && rm "input"
   [ -e "input" ] || mkfifo -m 0600 "input"
   [ -e "input" ] && exec 3<>input
 
- printf "%s\n%s\n%s\n%s\n%s\n%s\n" "cap REQ sasl" "${nick}" "${user}" "AUTHENTICATE EXTERNAL" "AUTHENTICATE +" "CAP END" >&3 &
-
-#############
-
 #############
 
 while sleep 60 ; do
 
- touch .ping
-
- printf "${cyan}%s${reset}\n" '#'
+ touch .ping ; printf "${cyan}%s${reset}\n" '#'
 
  printf "%s\n" "PING :irc.libera.chat" >&3
 
@@ -62,11 +57,10 @@ done &
 
 #############
 
-#openssl s_client -noservername -connect "${server}" -cert "sasl" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet -verify_hostname 'palladium.libera.chat' <&3 |
+printf "%s\n%s\n%s\n%s\n%s\n%s\n" "cap REQ sasl" "${nick}" "${user}" "AUTHENTICATE EXTERNAL" "AUTHENTICATE +" "CAP END" >&3 &
 
-openssl s_client -noservername -connect irc.libera.chat:6697 -cert "sasl" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet <&3 |
-tr -cd '[:alnum:]:!@#\n ' | 
-while read -r sender type target message ; do [ "${sender:0:6}" == ":Guest" ] && { [ -z "${message}" ] || message="herp derp" ; }
+openssl s_client -noservername -connect irc.libera.chat:6697 -cert "sasl" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet <&3 | tr -cd '[:alnum:]:.!@/#\n ' | 
+while read -r sender type target message ; do
 
  color="${green}" output="DEBUG"
 
@@ -84,11 +78,9 @@ while read -r sender type target message ; do [ "${sender:0:6}" == ":Guest" ] &&
     [[ "${message}" == "*:${account}*" ]] && highlight="${white}" || highlight="${reset}"
     [[ "${message}" == "* ${account}*" ]] && highlight="${white}" || highlight="${reset}"
 
- elif [ "${type}" == "WALLOPS" ] ; then color="yellow" output="NOTICE"
+ elif [ "${sender}" == "PING" ] ; then color="${cyan}" output="META" ; printf "%s\n" "PONG ${type}" >&3
 
- elif [ "${type}" == "PONG" ] ; then [ -f .ping ] && rm .ping ; color="${cyan}" output="META"
-
- elif [ "${sender}" == "PING" ] ; then printf "%s\n" "PONG ${type}" >&3 ; color="${cyan}" output="META"
+ elif [ "${type}" == "PONG" ] ; then color="${cyan}" output="META" ; [ -f .ping ] && rm .ping
 
  elif [ "${type}" == "NICK"  ] ; then color="${grey}" output="META"
  elif [ "${type}" == "MODE"  ] ; then color="${grey}" output="META"
@@ -98,24 +90,24 @@ while read -r sender type target message ; do [ "${sender:0:6}" == ":Guest" ] &&
  elif [ "${type}" == "KICK"  ] ; then color="${grey}" output="META"
  elif [ "${type}" == "TOPIC" ] ; then color="${grey}" output="META"
 
+ elif [ "${type}" == "WALLOPS" ] ; then color="${yellow}" output="NOTICE"
+
  elif [ "${sender}" == "ERROR" ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
-
- elif [ "${type}" == "432" ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
- elif [ "${type}" == "433" ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
- elif [ "${type}" == "461" ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
- elif [ "${type}" == "904" ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
-
- elif [ "${type}" == "001" ] ; then printf "%s\n" "${regain}"   >&3 ; sleep 13
-                                    printf "%s\n" "${mode}"     >&3 ; sleep 3
-                                    printf "%s\n" "${channels}" >&3 ; printf "\n"
+ elif [   "${type}" == "432"   ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
+ elif [   "${type}" == "433"   ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
+ elif [   "${type}" == "461"   ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
+ elif [   "${type}" == "904"   ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
+ elif [   "${type}" == "001"   ] ; then printf "%s\n" "${regain}"   >&3 ; sleep 13
+                                        printf "%s\n" "${mode}"     >&3 ; sleep 3
+                                        printf "%s\n" "${channels}" >&3 ; printf "\n"
 
    fi
 
- rainbow_sender="\e[38;5;$((16#$(printf "%s\n" "${sender}"|openssl sha1|tail -c3)))m"
- rainbow_target="\e[38;5;$((16#$(printf "%s\n" "${target}"|openssl sha1|tail -c3)))m"
- trim="${sender:0:23}" ; until [ "${#trim}" -ge "23" ];do trim=" ${trim}";done
-
  printf "${color}%s${reset}" "#"
+
+ rainbow_sender="\e[38;5;$((16#$(printf "%s\n" "${sender}"|md5sum|head -c2)))m"
+ rainbow_target="\e[38;5;$((16#$(printf "%s\n" "${target}"|md5sum|head -c2)))m"
+ trim="${sender:0:23}" ; until [ "${#trim}" -ge "23" ] ; do trim=" ${trim}" ; done
 
  printf "${rainbow_sender}%s${red}%s${rainbow_target}%s${highlight}%s${reset}\n" "[${trim}]" "[${type}]" "[${target}]" "[${message}]" >> "${output}"
 
@@ -125,9 +117,5 @@ done &
 
 wait
 
-#############
-#pkill sleep
-#sleep "$(shuf -i3-13 -n1)"
-#exec i.server
 #############
 
