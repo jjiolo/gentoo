@@ -1,11 +1,20 @@
 
 #############
 
+ has NO_ICONV
+     NO_INTL ? NO_GETTEXT implies no libintl (having it uses it)
+
+     NO_PTHREADS ?
+
+ NO_EXPAT - required for git-http-push... (using it for pretendy busybox http)
+
 last build attempt...
 
  grep '#' Makefile
  grep '#' configure
  ^ prints actual comments ? (./configure --help is full of shit)
+
+ find . -type f -exec grep -Hi -e '/*' -e '#' {} \; # code comments ?
 
  INSTALL_SYMLINKS=YesPlease
  SKIP_DASHED_BUILT_INS=YesPlease

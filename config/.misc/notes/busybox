@@ -1,6 +1,21 @@
 
 #############
 
+  sha1 hardware acceleration
+sha256 hardware acceleration
+
+ loop_configure - new one, old one, or try new fail old ?
+
+   tsort - topological
+ seedrng - seed kernel rng from file
+    tree - list files and directories in tree structure
+
+ * sleep builtin to ash ! (turned on)
+
+ absolute path to config script for ipv6 ?
+
+#############
+
 [chroot hardening]
 
  delete busybox binary after stand alone shell loads

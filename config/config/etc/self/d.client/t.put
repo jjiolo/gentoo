@@ -6,6 +6,8 @@ debug(){ printf "%s\n" "takes file or directory - ${1}" ; exit 1 ; }
 #############
 [ -f "${1}" ] || [ -d "${1}" ] || debug "no input"
 #############
+pgrep -x p2pd || debug "p2pd is not running"
+#############
 torrent="$(basename ${1})"
 #############
 [ -e "${shared}/downloads/${torrent}" ] && debug "download already exists"
@@ -19,5 +21,5 @@ chown -R "${USER}:p2pd" "${shared}/downloads/${torrent}" "${shared}/torrents/${t
 find "${shared}/downloads/${torrent}" "${shared}/torrents/${torrent}" -type d -exec chmod 0755 {} \;
 find "${shared}/downloads/${torrent}" "${shared}/torrents/${torrent}" -type f -exec chmod 0644 {} \;
 #############
-transmission-remote 127.0.0.1 -a "${shared}/torrents/${torrent}"
+transmission-remote --unix-socket "${services}/p2pd/socket" -a "${shared}/torrents/${torrent}"
 #############

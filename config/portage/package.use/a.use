@@ -5,6 +5,7 @@ app-arch/tar minimal
 app-arch/unzip -bzip2
 app-arch/xz-utils -extra-filters
 app-arch/zip -bzip2 -crypt
+app-arch/zstd -lzma -zlib
 app-crypt/gnupg -bzip2 -readline -smartcard -ssl -tofu
 app-crypt/gpgme -cxx
 app-crypt/libb2 -openmp

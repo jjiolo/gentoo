@@ -85,6 +85,7 @@ renice -10 -u root    2>/dev/null
 renice +0  -u user    2>/dev/null
 renice +20 -u nobody  2>/dev/null
 renice +20 -u proxy   2>/dev/null
+renice +20 -u jail    2>/dev/null
 
 renice +0  -u audio   2>/dev/null
 renice +0  -u video   2>/dev/null
@@ -104,7 +105,6 @@ renice +10 -u p2pd    2>/dev/null
 renice +20 -u smtp    2>/dev/null
 renice +20 -u http    2>/dev/null
 renice +20 -u irc     2>/dev/null
-
 renice +20 -u xmr     2>/dev/null
 #############
 
@@ -134,8 +134,8 @@ renice +20 -u xmr     2>/dev/null
  alias caps='find / -xdev -type f -exec getcap {} 2>/dev/null \;'
  alias libs='find ${PATH//:/ } /lib /lib64 /usr/lib /usr/lib64 -xdev -type f -exec sh /usr/bin/ldd {} 2>/dev/null \; | grep -i "not found" | sort -u'
 
- alias t='watch -tn3 transmission-remote 127.0.0.1 -l'
- alias tt='while read;do transmission-remote 127.0.0.1 -a "${REPLY}";done <${HOME}/magnets'
+ alias t='transmission-remote --unix-socket ${services}/p2pd/socket'
+ alias tt='watch -tn3 transmission-remote --unix-socket ${services}/p2pd/socket -l'
 
  alias torsocks="export LD_PRELOAD='/usr/lib64/libtorsocks.so'"
 
@@ -145,7 +145,7 @@ renice +20 -u xmr     2>/dev/null
  alias cam="ffmpeg -f alsa -i hw:1 -f video4linux2 -i /dev/video0 /tmp/webcam.mp4"
  alias camshot="ffmpeg -f video4linux2 -i /dev/video0 -frames:v 1 /tmp/webshot.jpg"
 
- alias record="arecord -d 10 /tmp/record.wav"
+ alias record="arecord /tmp/record.wav"
  alias play="aplay /tmp/record.wav"
 
  alias mpv="mpv --sid=no"

@@ -5,5 +5,5 @@
 [ -d "${service_storage}/.config"               ] || install -d -o p2pd -g p2pd -m 0700 "${service_storage}/.config"
 [ -f "${service_storage}/.config/settings.json" ] || install    -o p2pd -g p2pd -m 0600 "${service_system}/files/settings.json" "${service_storage}/.config/settings.json"
 #############
-. /etc/services/permissions p2pd p2pd 0700 0600
+. /etc/services/permissions p2pd p2pd 0750 0640
 #############

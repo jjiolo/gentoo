@@ -20,11 +20,14 @@ DEPEND="${RDEPEND}"
 #############
 src_configure(){
 
+sed -i '4i\ NO_GITWEB=YesPlease' Makefile
+
 sed -i '4i\ NO_PERL=YesPlease' Makefile
 sed -i '4i\ NO_PYTHON=YesPlease' Makefile
 sed -i '4i\ NO_TCLTK=YesPlease' Makefile
-sed -i '4i\ NO_GETTEXT=YesPlease' Makefile
+
 sed -i '4i\ NO_ICONV=YesPlease' Makefile
+sed -i '4i\ NO_GETTEXT=YesPlease' Makefile
 sed -i '4i\ NO_PTHREADS=YesPlease' Makefile
 
 sed -i '4i\ NO_REGEX=YesPlease' Makefile

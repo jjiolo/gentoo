@@ -45,6 +45,7 @@ src_configure(){
 --without-aarch64 \
 --without-apparmor \
 --without-libwrap \
+--without-io_uring \
 --without-libcap-ng
 }
 #############

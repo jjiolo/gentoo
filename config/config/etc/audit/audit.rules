@@ -11,6 +11,7 @@
 #-a always,exit -F arch=b64 -F uid=1     -S execve -k user_exec
 #-a always,exit -F arch=b64 -F uid=2     -S execve -k nobody_exec
 #-a always,exit -F arch=b64 -F uid=3     -S execve -k proxy_exec
+#-a always,exit -F arch=b64 -F uid=4     -S execve -k jail_exec
 
 #-a always,exit -F arch=b64 -F uid=5     -S execve -k audio_exec
 #-a always,exit -F arch=b64 -F uid=7     -S execve -k video_exec
@@ -30,7 +31,6 @@
 #-a always,exit -F arch=b64 -F uid=465   -S execve -k smtp_exec
 #-a always,exit -F arch=b64 -F uid=443   -S execve -k http_exec
 #-a always,exit -F arch=b64 -F uid=6697  -S execve -k irc_exec
-
 #-a always,exit -F arch=b64 -F uid=18081 -S execve -k xmr_exec
 
 #############
@@ -45,6 +45,7 @@
 #-a always,exit -F arch=b64 -F uid=1     -F dir=/tmp -F perm=wxa -k user_disk
 #-a always,exit -F arch=b64 -F uid=2     -F dir=/tmp -F perm=wxa -k nobody_disk
 #-a always,exit -F arch=b64 -F uid=3     -F dir=/tmp -F perm=wxa -k proxy_disk
+#-a always,exit -F arch=b64 -F uid=4     -F dir=/tmp -F perm=wxa -k jail_disk
 
 #-a always,exit -F arch=b64 -F uid=5     -F dir=/tmp -F perm=wxa -k audio_disk
 #-a always,exit -F arch=b64 -F uid=7     -F dir=/tmp -F perm=wxa -k video_disk

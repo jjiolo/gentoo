@@ -69,7 +69,7 @@ src_configure(){
 --disable-ntlm \
 --disable-ntlm-wb \
 --disable-tls-srp \
---disable-unix-sockets \
+--enable-unix-sockets \
 --disable-cookies \
 --disable-socketpair \
 --enable-http-auth \
@@ -98,6 +98,8 @@ src_configure(){
 --without-nss-deprecated \
 --without-nss \
 --without-test-nghttpx \
+--without-test-caddy \
+--without-test-httpd \
 --with-pic \
 --with-aix-soname=aix \
 --with-gnu-ld \

@@ -6,3 +6,4 @@ tty1::respawn:/bin/login -f root
 tty2::respawn:/bin/login -f user
 tty3::respawn:/bin/login -f nobody
 tty4::respawn:/bin/login -f proxy
+tty5::respawn:/bin/login -f jail

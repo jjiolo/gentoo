@@ -3,38 +3,45 @@ EAPI="7"
 #############
 DESCRIPTION="full-strength general purpose cryptography library (including SSL and TLS)"
 HOMEPAGE="https://www.openssl.org/"
-SRC_URI="https://www.openssl.org/source/${P}.tar.gz"
+SRC_URI="https://www.openssl.org/source/${P}-beta1.tar.gz"
 #############
 LICENSE="openssl"
-SLOT="0/1.1"
-KEYWORDS="amd64"
+SLOT="0"
+KEYWORDS="" #amd64"
 IUSE="+static-libs -bindist"
 RDEPEND="sys-libs/glibc sys-libs/zlib"
 DEPEND="${RDEPEND}"
 #############
 src_configure(){
 ./config \
+--release \
 --libdir=/usr/lib64 \
 --openssldir=/etc/ssl \
 --prefix=/usr \
---release \
+--with-zlib-include=/usr/include \
+--with-zlib-lib=/usr/lib64 \
 --with-rand-seed=os,devrandom \
 no-afalgeng \
+no-ktls \
 no-asan \
+no-acvp-tests \
 enable-asm \
 no-async \
 enable-autoalginit \
 enable-autoerrinit \
-no-autoload-config \
+enable-autoload-config \
 no-buildtest-c++ \
+enable-bulk \
+enable-cached-fetch \
 no-capieng \
+no-cmp \
 no-cms \
 enable-comp \
 no-crypto-mdebug \
 no-crypto-mdebug-backtrace \
 no-ct \
 enable-deprecated \
-no-dgram \
+enable-dgram \
 no-dso \
 no-devcryptoeng \
 no-dynamic-engine \
@@ -46,14 +53,19 @@ enable-engine \
 enable-err \
 no-external-tests \
 enable-filenames \
+no-fips \
+no-fips-securitychecks \
 no-fuzz-libfuzzer \
 no-fuzz-afl \
 no-gost \
-no-hw-padlock \
+no-legacy \
 no-makedepend \
+no-module \
 no-multiblock \
 no-nextprotoneg \
 enable-ocsp \
+no-padlockeng \
+no-hw-padlock \
 enable-pic \
 no-pinshared \
 no-posix-io \
@@ -61,7 +73,7 @@ no-psk \
 no-rdrand \
 no-rfc3779 \
 no-sctp \
-shared \
+enable-shared \
 enable-sock \
 no-srp \
 no-srtp \
@@ -71,10 +83,12 @@ no-static-engine \
 enable-stdio \
 no-tests \
 enable-threads \
+no-trace \
 no-ts \
 disable-ubsan \
 no-ui-console \
 no-unit-test \
+no-uplink \
 no-weak-ssl-ciphers \
 enable-zlib \
 no-zlib-dynamic \
@@ -86,16 +100,16 @@ no-tls1 \
 no-tls1_1 \
 enable-tls1_2 \
 enable-tls1_3 \
-no-dtls \
+enable-dtls \
 no-dtls1 \
-no-dtls1_2 \
+enable-dtls1_2 \
 \
 no-ssl3-method \
 no-tls1-method \
 enable-tls1_1-method \
 enable-tls1_2-method \
 no-dtls1-method \
-no-dtls1_2-method \
+enable-dtls1_2-method \
 \
 no-md2 \
 no-rc5 \
@@ -106,10 +120,10 @@ no-blake2 \
 no-camellia \
 no-cast \
 enable-chacha \
-no-cmac \
+enable-cmac \
 enable-des \
 enable-dh \
-enable-dsa \
+no-dsa \
 enable-ecdh \
 enable-ecdsa \
 no-idea \
@@ -123,6 +137,7 @@ no-rmd160 \
 enable-scrypt \
 no-seed \
 no-siphash \
+no-siv \
 no-sm2 \
 no-sm3 \
 no-sm4 \

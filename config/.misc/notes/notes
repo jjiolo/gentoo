@@ -27,11 +27,6 @@ stuff at the top is unordered raw sewage
  lastest - 2023:01:02 22:50:00
 -------------
 
- * transmission beta
- * tigervnc beta
-
--------------
-
  * app-alternatives - make.conf FEATURES='-collision-protect'
  ^ remove after its in stage3
 
@@ -41,6 +36,7 @@ stuff at the top is unordered raw sewage
 
  * gcc +hardened
  * glibc -custom_cflags
+ * grub -Os -march=x86_64 ${TARGET_CFLAGS}
  ^ make.conf -D_FORTIFY_SOURCE=3
    
 -------------
@@ -121,21 +117,16 @@ v attempt to create lists of things to actually do
 
 #############
 
-grub - uses TARGET_CFLAGS="-Os -march=x86-64 ${TARGET_CFLAGS}"
-       ^ package.env/z.env grub grub doesnt need to exist
-       ^ package.env/a.env x11-libs/cairo noexecheap doesnt need to exist
+ net-misc/curl - 7.88.0 - done... +deps
+ sys-process/audit - 3.1 - done... +deps
+ sys-kernel/linux-headers-6.1.12 - 
+ app-crypt/cryptsetup-2.6.1 - done... +deps
+ dev-vcs/git-2.39.2 - done... +deps
+ www-firefox/firefox-esr-102.8.0 - done... +deps
 
-* uses CPPFLAGS instead of CXXFLAGS ?
+ app-editor/vim-9.0.1310 - done... +deps
 
-^ overflow/sys-boot/grub - still bails on couldnt find memdisk
-                           even with portage CFLAGS
-                           needs patches...
-
-#############
-
-desktop attack surface...
-* xinitrc - monitor runs with desktop:desktop ?
-* herbe - run as desktop ontop of nested xephyr ?
+ dev-libs/openssl-3.1.0
 
 #############
 
@@ -147,24 +138,32 @@ desktop attack surface...
 
 #############
 
-* drop gnutls, that was needed for openssl ?
+* grub - uses CPPFLAGS instead of CXXFLAGS ?
 
-* cairo noexecheap - no longer needed...
-
-grub built without grub ? cant remember if it needs building ?
- do laptop reboots later
- can test stuff ?
+^ overflow/sys-boot/grub - still bails on couldnt find memdisk
+                           even with portage CFLAGS
+                           needs patches...
 
 #############
-test removal of sys-apps/shadow ? (can remember re adding it at some point)
-test removal of app-admin/eselect ? (dont actually use it)
+
+desktop attack surface...
+
+* xinitrc - monitor runs with desktop:desktop ?
+
+* herbe - run as desktop ontop of nested xephyr ?
+
 #############
 
-pulling /etc/resolv.conf values
+-------------
 
-intercepting traffic to address only
+pulling /etc/resolv.conf - intercepting traffic to address only
 
-while sleep 15 ; do echo "nameserver $(shuf -n1 /etc/dns)" > /etc/resolv.conf ; done
+nslookup domain.tld - brings back error message
+
+nslookup domain.tld 8.8.8.8 - returns A/AAAA records
+
+nslookup domain.tld {1.1.1.1,8.8.8.8}
+echo 0.0.0.0 domain.tld >> /etc/hosts
 
 intercepting firefox by path...
 /usr/lib64/firefox/firefox-bin
@@ -172,11 +171,7 @@ intercepting firefox by path...
 /tmp/storage/services/sets/firefox/firefox-bin
 ^ ignored completly instantly reloads
 
-echo 0.0.0.0 domain.tld >> /etc/hosts
-
-nslookup domain.tld - brings back error message
-
-nslookup domain.tld 8.8.8.8 - returns A/AAAA records
+^^ same dns attack on firefox internal cache
 
 getent hosts domain.tld
 ^ ignores /etc/hosts values
@@ -187,14 +182,13 @@ getent hosts domain.tld
   offline online first requests work
   until it figures out tor hasnt connected
 
-#############
+-------------
 
-transmission-remote -x # pex
-transmission-remote --dht # distributed hash tables
-transmission-remote -AS # no alt speed
-transmission-remote -D # no downlimit
-transmission-remote -HL # no honor session limits
-transmission-remote -nwg # no bandwidth group
+all of this is laughably easy to get around now
+
+hasnt changed or updated in over two years
+
+-------------
 
 #############
 
@@ -202,65 +196,25 @@ transmission-remote -nwg # no bandwidth group
  ^ fix x.{user,nobody,proxy,jail}
        p.{smtp,http,irc,xmr}
 
- * test grub with ohffs... ?
-
- * busybox 1.36.0 < - bump 
-
- * sets.blacklist < - update /etc/hosts ?
-
-#############
-
-  first attempt at p.{smtp,http,irc,xmr}
-
-* everything gets an ssh key... 
-  user - > everything
-  storage.setup && s.{client,server,flush}
-^ setup.shared - > httpd index ?
-
-#############
-* vncviewer cutting off console kills cli install's
-#############
-
-busybox
-sha1 0 fast 3 slow
-sha1 hardware acceleration
-sha256 hardware acceleration
-
-loop_configure - new one, old one, or try new fail old ?
-
-  tsort - topological sort
-seedrng - seed kernel rng from file
-   tree - list files and directories in a tree structure
-          absolute path to config script for ipv6
-          sleep builtin to ash
-
 #############
 
 [services]
 -------------
 
- root
-  user - dbclient + stage3
-  nobody - http/p2p + media(audio,video)
+   root - console only
+   user - dbclient + stage3
+ nobody - http/p2p + media(audio,video)
   proxy - proxy only
-  jail - no internet
+   jail - no internet
+
    smtp - 
    http - 
-   irc - 
-   xmr - 
+    irc - 
+    xmr - 
 
 * cant watch mpv in Xephyr...
-
-root:
-user:
-nobody:
-proxy:
-jail:
-
-smtp:
-http:
-irc:
-xmr:
+ offline user for media
+ online user http/p2p for media
 
 -------------
 
@@ -272,20 +226,16 @@ xmr:
   st
 
  ash -l -s /bin/sh [-c 'command'] <user> [< file] [<< EOF]
+  su -l -s /bin/sh [-c 'command'] <user> [< file] [<< EOF]
+  setpriv --nnp --reuid --regid --init-groups --ambient-caps --inh-caps --bounding-set --reset-env
   (exec binary </dev/null &>/dev/null & exit) &
-   su -l -s /bin/sh [-c 'command'] <user> [< file] [<< EOF]
-   setpriv --nnp --reuid --regid --init-groups --ambient-caps --inh-caps --bounding-set --reset-env
-   env -i
-   chroot
-   login -f
-   dtach/mtm
-   dbclient
+  env -i
+  chroot
+  login -f
 
  install / chown / chmod / mk{,nod,fifo,dir,temp}
 
-* su -c 'exec &' acts as a subshell wrapper ?
-  with & detaches from terminal ? 
-  without & hangs the terminal ?
+* su -c 'exec &' subshell + background ?
 
   su -l -s /bin/sh -c 'exec command &' <user>
   su -l -s /bin/sh -c 'command' <user> </dev/null &>/dev/null
@@ -335,13 +285,9 @@ setsid detaches controlling tty - breaks server daemons
  media    - nobody
  qemu     - user/nobody/proxy
 -------------
- Xephyr is really slow for video
- offline user for media
- online user http/p2p for media
--------------
 per application file access
 per application firewall access
-access to all system binaries
+access to all system binaries vs chroot
 -------------
 while sleep 3 ; do DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth xrandr --auto ; done
 -------------
@@ -353,13 +299,11 @@ lsw && xev -
 
 #############
 
-* p2pd - unix sockets dont work yet
-* tigervnc and cryptsetup and qemu ? proof read
-* ip -6 route < already has entries for fc00 fd00 private address ranges ?
+ * vncviewer cutting off console kills cli install's
 
-* udhcpc_{default,oneshot,ping}
+ * ip -6 route < already has entries for fc00 fd00 private address ranges ?
 
- * something keeps deleting /etc/portage
+ * udhcpc_{default,oneshot,ping}
 
  * /init /etc/inittab /etc/init /etc/profile - debug output ?
  
@@ -367,7 +311,7 @@ lsw && xev -
  
  * qemu usb pass through no longer works ?
 
- * v.client v.server - save .vpn/config nothing to actually reuse it ? v.{server,client,flush,restore?}
+ * v.client v.server - save .vpn/config nothing to actually use it ? v.{server,client,flush,restore?}
 
  * dtach cant recreate socket ? SIGHUP ignored SIGUSR1 terminates running process
  * identify dtach from PS1 - shlvl ?
@@ -396,6 +340,7 @@ lsw && xev -
  * tiny-curl - test git / transmission ?
 
 #############
+[dropbear]
 dropbear without -r /path/to/key refuses to start
 * Early exit: Bad buf_getptr
 ^ ChangeLog said ~ worked in key paths ?
@@ -406,7 +351,7 @@ dropbear without -r /path/to/key refuses to start
 storage.bootfs -
 $storage/{.gnupg,.ssh,.vpn,.wifi}
 $services/ddns/{public,private}
-$home/{user,nobody,proxy}/.ssh
+$home/{user,nobody,proxy,smtp,http,irc,xmr}/.ssh
 $home/irc/irc
 $home/http/.browser
 $home/smtp/mail
@@ -466,9 +411,9 @@ $home/xmr/monero
 
  openssl s_server -dtls1_2
  openssl s_client -dtls1_2
- ^ doesnt work...
+ ^ doesnt work with ed25519
 
-  end game,
+  end game ?
   root - > server - > certificate
            client - > certificate
 
@@ -532,27 +477,14 @@ $home/xmr/monero
 
 #############
 
- i.{input,client,server}
-
- busybox && openssl s_client
-
- ^ shortest path to network enabled shell
-
- ^ removed all external calls
-
- udpsvd tcpsvd nc
- s_server s_client
- anycast unicast multicast broadcast
- while read sender type target message -r ; do 
-
-#############
+[mutt]
 
   muttrc is fucking brutal
   easy to fake emails
 ^ set encode_from="yes"
 
-  pop_authenticators="user" < - allows login without sasl
-  smtp_authenticators="login" < - still forces sasl...
+  pop_authenticators="user" < - login without sasl
+  smtp_authenticators="login" < - forces sasl...
 
   drop sendmail from mutt
   sendmail with sasl plain base64 without cyrus-sasl ?
@@ -561,78 +493,54 @@ $home/xmr/monero
 
 #############
 
-[transmission 4.0.0 beta changes]
+ [transmission]
 
- new bugs...
+ -------------
 
-  every other start, fails to bind ports properly and hangs ?
+ rpc-bind-address: unix:/tmp/storage/services/p2pd/socket
+ ^ turns rpc-whitelist-enabled off ?
 
-  umask 022, no longer sets permissions properly ?
-   - partial downloads using global umask ?
-   - 
- usability...
+ watch-dir /tmp/storage/shared/torrents
+ file added with wrong perms, cant read then ignored ?
+ torrent added before data, cant read then ignored ?
+ ^ inotify triggering verify ? or preallocating file name
 
-  magnets owned by root:root 0664
-  p2pd:p2pd 0664 ?
-  drop magnet links ?
+ anti-bruteforce isnt in docs/Editing-
 
- alias tt stopped working awhile ago ?
- everything over a certain length is killed off (properly)
+ transmission-remote docs --unix-socket <path> < - doesnt imply it requires an arguement
 
- making /tmp/storage/shared/torrents the watch directory ? might make more sense
+ peer-congestion-algorithm ? just left it empty
 
+ transmission-create --source ?
 
- new...
+ trackers/webseeds require http://domain.tld/path/to/file
 
- * transmission-4.0.0 will work with openssl-3.0.0...
- * no longer starts if peer port matches rpc port
-   works if started random (breaks nat peer port 9091 assumption)
+ -------------
 
- * transmission-show -s hangs with webseeds ?
- * transmission-show -s hangs without private,tracker,webseed ?
- * transmission-edit - cant edit webseeds ?
- * transmission-edit - cant edit private,webseeds ?
-  ^ transmission-edit -s set the source ?
-  ^ transmission-create -r source for private trackers ?
+ actual bugs
 
- transmission-show - wont display the source
- ^^ trackers/webseeds require http://domain.tld/path/to/file
+ * transmission-remote --dht, stops all torrents, requires restart
+
+ * fails to bind ports properly and hangs ?
+ ^ race condition on 127.0.0.1:9091 0.0.0.0:9091 ?
+ ^ now unix:/path/socket (test if it continues)
 
  * rpc-socket works with 0750
    umask adding 0022 rewrites to 022 ?
 
- * rpc from 127.0.0.1:9091 - > unix:/path/to/p2pd.socket ?
- * unix:/tmp/socket - doesnt work ?
-   transmission-remote --unix-socket /tmp/socket fails ?
-   transmission-remote unix:/tmp/socket fails ?
-   transmission-remote /tmp/socket fails ?
- ^ was hoping to have that enabled /shrug (works without)
+ * umask 022, no longer sets permissions properly ?
+ - incomplete-dir, using global umask ?
+ - downloads-dir, umask on first directory, global umask on all files
 
- * peer-socket-tos default ? turns into "le"
+ * transmission-remote -a magnet:// (anything over cli input length is cut off)
 
- * disabled tcp completly ? (webseeds use libcurl?)
+ * transmission-edit - cant edit webseeds ?
+
+ -------------
 
  * transmission-remote allows setting alt-speed on or off...
    transmission-daemon forces it to start off...
    ^ used to settings.json variable at runtime (dont really care?)
-
- * no webseed is capping at 65 ?
- * used to cap at 8000 ?
-
- ? difference between default-trackers and announce-ip ?
-
-#############
-
-* ddns or dnsd - dnsd/files/{lo,setup}
-
-  current
-
-  ash /etc/services/dnsd/files/lo # was always assumed to be executed first...
-  edit /tmp/storage/services/ddns/config # hidden services into 172.16.0.1, dns/socks into 0.0.0.0
-  edit /etc/nftables/chains/nat # tcp dport {22,80} skuid {ddns} ct state new log flags skuid prefix "output.nat.new " accept
-  storage.{setup,shared} # if public/private address change
-
- ^ easy to do, still works after the fact
 
 #############
 
@@ -2379,7 +2287,7 @@ env -i /sbin/httpd -p 80 -u httpd:httpd -h "${service_storage}" -c "${service_st
 alias serial='microcom -s 115200 /dev/ttyUSB0'
 #############
 -------------
-cheap remote desktop (requires xauth with remote host + magic cookie)
+cheap remote desktop
 -------------
 local: Xephyr -ac -listen tcp :13
 -------------

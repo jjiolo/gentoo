@@ -3,7 +3,7 @@ EAPI="7"
 #############
 DESCRIPTION="Remote desktop viewer display system"
 HOMEPAGE="https://www.tigervnc.org"
-SRC_URI="https://github.com/TigerVNC/tigervnc/archive/refs/tags/v1.12.90.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/TigerVNC/tigervnc/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 #############
 LICENSE="GPL-2"
 SLOT="0"
@@ -40,7 +40,6 @@ x11-libs/libXinerama
 x11-libs/libXtst
 "
 DEPEND="${RDEPEND}"
-S="${WORKDIR}/tigervnc-1.12.90"
 #############
 src_configure(){
 cmake \
