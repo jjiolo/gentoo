@@ -12,5 +12,5 @@ pkill -x /sbin/udhcpc
 #############
 ip link set up "${1}"
 #############
-env -i /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /bin/udhcpc_ping ${hostname}
+env -i /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /bin/udhcpc_ping "${hostname}"
 #############

@@ -3,13 +3,13 @@
 usage(){
 cat << EOF
 
-${0} - ${1}
+ ${0} - ${1}
 
- -o oneshot
- -c cli
- -l logger
- -x xsetroot
- -h help
+  -o oneshot
+  -c cli
+  -l logger
+  -x xsetroot
+  -h help
 
 EOF
 exit 1
@@ -106,12 +106,12 @@ output="${output} [v$(right $(scale ${write}) 5) ^$(right $(scale ${read}) 5)]"
 
 #
 read  dirty writeback << EOF
-$(awk '/Dirty:|Writeback:/{printf" "$2}' /proc/meminfo)
+$(awk '/Dirty:|Writeback:/{printf$2" "}' /proc/meminfo)
 EOF
 output="${output} [$(right $(scale ${dirty}) 5) $(right $(scale ${writeback}) 5)]"
 
 #
-output="${output} [$(df -Ph 2>&1|awk '/\/tmp\/z.local$/{print$5}')]"
+output="${output} [$(df -Ph 2>&1|awk '/z.local$/{print$5}')]"
 
 #
 read -r uptime < /proc/uptime

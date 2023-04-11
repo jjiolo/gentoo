@@ -1,5 +1,8 @@
 
 #############
+* tor geoip file edit to create full network view ?
+* obfs4proxy and meeks localhost access is a random port ? (cant preconfigure nftables)
+#############
 
  tor
   AutomapHostOnResolve 1

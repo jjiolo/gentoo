@@ -4,7 +4,7 @@ debug(){ printf "%s\n" "takes ip and torrent - ${1}";exit 1; }
 #############
 [ "${#}" == "2" ] || debug "no input"
 #############
-pgrep -x p2pd || debug "p2pd is not running"
+[ -S "${services}/p2pd/.config/socket" ] || debug "p2pd is not running"
 #############
 [ -e "${shared}/downloads/${2}" ] && debug "download already exists"
 [ -e "${shared}/torrents/${2}"  ] && debug "torrent already exists"
@@ -14,5 +14,5 @@ curl --connect-timeout 3 -o "${shared}/torrents/${2}" "http://${1}/shared/torren
 chown "${USER}:p2pd" "${shared}/torrents/${2}"
 chmod 0644 "${shared}/torrents/${2}"
 #############
-transmission-remote --unix-socket "${services}/p2pd/socket" -a "${shared}/torrents/${2}"
+transmission-remote --unix-socket "${services}/p2pd/.config/socket" -a "${shared}/torrents/${2}"
 #############

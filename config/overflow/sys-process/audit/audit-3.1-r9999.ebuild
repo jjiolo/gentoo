@@ -1,5 +1,5 @@
 #############
-EAPI="7"
+EAPI=8
 #############
 DESCRIPTION="Userspace utilities for storing and processing auditing records"
 HOMEPAGE="https://people.redhat.com/sgrubb/audit/"

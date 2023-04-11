@@ -1,18 +1,173 @@
 
 #############
+busybox only log server...
+ -------------
+ syslogd -R 172.16.0.1:514 -StD
+ udpsvd 0.0.0.0 514 tee -a /tmp/logfile
+ -------------
+ cli - udpsvd 0.0.0.0 4444 stdbuf -oL /bin/udpsvd.script
+ udpsvd.script - exec tr -cd 'a-zA-Z0-9' <&0 >>/tmp/udpsvd.log
+ ^ actually works
+ -------------
+#############
 
-  sha1 hardware acceleration
-sha256 hardware acceleration
+[shlel]
+-------------
+tl;dr - end goal: template sane defaults regardless of whats executed
+-------------
 
- loop_configure - new one, old one, or try new fail old ?
+ exec setsid command </dev/null &>/dev/null & exit
 
-   tsort - topological
- seedrng - seed kernel rng from file
-    tree - list files and directories in tree structure
+ ^ exec irrelivent with force detach (backgrounding)
+   & exit force close the initialising shell
 
- * sleep builtin to ash ! (turned on)
+ su -l -s /bin/sh -c 'setsid command </dev/null &>/dev/null & exit' user
+ setsid setpriv --reuid --regid --init-groups --reset-env --nnp --securebits command </dev/null &>/dev/null & exit
 
- absolute path to config script for ipv6 ?
+-------------
+
+ end goal : 
+
+  force normal daemonization on any execute
+  reset env
+  force terminal detach
+  force stdin/stdout/stderr redirection
+  force background
+  force initializing shell to close
+
+  force normal priv drop on any client execute...
+
+      setsid - prevent signals to controlling terminal
+  </dev/null - prevent reading terminal input ? (partial keylogging)
+  &>dev/null - prevent updating terminal ? (sort of useless for a client)
+
+  ^ prevent executed pid from hanging and reading terminal input ?
+
+-------------
+
+* for su...
+  su -l -s /bin/sh -c 'setpriv command </dev/null &>/dev/null & exit' user
+  ^ -l cleans environment for priv drop
+    forces terminal detach
+    forces stdin/stdout/stderr redirect
+    forces background
+    forces the initializing shell to close
+
+-------------
+
+* for setpriv...
+  setsid setpriv --reuid --regid --init-groups --reset-env --nnp --securebits command </dev/null &>/dev/null & exit
+  ^ --reset-env cleans environment for priv drop
+    forces terminal detach (signals allow execution)
+    forces stdin/stdout/stderr redirect ? (optional client not server)
+    forces background ? (not relevent)
+    forces the initalizing shell to close ? (optional client not server)
+
+-------------
+
+* differences...
+
+  su and setpriv both support setuid setgid
+
+  su and setpriv both support cleaning environment
+  ^ (--reset-env less efficient than -l login shell)
+
+ cons - BUSYBOX SETPRIV DOESNT ACTUALLY WORK YET...
+ cons - --reset-env is weaker than su -l
+
+ pros - setuid setgid setcap nnp securebits, noroot nosetuid ?
+
+-------------
+
+#############
+
+
+ exec sleep 13 &
+(exec sleep 13 </dev/null &>/dev/null &)
+
+^ exec inside a subshell kills the subshell not the parent...
+
+su creates a subshell ? su -c 'sleep 30 &' double forks...
+su without exec leaves the -s /bin/sh shell open... ?
+
+-------------
+         exec - replace current shell with command
+ background & - execute in parallel
+     {inline} - execute inline
+   (subshell) - execute inside a subshell
+   </dev/null - replace stdin
+  &>/dev/null - replace stdout & stderr
+-------------
+ * su -l -s /bin/ash -c 'command </dev/null &>/dev/null' user
+ * su -l -s /bin/ash -c 'command' user </dev/null &>/dev/null
+ ^ <redirects &>redirects inherited by child process
+-------------
+ash -l            [-c 'command'] <user> [< file] [<< EOF]
+ su -l -s /bin/sh [-c 'command'] <user> [< file] [<< EOF]
+ setsid <command>
+ setpriv --nnp --reuid --regid --init-groups --ambient-caps --inh-caps --bounding-set --reset-env <command>
+ env -i <command>
+ chroot /path <command>
+-------------
+su -l -s /bin/ash -c 'exec command </dev/null &>/dev/null & exit ' <user>
+-------------
+su -l -s /bin/ash <user> << EOF # horrible \$(escape) \${characters}
+su -l -s /bin/ash <user> < /path/to/file # works without \${escapes}
+-------------
+su -l -s /bin/ash <user> < /path/to/file > /path/to/output
+dbclient -T <user>@172.16.0.1 < /path/to/file > /path/to/output
+-------------
+
+ [controlling terminal fuck up]
+
+ etc/self/f.setpriv - setpriv doesnt remove controlling terminal
+  setpriv_udhcpc - libcap exposes net_bind_service,net_raw,net_admin, controlling terminal allows root exec
+  setpriv_tftpd - libcap exposes net_bind_service,sys_chroot, controlling terminal allows root exec (missed because execution from /etc/inittab sysinit) (reexecution hooks controlling terminal)
+  setpriv_ntpc - libcap exposes sys_time, controlling terminal allows root exec
+
+ examples
+
+ * setsid su -ls /bin/sh -c 'while sleep 3 ; do echo test ; done' nobody
+ ^ read and write access ? (read would imply keylogging the controlling pts?)
+
+ * setsid su -ls /bin/sh -c 'cat /dev/pts/1' nobody
+ ^ permission denied cant open /dev/pts/1... (opens fd before setuid setgid)
+
+ * setsid su -ls /bin/sh -c 'while sleep 3 ; do echo test ; done </dev/null' nobody
+
+-------------
+
+ * etc/services/*/start -
+   setsid su - disables interactive shell ?
+   su setsid - allows interactive shell ?
+
+ * etc/services
+ * etc/self/e.setpriv
+ ^ uniform command wrapper to provide the safest execution ?
+
+  setsid setpriv command </dev/null
+  ^ removes controlling terminal ?
+    removes keylog controlling terminal ?
+    allows display controlling terminal ?
+
+  su < file - not eval...
+  su << EOF - technically eval ?
+  su -c 'still eval'
+
+  dbclient user@remote < file - not eval...
+  dbclient user@remote << EOF - eval
+  dbclient user@remote $command - eval
+
+  test='ls -lah' ; $test - still eval...
+
+ ^ assumed grep -r eval path/* was useful
+ ^ assumption change implies proof reading all code...
+
+ setsid setpriv --options binary </dev/null &>/dev/null &
+ ^ redirectors on which command ?
+   testing implied setpriv </dev/null && binary </dev/null ?
+
+
 
 #############
 
@@ -60,6 +215,7 @@ e
 #############
 
 #############
+setsid    - run program in a new session
 taskset   - lock processes to cores
 nice      - runs a program with modified scheduling priority
 renice    - alters the scheduling priority of one or more running processes
@@ -67,6 +223,20 @@ ionice    - set program io scheduling class and priority
 chrt      - manipulate real-time attributes of a process
 choom     - echo 123 > /proc/1/oom_score_adj -999 unlikerly to be killed 1000 likely to be killed
 #############
+
+-------------
+
+ [setsid]
+
+  setsid command </dev/null &>/dev/null
+
+  start <command> in new session
+  removes controlling tty
+  redirects stdin stdout stderr
+
+  prevents process from sending SIGNALS to controlling terminal
+
+  setsid su -l -s /bin/sh -c '<command>' <user> [</dev/null] [&>/dev/null]
 
 -------------
 
@@ -95,7 +265,7 @@ choom     - echo 123 > /proc/1/oom_score_adj -999 unlikerly to be killed 1000 li
  ionice -c 2 -n {0-7} -p $$ < - none root best effort
  ionice -c 3          -p $$ < - none root idle
 
- defaults to best-effort priority 4
+ defaults to best-effort:2 priority:4
 
  if unassigned derives priority from process nice level
 

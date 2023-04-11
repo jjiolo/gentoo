@@ -1,5 +1,5 @@
 #############
-EAPI="7"
+EAPI=8
 #############
 DESCRIPTION="a dynamic window manager for X11"
 HOMEPAGE="https://dwm.suckless.org/"

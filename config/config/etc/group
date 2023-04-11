@@ -5,10 +5,10 @@ nobody:x:2:
 proxy:x:3:
 jail:x:4:
 
-audio:x:5:nobody
-video:x:7:nobody
-desktop:x:9:
-qemu:x:11:
+audio:x:7:nobody,jail
+video:x:9:nobody
+desktop:x:11:
+qemu:x:13:
 
 ddns:x:5353:
 dnsd:x:53:
@@ -19,6 +19,7 @@ ntpd:x:123:
 
 httpd:x:80:
 p2pd:x:9091:user,nobody
+ircd:x:6667:
 
 smtp:x:465:
 http:x:443:

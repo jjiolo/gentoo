@@ -5,7 +5,7 @@ printf "%s\n" "#############"
 
 install -d -o "${USER}" -m 0700 certs && cd certs || exit 1
 
-curl --connect-timeout 3 -o "ca-certificates.crt" "https://ccadb-public.secure.force.com/mozilla/includedRootsPEMTxt?TrustBitsInclude=Websites"
+curl --connect-timeout 3 -Lo "ca-certificates.crt" "https://ccadb-public.secure.force.com/mozilla/IncludedRootsPEMTxt?TrustBitsInclude=Websites"
 
 awk 'BEGIN {c=0;} /BEGIN CERT/ {c++} { print > "cert." c ".crt" }' < "ca-certificates.crt"
 

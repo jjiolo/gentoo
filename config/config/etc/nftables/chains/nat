@@ -50,9 +50,9 @@ table inet filter {
   udp dport {9091} skuid {p2pd} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {80}   skuid {p2pd} ct state new log flags skuid prefix "output.nat.new " accept
 
-  tcp dport {9050} skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {22}   skuid {user}              ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {80}   skuid {root,user,nobody}  ct state new log flags skuid prefix "output.nat.new " accept
+  tcp dport {9050} skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.nat.new " accept
 
   tcp dport {465,995}     skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {443}         skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept

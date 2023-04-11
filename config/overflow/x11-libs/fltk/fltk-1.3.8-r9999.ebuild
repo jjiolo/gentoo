@@ -1,5 +1,5 @@
 #############
-EAPI=7
+EAPI=8
 #############
 DESCRIPTION="C++ user interface toolkit for X and OpenGL"
 HOMEPAGE="https://www.fltk.org/"

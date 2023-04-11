@@ -70,11 +70,11 @@ RDEPEND="${COMMON_DEPEND}
 	>=dev-util/gtk-update-icon-cache-3
 "
 # librsvg for svg icons (PDEPEND to avoid circular dep), bug #547710
-#PDEPEND="
-#	gnome-base/librsvg[${MULTILIB_USEDEP}]
-#	>=x11-themes/adwaita-icon-theme-3.14
-#	vim-syntax? ( app-vim/gtk-syntax )
-#"
+PDEPEND="
+	gnome-base/librsvg[${MULTILIB_USEDEP}]
+	>=x11-themes/adwaita-icon-theme-3.14
+	vim-syntax? ( app-vim/gtk-syntax )
+"
 BDEPEND="
 	app-text/docbook-xml-dtd:4.1.2
 	app-text/docbook-xsl-stylesheets

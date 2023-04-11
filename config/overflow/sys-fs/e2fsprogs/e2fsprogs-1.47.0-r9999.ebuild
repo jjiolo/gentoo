@@ -1,5 +1,5 @@
 #############
-EAPI=7
+EAPI=8
 #############
 DESCRIPTION="Standard EXT2/EXT3/EXT4 filesystem utilities"
 HOMEPAGE="https://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git"

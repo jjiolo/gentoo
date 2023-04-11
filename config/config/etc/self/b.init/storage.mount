@@ -1,7 +1,9 @@
 
 #############
 
-grep -q "laptop" /proc/cmdline && /bin/sh -l || timeout -s SIGTERM 3 sh -c 'read -p interupt && /bin/sh -l'
+grep -q "laptop" /proc/cmdline || timeout -s SIGTERM 3 sh -c 'read -p interupt && /bin/sh -l'
+
+grep -q "laptop" /proc/cmdline && /bin/sh -l
 
 [ -b "/dev/storage" ] && use="/dev/storage"
 [ -b "/dev/mapper/storage" ] && use="/dev/mapper/storage"
@@ -10,9 +12,9 @@ grep -q "laptop" /proc/cmdline && /bin/sh -l || timeout -s SIGTERM 3 sh -c 'read
 
 [ -b "${use}" ] &&
 fsck.ext4 -pv "${use}" &&
-install -d -o 0 -g 0 -m 0775 "${local}" &&
+install -d -o 0 -g 0 -m 0755 "${local}" &&
 mount -t ext4 -o rw,nodev,nosuid,noexec,noatime "${use}" "${local}" &&
-install -d -o 0 -g 0 -m 0775 "${local}" && 
+install -d -o 0 -g 0 -m 0755 "${local}" && 
 ln -sf "${local}" "${storage}" || ln -sf "${ephemeral}" "${storage}"
 
 #############

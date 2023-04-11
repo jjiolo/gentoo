@@ -1,5 +1,5 @@
 #############
-EAPI=7
+EAPI=8
 #############
 DESCRIPTION="Virtual for libudev providers"
 SLOT="0"

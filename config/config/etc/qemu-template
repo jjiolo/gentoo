@@ -1,11 +1,13 @@
 #!/bin/sh
 #############
+defaults="-nodefaults                                           -sandbox on -k en-gb -L /usr/share/qemu"
 defaults="-nodefaults -daemonize -runas qemu -chroot /var/empty -sandbox on -k en-gb -L /usr/share/qemu"
 #############
 cpu="-cpu host -smp 2,sockets=1,cores=2 -enable-kvm" mem="-m 4G" gpu="-vga virtio"
 #############
 network="-netdev tap,id=nd0,script=/etc/qemu-lan,downscript=no"
 network="-netdev tap,id=nd0,script=/etc/qemu-nat,downscript=no"
+network="-netdev tap,id=nd0,ifname=tap0,script=no,downscript=no"
 #############
 interface="-device virtio-net-pci,netdev=nd0,mac=52:54:00:XX:XX:XX"
 #############
@@ -15,9 +17,27 @@ boot="-drive if=virtio,index=0,format=raw,media=cdrom,file=XXX"
 file="-drive if=virtio,index=1,format=raw,media=disk,file=XXX"
 extra="-drive if=virtio,index=2,format=raw,media=disk,file=XXX"
 #############
-vnc="-display none -vnc unix:/dev/shm/qemu"
+vnc="-display none -nographic -vnc unix:/dev/shm/qemu"
+console="-display none -nographic -serial stdio -append console=ttyS0"
 #############
-qemu-system-x86_64 ${defaults} ${cpu} ${mem} ${gpu} ${network} ${interface} ${kernel} ${initrd} ${boot} ${file} ${extra} ${vnc} ${usb}
+
+#############
+qemu-system-x86_64 ${defaults} ${cpu} ${mem} ${gpu} ${network} ${interface} ${kernel} ${initrd} ${boot} ${file} ${extra} ${vnc} ${console} ${usb}
+#############
+
+#############
+#tunctl -t tap0 -u qemu -g qemu
+#brctl addif nat tap0
+#ip link set up tap0
+#su -l -s /bin/sh -c 'dtach -n /dev/shm/qemu /bin/sh -l' qemu
+#############
+echo "exec qemu-system-x86_64 ${defaults} ${cpu} ${mem} ${gpu} ${network} ${interface} ${kernel} ${initrd} ${boot} ${file} ${extra} ${vnc} ${console} ${usb}" | dtach -p /dev/shm/qemu
+#############
+
+#############
+chown user:user /dev/shm/qemu
+#############
+
 #############
 #usb="-device qemu-xhci"
 #usb="${usb} -usb -device usb-host,vendorid=0x1b1c,productid=0x0a4a" # usb audio wifi
@@ -26,3 +46,4 @@ qemu-system-x86_64 ${defaults} ${cpu} ${mem} ${gpu} ${network} ${interface} ${ke
 #usb="${usb} -usb -device usb-host,vendorid=0x04f2,productid=0xb681" # usb webcam (laptop)
 #usb="${usb} -usb -device usb-host,vendorid=0x148f,productid=0x5372" # usb wifi (laptop)
 #############
+

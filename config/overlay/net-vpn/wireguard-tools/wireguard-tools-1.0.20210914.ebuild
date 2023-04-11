@@ -1,5 +1,5 @@
 #############
-EAPI=7
+EAPI=8
 #############
 DESCRIPTION="Required tools for WireGuard, such as wg(8) and wg-quick(8)"
 HOMEPAGE="https://www.wireguard.com/"

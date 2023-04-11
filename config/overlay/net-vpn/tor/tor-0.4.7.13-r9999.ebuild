@@ -1,5 +1,5 @@
 #############
-EAPI="7"
+EAPI=8
 #############
 DESCRIPTION="Anonymizing overlay network for TCP"
 HOMEPAGE="https://www.torproject.org/"

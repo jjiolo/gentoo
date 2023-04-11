@@ -1,5 +1,5 @@
 #############
-EAPI=7
+EAPI=8
 #############
 DESCRIPTION="The GNU Privacy Guard, a GPL OpenPGP implementation"
 HOMEPAGE="https://www.gnupg.org/"

@@ -28,7 +28,7 @@ cpu="-cpu host -smp 2,sockets=1,cores=2 -enable-kvm"
 mem="-m $(((($(awk '/MemTotal:/{print$2}' /proc/meminfo)/100)*20)/1000))"
 gpu="-vga virtio"
 interface="-device virtio-net-pci,netdev=nd0,mac=52:54:00:${hash:0:2}:${hash:2:2}:${hash:4:2}"
-vnc="-display none -vnc unix:/dev/shm/${name}"
+vnc="-nographic -display none -vnc unix:/dev/shm/${name}"
 #############
 qemu-system-x86_64 ${defaults} ${cpu} ${mem} ${gpu} ${network} ${interface} ${kernel} ${initrd} ${boot} ${file} ${extra} ${vnc} ; chown "${user}:" "/dev/shm/${name}"
 #############

@@ -7,7 +7,7 @@ debug(){ printf "%s\n" "takes endpoint and or public key file - ${1}";exit 1; }
 
 [ "${#}" == "1" ] || [ "${#}" == "2" ] || debug "no input"
 
-[ -z "${2}" ] && peer="$(curl --silent --connect-timeout 3 "http://${1}/shared/contacts/self/user")" || read peer < "${2}"
+[ -z "${2}" ] && peer="$(curl --silent --connect-timeout 3 "http://${1}/shared/contacts/self/user"|head -c80|strings)" || read peer < "${2}"
 
 [ -z "${peer}" ] && debug "peer key failed"
 
@@ -15,19 +15,24 @@ debug(){ printf "%s\n" "takes endpoint and or public key file - ${1}";exit 1; }
 
 #############
 
+printf "\n%s\n\n" "${peer} ${1}" ; read
+
+#############
+
 grep -q "${1}"    "${storage}/.ssh/authorized_keys" && debug "host exists in authorized_keys"
 grep -q "${peer}" "${storage}/.ssh/authorized_keys" && debug "fingerprint exists in authorized_keys"
 
-printf "%s\n" "${peer} user@${1}" >> "${storage}/.ssh/authorized_keys"
+printf "%s\n" "${peer} ${1}" >> "${storage}/.ssh/authorized_keys"
 
-printf "%s\n" "${peer} user@${1}" >> "${home}/user/.ssh/authorized_keys"
-printf "%s\n" "${peer} user@${1}" >> "${home}/nobody/.ssh/authorized_keys"
-printf "%s\n" "${peer} user@${1}" >> "${home}/proxy/.ssh/authorized_keys"
+printf "%s\n" "${peer} ${1}" >> "${home}/user/.ssh/authorized_keys"
+printf "%s\n" "${peer} ${1}" >> "${home}/nobody/.ssh/authorized_keys"
+printf "%s\n" "${peer} ${1}" >> "${home}/proxy/.ssh/authorized_keys"
+printf "%s\n" "${peer} ${1}" >> "${home}/jail/.ssh/authorized_keys"
 
-printf "%s\n" "${peer} user@${1}" >> "${home}/smtp/.ssh/authorized_keys"
-printf "%s\n" "${peer} user@${1}" >> "${home}/http/.ssh/authorized_keys"
-printf "%s\n" "${peer} user@${1}" >> "${home}/irc/.ssh/authorized_keys"
-printf "%s\n" "${peer} user@${1}" >> "${home}/xmr/.ssh/authorized_keys"
+printf "%s\n" "${peer} ${1}" >> "${home}/smtp/.ssh/authorized_keys"
+printf "%s\n" "${peer} ${1}" >> "${home}/http/.ssh/authorized_keys"
+printf "%s\n" "${peer} ${1}" >> "${home}/irc/.ssh/authorized_keys"
+printf "%s\n" "${peer} ${1}" >> "${home}/xmr/.ssh/authorized_keys"
 
 #############
 

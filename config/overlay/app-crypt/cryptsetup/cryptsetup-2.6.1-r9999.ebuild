@@ -1,5 +1,5 @@
 #############
-EAPI=7
+EAPI=8
 #############
 DESCRIPTION="Tool to setup encrypted devices with dm-crypt"
 HOMEPAGE="https://gitlab.com/cryptsetup/cryptsetup/blob/master/README.md"
@@ -43,7 +43,7 @@ src_configure(){
 --enable-static-cryptsetup \
 --enable-cryptsetup \
 --disable-veritysetup \
---disable-integritysetup \
+--enable-integritysetup \
 --disable-selinux \
 --disable-udev \
 --enable-kernel_crypto \
@@ -101,5 +101,6 @@ src_configure(){
 src_install(){
 install -d -o root -g root -m 0755 "${D}/sbin"
 install    -o root -g root -m 0755 "cryptsetup.static" "${D}/sbin/cryptsetup" || die "install failed"
+install    -o root -g root -m 0755 "integritysetup.static" "${D}/sbin/integritysetup" || die "install failed"
 }
 #############

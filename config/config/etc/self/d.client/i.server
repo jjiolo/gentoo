@@ -27,8 +27,8 @@ regain="PRIVMSG NickServ :regain ${account}"
 #############
 channels="JOIN #libera,#gentoo-chat"
 channels="${channels},#linux,#networking,#security"
-channels="${channels},#gentoo,#archlinux,#debian"
-channels="${channels},#gentoo-bugs,#gentoo-dev,#gentoo-security"
+channels="${channels},#gentoo,#archlinux"
+channels="${channels},#gentoo-security,#gentoo-bugs,#gentoo-dev"
 #############
 red="\e[31m" green="\e[32m" yellow="\e[33m" blue="\e[34m"
 purple="\e[35m" cyan="\e[36m" white="\e[37m" grey="\e[38m"
@@ -45,6 +45,10 @@ reset="\e[0m"
 
 #############
 
+printf "%s\n%s\n%s\n%s\n%s\n%s\n" "cap REQ sasl" "${nick}" "${user}" "AUTHENTICATE EXTERNAL" "AUTHENTICATE +" "CAP END" >&3 &
+
+#############
+
 while sleep 60 ; do
 
  touch .ping ; printf "${cyan}%s${reset}\n" '#'
@@ -57,9 +61,8 @@ done &
 
 #############
 
-printf "%s\n%s\n%s\n%s\n%s\n%s\n" "cap REQ sasl" "${nick}" "${user}" "AUTHENTICATE EXTERNAL" "AUTHENTICATE +" "CAP END" >&3 &
-
-openssl s_client -noservername -connect irc.libera.chat:6697 -cert "sasl" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet <&3 | tr -cd '[:alnum:]:.!@/#\n ' | 
+openssl s_client -noservername -connect irc.libera.chat:6697 -cert "sasl" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet <&3 |
+tr -cd '[:alnum:]:.!@/#\n ' |
 while read -r sender type target message ; do
 
  color="${green}" output="DEBUG"
@@ -68,28 +71,32 @@ while read -r sender type target message ; do
 
     [ "${target}" == "${account}" ] && color="\e[01;31m" output="SELF" || color="${red}" output="PRIVMSG"
 
-    [[ "${message}" == "*:${account}*" ]] && highlight="${white}" || highlight="${reset}"
-    [[ "${message}" == "* ${account}*" ]] && highlight="${white}" || highlight="${reset}"
+    [[ "${message}" == "*:${account}"   ]] && highlight="${white}" || highlight="${reset}"
+    [[ "${message}" == "*:${account} *" ]] && highlight="${white}" || highlight="${reset}"
+    [[ "${message}" == "* ${account} *" ]] && highlight="${white}" || highlight="${reset}"
+    [[ "${message}" == "* ${account}"   ]] && highlight="${white}" || highlight="${reset}"
 
  elif [ "${type}" == "NOTICE" ] ; then
 
     [ "${target}" == "${account}" ] && color="\e[01;33m" output="SELF" || color="${yellow}" output="NOTICE"
 
-    [[ "${message}" == "*:${account}*" ]] && highlight="${white}" || highlight="${reset}"
-    [[ "${message}" == "* ${account}*" ]] && highlight="${white}" || highlight="${reset}"
+    [[ "${message}" == "*:${account}"   ]] && highlight="${white}" || highlight="${reset}"
+    [[ "${message}" == "*:${account} *" ]] && highlight="${white}" || highlight="${reset}"
+    [[ "${message}" == "* ${account} *" ]] && highlight="${white}" || highlight="${reset}"
+    [[ "${message}" == "* ${account}"   ]] && highlight="${white}" || highlight="${reset}"
 
  elif [ "${sender}" == "PING" ] ; then color="${cyan}" output="META" ; printf "%s\n" "PONG ${type}" >&3
 
  elif [ "${type}" == "PONG" ] ; then color="${cyan}" output="META" ; [ -f .ping ] && rm .ping
 
- elif [ "${type}" == "NICK"  ] ; then color="${grey}" output="META"
- elif [ "${type}" == "MODE"  ] ; then color="${grey}" output="META"
- elif [ "${type}" == "JOIN"  ] ; then color="${grey}" output="META"
- elif [ "${type}" == "PART"  ] ; then color="${grey}" output="META"
- elif [ "${type}" == "QUIT"  ] ; then color="${grey}" output="META"
- elif [ "${type}" == "KICK"  ] ; then color="${grey}" output="META"
+ elif [ "${type}" == "NICK" ] ; then color="${grey}" output="META"
+ elif [ "${type}" == "MODE" ] ; then color="${grey}" output="META"
+ elif [ "${type}" == "JOIN" ] ; then color="${grey}" output="META"
+ elif [ "${type}" == "PART" ] ; then color="${grey}" output="META"
+ elif [ "${type}" == "QUIT" ] ; then color="${grey}" output="META"
+ elif [ "${type}" == "KICK" ] ; then color="${grey}" output="META"
  elif [ "${type}" == "TOPIC" ] ; then color="${grey}" output="META"
-
+ elif [ "${type}" == "INVITE" ] ; then color="${grey}" output="META"
  elif [ "${type}" == "WALLOPS" ] ; then color="${yellow}" output="NOTICE"
 
  elif [ "${sender}" == "ERROR" ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$

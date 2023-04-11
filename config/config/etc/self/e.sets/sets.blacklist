@@ -12,6 +12,12 @@ cat > "blacklist" << EOF
 172.16.0.1 nat
 10.0.0.1 tun
 
+1.1.1.1 cloudflare-dns.com
+1.0.0.1 cloudflare-dns.com
+
+8.8.8.8 dns.google
+8.8.4.4 dns.google
+
 EOF
 
 curl --connect-timeout 3 "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts" | grep '^0.0.0.0' | awk '{print$1" "$2}' >> blacklist

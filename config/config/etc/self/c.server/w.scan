@@ -6,6 +6,8 @@ usage(){ printf "\n${0} - ${1}\n\n takes interface\n\n" ; exit ; }
 [ "${#}" == "1" ] || usage "no input"
 [ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
 #############
+pgrep -x wpa_supplicant &>/dev/null && usage "wpa_supplicant already running"
+#############
 export BSS="BSS" SSID=" SSID" CHANNEL=" CHANNEL" SIGNAL=" SIGNAL" AUTH=" AUTH"
 #############
 ip link set up "${1}"

@@ -1,5 +1,5 @@
 #############
-EAPI="8"
+EAPI=8
 #############
 DESCRIPTION="make xorg werk"
 HOMEPAGE="https://github.com/illiliti/libudev-zero"

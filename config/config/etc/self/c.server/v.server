@@ -7,11 +7,15 @@ debug(){ printf "%s\n" "takes endpoint, address and or public key file - ${1}";e
 
 [ "${#}" == "2" ] || [ "${#}" == "3" ] || debug "no input"
 
-[ -z "${3}" ] && peer="$(curl --silent --connect-timeout 3 "http://${1}/shared/contacts/self/wireguard")" || read peer < "${3}"
+[ -z "${3}" ] && peer="$(curl --silent --connect-timeout 3 "http://${1}/shared/contacts/self/wireguard"|head -c44|strings)" || read peer < "${3}"
 
 [ -z "${peer}" ] && debug "peer key failed"
 
 [ "${#peer}" == "44" ] || debug "peer key failed"
+
+#############
+
+printf "\n%s\n\n" "${1} ${2} ${peer}" ; read
 
 #############
 ip link del tun

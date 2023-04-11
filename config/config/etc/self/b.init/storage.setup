@@ -12,7 +12,7 @@ install -d -o 0 -g 0 -m 0700 "${storage}/.wifi"
 
 [ -f "${storage}/.gnupg/gpg.conf"       ] || install -o 0 -g 0 -m 0600 "/etc/self/c.server/g.conf"  "${storage}/.gnupg/gpg.conf"
 [ -f "${storage}/.gnupg/gpg-agent.conf" ] || install -o 0 -g 0 -m 0600 "/etc/self/c.server/g.agent" "${storage}/.gnupg/gpg-agent.conf"
-[ -f "${storage}/.gnupg/pubring.kbx"    ] || printf "9\n1\n0\n$(hostname)\n\n\n" | gpg --homedir "${storage}/.gnupg" --no-tty --expert --full-generate-key --allow-freeform-uid --command-fd /dev/stdin --pinentry-mode loopback --passphrase '' ; busybox pkill gpg-agent
+[ -f "${storage}/.gnupg/pubring.kbx"    ] || printf "9\n1\n0\n$(hostname)\n\n\n" | gpg --quiet --homedir "${storage}/.gnupg" --expert --full-generate-key --allow-freeform-uid --no-tty --command-fd /dev/stdin --pinentry-mode loopback --passphrase '' ; busybox pkill gpg-agent
 
 [ -f "${storage}/.ssh/sshd"            ] || dropbearkey -t ed25519 -s 256 -f "${storage}/.ssh/sshd"
 [ -f "${storage}/.ssh/authorized_keys" ] || install -o 0 -g 0 -m 0600 "/dev/null" "${storage}/.ssh/authorized_keys"
@@ -31,7 +31,7 @@ find "${storage}/.gnupg" "${storage}/.ssh" "${storage}/.vpn" "${storage}/.wifi" 
 
 install -d -o 0 -g 0 -m 0775 "${home}"
 
-for i in user nobody proxy smtp http irc xmr
+for i in user nobody proxy jail smtp http irc xmr
 
 do
 

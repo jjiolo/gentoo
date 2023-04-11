@@ -1,9 +1,9 @@
 #############
-EAPI=7
+EAPI=8
 #############
 DESCRIPTION="Use most socks-friendly applications with Tor"
-HOMEPAGE="https://github.com/dgoulet/torsocks"
-SRC_URI="https://github.com/dgoulet/torsocks/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+HOMEPAGE="https://gitweb.torproject.org/torsocks.git"
+SRC_URI="https://gitweb.torproject.org/torsocks.git/snapshot/${P}.tar.gz"
 #############
 LICENSE="GPL-2"
 SLOT="0"

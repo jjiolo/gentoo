@@ -1,5 +1,5 @@
 #############
-EAPI="7"
+EAPI=8
 #############
 DESCRIPTION="a relatively small ssh server and client"
 HOMEPAGE="https://matt.ucc.asn.au/dropbear/dropbear.html"
@@ -16,6 +16,8 @@ sys-libs/libxcrypt
 DEPEND="${RDEPEND}"
 #############
 src_configure(){
+
+ sed -i 's/#define DROPBEAR_DSS 1/#define DROPBEAR_DSS 0/' sysoptions.h
 
 ./configure \
 --prefix=/usr \

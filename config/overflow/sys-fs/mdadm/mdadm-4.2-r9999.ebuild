@@ -1,9 +1,9 @@
 #############
-EAPI=7
+EAPI=8
 #############
 DESCRIPTION="Tool for running RAID systems - replacement for the raidtools"
 HOMEPAGE="https://git.kernel.org/pub/scm/utils/mdadm/mdadm.git/"
-SRC_URI="https://mirrors.edge.kernel.org/pub/linux/utils/raid/mdadm/mdadm-4.2.tar.xz"
+SRC_URI="https://mirrors.edge.kernel.org/pub/linux/utils/raid/mdadm/${P}.tar.xz"
 #############
 LICENSE="GPL-2"
 SLOT="0"

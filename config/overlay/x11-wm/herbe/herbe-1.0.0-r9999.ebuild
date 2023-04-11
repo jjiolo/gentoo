@@ -1,5 +1,5 @@
 #############
-EAPI="8"
+EAPI=8
 #############
 DESCRIPTION="desktop notifications without dbus"
 HOMEPAGE="https://github.com/dudik/herbe"

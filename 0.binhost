@@ -35,7 +35,7 @@
 
 #############
 
- [ -f ".gentoo-release.asc" ] || curl --connect-timeout 3 -L https://dev.gentoo.org/~mgorny/dist/openpgp-keys/gentoo-release.asc.20220101.gz | gunzip > .gentoo-release.asc
+ [ -f ".gentoo-release.asc" ] || curl --connect-timeout 3 -L https://dev.gentoo.org/~mgorny/dist/openpgp-keys/gentoo-release.asc.20230329.gz | gunzip > .gentoo-release.asc
 
   date
 

@@ -1,5 +1,5 @@
 #############
-EAPI="7"
+EAPI=8
 #############
 DESCRIPTION="full-strength general purpose cryptography library (including SSL and TLS)"
 HOMEPAGE="https://www.openssl.org/"

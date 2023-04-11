@@ -30,3 +30,25 @@ trap sigint SIGINT
 #############
 for i in $(seq 0 60);do echo $i && sleep 1;done
 #############
+
+#############
+#
+# stty -a < - show all hotkey interupts
+#
+# ctrl+c - interupt
+# ctrl+\ - quit
+# ctrl+u - kill
+#
+# ctrl+s - stop
+# ctrl+q - start
+# ctrl+z - suspend (fg)
+#
+# ctrl+w - delete line
+# ctrl+d - eof
+#
+# ctrl+l - redraw terminal
+#
+# missing - erase / rprnt / lnext / flush
+#
+#############
+

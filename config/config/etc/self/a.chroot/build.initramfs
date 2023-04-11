@@ -91,6 +91,7 @@ rm -r usr/lib64/gnome-settings-daemon-*
 rm -r usr/lib64/gtk-*
 rm -r usr/lib64/libffi
 rm -r usr/lib64/misc
+rm -r usr/lib64/ossl-modules
 rm -r usr/lib64/pkgconfig
 rm -r usr/lib64/terminfo
 #
@@ -123,6 +124,7 @@ rm -r usr/share/icons
 rm -r usr/share/libgpg-error
 rm -r usr/share/libinput
 rm -r usr/share/locale
+rm -r usr/shared/metainfo
 rm -r usr/share/mimelnk
 rm -r usr/share/pixmaps
 rm -r usr/share/pkgconfig
@@ -172,6 +174,7 @@ cp -a /lib64/libblkid.so* lib64
 cp -a /bin/lsblk bin
 cp -a /lib64/libsmartcols* lib64
 #
+cp -a /sbin/zramctl sbin
 cp -a /usr/bin/setpriv usr/bin
 cp -a /usr/lib64/libcap-ng.so* usr/lib64
 #

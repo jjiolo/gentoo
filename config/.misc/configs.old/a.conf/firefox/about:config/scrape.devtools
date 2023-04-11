@@ -1,9 +1,0 @@
-
-#############
-grep -ie 'devtools' z.full|grep -ie 'enabled'|grep -ie 'true'|while read key value;do
-
-printf "%s\n" "user_pref(\"$key\", false);"
-
-done
-#############
-

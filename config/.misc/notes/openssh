@@ -1,15 +1,28 @@
 
 #############
 
-dropped openssh for dropbear - but its sharing this notes file
+dropped openssh for dropbear - sharing notes file
 
-currently trying to full scope openssh functionality
+#############
+
+ * dropbear without -r /path/to/key refuses to start
+   Default hostkey paths - Homedir prepended if path begins with ~
+ ^ doesnt work
+
+ * forces /tmp/z.{ephemeral,local,remote} 0755
+   0775 refuses to read authorized_keys
+
+#############
 
 -------------
 [dropbear]
 -------------
 
 tldr ;
+
+ forces
+
+ * nftables outbound root rules (doesnt privdrop forwarding)
 
  doesnt
 
@@ -29,18 +42,9 @@ tldr ;
 
  improvements
 
- +DEFAULT_RECV_WINDOW == 1048576 == 1024*1024
- -RECV_MAX_PAYLOAD_LEN == 524288 == 1024*512
- ^ one random hit suggested 0.5MB RECV_MAX_PAYLOAD_LEN doesnt do anything...
+ +DEFAULT_RECV_WINDOW == 1024000 == 1000 * 1024
 
-* requires editing config/config/etc/self/a.chroot/build.initramfs
-  /dev/fuse permissions 0600 - > root:user 0660
-  /usr/bin/fusermount3 - > root:user 2750 
-
-* fusermount3 suid is a local root shlel
-* forced to use user:user because keys
-
--------------
+#############
 
 sshfs -o allow_other,reconnect,auto_unmount root@172.16.0.1:/tmp/storage/stage3 /tmp/storage/stage3
 cd /tmp/storage/stage3 ; ./2.shell ; emerge -av busybox...

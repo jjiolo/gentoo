@@ -24,79 +24,88 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:01:02 22:50:00
+ lastest - 2023:03:29 13:37:00
 -------------
 
- * app-alternatives - make.conf FEATURES='-collision-protect'
- ^ remove after its in stage3
+ built first time...
 
+ * linux-6.2 - server CONFIG_DRM_AST, desktop wifi disconnects ?
+ * app-alternatives - make.conf FEATURES='-collision-protect' < remove after its in stage3
  * qemu usb passthrough doesnt work...
+ * ps-utils 4.0.3 - prints maximum elapsed time ? (screws up visual output)
+ * app-misc/ca-certificates - > ca-certificates-2023:02:22
+
+ * qemu-8.0.0 release candidate out...
 
 -------------
 
  * gcc +hardened
  * glibc -custom_cflags
  * grub -Os -march=x86_64 ${TARGET_CFLAGS}
- ^ make.conf -D_FORTIFY_SOURCE=3
-   
+
+-------------
+
+ * {gcc,binutils}-config -l updates on gcc or binhost ?
+ ^ binhost updated automagically
+
+-------------
+
+ * trim binhost/distfiles
+
+ why - ash ./backup allofit
+       binhost upto 6GB in size
+       vfat 4GB file limit
+
+ mv binhost/distfiles ../shared/distfiles
+
+ config/portage/make.conf - GENTOO_MIRRORS=http://127.0.0.1/shared"
+  
 -------------
 #############
 
 [INFORMATIONAL]:
 #############
+* mandoc: sys-boot/efibootmgr - > sys-libs/efi-var - > mandoc ./file.1 | less -S
 * pkg_postinst isnt recorded in CONTENTS
-* man: sys-boot/efibootmgr - > sys-libs/efi-var - > mandoc ./file.1 | less -S
-* mkp224o.ebuild - https://github.com/cathugger/mkp224o/archive/tags/v1.6.1.tar.gz
-* sysctl -w kernel.yama.ptrace_scope=3 CONFIG_SECURITY CONFIG_SECURITY_YAMA
 * raw pasting into st/vim is bad mode...
 * opening httpd pages is bad mode (no sanitization)
 * busybox/ip - no nexthop, no multicast, no netns
 * /bin/login sets USER HOME ; /bin/ash /init /sbin/init have no USER HOME
-* dropbear requires outbound root rules (doesnt privdrop forwarding)
-* for i in $(seq 0 64);do trap false $i;done ; exec command </dev/null &>/dev/null
-* constantly failing at static_binaries: gnupg, + anything else
-* constantly failing at musl: dns failures and multiple package build failures
-* constantly failing at wayland: < - still technically failing but learnt more
-* file(mv *match* ffs) directory(mv *match*/* /tmp/why; rmdir *match*;)
-* gcc -lto -pgo 00:18:31 +00:00:00 || gcc +lto -pgo 00:24:44 +00:06:00 || gcc +lto +pgo 00:36:48 +00:12:00
 * mkfs.ext4 -m0 - remove space reserved for root... (5% 1TB == 50GB)
-* keepalive points - crond,monitor,udhcpd_script,udhcpc_persist  ntpd ?
 * dropbear socks || wg/microsocks nc -lks local:/path -e dbclient user@host nc local:/path
+* keepalive points - crond,monitor,udhcpd_script,udhcpc_persist  ntpd ?
+* file(mv *match* ffs) directory(mv *match*/* /tmp/why; rmdir *match*;)
+* for i in $(seq 0 64) ; do trap false $i ; done ; exec command </dev/null &>/dev/null
+* gcc -lto -pgo 00:18:31 +00:00:00 || gcc +lto -pgo 00:24:44 +00:06:00 || gcc +lto +pgo 00:36:48 +00:12:00
+* sysctl -w kernel.yama.ptrace_scope=3 CONFIG_SECURITY CONFIG_SECURITY_YAMA
 #############
 
 [TODO]
 #############
-* vim / mutt < - only things not really full scoped
 * vim - :h vimrc-intro || :h option-list
+* vim / mutt < - only things not really full scoped
 * dnssec verified cache (optionally over tor) (still no real competition)
 * privdrop stage3 initial pull, stage3 portage update, stage3 fetch
-* acpid poweroff on lid close (${storage}/.init to increase boot speeds)
 * alsa environment variable as default soundcard ?
-* nothing to schedule netio - QoS - tc cake?
 #############
 
 [PROBLEMS]:
 #############
-* eselect gcc binutils on version bump ? (chroot.update + gcc-config + binutils-config)
-* ebuild scheduled for merge, causes rebuilds (doesnt install into /binhost/rootfs)
-* sysctl -w net.ipv4.ip_unprivileged_port_start={0,32768} vs inbound skuid (breaks conntrack)
 * w.scan < - literally says dont attempt to parse the output 
+* inability to add wifi interfaces to bridges (breaks the ability to dedupe commands)
+* monitor diskio reads every drive then every block device doubling the values ? (sda && md127)
+* Xephyr, -auth fails silently and allows global access to :display
+* ebuild scheduled for merge, causes rebuilds (doesnt install into /binhost/rootfs?)
+* sysctl -w net.ipv4.ip_unprivileged_port_start={0,32768} vs inbound skuid (breaks conntrack)
 * icmp doesnt ct state, forces invalid traffic
 * multicast and broadcast, force invalid traffic < - should be related ?
-* Xephyr, -auth fails silently and allows global access to :display
-* proxy dox without privesc, /shared key_fingerprints (dedicated hardware not shared)
-* transmission on boot, binds wrong interface, doesnt download without restart
-* transmission move complete doesnt check space available when transfering between block devices
-* inability to add wifi interfaces to bridges (breaks the ability to dedupe commands)
-* dwm, holding down alt+i increments the number indefinintly ?
-* tor geoip file edit to create full network view ?
-* obfs4proxy and meeks localhost access is a random port ? (cant preconfigure nftables)
 * openssl dtls doesnt support ed25519
 * openssl pkeyutl doesnt support ed25519
+* qemu < - libusb stopped working completly ?
 * qemu < - tigervnc has sticky keys with xorg-server open...
 * qemu-7.{0,1}.0 < - vnc output doesnt resize bottom of the console hangs off
-* qemu < - libusb stopped working completly ?
-* monitor diskio reads every drive then every block device doubling the values ? (sda && md127)
+* dwm, holding down alt+i increments the number indefinintly ? (requires multiple alt+d to recover)
+* proxy dox without privesc, /shared key_fingerprints (dedicated hardware not shared)
 #############
 
 [CURRENT]
@@ -117,84 +126,419 @@ v attempt to create lists of things to actually do
 
 #############
 
- net-misc/curl - 7.88.0 - done... +deps
- sys-process/audit - 3.1 - done... +deps
- sys-kernel/linux-headers-6.1.12 - 
- app-crypt/cryptsetup-2.6.1 - done... +deps
- dev-vcs/git-2.39.2 - done... +deps
- www-firefox/firefox-esr-102.8.0 - done... +deps
+ * sort of really want cryptsetup to do a compression map...
+ ^ zram with integrity cant mimic with block or file devices ?
+ ? vdo apparently support transparent block level compression
 
- app-editor/vim-9.0.1310 - done... +deps
-
- dev-libs/openssl-3.1.0
+ desktop - CONFIG_INPUT_LEDS (allows turning off now?)
+ ^ forced on by wifi now not ?
+   leds forced on by sound card mute led toggle
 
 #############
 
- [e2fsprogs]
+ * proof read kernel + busybox ?
 
-  metadata_csum_seed - store metadata checkum seed in superblock (change uuid on a mounted filesystem)
+ * kernel changes
+ - testing zram + mkswap - feels pointless ? (stage3 compressed tmpfs mount...)
+ - cryptsetup integritysetup (testing)
+ - add serial to all kernels or cant open /dev/ttyS0 no such file or directory
+ - server still doesnt validate audio input... one security toggle
+ - 
 
-  orphan_file - tune2fs -O orphan_file /dev/block (speed up parallel file deletion?)
-
-#############
-
-* grub - uses CPPFLAGS instead of CXXFLAGS ?
-
-^ overflow/sys-boot/grub - still bails on couldnt find memdisk
-                           even with portage CFLAGS
-                           needs patches...
+ df -h shows dev as used 0...
+ ^ means size=0% should work can just add it to everything ?
 
 #############
 
-desktop attack surface...
+ firefox -
 
-* xinitrc - monitor runs with desktop:desktop ?
+  still network activity on browser open...
 
-* herbe - run as desktop ontop of nested xephyr ?
+  network.trr.exclude-etc-hosts < - apparently fucked that up...
+  disabled cisco openh264 download ?
+  disabled app.normandy (c2 network)
+  disabled random prefetch
+  ^ point in policies, didnt full scope network prediction ?
 
 #############
+
+ [busybox]
+
+ * CONFIG_FEATURE_TAR_OLDGNU_COMPATIBILITY - 
+ ^ couldnt unpack cryptsetup.tar.xz...
+
+ -settings-
+
+ * default stance enable all long options ?
+ ^ some binaries does nothing
+   others get increased functionality
+
+ + more verbose copy error messages - why not ?
+ + ioctl names > hex values - why not ? (never seen any of them)
+
+ ? vi inline editing CONFIG_FEATURE_EDITING_VI
+ ^ set -o vi (doesnt turn on when disabled)
+ ^ (exists in set -o output regardless)
+ ^^ want it on so its complete and not misleading ?
+
+ * -werror - doesnt build
+
+ ? query cursor position from terminal
+ ^ settings claims 'more robust'
+ ^ vi claims last ditch effort
+ ^ less claims last ditch effort
+ ^^ made it uniform
+
+ * unicode support - stop printing dump characters on output
+
+ -archival utilities-
+
+ * support old tar header format - make it legacy or die trying
+
+ ? unzip - firmware files are always .zip encoded... gets annoying
+
+ -coreutils-
+
+  * CONFIG_FEATURE_PRESERVE_HARDLINKS ?
+  ^ mv does preserve hardlinks 
+  ^ cp doesnt preserve hardlinks misleading ?
+  ^ tl;dr fuck hardlinks no visability and weird functionality
+
+  * copy long options --reflink (ext4 doesnt support it)
+
+  * cat tac rev fold head tail
+  ^ not disabling anything that allows output manipulation
+
+  ? ls - fairly sure -w <width> doesnt do anything ?
+
+  * sha3sum - have all the rest ?
+
+  * sort - tiny version dont really have a lot of use for it ?
+
+  ? head and tail - fancy output options dont match ?
+
+  * expr - more hardened compared to test ?
+  * test - extend test to 64 bit (assuming larger numbers ?)
+  ^ test --help would be awesome...
+
+  ** touch - SUSV3 allows timestamps etc ?
+  *  find -mtime -atime -ctime -mmin -amin -cmin vs inotify vs auditd
+
+  ** have false for /etc/passwd shells dont have true ? works for set -e bypass ?
+
+ -console utilities-
+ -debian utilities-
+
+  * run-parts - technically awesome for cronjobs / config directories
+  ^ hard requirement for acpid ?
+
+  * which - use it alot ?
+
+ -klibc-utils-
+ -editors-
+
+  * diff long options - doesnt do anything
+  * vi tell me cursor position (duplicate from settings on terminal resizing?)
+
+ -find utilities-
+ -init utilities-
+
+  * linuxrc - remove pid1 check allow init as supervisor daemon in chroots ?
+  ^ busybox_init addition ?
+
+ -login/password management utilities-
+ -linux ext2 fs progs-
+ -linux module utilities-
+ -linux system utilities-
+
+ * setpriv - wish it worked ?
+
+ * mkswap - testing zram zswap
+ * swapon - testing zram zswap
+ * swapoff - testing zram zswap
+
+ * acpid - know what it does provides extra functionality ?
+ * uevent - prints out udev information (suppose to be used with mdev)
+ ^ duplication of dmesg output more info ?
+ ? uevent | while read ; do poweroff ; done
+ ^ any hotplug activity kill remote node
+
+ * getopt isnt getopts ?
+ ^ norm: enable shell built-in and applet
+ ^ breaks norm different name / program...
+
+ -miscellaneous utilities-
+
+ * crond - -fd (foreground and log to stderr for debug?)
+ * hdparm - doesnt support hdparm -W /dev/disk to view write cache status...
+
+ -misc utilities-
+
+  * less - alias less='less -m'
+  * less - tell me cursor position (duplicate from settings on terminal resizing?)
+  * microcom - used it to flash openwrt devices...
+  * setfattr - edit xattrs on a file ? (drag and drop mode should be enabled to increase functionality) 
+  ^ that reasoning would force chattr lsattr tune2fs etc for ext2 support ? bit meh
+  ^ might have been a shit idea (touching filesystem would be unique to host else tmpfs doesnt have any of that ?)
+  * drag and drop assumes ram only or target would have to have filesystem tools pre installed...
+
+ -networking-
+
+ * brctl fancy options ? dont know what any of them actually do ? so...
+ * ether-wake ? drag and drop ping shit mode sort of functionality
+ * dnsd ? drag and drop
+ * fdtpd ? drag and drop
+
+ -print utilities-
+ -mail utilities-
+ -process utilities-
+
+ * fuser - show everyone with file or port open ?
+ * iostat -d - shows all disks with current read write ?
+
+ -runinit utilities-
+ -shells-
+
+ * CONFIG_FEATURE_SH_NOFORK - may significantly speed up shell scripts ?
+
+ -system logging utilities-
+
+-------------
+ long options
+ zcat
+ gzip
+ tar
+ chown
+ install
+ cp (turned on --reflink shallow cow copy ?)
+ install
+ run-parts
+ diff
+ wget
+ nslookup
+-------------
+  * echo -n -e 
+  ^ check $variable with -tac fuck ups...
+  *  command $variable - always parses -tac options
+  *  "force it to be read as a single arguement"
+  *  ^ anything with a space dies
+-------------
+#############
+
+* zram + zswap
+
+   zramctl /dev/zram0 -s 1G
+   mkswap /dev/zram0
+   swapon /dev/zram0
+   zramctl ; cat /proc/swaps ; free -h
+
+ cryptographic api - > compression - > lzo
+ CONFIG_CRYPTO_LZO
+
+ device drivers - > block devices - > compressed ram block device support
+ CONFIG_ZRAM
+
+ memory management options - > support for paging of anonymous memory
+ CONFIG_SWAP
+
+^ short and sweet...
+
+ CONFIG_ZSWAP - does the above for block device or file ?
+              using it for zram would double memory use ?
+
+#############
+
+[kernel]
+
+* virtual - CONFIG_COMMON_CLK disabled...
+
+* networking options - >
+   network packet filtering framework - >
+    core netfilter configuration - CONFIG_NF_LOG_SYSLOG
+    ipv4 netfilter configuration - remove all logging references
+    ipv6 netfilter configuration - remove all logging references
+^ updated for all kernels
+
+* CONFIG_VIRTIO_INPUT
+* -device virtio-{keyboard,mouse,tablet}
+^ prefer the at keyboard / ps2 mouse setup...
+  virtio-mouse doesnt match properly
+  virtio-tablet no button press at all
+
+* qemu - dtach console / vnc console
+
+* CONFIG_SYSFB_SIMPLEFB / CONFIG_DRM_SIMPLEDRM / CONFIG_FB_SIMPLE
+^ doesnt do anything ?
+^ without CONFIG_DRM_FBDEV_EMULATION there is no console output...
 
 -------------
 
-pulling /etc/resolv.conf - intercepting traffic to address only
+#############
 
-nslookup domain.tld - brings back error message
-
-nslookup domain.tld 8.8.8.8 - returns A/AAAA records
-
-nslookup domain.tld {1.1.1.1,8.8.8.8}
-echo 0.0.0.0 domain.tld >> /etc/hosts
-
-intercepting firefox by path...
-/usr/lib64/firefox/firefox-bin
-^ hard dropping connections to onion sites
-/tmp/storage/services/sets/firefox/firefox-bin
-^ ignored completly instantly reloads
-
-^^ same dns attack on firefox internal cache
-
-getent hosts domain.tld
-^ ignores /etc/hosts values
-  ignores /etc/nsswitch.conf
-  pulls ipv6 addresses first regardless of etc/hosts ?
-
-^ breaking tooling to cache and intercept dns requests
-  offline online first requests work
-  until it figures out tor hasnt connected
+ dtach -
 
 -------------
-
-all of this is laughably easy to get around now
-
-hasnt changed or updated in over two years
-
+ su -l -s /bin/sh -c 'dtach -n /dev/shm/test /bin/sh -l' user
+ ^ /proc/4444/fd
+   0 > /dev/null
+   1 > /dev/null
+   2 > /dev/null
+   3 > socket
+   4 > pts
+-------------
+ echo 'exec sleep 30' | dtach -p /dev/shm/test < - replaces running shell
+-------------
+ ^ no controlling tty
+   no stdin stdout stderr
+   new /dev/pts with correct privs
+   replace running shell with anything passed to it
 -------------
 
 #############
 
- add user jail:jail for no network access
- ^ fix x.{user,nobody,proxy,jail}
-       p.{smtp,http,irc,xmr}
+[networking]
+
+* build target is stand alone laptop...
+  until router/server/laptop is viable hardware wise#
+  nat priority is virtual machines and development ?
+  inbound rules yes ?
+  outbound rules no ?
+
+ * check glibc updates dont require locale-gen (compile-locale disabled in glibc)
+
+ * diskless in grub shouldnt work ? (assumed usb boot not pxe network pulled?)
+
+#############
+
+ links2 doh...
+ ^ dns_over_https "https://dns.google/dns-query"
+ ? cant encrypted client hello ?
+
+ curl doh ech...
+ * --enable-ech --enable-doh
+ ^ --doh-url https://dns.google/dns-query
+ ^ automatically attempts encrypted client hello if enabled
+
+ openssl s_client -noservername
+ openssl s_client -servername domain.tld
+ ^ curl equivilent
+
+#############
+
+ dropbear Xephyr forwarding -
+
+ setsid Xephyr -ac -nolisten tcp -listen unix -nolisten local :4444 </dev/null &>/dev/null
+
+ local: nc local:/tmp/.X11-unix/X4444 -e dbclient user@172.16.0.1 nc -ls local:/tmp/.X11-unix/X4444
+
+ remote: dbclient user@172.16.0.1 DISPLAY=:4444 setsid dwm-guest </dev/null &>/dev/null
+
+ ^ works then terminates the nc session in dropbear ? (missing -lk because no -e)
+
+ ? nc local:/tmp/.X11-unix/X4444 -e dbclient user@172.16.0.1 nc -lks local:/tmp/.X11-unix/X4444 -e dwm-guest ?
+
+ ^ that would keep netcat open but attaches dwm to input output ?
+   dwm stdout/stderr now goes into X socket ? </dev/null &>/dev/null to fix it : /
+   took ages to get testing environment up...
+
+****
+  local: Xephyr -ac -listen tcp :13
+ remote: DISPLAY=172.16.0.1:13 dwm-guest
+****
+
+#############
+libcurl needed unix socket support for transmission
+fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1)
+
+ -r --raw < - interpret backslashes literally
+              rather than as escape characters
+ ? variable holds backslash rather than stripping ? or changing them to literal characters ?
+#############
+
+ muttrc: hostname, might get rid of leak in gmail headers ?
+ ^ still leaves the ip/rdns used to connect to it...
+ 
+ read -r leaves backslashes in ?
+ cant get it to actually interpret them from input
+
+#############
+
+ [qemu]
+
+ * -nographic doesnt work ?
+
+ kernel enable serial
+ CONFIG_SERIAL_8250
+ CONFIG_SERIAL_8250_CONSOLE
+
+ [ -deamonize -display none -vnc unix:/dev/shm/qemu ]
+
+ [ -serial stdio -display none -nographic -append console=ttyS0 ]
+
+ dtach -A /dev/shm/qemu setsid qemu-system-x86_64
+ dtach -a /dev/shm/qemu
+
+ ^ dtach setsid double forks qemu
+   leaves stdin stdout stderr pointing to none existent terminal ?
+
+ [ -z $console ] && kernel="--append root=/dev/vda" || kernel="--append root=/dev/vda console=ttyS0"
+
+ ^ still doesnt work because --append thing0 thing1
+   treats thing1 as a file and fails to start qemu
+
+ -k(ernel) -i(nitramfs) -b(oot) -f(ile) -e(xtra)
+ -l(an) -n(at)
+ -c(onsole) -v(nc)
+ -u(ser)
+
+ * also matches /dev/shm/{dtach,vnc} as an access method
+
+#############
+
+ [kernel]
+
+ missing input sanitization on server audio... ?
+
+ linux-6.1.18 - SND_HDA_CTL_DEV_ID ?
+ ^ turn it on for old behaviour ? left it off
+
+ [linux-6.2]
+
+-------------
+
+ * server: CONFIG_DRM_AST is fucked...
+   CONFIG_DRM_NOMODESET
+   CONFIG_VIDEO_NOMODESET
+
+ ^ drm nomodeset moved to video nomodeset
+   to allow gpu drivers with drm to control it ?
+
+ * X0-log - ShadowFB: preferred YES, enabled YES
+
+-------------
+
+ * wifi: works well, looks normal...
+   ping gateway - fails
+   setpriv_udhcpc wlan0 - fails
+   w.connect wlan0 ; setpriv_udhcpc wlan0 ; ping gateway < - works again
+   
+ ^ no error output
+
+ -------------
+
+ tl;dr - disabled TIOCSTI, reduced attack surface
+
+ CALL_DEPTH_TRACKING - mitigations for speculative execution vulnerabilities
+ ^ virtual - CONFIG_PROCESSOR_SELECT (intel only)
+
+ ACPI_FFH - fixed function hardware address space (define platform specific opregion)
+ KVM_SMM - emulate system management mode (allow secure boot)
+ SLAB/SLUB/SLOB - deprecated slob ?
+ SLUB_TINY - sacrifice scalability,debugging and other features <16MB
+ LEGACY_TIOCSTI - legacy functionality used for priv esc... disable
+ DRM_ACCEL - framework for compute acceleration devices
+ CONFIG_HID_MCP2221 - i2c and smbus over usb-hid ?
+ CONFIG_IOMMUFD - /dev/iommu userspace iommu api
 
 #############
 
@@ -202,19 +546,24 @@ hasnt changed or updated in over two years
 -------------
 
    root - console only
-   user - dbclient + stage3
- nobody - http/p2p + media(audio,video)
-  proxy - proxy only
-   jail - no internet
+   user - stage3 + dbclient/dnsd/ddns
+ nobody - single user mode no proxy + audio/video
+  proxy - single user mode proxy only
+   jail - no internet + audio/video
 
-   smtp - 
-   http - 
-    irc - 
-    xmr - 
+   smtp - 465,995
+   http - 443
+    irc - 6697
+    xmr - 18081,18089
 
-* cant watch mpv in Xephyr...
- offline user for media
- online user http/p2p for media
+-------------
+
+- user lo 9050 + nat 22 (private ssh)
+  nobody lan 22 (public ssh) (browser + audio/video)
+^ implies p.ssh (though not alot of use)
+
+* self contained virtual machine with usb mic/webcam passthrough
+^ image.master + image + image.backups 
 
 -------------
 
@@ -225,33 +574,6 @@ hasnt changed or updated in over two years
  dwm-{host,guest}
   st
 
- ash -l -s /bin/sh [-c 'command'] <user> [< file] [<< EOF]
-  su -l -s /bin/sh [-c 'command'] <user> [< file] [<< EOF]
-  setpriv --nnp --reuid --regid --init-groups --ambient-caps --inh-caps --bounding-set --reset-env
-  (exec binary </dev/null &>/dev/null & exit) &
-  env -i
-  chroot
-  login -f
-
- install / chown / chmod / mk{,nod,fifo,dir,temp}
-
-* su -c 'exec &' subshell + background ?
-
-  su -l -s /bin/sh -c 'exec command &' <user>
-  su -l -s /bin/sh -c 'command' <user> </dev/null &>/dev/null
-
-  exec sleep 1 & echo exec with ampersand doesnt kill parent
-  exec sleep 1 ; echo exec with colon does kill parent
-
--------------
-su -l -s /bin/ash -c 'exec command </dev/null &>/dev/null & exit ' <user>
-su -l -s /bin/ash <user> << EOF # horrible \$(escape) \${characters}
-su -l -s /bin/ash <user> < /path/to/file # works without \${escapes}
--------------
-su -l -s /bin/ash <user> < /path/to/file > /path/to/output
-dbclient -T <user>@172.16.0.1 < /path/to/file > /path/to/output
--------------
-setsid detaches controlling tty - breaks server daemons
 -------------
 /etc/services/
  crond
@@ -260,6 +582,15 @@ setsid detaches controlling tty - breaks server daemons
  httpd
  p2pd
  sets
+-------------
+ dbclient - user
+ smtp     - nobody,smtp
+ http     - root,nobody,http
+ p2p      - root,user,nobody
+ irc      - nobody,irc
+ xmr      - nobody,xmr
+ qemu     - user/nobody
+ media    - jail,nobody
 -------------
  a.chroot b.init (c.keys)
  c.server d.client
@@ -273,21 +604,10 @@ setsid detaches controlling tty - breaks server daemons
  wifi w.{scan,public,private,connect,auth}
  xephyr {x.nobody,x.proxy}
  xephyr {p.smtp,p.http,p.irc,p.xmr}
- d.{smtp,http,irc,xmr} dtach -A $HOME/socket mtm -t mtm-256color
--------------
-/etc/self/d.client
- dbclient - user
- smtp     - nobody,smtp
- http     - root,nobody,proxy,http
- p2p      - root,user,nobody
- irc      - nobody,irc
- xmr      - nobody,xmr
- media    - nobody
- qemu     - user/nobody/proxy
 -------------
 per application file access
 per application firewall access
-access to all system binaries vs chroot
+all system binaries vs chroot ?
 -------------
 while sleep 3 ; do DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth xrandr --auto ; done
 -------------
@@ -298,12 +618,6 @@ lsw && xev -
 -------------
 
 #############
-
- * vncviewer cutting off console kills cli install's
-
- * ip -6 route < already has entries for fc00 fd00 private address ranges ?
-
- * udhcpc_{default,oneshot,ping}
 
  * /init /etc/inittab /etc/init /etc/profile - debug output ?
  
@@ -316,11 +630,10 @@ lsw && xev -
  * dtach cant recreate socket ? SIGHUP ignored SIGUSR1 terminates running process
  * identify dtach from PS1 - shlvl ?
  * identify mtm from PS1 - $MTM
- * usability over dbclient ? (force command authorized_keys - "command='dtach -A $HOME/socket mtm -t st-256color' sha-ed25519 <hash> user@domain")
 
  * mutt smtp still exposes ip/hostname in headers ? (sending From username $(date) as  well ?)
 
- * monero / ca-certificates updates - forced to delete manifest
+ * ca-certificates updates - forced to delete manifest
 
 * pkill -x /sbin/<thing> needs pkill -x <thing> ? (only matching wrappers)
   ^ fucks up accidently killing partial matches... (probably worse ?)
@@ -329,23 +642,12 @@ lsw && xev -
 
  * grub ebuild ? finishes off udhcpd/tftpd/grub kernel/initramfs/nfsd
 
- * FORTIFY_SOURCE=3 - glibc died, cmake died < - even with fortify=2 something with fortify=3 is bricking ./configure
- * -fcf-protection=full -mcet (control flow integrity)
-
  * tor DisableAllSwap as none root...( didnt stderr, used address sanitizer ? shouldnt have executed at all) 
  ^ test expensive/fragile without DisableAllSwap ?
 
  * herbe needs /dev/shm/$USER splitting (doesnt support multiplayer) (logread|grep -f file|while read ; do herbe "notifcation" ; done
+ ^ desktop:desktop /dev/shm/desktop.tmp < - herbe as a single user
 
- * tiny-curl - test git / transmission ?
-
-#############
-[dropbear]
-dropbear without -r /path/to/key refuses to start
-* Early exit: Bad buf_getptr
-^ ChangeLog said ~ worked in key paths ?
-^ tried without ~
-^ tried without symlink
 #############
 
 storage.bootfs -
@@ -490,57 +792,6 @@ $home/xmr/monero
   sendmail with sasl plain base64 without cyrus-sasl ?
 
 * complexity for user hand off is to high (cant full scope it)
-
-#############
-
- [transmission]
-
- -------------
-
- rpc-bind-address: unix:/tmp/storage/services/p2pd/socket
- ^ turns rpc-whitelist-enabled off ?
-
- watch-dir /tmp/storage/shared/torrents
- file added with wrong perms, cant read then ignored ?
- torrent added before data, cant read then ignored ?
- ^ inotify triggering verify ? or preallocating file name
-
- anti-bruteforce isnt in docs/Editing-
-
- transmission-remote docs --unix-socket <path> < - doesnt imply it requires an arguement
-
- peer-congestion-algorithm ? just left it empty
-
- transmission-create --source ?
-
- trackers/webseeds require http://domain.tld/path/to/file
-
- -------------
-
- actual bugs
-
- * transmission-remote --dht, stops all torrents, requires restart
-
- * fails to bind ports properly and hangs ?
- ^ race condition on 127.0.0.1:9091 0.0.0.0:9091 ?
- ^ now unix:/path/socket (test if it continues)
-
- * rpc-socket works with 0750
-   umask adding 0022 rewrites to 022 ?
-
- * umask 022, no longer sets permissions properly ?
- - incomplete-dir, using global umask ?
- - downloads-dir, umask on first directory, global umask on all files
-
- * transmission-remote -a magnet:// (anything over cli input length is cut off)
-
- * transmission-edit - cant edit webseeds ?
-
- -------------
-
- * transmission-remote allows setting alt-speed on or off...
-   transmission-daemon forces it to start off...
-   ^ used to settings.json variable at runtime (dont really care?)
 
 #############
 

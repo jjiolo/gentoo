@@ -18,8 +18,8 @@ ssid="${2}"
 key_mgmt=WPA-EAP-SHA256 WPA-EAP
 identity="${3}"
 password="${4}"
-ca_path="/etc/ssl/certs/ca-certificates.crt"
-#ca_cert="/path/to/certificate"
+#ca_path="/etc/ssl/certs"
+ ca_cert="/etc/ssl/certs/ca-certificates.crt"
 ieee80211w=1
 ocv=1
 }
@@ -33,6 +33,6 @@ ip addr flush "${1}"
 until ip link set dev "${1}" address "$(hexdump -n6 -ve '1/1 "%02X:"' /dev/urandom|head -c17)";do sleep .1;done
 ip link set up "${1}"
 #############
-( exec wpa_supplicant -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant" </dev/null &>/dev/null & exit )
+wpa_supplicant -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant"
 #############
 

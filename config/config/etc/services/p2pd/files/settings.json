@@ -45,7 +45,7 @@
     "ratio-limit-enabled": false,
     "rename-partial-files": true,
     "rpc-authentication-required": false,
-    "rpc-bind-address": "unix:/tmp/storage/services/p2pd/socket",
+    "rpc-bind-address": "unix:/tmp/storage/services/p2pd/.config/socket",
     "rpc-enabled": true,
     "rpc-host-whitelist": "",
     "rpc-host-whitelist-enabled": false,

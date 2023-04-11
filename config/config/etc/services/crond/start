@@ -2,7 +2,9 @@
 #############
 . /etc/services/crond/install
 #############
-( exec crond -bSc "${service_storage}" </dev/null &>/dev/null & exit )
+
+( setsid crond -bSc "${service_storage}" </dev/null &>/dev/null & exit )
+
 #############
 renice -10 -u "root"
 #############

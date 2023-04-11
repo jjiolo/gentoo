@@ -32,11 +32,12 @@ umask 0007
 [ "$(hostname)" == "virtual" ] && {
 
  ash /etc/self/f.setpriv/setpriv_udhcpc nat virtual
+ ash /etc/services/httpd/start
+ ash /etc/services/p2pd/start
 
  sshd -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null
-
- ash /etc/self/c.server/s.client 172.16.0.1
- ash /etc/self/c.server/v.server 172.16.0.1 10.0.0.2
+ echo yes | ash /etc/self/c.server/s.client 172.16.0.1
+ echo yes | ash /etc/self/c.server/v.server 172.16.0.1 10.0.0.2
 
 }
 

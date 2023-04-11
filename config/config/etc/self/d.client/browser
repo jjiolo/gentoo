@@ -2,8 +2,24 @@
 #############
 install -d -o "${USER}" -m 0700 "${HOME}/.browser"
 #############
-[ -f "${services}/sets/firefox/firefox-bin" ] && LD_LIBRARY_PATH="${services}/sets/firefox" LD_PRELOAD="/usr/lib64/apulse/libpulse.so" exec "${services}/sets/firefox/firefox-bin" --profile "${HOME}/.browser" --new-instance --no-remote </dev/null &>/dev/null
+
+[ -f "${HOME}/.browser/prefs.js" ] || {
+
+ install -o "${USER}" -m 0600 "/usr/lib64/firefox/firefox.domain" "${HOME}/.browser/prefs.js"
+
+ [ "${USER}" == "proxy" ] && printf "%s\n" 'user_pref("javascript.enabled", false);' >> "${HOME}/.browser/prefs.js"
+
+}
+
 #############
-[ -f "${services}/sets/firefox/firefox-bin" ] || LD_LIBRARY_PATH="/usr/lib64/firefox" LD_PRELOAD="/usr/lib64/apulse/libpulse.so" exec firefox --profile "${HOME}/.browser" --new-instance --no-remote </dev/null &>/dev/null
+[ -f "${services}/sets/firefox/firefox-bin" ] && 
+LD_LIBRARY_PATH="${services}/sets/firefox" \
+LD_PRELOAD="/usr/lib64/apulse/libpulse.so" \
+exec "${services}/sets/firefox/firefox-bin" --profile "${HOME}/.browser" --new-instance --no-remote </dev/null &>/dev/null
+#############
+[ -f "${services}/sets/firefox/firefox-bin" ] || 
+LD_LIBRARY_PATH="/usr/lib64/firefox" \
+LD_PRELOAD="/usr/lib64/apulse/libpulse.so" \
+exec firefox --profile "${HOME}/.browser" --new-instance --no-remote </dev/null &>/dev/null
 #############
 

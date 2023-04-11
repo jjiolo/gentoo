@@ -4,7 +4,7 @@
 #############
 [ -z "${interface}" ] || [ -z "${ip}" ] || [ -z "${subnet}" ] || [ -z "${router}" ] && return 1
 #############
-cat << EOF
+printf "%s\n" "
 #############
 # interface:${interface}
 #############
@@ -16,17 +16,17 @@ cat << EOF
 #      dnsd:${dns}
 #    ntpsrv:${ntpsrv}
 #############
-EOF
+"
 #############
 read -rp 'continue ?'
 #############
 
-[ -z "${broadcast}" ] && broadcast="" || broadcast="broadcast ${broadcast}"
-
 ip link set down dev "${interface}"
 ip addr flush dev "${interface}"
 
-ip addr add "${ip}/${subnet}" ${broadcast} dev "${interface}"
+[ -z "${broadcast}" ] && ip addr add "${ip}/${subnet}" dev "${interface}"
+[ -z "${broadcast}" ] || ip addr add "${ip}/${subnet}" broadcast "${broadcast}" dev "${interface}"
+
 ip link set up "${interface}"
 
 ip route del default

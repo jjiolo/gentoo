@@ -2,6 +2,7 @@
 ::restart:/sbin/poweroff
 ::shutdown:/sbin/poweroff
 ::ctrlaltdel:/sbin/poweroff
+ttyS0::respawn:/bin/login -f root
 tty1::respawn:/bin/login -f root
 tty2::respawn:/bin/login -f user
 tty3::respawn:/bin/login -f nobody

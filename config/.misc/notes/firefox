@@ -7,6 +7,28 @@ overall goal,
 
 #############
 
+ [about:config]
+
+ about:policies > about:config
+
+ to many insecure default values
+
+ [doh+ech]
+
+ firefox doh ech...
+ ^ disabled policies.json DNSOverHTTPS...
+   true forces =2
+   false forces =5
+   firefox.cfg lockPref =3
+ * doh and ech on by default
+ ^ ech adoption prevents censorship through SNI (free vpn)
+ ^^ tld root authority and dane...
+
+ about:preferences#general < - check spelling as you type
+ privacy.donottrackheader.enabled
+
+#############
+
 [firefox]
 
  distributions/policies.json < - hardcoded path root:root 0775

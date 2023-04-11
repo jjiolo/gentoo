@@ -2,17 +2,22 @@
 #############
 debug(){ printf "%s\n" "debug - ${1}" ; exit 1 ; }
 #############
-[ -f "/tmp/.X0-lock"  ] || debug "xorg server not running"
-[ -f "/tmp/.X15-lock" ] && debug "Xephyr server already running"
+[ "${USER}" == "root" ] || debug "requires root"
 #############
-install -o desktop -g proxy -m 0640 "/dev/null" "/tmp/.X15-auth"
-printf "%s\n" "add :15 . $(hexdump -n16 -ve '1/1 "%02x"' /dev/urandom)"|xauth -nqf "/tmp/.X15-auth"
-chown desktop:proxy "/tmp/.X15-auth"
-chmod 0640 "/tmp/.X15-auth"
+user="proxy"
+display="3"
+#############
+[ -f "/tmp/.X0-lock"  ] || debug "xorg server not running"
+[ -f "/tmp/.X${display}-lock" ] && debug "Xephyr server already running"
+#############
+install -o desktop -g "${user}" -m 0640 "/dev/null" "/tmp/.X${display}-auth"
+printf "%s\n" "add :${display} . $(hexdump -n16 -ve '1/1 "%02x"' /dev/urandom)"|xauth -nqf "/tmp/.X${display}-auth"
+chown "desktop:${user}" "/tmp/.X${display}-auth"
+chmod 0640 "/tmp/.X${display}-auth"
 #############
 su -l -s /bin/ash desktop << EOF
 DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth \
-exec Xephyr \
+setsid Xephyr \
 -extension 'Generic Event Extension' \
 -extension 'MIT-SHM' \
 -extension 'XTEST' \
@@ -29,20 +34,20 @@ exec Xephyr \
 -extension 'X-Resource' \
 -extension 'XVideo' \
 -extension 'XVideo-MotionCompensation' \
--s 0 -auth /tmp/.X15-auth \
+-s 0 -auth /tmp/.X${display}-auth \
 -nolisten tcp -nolisten unix -listen local \
 -resizeable -no-host-grab \
-:15 </dev/null &>/dev/null & exit
+:${display} </dev/null &>/dev/null & exit
 EOF
 #############
-until [ -f "/tmp/.X15-lock" ];do sleep .1;done
+until [ -f "/tmp/.X${display}-lock" ];do sleep .1;done
 #############
 
 #############
-su -l -s /bin/ash -c "DISPLAY=:15 XAUTHORITY=/tmp/.X15-auth exec dwm-guest </dev/null &>/dev/null & exit" proxy
+ su -l -s /bin/ash -c "DISPLAY=:${display} XAUTHORITY=/tmp/.X${display}-auth setsid dwm-guest </dev/null &>/dev/null & exit" "${user}"
 #############
-su -l -s /bin/ash -c "DISPLAY=:15 XAUTHORITY=/tmp/.X15-auth exec st </dev/null &>/dev/null & exit" proxy
+#su -l -s /bin/ash -c "DISPLAY=:${display} XAUTHORITY=/tmp/.X${display}-auth setsid st </dev/null &>/dev/null & exit" "${user}"
 #############
-renice +20 -u "proxy"
+renice +20 -u "${user}"
 #############
 

@@ -1,5 +1,5 @@
 #############
-EAPI="8"
+EAPI=8
 #############
 DESCRIPTION="micro terminal multiplexer"
 HOMEPAGE="https://github.com/deadpixi/mtm"

@@ -1,6 +1,27 @@
 
 #############
 
+ CONFIG_SERIAL_8250 - enables /dev/ttyS{0-3}
+ CONFIG_SERIAL_8250_CONSOLE - console=ttyS0
+
+ qemu -serial stdio (-nographic)
+
+ ^ ctrl-a + h to switch between console and monitor
+
+ * currently dont have serial port support in the virtual kernel...
+
+#############
+
+ -vnc very useful to enable -device usb-tablet ?
+
+ * currently dont have usb hid devices enabled in the kernel...
+
+#############
+
+ -bios - clean up /usr/share/qemu files ? (select a known working bios only)
+
+#############
+
 generic tl;dr
 
 -chardev  -device || 
@@ -11,6 +32,9 @@ generic tl;dr
 define the backend char/block/fs/net
 define the device to use with it
 or use the none uniform attempt at grouping commands... (only drive really works because no reference to blockdev -device at all ? )
+
+-blockdev + -device = -drive
+-netdev + -device = -nic
 
 #############
 
@@ -25,15 +49,7 @@ and glusterfs...
 
 #############
 
--fsdev -device -virtfs
-
-mount -t 9p -o trans=virtio <tag> <mountpoint> -oversion=9o2000.L
-
-sounds good but doesnt look very clean ? cant run as none root...
-
-#############
-
--netdev -device -nic
+-netdev -device -nic -net
 
 -netdev user,ipv4=on,host=192.168.0.1,net=192.168.0.0/24,ipv6=on,ipv6-host=fd00::1,ipv6-net=fd00::/64
 -netdev tap,id=,fd=,ifname=,script=,downscript=,br=,helper=,

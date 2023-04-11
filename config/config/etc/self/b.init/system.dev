@@ -11,20 +11,21 @@ find /dev/snd -type c -exec chmod 0660 {} \;
 chown -R root:video /dev/video*
 chmod -R 0770 /dev/video*
 #############
-chown -R root:desktop /dev/dri
-find /dev/dri -type d -exec chmod 0750 {} \;
-find /dev/dri -type c -exec chmod 0660 {} \;
-#############
 chown -R root:desktop /dev/input
 find /dev/input -type d -exec chmod 0750 {} \;
 find /dev/input -type c -exec chmod 0660 {} \;
+#############
+chown -R root:desktop /dev/dri
+find /dev/dri -type d -exec chmod 0750 {} \;
+find /dev/dri -type c -exec chmod 0660 {} \;
 #############
 ln -sf /proc/self/fd   /dev/fd
 ln -sf /proc/self/fd/0 /dev/stdin
 ln -sf /proc/self/fd/1 /dev/stdout
 ln -sf /proc/self/fd/2 /dev/stderr
 #############
-[ -c "/dev/kvm"  ] && { chown qemu:qemu /dev/kvm  ; chmod 0660 /dev/kvm  ; }
+[ -c "/dev/kvm" ] && { chown qemu:qemu /dev/kvm ; chmod 0660 /dev/kvm ; }
+[ -c "/dev/net/tun" ] && { chown qemu:qemu /dev/net/tun ; chmod 0660 /dev/net/tun ; }
 [ -d "/proc/bus" ] && { chown root:root /proc/bus ; chmod 0700 /proc/bus ; }
 #############
 

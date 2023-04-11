@@ -117,11 +117,11 @@ renice +20 -u xmr     2>/dev/null
  alias c='clear'
  alias ..='cd ..'
 
-[ -L /bin/ps ] && alias ps="ps -o pid,ppid,user,group,nice,etime,comm|awk '\$1 != 2 && \$2 != 2'"
-[ -L /bin/ps ] && alias psw="watch -t ps -o pid,ppid,user,group,nice,etime,comm|awk '\$1 != 2 && \$2 != 2'"
+[ -L /bin/ps ] && alias ps="ps -o sid,pid,ppid,user,group,nice,etime,comm|awk '\$1 != 2 && \$2 != 2'"
+[ -L /bin/ps ] && alias psw="watch -t ps -o sid,pid,ppid,user,group,nice,etime,comm|awk '\$1 != 2 && \$2 != 2'"
 
-[ -L /bin/ps ] || alias ps='/bin/ps fo pid,ppid,uid,gid,pcpu,pmem,pri,ni,tty,etime,comm --pid 2 --ppid 2 -N'
-[ -L /bin/ps ] || alias psw='watch -t /bin/ps fo pid,ppid,uid,gid,pcpu,pmem,pri,ni,tty,etime,comm --pid 2 --ppid 2 -N'
+[ -L /bin/ps ] || alias ps='/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pmem,pri,ni,tty,etime,comm --pid 2 --ppid 2 -N'
+[ -L /bin/ps ] || alias psw='watch -t /bin/ps fo sid,pid,ppid,uid,gid,pcpu,pmem,pri,ni,tty,etime,comm --pid 2 --ppid 2 -N'
 
  alias log='tail -F /run/logs/syslog'
  alias ffs='tail -F /run/logs/syslog|grep -v "^....................kernel:"'
@@ -134,8 +134,8 @@ renice +20 -u xmr     2>/dev/null
  alias caps='find / -xdev -type f -exec getcap {} 2>/dev/null \;'
  alias libs='find ${PATH//:/ } /lib /lib64 /usr/lib /usr/lib64 -xdev -type f -exec sh /usr/bin/ldd {} 2>/dev/null \; | grep -i "not found" | sort -u'
 
- alias t='transmission-remote --unix-socket ${services}/p2pd/socket'
- alias tt='watch -tn3 transmission-remote --unix-socket ${services}/p2pd/socket -l'
+ alias t='transmission-remote --unix-socket ${services}/p2pd/.config/socket'
+ alias tt='watch -tn3 transmission-remote --unix-socket ${services}/p2pd/.config/socket -l'
 
  alias torsocks="export LD_PRELOAD='/usr/lib64/libtorsocks.so'"
 

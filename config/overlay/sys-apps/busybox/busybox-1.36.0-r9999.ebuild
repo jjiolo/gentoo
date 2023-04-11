@@ -1,5 +1,5 @@
 ############
-EAPI="7"
+EAPI=8
 #############
 DESCRIPTION="Utilities for rescue and embedded systems"
 HOMEPAGE="https://busybox.net/"

@@ -1,5 +1,5 @@
 #############
-EAPI=7
+EAPI=8
 #############
 DESCRIPTION="Virtual to select between different udev daemon providers"
 SLOT="0"

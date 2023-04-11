@@ -60,18 +60,18 @@ DEPEND="${COMMON_DEPEND}
 # gtk+-2.24.8 breaks Alt key handling in <=x11-libs/vte-0.28.2:0
 # Add blocker against old gtk-builder-convert to be sure we maintain both
 # in sync.
-RDEPEND="${COMMON_DEPEND}
-	>=dev-util/gtk-update-icon-cache-2
-	>=x11-themes/adwaita-icon-theme-3.14
-	x11-themes/gnome-themes-standard
-	!<dev-util/gtk-builder-convert-${PV}
-"
-# librsvg for svg icons (PDEPEND to avoid circular dep), bug #547710
-PDEPEND="
-	gnome-base/librsvg[${MULTILIB_USEDEP}]
-	x11-themes/gtk-engines-adwaita
-	vim-syntax? ( app-vim/gtk-syntax )
-"
+#RDEPEND="${COMMON_DEPEND}
+#	>=dev-util/gtk-update-icon-cache-2
+#	>=x11-themes/adwaita-icon-theme-3.14
+#	x11-themes/gnome-themes-standard
+#	!<dev-util/gtk-builder-convert-${PV}
+#"
+## librsvg for svg icons (PDEPEND to avoid circular dep), bug #547710
+#PDEPEND="
+#	gnome-base/librsvg[${MULTILIB_USEDEP}]
+#	x11-themes/gtk-engines-adwaita
+#	vim-syntax? ( app-vim/gtk-syntax )
+#"
 # docbook-4.1.2 and xsl required for man pages
 # docbook-4.3 required for gtk-doc
 BDEPEND="

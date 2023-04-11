@@ -11,10 +11,20 @@
 #############
 # --integrity crc32c/crc32 sha1 sha256 || hmac-sha256
 #############
+
+ cryptsetup --hash sha256 open --type plain ./file file
+ integritysetup --integrity sha256 format /dev/mapper/file
+ integritysetup --integrity sha256 open /dev/mapper/file file.int
+ mkfs.ext4 /dev/mapper/file.int
+ mkfs.ext2 /dev/mapper/file.int
+
+ * double journal vs single journal
+
+#############
 integritysetup format --integrity sha256 /dev/device
-integritysetup dump /dev/device
 integritysetup open /dev/device name
-integritysetup status name
+integritysetup dump name (backing block device)
+integritysetup status name (mapped block device)
 #############
 
  --allow-discards - trim

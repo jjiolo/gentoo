@@ -13,7 +13,7 @@ usage(){ printf "%s\n" "${1}" ; exit 1 ; }
  interface="-device virtio-net-pci,netdev=nd0,mac=52:54:00:00:00:00"
     kernel="-kernel /tmp/storage/stage3/binhost/kernels/virtual -append root=/dev/vda"
     initrd="-initrd /tmp/storage/stage3/binhost/images/client"
-       vnc="-display none -vnc unix:/dev/shm/qemu"
+       vnc="-nographic -display none -vnc unix:/dev/shm/qemu"
 
  qemu-system-x86_64 ${defaults} ${cpu} ${mem} ${gpu} ${network} ${interface} ${kernel} ${initrd} ${vnc}
 
