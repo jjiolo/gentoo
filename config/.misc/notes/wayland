@@ -1,120 +1,29 @@
 
 #############
 
-fuck that shit would be an understatement
+parallels...
 
- triples build time
+ seatd starts xorg-server with nothing on it...
+ creates socket restricted with uid/gid permissions (replacing magic cookies)
+ ^ requires access to tty0 ? (SEATD_VTBOUND=0)
+ ^ requires access to /dev/dri
+ ^ requires access to /dev/input
+ ^ requires write access to /run/seatd.sock (ebuild changed default path)
 
- forces gcc/rust/llvm to hit radeonsi_dri.so...
-
--------------
-
-everythings hard before you know how to do it
-
-reversing the smallest package list to get software rendering functional
-
-is probably doable ?
-
-not realistic for this project
-
-massive increase to build time
-
-massive increase to complexity
-
-might get bored and finish it one day
+ su -l -s /bin/sh -c 'SEATD_VTBOUND=0 setsid seatd </dev/null &>/dev/null' desktop
+ chown desktop:<user> /run/seatd.sock
+ chmod 0660 /run/seatd.sock
+ su -l -s /bin/sh -c 'XDG_RUNTIME_DIR=/dev/shm SWAYSOCK=/tmp/seatd.sock WLR_RENDERER=pixman setsid sway </dev/null &>/dev/null' <user>
 
 -------------
 
-#############
-
- suid seatd-launch sway + input,audio,video + su -lc 'exec terminal' nobody
- ^ minimum viable product
-
- if whatever alpines using for virtio_gpu_dri is viable on metal without being utterly shit
- it would reduce complexity levels back to viable
-
-#############
-
-* wayland/sway testing - build order creates empty packages... (not that it works regardless)
-^ /usr/lib64/dri/radeonsi_dri.so breaks startx
-  delete it and old setup works
-  leave it and XDG_RUNTIME_DIR=/tmp seatd-launch sway sort of works
-
-#############
-
-tl;dr
-
-* massively simplifies the idea of desktop dac isolation ?
-  dont need to wrap Xephyr to anything when it can just run natively
-
-^ that alone is enough complexity reduction to justify it given @set logic
-  till you figure out your nesting into Xwayland which is literally Xephyr to support half the shit to begin with
-  making what already exists twice as complicated for no reason
-
--------------
-
-addgroup user input && chmod -R 0755 /run/udev && XDG_RUNTIME_DIR=/tmp seatd-launch sway < - currently works
-
-alacritty broke ?
-
-radeonsi_dri bricked sway in qemu
-radeonsi_dri bricked startx
-
-seatd-launch < - suid blob that only controls /dev/tty permissions
-                 no idea /shrug set them statically at runtime and delete the lot of it ?
-                 (newer sway forced seatd as a dependency)
-
-xorg executes libudev to get hardware devices
-sway reads the udev file cache to get hardware devices
-^ /proc /sys permissions are all global any user can generate /run/udev locking 0700 does nothing
-  would need grsecs permissions patch set to harden udev literally does fuck all but parse shit output into readable
-^ or its suid and xorg is reading it regardless over just executing it and not needing the shitty daemon in the first place
-  imo libudev stripped to only parse system input output added to display server > depending on a system daemon
-
--------------
-adding llvm fucked an obsurd amount of binaries with segfaults
--------------
-
-#############
-
-sway -suid with audio,video,input works...
-su -ls/bin/sh -c 'XDG_RUNTIME_DIR=/tmp WAYLAND_DISPLAY=wayland-1 exec alacritty' nobody
-^ Xwayland ?
-^ kwin_wayland XDG_RUNTIME_DIR=/tmp WAYLAND_DISPLAY=wayland-{1,2,3}
-  should be able to nest sway single ebuild and config files for hotkeying host/guest ?
-
-#############
-
-cheating /dev/dri /dev/input /run/udev permissions (to mimic input,audio,video groups)
-ash /etc/toor
-
-fairly sure - /usr/lib64/dri/<binaries>
--Ddri_drivers [auto,i915,i965,r100,r200,nouveau] not used ?
--Dgallium-drivers=virgl,swrast ? virtio drivers ?
--Dvulkan-drivers=amd ?
-^ mesa just forced USE= which indirectly forces setting VIDEO_CARD...
-
-#############
-
-package.use
-
-# wayland/sway testing
-x11-terms/alacritty wayland
-x11-libs/libxkbcommon wayland
-sys-devel/binutils plugins
-media-libs/mesa llvm
-x11-libs/libdrm video_cards_amdgpu
-x11-libs/libdrm video_cards_radeon
-sys-devel/llvm llvm_targets_AMDGPU -gold
-x11-base/xorg-server -minimal
-media-libs/libepoxy egl
-
-package.env
-
-sys-auth/seatd nopie
-dev-libs/wayland nopie
-gui-libs/wlroots nopie
-x11-libs/libxkbcommon nopie
+ su -l -s /bin/sh -c "SEATD_VTBOUND=0 setsid seatd </dev/null &>/dev/null" desktop
+ chown desktop:not_desktop /dev/shm/seatd.sock
+ chmod 0660 /dev/shm/seatd.sock
+ su -l -s /bin/sh -c "XDG_RUNTIME_DIR=/dev/shm WLR_RENDERER=pixman setsid sway </dev/null &>/dev/null" not_desktop
+ chown not_desktop:other_user /dev/shm/wayland-1
+ chmod 0660 /dev/shm/wayland-1
+ su -l -s /bin/sh -c "XDG_RUNTIME_DIR=/dev/shm WLR_RENDERER=pixman WAYLAND_DISPLAY=wayland-1 setsid foot </dev/null &>/dev/null" other_user
 
 #############
 

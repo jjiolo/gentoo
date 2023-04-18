@@ -1,54 +1,55 @@
 #!/bin/sh
 #############
 usage(){
+
  printf "%s\n" "takes block or file - ${1}"
+
  mountpoint -q "${mount}" && umount "${mount}"
- [ -b "/dev/mapper/mount" ] && cryptsetup close mount
+ [ -b "/dev/mapper/mount.integrity" ] && integritysetup close mount.integrity
+ [ -b "/dev/mapper/mount.crypt" ] && cryptsetup close mount.crypt
+
  exit 1
+
 }
 #############
 [ "${#}" == "1" ] || [ "${#}" == "2" ] || usage "no input"
 [ -b "${1}" ] || [ -f "${1}" ] || usage "input does not exist"
-[ -b "/dev/mapper/wipe"  ] && usage "wipe already exists"
-[ -b "/dev/mapper/mount" ] && usage "mount already exists"
+[ -b "/dev/mapper/wipe" ] && usage "wipe already exists"
+[ -b "/dev/mapper/mount.integrity" ] && usage "mount.integrity already exists"
+[ -b "/dev/mapper/mount.crypt" ] && usage "mount.crypt already exists"
 mountpoint -q "${mount}" && usage "mount already in use"
 #############
 
 [ "${#}" == "2" ] && {
 
-read -rp "about to nuke ${1}"
+ read -rp "about to nuke ${1}"
 
-cryptsetup open --key-file /dev/urandom --type plain "${1}" wipe
-dd if=/dev/zero of=/dev/mapper/wipe bs=4096 conv=fsync
-cryptsetup close wipe
+ cryptsetup open --key-file /dev/urandom --type plain "${1}" wipe
+ dd if=/dev/zero of=/dev/mapper/wipe bs=4096 conv=fsync
+ cryptsetup close wipe
 
 }
 
 #############
 read -rsp 'passphrase > ' passphrase
 uuid="$(hexdump -n32 -ve '1/1 "%02x"' "${1}")"
-threads="$(grep MHz /proc/cpuinfo|wc -l)"
+threads="$(grep -c MHz /proc/cpuinfo)"
 #############
-printf "%s" "${passphrase}"|argon2 "${uuid}" -id -t 3 -m 12 -p "${threads}" -r|
-cryptsetup --key-file - --hash sha256 --cipher aes-cbc-essiv:sha256 --key-size 256 --offset 1 open --type plain "${1}" mount || usage "cryptsetup failed"
+printf "%s" "${passphrase}" | argon2 "${uuid}" -id -t 3 -m 12 -p "${threads}" -r |
+cryptsetup --key-file - --hash sha256 --cipher aes-cbc-essiv:sha256 --key-size 256 --offset 1 open --type plain "${1}" "mount.crypt" || usage "cryptsetup failed"
 #############
-# hash cipher verify-passphrase sector-size
-# key-file keyfile-size keyfile-offset key-size offset
-# skip device-size size readonly shared allow-discards
-# refresh timeout verify-passphrase iv-large-sectors
+[ "${#}" == "2" ] && { integritysetup format --batch-mode --integrity sha256 "/dev/mapper/mount.crypt" || usage "integritysetup failed" ; }
+[ "${#}" == "2" ] && { integritysetup open --batch-mode --integrity sha256 "/dev/mapper/mount.crypt" "mount.integrity" || usage "integritysetup failed" ; }
+[ "${#}" == "1" ] && { integritysetup open --batch-mode --integrity sha256 "/dev/mapper/mount.crypt" "mount.integrity" || usage "integritysetup failed" ; }
 #############
-
-[ "${#}" == "1" ] && { fsck.ext4 -pvf "/dev/mapper/mount" ; fsck.ext4 -pv "/dev/mapper/mount" || usage "fsck failed"; }
-
-[ "${#}" == "2" ] && { mkfs.ext4 -L mount "/dev/mapper/mount" || usage "mkfs failed"; }
-
+[ "${#}" == "2" ] && { mkfs.ext2 -m 0 -L mount "/dev/mapper/mount.integrity" || usage "mkfs failed"; }
+[ "${#}" == "1" ] && { fsck.ext2 -pvf "/dev/mapper/mount.integrity" ; fsck.ext2 -pv "/dev/mapper/mount.integrity" || usage "fsck failed"; }
 #############
 
 install -d -o 0 -g 0 -m 0700 "${mount}"
 
-mount -o rw,nodev,nosuid,noexec,noatime "/dev/mapper/mount" "${mount}"
+mount -o rw,nodev,nosuid,noexec,noatime "/dev/mapper/mount.integrity" "${mount}"
 
 rmdir /tmp/storage/mount/lost+found
 
 #############
-

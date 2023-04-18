@@ -1,0 +1,26 @@
+
+#############
+pkill -x crond
+pkill -x /sbin/udhcpd
+pkill -x /bin/udpsvd
+pkill -x /sbin/ntpd
+pkill -x /sbin/httpd
+pkill -x p2pd
+pkill -x sshd
+#############
+
+[ -z "${1}" ] || {
+
+sleep 3
+#############
+ash /etc/services/crond/start
+setpriv_udhcpd
+setpriv_tftpd
+setpriv_ntpd
+ash /etc/services/httpd/start
+ash /etc/services/p2pd/start
+sshd
+#############
+
+}
+

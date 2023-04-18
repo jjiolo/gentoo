@@ -1,20 +1,29 @@
 
 #############
 
+ CONFIG_VIRTIO_INPUT - 
+ -device virtio-keyboard
+ -device virtio-mouse
+ -device virtio-tablet
+ ^ qemu-system-x86_64 -device help | grep virtio
+
  CONFIG_SERIAL_8250 - enables /dev/ttyS{0-3}
  CONFIG_SERIAL_8250_CONSOLE - console=ttyS0
 
  qemu -serial stdio (-nographic)
-
  ^ ctrl-a + h to switch between console and monitor
-
- * currently dont have serial port support in the virtual kernel...
 
 #############
 
  -vnc very useful to enable -device usb-tablet ?
 
  * currently dont have usb hid devices enabled in the kernel...
+
+ tried with virtio-tablet and it did literally nothing ?
+
+ was assuming not updating mouse position and tablet presses
+ was to reduce network bandwidth
+ google now full of shit teir mongtard logic implying it aligned mouse output properly ?
 
 #############
 

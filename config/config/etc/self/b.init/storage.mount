@@ -6,7 +6,7 @@ grep -q "laptop" /proc/cmdline || timeout -s SIGTERM 3 sh -c 'read -p interupt &
 grep -q "laptop" /proc/cmdline && /bin/sh -l
 
 [ -b "/dev/storage" ] && use="/dev/storage"
-[ -b "/dev/mapper/storage" ] && use="/dev/mapper/storage"
+[ -b "/dev/mapper/storage.integrity" ] && use="/dev/mapper/storage.integrity"
 
 [ -b "${use}" ] && fsck.ext4 -pvf "${use}"
 

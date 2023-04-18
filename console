@@ -1,0 +1,55 @@
+#!/bin/sh
+#############
+usage(){ printf "%s\n" "${1}" ; exit 1 ; }
+#############
+
+#############
+[ -f "binhost/kernels/virtual" ] || usage "binhost/kernels/virtual does not exist"
+#############
+[ -f "binhost/kernels/virtual" ] && install -o qemu -g qemu -m 0600 "binhost/kernels/virtual" "/dev/shm/virtual"
+#############
+[ -f "binhost/images/client" ] || usage "binhost/images/client does not exist"
+#############
+[ -f "binhost/images/client" ] && install -o qemu -g qemu -m 0600 "binhost/images/client" "/dev/shm/client"
+#############
+
+#############
+[ -S "/dev/shm/qemu" ] && usage "/dev/shm/qemu already exists"
+#############
+[ -d "/sys/class/net/tap0" ] && usage "interface tap0 already exists"
+#############
+
+#############
+tunctl -t tap0 -u qemu -g qemu
+#############
+brctl addif nat tap0
+#############
+ip link set up tap0
+#############
+
+#############
+
+  defaults="-nodefaults -sandbox on -k en-gb -L /usr/share/qemu"
+       cpu="-cpu host -smp 4,sockets=1,cores=4 -enable-kvm" mem="-m 8G" gpu="-vga virtio"
+   network="-netdev tap,id=nd0,ifname=tap0,script=no,downscript=no"
+ interface="-device virtio-net-pci,netdev=nd0,mac=52:54:00:00:00:00"
+    kernel="-kernel /dev/shm/virtual -append console=ttyS0"
+    initrd="-initrd /dev/shm/client"
+       vnc="-nographic -display none -serial stdio"
+
+ su -l -s /bin/sh -c 'dtach -n /dev/shm/qemu /bin/sh -l' qemu
+
+ echo "exec qemu-system-x86_64 ${defaults} ${cpu} ${mem} ${gpu} ${network} ${interface} ${kernel} ${initrd} ${vnc}" | dtach -p /dev/shm/qemu
+
+#############
+
+ until [ -e /dev/shm/qemu ] ; do sleep .1 ; done
+
+  chown 1:1 /dev/shm/qemu
+
+ chmod 0600 /dev/shm/qemu
+
+ printf "%s\n" "dtach -a /dev/shm/qemu"
+
+#############
+

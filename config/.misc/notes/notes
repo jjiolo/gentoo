@@ -24,7 +24,7 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:03:29 13:37:00
+ lastest - 2023:04:18 17:20:00
 -------------
 
  built first time...
@@ -125,25 +125,71 @@ stuff at the top is unordered raw sewage
 v attempt to create lists of things to actually do
 
 #############
+threads="(grep -c MHz /proc/cpuinfo)" < - |wc -l is redundent
+#############
 
- * sort of really want cryptsetup to do a compression map...
- ^ zram with integrity cant mimic with block or file devices ?
- ? vdo apparently support transparent block level compression
+added wayland support...
 
- desktop - CONFIG_INPUT_LEDS (allows turning off now?)
- ^ forced on by wifi now not ?
-   leds forced on by sound card mute led toggle
+ seatd + wayland + wlroots + sway + foot
+
+ sets_wayland - minimum install for desktop/terminal
+ busybox_init - makes it bootable inside qemu
+
+ starting as none root without /dev/tty0 permissions...
+ ^ keystrokes pass directly to starting tty ?
+
+ starting as root works...
+ ^ but then its running as root ?
+
+^ doesnt support any nested priv seperation easily ?
+  starting seatd inside itself as desktop ?
+  starting sway inside itself as the same user ?
+
+-------------
+
+imo its not viable
+
+current Xorg setup is pretty much fin
+
+-------------
+
+ current meson ebuilds...
+ meson -C build -j16 -l16
+ meson -C build ${MAKEOPTS}
+
+-------------
+
+random notes...
+
+ as root - allows tty change
+ as root - binds to the tty used to start sway
+
+ as desktop - cant change tty ?
+ as desktop - passes all keyboard input 
+
+-------------
 
 #############
 
- * proof read kernel + busybox ?
+* running login when pids close ? (never used to)
 
- * kernel changes
- - testing zram + mkswap - feels pointless ? (stage3 compressed tmpfs mount...)
- - cryptsetup integritysetup (testing)
- - add serial to all kernels or cant open /dev/ttyS0 no such file or directory
- - server still doesnt validate audio input... one security toggle
- - 
+#############
+
+* remove kernel serial support...
+^ inittab /dev/ttyS0 once (log spam)
+
+#############
+
+ * cryptsetup/integrity setup...
+ ^ crypt.{start,stop}
+ ^ storage.fde...
+
+ * multiple journals mode
+   journal/bitmap blargh
+
+   current assumption mkfs.ext2 ontop of integrity journal ?
+
+#############
 
  df -h shows dev as used 0...
  ^ means size=0% should work can just add it to everything ?
