@@ -3,7 +3,7 @@
 [ -d "/root" ] && rmdir "/root"
 #############
 
-     mountpoint -q "/dev" || { install -d -o 0 -g 0 -m 0700 "/dev"     ; mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime                         host "/dev"     ; }
+     mountpoint -q "/dev" || { install -d -o 0 -g 0 -m 0700 "/dev"     ; mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime,size=0%                 host "/dev"     ; }
  mountpoint -q "/dev/pts" || { install -d -o 0 -g 0 -m 0700 "/dev/pts" ; mount -t devpts   -o rw,dev,nosuid,noexec,noatime,mode=0600,ptmxmode=0000 host "/dev/pts" ; }
  mountpoint -q "/dev/shm" || { install -d -o 0 -g 0 -m 0700 "/dev/shm" ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,mode=1777,size=3%     host "/dev/shm" ; }
     mountpoint -q "/proc" || { install -d -o 0 -g 0 -m 0700 "/proc"    ; mount -t proc     -o rw,nodev,nosuid,noexec,noatime,hidepid=1             host "/proc"    ; mount -o remount,hidepid=1 "/proc" ; }

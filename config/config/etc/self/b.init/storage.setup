@@ -31,7 +31,7 @@ find "${storage}/.gnupg" "${storage}/.ssh" "${storage}/.vpn" "${storage}/.wifi" 
 
 install -d -o 0 -g 0 -m 0775 "${home}"
 
-for i in user nobody proxy jail smtp http irc xmr
+for i in user nobody proxy jail ssh smtp http irc xmr
 
 do
 

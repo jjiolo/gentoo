@@ -2,8 +2,8 @@
 EAPI=8
 #############
 DESCRIPTION="wayland-scanner tool"
-HOMEPAGE="https://wayland.freedesktop.org/ https://gitlab.freedesktop.org/wayland/wayland"
-SRC_URI=""
+HOMEPAGE="https://wayland.freedesktop.org"
+SRC_URI="" # https://gitlab.freedesktop.org/wayland/wayland/-/releases/${PV}/downloads/${P}.tar.xz"
 #############
 LICENSE="MIT"
 SLOT="0"

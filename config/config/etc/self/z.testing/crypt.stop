@@ -3,8 +3,8 @@
 
 mountpoint -q "${mount}" && umount "${mount}"
 
-[ -b "/dev/mapper/integrity" ] && integritysetup close integrity
-[ -b "/dev/mapper/crypt" ] && cryptsetup close crypt
+[ -b "/dev/mapper/mount.integrity" ] && integritysetup close mount.integrity
+[ -b "/dev/mapper/mount.crypt" ] && cryptsetup close mount.crypt
 
 #############
 

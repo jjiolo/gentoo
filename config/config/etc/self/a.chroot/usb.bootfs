@@ -28,7 +28,7 @@ menuentry "net_server"  { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.
 menuentry "net_desktop" { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/desktop ; initrd downloads/bootfs/client ; }
 menuentry "net_laptop"  { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/laptop ; initrd downloads/bootfs/client ; }
 
-menuentry "diskless" { linux downloads/bootfs/desktop root=/dev/nfs nfsroot=172.16.0.1:/,vers=4 ip=dhcp; }
+menuentry "diskless" { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/desktop root=/dev/nfs nfsroot=172.16.0.1:/,vers=4 ip=dhcp; }
 
 EOF
 

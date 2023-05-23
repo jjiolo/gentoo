@@ -31,6 +31,6 @@ src_configure(){ cp -a "${FILESDIR}/config.h" "${S}/config.h" ; }
 #############
 src_install(){
 install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
-install    -o root -g root -m 0755 "herbe" "${D}/usr/bin"
+install    -o root -g root -m 0755 "herbe" "${D}/usr/bin" || die "install failed"
 }
 #############

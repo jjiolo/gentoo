@@ -35,6 +35,6 @@ LDFLAGS=-static ./configure \
 #############
 src_install(){
 install -d -o root -g root -m 0755 "${D}/sbin"
-install    -o root -g root -m 0755 "tcpdump" "${D}/sbin"
+install    -o root -g root -m 0755 "tcpdump" "${D}/sbin" || die "install failed"
 }
 #############

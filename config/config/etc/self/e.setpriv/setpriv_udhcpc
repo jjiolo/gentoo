@@ -10,19 +10,18 @@ pkill -x /sbin/udhcpc
 #############
 ip link set up "${1}"
 #############
+
 install -d -o 68 -g 68 -m 0775 /run/udhcpc
 install    -o 68 -g 68 -m 0664 /dev/null /run/resolv.conf
-#############
 
 cd / ; caps="-all,+net_bind_service,+net_raw,+net_admin"
 
 /bin/setsid /usr/bin/setpriv \
  --reuid dhcpc --regid dhcpc --init-groups --nnp --reset-env \
  --inh-caps ${caps} --ambient-caps ${caps} --bounding-set ${caps} \
- /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /etc/self/f.setpriv/setpriv_udhcpc_script "${hostname}" < /dev/null
+ /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /etc/self/e.setpriv/setpriv_udhcpc_script "${hostname}" < /dev/null
 
 #############
-
 if [ "${1}" == "nat" ]
 then
 
@@ -30,5 +29,5 @@ then
  ip route add 169.254.0.0/16 dev nat scope link metric 0
 
 fi
-
 #############
+

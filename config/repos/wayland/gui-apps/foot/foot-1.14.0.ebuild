@@ -58,11 +58,14 @@ src_compile(){ ninja -C build -j16 -l16 || die "compile failed" ; }
 #src_install(){ DESTDIR="${D}" ninja -C build install || die "install failed" ; }
 #############
 src_install(){
+
 install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
-install -d -o root -g root -m 0755 "${D}/etc" "${D}/etc/terminfo"
 install    -o root -g root -m 0755 "build/foot" "${D}/usr/bin" || die "install failed"
+
 sed -i 's/@default_terminfo@/foot/' foot.info
+install -d -o root -g root -m 0755 "${D}/etc" "${D}/etc/terminfo"
 [ -f /usr/bin/tic ] && tic -o "${D}/etc/terminfo" -sx foot.info
 [ -f /usr/bin/x86_64-pc-linux-gnu-tic ] && x86_64-pc-linux-gnu-tic -o "${D}/etc/terminfo" -sx foot.info
+
 }
 #############

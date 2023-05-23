@@ -5,12 +5,12 @@
 [ -z "${interface}" ] || [ -z "${ip}" ] || [ -z "${subnet}" ] || [ -z "${router}" ] && return 1
 #############
 
- [ -z "${broadcast}" ] && broadcast="" || broadcast="broadcast ${broadcast}"
-
  ip link set down dev "${interface}"
  ip addr flush dev "${interface}"
 
- ip addr add "${ip}/${subnet}" ${broadcast} dev "${interface}"
+ [ -z "${broadcast}" ] && ip addr add "${ip}/${subnet}" dev "${interface}"
+ [ -z "${broadcast}" ] || ip addr add "${ip}/${subnet}" broadcast "${broadcast}" dev "${interface}"
+
  ip link set up "${interface}"
 
  ip route del default
@@ -25,7 +25,7 @@
 #############
 [ -L "/etc/resolv.conf" ] || ln -sf /run/resolv.conf /etc/resolv.conf
 #############
-[ -z "${dns}" ] || printf "" > /run/resolv.conf
+[ -z "${dns}" ] || install -o 68 -g 68 -m 0664 /dev/null /run/resolv.conf
 [ -z "${dns}" ] || for i in ${dns} ; do printf "%s\n" "nameserver ${i}" >> /run/resolv.conf ; done
 #############
 

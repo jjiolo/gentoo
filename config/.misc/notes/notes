@@ -26,39 +26,18 @@ stuff at the top is unordered raw sewage
 -------------
  lastest - 2023:04:18 17:20:00
 -------------
-
- built first time...
-
+ * linux-6.3 - hid bus update, dekstop mouse disabled ?
  * linux-6.2 - server CONFIG_DRM_AST, desktop wifi disconnects ?
- * app-alternatives - make.conf FEATURES='-collision-protect' < remove after its in stage3
- * qemu usb passthrough doesnt work...
- * ps-utils 4.0.3 - prints maximum elapsed time ? (screws up visual output)
- * app-misc/ca-certificates - > ca-certificates-2023:02:22
-
- * qemu-8.0.0 release candidate out...
-
--------------
-
- * gcc +hardened
- * glibc -custom_cflags
- * grub -Os -march=x86_64 ${TARGET_CFLAGS}
-
--------------
-
- * {gcc,binutils}-config -l updates on gcc or binhost ?
- ^ binhost updated automagically
-
+ * app-alternatives - make.conf FEATURES='-collision-protect' (remove after its in stage3)
 -------------
 
  * trim binhost/distfiles
 
- why - ash ./backup allofit
-       binhost upto 6GB in size
-       vfat 4GB file limit
+   why - ./backup all (binhost upto 6GB) (vfat 4GB limit)
 
- mv binhost/distfiles ../shared/distfiles
+   mv binhost/distfiles ../shared/distfiles
 
- config/portage/make.conf - GENTOO_MIRRORS=http://127.0.0.1/shared"
+   config/portage/make.conf - GENTOO_MIRRORS=http://127.0.0.1/shared"
   
 -------------
 #############
@@ -92,7 +71,7 @@ stuff at the top is unordered raw sewage
 [PROBLEMS]:
 #############
 * w.scan < - literally says dont attempt to parse the output 
-* inability to add wifi interfaces to bridges (breaks the ability to dedupe commands)
+* inability to add wifi interfaces to bridges (breaks ability to dedupe commands)
 * monitor diskio reads every drive then every block device doubling the values ? (sda && md127)
 * Xephyr, -auth fails silently and allows global access to :display
 * ebuild scheduled for merge, causes rebuilds (doesnt install into /binhost/rootfs?)
@@ -125,55 +104,127 @@ stuff at the top is unordered raw sewage
 v attempt to create lists of things to actually do
 
 #############
-threads="(grep -c MHz /proc/cpuinfo)" < - |wc -l is redundent
+
+ afk - partial update 22:05:2023 20:53:00
+
+#############
+
+ made ssh user
+ added dropbear to nobody...
+ fits in with user private stuff nobody / priv seperation public stuff ?
+
+sec-keys/openpgp-keys-{gentoo-auth,gentoo-developers,gentoo-release}
+
+#############
+
+ gcc-13 < - doesnt work ?
+
+ # gcc-config 2
+ # binutils-config 2
+ emerge -av =gcc-12.2.1_p20230428-r1
+ first.run
+
+ mod4 on server doesnt work ?
+
+ kernel 6.3.0 < - broke desktop mouse
+ kernel 6.2.0 < - broke server gpu
+
+ ^ fuck right off ? leaving >6.2.0 package.mask : /
+
+ 6.3 enabled CONFIG_SECRETMEM for no reason ?
+ 6.3 enabled I2C_ALGOBIT ? (virtual only ?)
+ CONFIG_INPUT_LEDS ? laptop let me turn it off ?
+
+#############
+
+ kernel bump... (6.1) (6.2) (6.3)
+
+   qemu bump... (big) (restart resizes vnc) (default devices is default emulated hardware)
+ auditd bump... (little)
+    vim bump...
+    git bump...
+
+#############
+
+ z.testing/server - setsid nesting ash /etc/services ?
+
+-------------
+
+ ash /etc/services/httpd/start < - hangs script
+
+ ash
+ -ash
+ --ash
+ ---ash
+
+ server #!/bin/sh
+ ash /etc/service/http/start
+ su -l -s /bin/ash
+
+ * switching ash for .
+ ^ removed a sub shell
+
+ ^ assuming something i dont understand ?
+
+-------------
+
+setpriv_tftpd - works in cli, hangs in a script ?
+
+        services - (su -l -s /bin/sh -c 'setsid <command> </dev/null &>/dev/null' <user>)
+self(foreground) - setsid setpriv <command>
+self(background) - setsid setpriv <command> </dev/null &>/dev/null &
+
+             cli - setsid command < - detaches
+          script - setsid command < - hangs
+
+^ setsid on cli detaches regardless of background...
+  setsid from a script hangs the script unless &...
+
+^ allows stdin / stdout ? cant really complain ?
+
+! still cant explain why...
+
+  doesnt need (command &) to double fork
+  assuming setsid & acts as a subshell ?
+
+-------------
+until pgrep -x <command> &>/dev/null ; do sleep .1 ; done
+-------------
+
+ [ssdd]
+
+  server calls ash /etc/services/httpd/start
+  ^ server hangs indefinintly
+
+-------------
 #############
 
 added wayland support...
 
+ * missing build dependency
+ - first run no keyboard input
+ - second run keyboard input
+
  seatd + wayland + wlroots + sway + foot
 
- sets_wayland - minimum install for desktop/terminal
- busybox_init - makes it bootable inside qemu
-
+ su -l -s /bin/sh -c 'setpriv seatd' desktop
  starting as none root without /dev/tty0 permissions...
  ^ keystrokes pass directly to starting tty ?
 
+ seatd -u toor -g toor
  starting as root works...
  ^ but then its running as root ?
 
-^ doesnt support any nested priv seperation easily ?
+^ doesnt support any nested priv seperation ?
+  temp group access to socket
   starting seatd inside itself as desktop ?
   starting sway inside itself as the same user ?
 
--------------
-
-imo its not viable
-
-current Xorg setup is pretty much fin
-
--------------
-
- current meson ebuilds...
- meson -C build -j16 -l16
- meson -C build ${MAKEOPTS}
-
--------------
-
-random notes...
-
- as root - allows tty change
- as root - binds to the tty used to start sway
-
- as desktop - cant change tty ?
- as desktop - passes all keyboard input 
-
--------------
-
 #############
 
+* meson still uses hardcoded job/load
 * running login when pids close ? (never used to)
-
-#############
+* firefox - still network activity on browser open...
 
 * remove kernel serial support...
 ^ inittab /dev/ttyS0 once (log spam)
@@ -191,31 +242,11 @@ random notes...
 
 #############
 
- df -h shows dev as used 0...
- ^ means size=0% should work can just add it to everything ?
-
-#############
-
- firefox -
-
-  still network activity on browser open...
-
-  network.trr.exclude-etc-hosts < - apparently fucked that up...
-  disabled cisco openh264 download ?
-  disabled app.normandy (c2 network)
-  disabled random prefetch
-  ^ point in policies, didnt full scope network prediction ?
-
-#############
-
  [busybox]
-
- * CONFIG_FEATURE_TAR_OLDGNU_COMPATIBILITY - 
- ^ couldnt unpack cryptsetup.tar.xz...
 
  -settings-
 
- * default stance enable all long options ?
+ * default - enable all long options
  ^ some binaries does nothing
    others get increased functionality
 
@@ -225,7 +256,6 @@ random notes...
  ? vi inline editing CONFIG_FEATURE_EDITING_VI
  ^ set -o vi (doesnt turn on when disabled)
  ^ (exists in set -o output regardless)
- ^^ want it on so its complete and not misleading ?
 
  * -werror - doesnt build
 
@@ -239,8 +269,6 @@ random notes...
 
  -archival utilities-
 
- * support old tar header format - make it legacy or die trying
-
  ? unzip - firmware files are always .zip encoded... gets annoying
 
  -coreutils-
@@ -248,18 +276,11 @@ random notes...
   * CONFIG_FEATURE_PRESERVE_HARDLINKS ?
   ^ mv does preserve hardlinks 
   ^ cp doesnt preserve hardlinks misleading ?
-  ^ tl;dr fuck hardlinks no visability and weird functionality
+  ^^ tl;dr fuck hardlinks no visability and weird functionality
 
   * copy long options --reflink (ext4 doesnt support it)
 
-  * cat tac rev fold head tail
-  ^ not disabling anything that allows output manipulation
-
   ? ls - fairly sure -w <width> doesnt do anything ?
-
-  * sha3sum - have all the rest ?
-
-  * sort - tiny version dont really have a lot of use for it ?
 
   ? head and tail - fancy output options dont match ?
 
@@ -268,17 +289,11 @@ random notes...
   ^ test --help would be awesome...
 
   ** touch - SUSV3 allows timestamps etc ?
-  *  find -mtime -atime -ctime -mmin -amin -cmin vs inotify vs auditd
-
-  ** have false for /etc/passwd shells dont have true ? works for set -e bypass ?
 
  -console utilities-
  -debian utilities-
 
-  * run-parts - technically awesome for cronjobs / config directories
-  ^ hard requirement for acpid ?
-
-  * which - use it alot ?
+  * run-parts - technically awesome for cronjobs / config directories (hard requirement for acpid)
 
  -klibc-utils-
  -editors-
@@ -289,8 +304,7 @@ random notes...
  -find utilities-
  -init utilities-
 
-  * linuxrc - remove pid1 check allow init as supervisor daemon in chroots ?
-  ^ busybox_init addition ?
+  ? linuxrc - remove pid1 check allow init as supervisor daemon in chroots ?
 
  -login/password management utilities-
  -linux ext2 fs progs-
@@ -305,9 +319,6 @@ random notes...
 
  * acpid - know what it does provides extra functionality ?
  * uevent - prints out udev information (suppose to be used with mdev)
- ^ duplication of dmesg output more info ?
- ? uevent | while read ; do poweroff ; done
- ^ any hotplug activity kill remote node
 
  * getopt isnt getopts ?
  ^ norm: enable shell built-in and applet
@@ -320,28 +331,18 @@ random notes...
 
  -misc utilities-
 
-  * less - alias less='less -m'
   * less - tell me cursor position (duplicate from settings on terminal resizing?)
   * microcom - used it to flash openwrt devices...
+
   * setfattr - edit xattrs on a file ? (drag and drop mode should be enabled to increase functionality) 
   ^ that reasoning would force chattr lsattr tune2fs etc for ext2 support ? bit meh
   ^ might have been a shit idea (touching filesystem would be unique to host else tmpfs doesnt have any of that ?)
   * drag and drop assumes ram only or target would have to have filesystem tools pre installed...
 
  -networking-
-
- * brctl fancy options ? dont know what any of them actually do ? so...
- * ether-wake ? drag and drop ping shit mode sort of functionality
- * dnsd ? drag and drop
- * fdtpd ? drag and drop
-
  -print utilities-
  -mail utilities-
  -process utilities-
-
- * fuser - show everyone with file or port open ?
- * iostat -d - shows all disks with current read write ?
-
  -runinit utilities-
  -shells-
 
@@ -349,19 +350,6 @@ random notes...
 
  -system logging utilities-
 
--------------
- long options
- zcat
- gzip
- tar
- chown
- install
- cp (turned on --reflink shallow cow copy ?)
- install
- run-parts
- diff
- wget
- nslookup
 -------------
   * echo -n -e 
   ^ check $variable with -tac fuck ups...
@@ -597,6 +585,7 @@ fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1
   proxy - single user mode proxy only
    jail - no internet + audio/video
 
+    ssh - 22
    smtp - 465,995
    http - 443
     irc - 6697
@@ -629,7 +618,7 @@ fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1
  p2pd
  sets
 -------------
- dbclient - user
+ dbclient - user,nobody
  smtp     - nobody,smtp
  http     - root,nobody,http
  p2p      - root,user,nobody

@@ -1,1 +1,3 @@
->=sys-kernel/linux-headers-6.2
+
+>=sys-devel/gcc-13
+

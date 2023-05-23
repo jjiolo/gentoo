@@ -1,0 +1,14 @@
+#!/bin/sh
+#############
+script -c 'emerge                     -avbkuDN --onlydeps @z.wayland' /tmp/wayland.host
+script -c 'emerge --root /run/wayland -avbkuDN --nodeps @z.wayland' /tmp/wayland.rootfs
+#############
+cp -a /lib64/libblkid.* /run/wayland/lib64
+cp -a /lib64/libmount.* /run/wayland/lib64
+#############
+install -d -o root -g root -m 0755 /run/wayland/usr/lib/locale
+cp -a /usr/lib/locale/locale-archive /run/wayland/usr/lib/locale
+#############
+install -o root -g root -m 0755 /etc/self/f.sets/sets_startw /run/wayland/usr/bin/startw
+#############
+

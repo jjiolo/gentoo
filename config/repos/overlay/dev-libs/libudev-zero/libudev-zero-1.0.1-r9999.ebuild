@@ -14,5 +14,5 @@ DEPEND="${RDEPEND}"
 #############
 src_configure(){ default ; }
 #############
-src_install(){ make DESTDIR="${D}" PREFIX="/usr" LIBDIR="/usr/lib64" install ; }
+src_install(){ make DESTDIR="${D}" PREFIX="/usr" LIBDIR="/usr/lib64" install || die "install failed" ; }
 #############

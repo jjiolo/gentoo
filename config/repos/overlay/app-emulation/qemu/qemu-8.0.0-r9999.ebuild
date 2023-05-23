@@ -27,18 +27,20 @@ src_configure(){
 ./configure --static \
 --prefix=/usr \
 --target-list=x86_64-softmmu \
---disable-sanitizers \
+--disable-werror \
 --disable-tsan \
+--disable-sanitizers \
 --enable-stack-protector \
 --audio-drv-list= \
---block-drv-rw-whitelist=file,raw \
 --block-drv-ro-whitelist=file,raw \
+--block-drv-rw-whitelist=file,raw \
 --enable-block-drv-whitelist-in-tools \
 --disable-plugins \
 --enable-lto \
 --disable-cfi \
---disable-cfi-debug \
 --disable-coroutine-pool \
+--disable-hexagon-idef-parser \
+--disable-tcg-interpreter \
 --enable-fdt=internal \
 --enable-malloc=system \
 \
@@ -46,6 +48,7 @@ src_configure(){
 --disable-attr \
 --disable-auth-pam \
 --disable-avx2 \
+--disable-avx512bw \
 --disable-avx512f \
 --disable-blkio \
 --disable-bochs \
@@ -84,6 +87,7 @@ src_configure(){
 --enable-kvm \
 --disable-l2tpv3 \
 --disable-libdaxctl \
+--disable-libdw \
 --disable-libiscsi \
 --disable-libnfs \
 --disable-libpmem \
@@ -135,17 +139,16 @@ src_configure(){
 --disable-usb-redir \
 --disable-vde \
 --disable-vdi \
+--disable-vduse-blk-export \
 --disable-vfio-user-server \
 --disable-vhost-crypto \
 --disable-vhost-kernel \
 --disable-vhost-net \
 --disable-vhost-user \
 --disable-vhost-user-blk-server \
---disable-vduse-blk-export \
 --disable-vhost-vdpa \
 --disable-virglrenderer \
 --disable-virtfs \
---disable-virtiofsd \
 --disable-vmnet \
 --enable-vnc \
 --enable-vnc-jpeg \

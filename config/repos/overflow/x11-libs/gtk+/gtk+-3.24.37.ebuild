@@ -18,7 +18,7 @@ REQUIRED_USE="
 "
 RESTRICT="!test? ( test )"
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 
 COMMON_DEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0[introspection?,${MULTILIB_USEDEP}]
@@ -33,7 +33,7 @@ COMMON_DEPEND="
 	>=x11-libs/pango-1.44.0[introspection?,${MULTILIB_USEDEP}]
 	x11-misc/shared-mime-info
 
-	cloudproviders? ( net-libs/libcloudproviders )
+	cloudproviders? ( net-libs/libcloudproviders[${MULTILIB_USEDEP}] )
 	colord? ( >=x11-misc/colord-0.1.9:0=[${MULTILIB_USEDEP}] )
 	cups? ( >=net-print/cups-2.0[${MULTILIB_USEDEP}] )
 	introspection? ( >=dev-libs/gobject-introspection-1.39:= )
@@ -68,11 +68,11 @@ RDEPEND="${COMMON_DEPEND}
 	>=dev-util/gtk-update-icon-cache-3
 "
 # librsvg for svg icons (PDEPEND to avoid circular dep), bug #547710
-#PDEPEND="
-#	gnome-base/librsvg[${MULTILIB_USEDEP}]
-#	>=x11-themes/adwaita-icon-theme-3.14
-#	vim-syntax? ( app-vim/gtk-syntax )
-#"
+PDEPEND="
+	gnome-base/librsvg[${MULTILIB_USEDEP}]
+	>=x11-themes/adwaita-icon-theme-3.14
+	vim-syntax? ( app-vim/gtk-syntax )
+"
 BDEPEND="
 	app-text/docbook-xml-dtd:4.1.2
 	app-text/docbook-xsl-stylesheets

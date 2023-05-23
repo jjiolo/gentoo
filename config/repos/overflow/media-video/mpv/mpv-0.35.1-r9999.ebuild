@@ -39,7 +39,7 @@ DEPEND="${RDEPEND}"
 #############
 src_configure() {
 
-install -o portage -g portage -m 0755 "${DISTDIR}/waf"* "${S}/waf" || die
+install -o portage -g portage -m 0755 "${DISTDIR}/waf"* "${S}/waf" || die "waf failed"
 
 ./waf configure \
 --progress \
@@ -118,7 +118,7 @@ install -o portage -g portage -m 0755 "${DISTDIR}/waf"* "${S}/waf" || die
 --disable-cocoa \
 --disable-drm \
 --disable-gbm \
---enable-wayland \
+--disable-wayland \
 --enable-x11 \
 --disable-xv \
 --disable-gl-cocoa \
@@ -127,7 +127,7 @@ install -o portage -g portage -m 0755 "${DISTDIR}/waf"* "${S}/waf" || die
 --disable-egl \
 --disable-egl-x11 \
 --disable-egl-drm \
---enable-gl-wayland \
+--disable-gl-wayland \
 --disable-gl-win32 \
 --disable-gl-dxinterop \
 --disable-egl-angle \
@@ -170,8 +170,13 @@ install -o portage -g portage -m 0755 "${DISTDIR}/waf"* "${S}/waf" || die
 
 }
 #############
-src_compile(){ ./waf build ; }
+src_compile(){ ./waf build || die "compile failed" ; }
 #############
-src_install(){ ./waf --destdir="${D}" install ; }
+#src_install(){ ./waf --destdir="${D}" install || die "install failed" ; }
+#############
+src_install(){
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
+install    -o root -g root -m 0755 "build/mpv" "${D}/usr/bin"
+}
 #############
 

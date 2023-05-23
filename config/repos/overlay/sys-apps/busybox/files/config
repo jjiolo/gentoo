@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Busybox version: 1.36.0
-# Mon Apr 10 14:50:17 2023
+# Sun May  7 13:53:48 2023
 #
 CONFIG_HAVE_DOT_CONFIG=y
 
@@ -284,7 +284,7 @@ CONFIG_MD5SUM=y
 CONFIG_SHA1SUM=y
 CONFIG_SHA256SUM=y
 CONFIG_SHA512SUM=y
-CONFIG_SHA3SUM=y
+# CONFIG_SHA3SUM is not set
 
 #
 # Common options for md5sum, sha1sum, sha256sum, sha512sum, sha3sum

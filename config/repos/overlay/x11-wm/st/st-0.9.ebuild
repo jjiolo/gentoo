@@ -34,10 +34,13 @@ sed -i 's/it#8,/it#2,/' st.info
 }
 #############
 src_install() {
+
 install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
-install -d -o root -g root -m 0755 "${D}/etc" "${D}/etc/terminfo"
 install    -o root -g root -m 0755 "st" "${D}/usr/bin" || die "install failed"
+
+install -d -o root -g root -m 0755 "${D}/etc" "${D}/etc/terminfo"
 [ -f /usr/bin/tic ] && tic -o "${D}/etc/terminfo" -sx st.info
 [ -f /usr/bin/x86_64-pc-linux-gnu-tic ] && x86_64-pc-linux-gnu-tic -o "${D}/etc/terminfo" -sx st.info
+
 }
 #############

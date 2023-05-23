@@ -5,7 +5,12 @@
 
 #############
 
- [ -f "${mount}/stage3" ] || { qemu-img create -f raw "${mount}/stage3" 47G ; mkfs.ext4 -m 0 -L "stage3" "${mount}/stage3" ; }
+ [ -f "${mount}/stage3" ] || {
+
+  qemu-img create -f raw "${mount}/stage3" 47G
+  mkfs.ext4 -m 0 -L "stage3" "${mount}/stage3"
+
+ }
 
 #############
 
@@ -18,7 +23,7 @@
 
  rmdir "${stage3}/lost+found"
 
- dtach -A "${stage3}/.socket" /bin/ash -l
+ exec dtach -A "${stage3}/.socket" /bin/ash -l
 
 #############
 

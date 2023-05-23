@@ -144,5 +144,5 @@ no-sm4 \
 no-whirlpool
 }
 #############
-src_install(){ make DESTDIR="${D}" install_sw install_ssldirs ; rm "${D}/usr/bin/c_rehash" ; }
+src_install(){ make DESTDIR="${D}" install_sw install_ssldirs || die "install failed" ; rm "${D}/usr/bin/c_rehash" ; }
 #############

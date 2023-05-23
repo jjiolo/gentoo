@@ -2,10 +2,10 @@
 #############
 debug(){ printf "%s\n" "debug - ${1}" ; exit 1 ; }
 #############
-[ "${USER}" == "root" ] || debug "requires root"
-#############
 user="xmr"
 display="18081"
+#############
+[ "${USER}" == "root" ] || debug "requires root"
 #############
 [ -f "/tmp/.X0-lock"  ] || debug "xorg server not running"
 [ -f "/tmp/.X${display}-lock" ] && debug "Xephyr server already running"
@@ -15,6 +15,7 @@ printf "%s\n" "add :${display} . $(hexdump -n16 -ve '1/1 "%02x"' /dev/urandom)"|
 chown "desktop:${user}" "/tmp/.X${display}-auth"
 chmod 0640 "/tmp/.X${display}-auth"
 #############
+
 su -l -s /bin/ash desktop << EOF
 DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth \
 setsid Xephyr \
@@ -39,15 +40,18 @@ setsid Xephyr \
 -resizeable -no-host-grab \
 :${display} </dev/null &>/dev/null & exit
 EOF
-#############
-until [ -f "/tmp/.X${display}-lock" ];do sleep .1;done
-#############
 
 #############
- su -l -s /bin/ash -c "DISPLAY=:${display} XAUTHORITY=/tmp/.X${display}-auth setsid dwm-guest </dev/null &>/dev/null & exit" "${user}"
+
+until [ -f "/tmp/.X${display}-lock" ];do sleep .1;done
+
 #############
-#su -l -s /bin/ash -c "DISPLAY=:${display} XAUTHORITY=/tmp/.X${display}-auth setsid st </dev/null &>/dev/null & exit" "${user}"
+
+su -l -s /bin/ash -c "DISPLAY=:${display} XAUTHORITY=/tmp/.X${display}-auth setsid dwm-guest </dev/null &>/dev/null & exit" "${user}"
+
 #############
+
 renice +20 -u "${user}"
+
 #############
 

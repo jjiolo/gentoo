@@ -14,6 +14,6 @@ DEPEND="${RDEPEND}"
 #############
 src_install(){
  install -d -o root -g root -m 0755 "${D}/bin"
- install    -o root -g root -m 0755 "dtach" "${D}/bin/dtach"
+ install    -o root -g root -m 0755 "dtach" "${D}/bin/dtach" || die "install failed"
 }
 #############

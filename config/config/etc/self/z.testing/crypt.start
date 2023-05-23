@@ -22,6 +22,8 @@ mountpoint -q "${mount}" && usage "mount already in use"
 
 [ "${#}" == "2" ] && {
 
+ lsblk
+
  read -rp "about to nuke ${1}"
 
  cryptsetup open --key-file /dev/urandom --type plain "${1}" wipe
@@ -31,16 +33,16 @@ mountpoint -q "${mount}" && usage "mount already in use"
 }
 
 #############
-read -rsp 'passphrase > ' passphrase
+read -rsp 'passphrase > ' passphrase ; echo
 uuid="$(hexdump -n32 -ve '1/1 "%02x"' "${1}")"
 threads="$(grep -c MHz /proc/cpuinfo)"
 #############
 printf "%s" "${passphrase}" | argon2 "${uuid}" -id -t 3 -m 12 -p "${threads}" -r |
 cryptsetup --key-file - --hash sha256 --cipher aes-cbc-essiv:sha256 --key-size 256 --offset 1 open --type plain "${1}" "mount.crypt" || usage "cryptsetup failed"
 #############
-[ "${#}" == "2" ] && { integritysetup format --batch-mode --integrity sha256 "/dev/mapper/mount.crypt" || usage "integritysetup failed" ; }
-[ "${#}" == "2" ] && { integritysetup open --batch-mode --integrity sha256 "/dev/mapper/mount.crypt" "mount.integrity" || usage "integritysetup failed" ; }
-[ "${#}" == "1" ] && { integritysetup open --batch-mode --integrity sha256 "/dev/mapper/mount.crypt" "mount.integrity" || usage "integritysetup failed" ; }
+[ "${#}" == "2" ] && { integritysetup format --integrity sha256 "/dev/mapper/mount.crypt" || usage "integritysetup failed" ; }
+[ "${#}" == "2" ] && { integritysetup open --integrity sha256 "/dev/mapper/mount.crypt" "mount.integrity" || usage "integritysetup failed" ; }
+[ "${#}" == "1" ] && { integritysetup open --integrity sha256 "/dev/mapper/mount.crypt" "mount.integrity" || usage "integritysetup failed" ; }
 #############
 [ "${#}" == "2" ] && { mkfs.ext2 -m 0 -L mount "/dev/mapper/mount.integrity" || usage "mkfs failed"; }
 [ "${#}" == "1" ] && { fsck.ext2 -pvf "/dev/mapper/mount.integrity" ; fsck.ext2 -pv "/dev/mapper/mount.integrity" || usage "fsck failed"; }

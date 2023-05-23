@@ -18,7 +18,7 @@ chmod 0640 /tmp/.X0-auth
 
 su -l -s /bin/ash desktop << EOF
 DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth \
-setsid xinit /etc/xinitrc -- /usr/bin/X -s 0 \
+setsid xinit /etc/xinitrc -- /usr/bin/X \
 -extension 'Generic Event Extension' \
 -extension 'MIT-SHM' \
 -extension 'XTEST' \
@@ -35,8 +35,8 @@ setsid xinit /etc/xinitrc -- /usr/bin/X -s 0 \
 -extension 'X-Resource' \
 -extension 'XVideo' \
 -extension 'XVideo-MotionCompensation' \
+-s 0 -auth /tmp/.X0-auth -logfile /tmp/.X0-log \
 -nolisten tcp -nolisten unix -listen local \
--auth /tmp/.X0-auth -logfile /tmp/.X0-log \
 vt7 :0 </dev/null &>/dev/null & exit
 EOF
 

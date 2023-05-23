@@ -3,7 +3,6 @@ app-crypt/argon2
 app-crypt/cryptsetup
 app-crypt/gnupg
 app-crypt/gpgme
-app-crypt/monero
 sec-keys/openpgp-keys-gentoo-release
 app-crypt/pinentry
 app-editors/vim
@@ -29,6 +28,7 @@ net-libs/libnftnl
 net-libs/miniupnpc
 net-misc/curl
 net-misc/dropbear
+net-p2p/monero
 net-p2p/transmission
 net-vpn/tor
 net-vpn/torsocks

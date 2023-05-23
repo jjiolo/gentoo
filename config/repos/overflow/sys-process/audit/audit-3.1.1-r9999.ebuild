@@ -51,13 +51,13 @@ src_configure(){
 #############
 src_install() {
 install -d -o root -g root -m 0755 "${D}/bin" "${D}/sbin"
-install    -o root -g root -m 0755 "src/.libs/auditd" "${D}/sbin"
-install    -o root -g root -m 0755 "src/.libs/auditctl" "${D}/sbin"
-install    -o root -g root -m 0755 "src/.libs/aureport" "${D}/sbin"
-install    -o root -g root -m 0755 "src/.libs/ausearch" "${D}/sbin"
+install    -o root -g root -m 0755 "src/.libs/auditd" "${D}/sbin" || die "install failed"
+install    -o root -g root -m 0755 "src/.libs/auditctl" "${D}/sbin" || die "install failed"
+install    -o root -g root -m 0755 "src/.libs/aureport" "${D}/sbin" || die "install failed"
+install    -o root -g root -m 0755 "src/.libs/ausearch" "${D}/sbin" || die "install failed"
 install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/lib64"
-install    -o root -g root -m 0755 lib/.libs/libaudit.so* "${D}/usr/lib64"
-install    -o root -g root -m 0755 auparse/.libs/libauparse.so* "${D}/usr/lib64"
+install    -o root -g root -m 0755 lib/.libs/libaudit.so* "${D}/usr/lib64" || die "install failed"
+install    -o root -g root -m 0755 auparse/.libs/libauparse.so* "${D}/usr/lib64" || die "install failed"
 }
 #############
 

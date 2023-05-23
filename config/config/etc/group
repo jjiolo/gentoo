@@ -18,9 +18,9 @@ tftpd:x:69:
 ntpd:x:123:
 
 httpd:x:80:
-p2pd:x:9091:user,nobody
-ircd:x:6667:
+p2pd:x:9091:nobody
 
+ssh:x:22:
 smtp:x:465:
 http:x:443:
 irc:x:6697:
