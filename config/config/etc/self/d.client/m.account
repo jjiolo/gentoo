@@ -2,7 +2,7 @@
 #############
 set realname="example"
 set from="example@gmail.com"
-set hostname=""
+set hostname="localhost"
 #############
 set pop_host="pops://pop.gmail.com:995"
 set pop_pass="password"

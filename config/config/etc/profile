@@ -103,6 +103,7 @@ renice -10 -u ntpd    2>/dev/null
 renice +10 -u httpd   2>/dev/null
 renice +10 -u p2pd    2>/dev/null
 
+renice +20 -u ssh     2>/dev/null
 renice +20 -u smtp    2>/dev/null
 renice +20 -u http    2>/dev/null
 renice +20 -u irc     2>/dev/null

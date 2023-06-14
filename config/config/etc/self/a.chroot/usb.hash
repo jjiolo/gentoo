@@ -1,0 +1,18 @@
+#!/bin/sh
+#############
+cd "/tmp/a.bootfs" || exit ; echo '#############'
+#############
+
+#############
+[ -f "EFI/boot/bootx64.efi" ] && openssl sha256 "EFI/boot/bootx64.efi" | tee "hashes" || printf "%s\n" "SHA2-256(EFI/boot/bootx64.efi)= missing" | tee -a "hashes" ; echo '#############'
+#############
+                       for i in client ; do [ -f "images/${i}" ] && openssl sha256 "images/${i}" | tee -a "hashes" || printf "%s\n" "SHA2-256(images/${i})= missing" | tee -a "hashes" ; done ; echo '#############'
+for i in desktop laptop server virtual ; do [ -f "kernels/${i}" ] && openssl sha256 "kernels/${i}" | tee -a "hashes" || printf "%s\n" "SHA-256(kernels/${i})= missing" | tee -a "hashes" ; done ; echo '#############'
+#############
+                          for i in .client ; do [ -f "images/${i}" ] && openssl sha256 "images/${i}" | tee -a "hashes" || printf "%s\n" "SHA2-256(images/${i})= missing" | tee -a "hashes" ; done ; echo '#############'
+for i in .desktop .laptop .server .virtual ; do [ -f "kernels/${i}" ] && openssl sha256 "kernels/${i}" | tee -a "hashes" || printf "%s\n" "SHA-256(kernels/${i})= missing" | tee -a "hashes" ; done ; echo '#############'
+#############
+for i in config.tar.gz config.torrent ; do [ -f "${i}" ] && openssl sha256 "${i}" | tee -a "hashes" || printf "%s\n" "SHA-256(${i})= missing" | tee -a "hashes" ; done ; echo '#############'
+#############
+[ -f "binhost.tar.gz" ] && openssl sha256 binhost.tar.gz | tee -a "hashes" || printf "%s\n" "SHA-256(binhost.tar.gz)= missing" | tee -a "hashes" ; echo '#############'
+#############

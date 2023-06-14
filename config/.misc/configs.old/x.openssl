@@ -9,7 +9,7 @@
 # -type f
 # -name DEPEND
 # -exec grep -Hi openssl {} \; |
-# less -S
+# cut -d ':' -f1 | less
 
 #############
 

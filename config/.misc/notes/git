@@ -1,6 +1,18 @@
 
 #############
 
+  cd git-A.B.C ; ./configure.sh > configure.sh
+  cd git-X.Y.Z ; ./configure.sh > configure.sh
+
+  diff git-A.B.C/configure.sh git-X.Y.Z/configure.sh
+
+  cd git-A.B.C ; find . -type f -exec grep -H YesPlease {} \; > ffs
+  cd git-X.Y.Z ; find . -type f -exec grep -H YesPlease {} \; > ffs
+
+  diff git-A.B.C/ffs git-X.Y.Z/ffs
+
+#############
+
  has NO_ICONV
      NO_INTL ? NO_GETTEXT implies no libintl (having it uses it)
 

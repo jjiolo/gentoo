@@ -24,21 +24,17 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:04:18 17:20:00
+ lastest - 2023:06:14 08:33:33
 -------------
- * linux-6.3 - hid bus update, dekstop mouse disabled ?
- * linux-6.2 - server CONFIG_DRM_AST, desktop wifi disconnects ?
- * app-alternatives - make.conf FEATURES='-collision-protect' (remove after its in stage3)
+ * linux-6.3 - current
+ * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
+ ^ X0-log - ShadowFB: preferred NO, enabled NO (something about no/modesetting)
+ * app-alternatives - FEATURES='-collision-protect' (remove after its in stage3)
 -------------
-
  * trim binhost/distfiles
-
-   why - ./backup all (binhost upto 6GB) (vfat 4GB limit)
-
-   mv binhost/distfiles ../shared/distfiles
-
-   config/portage/make.conf - GENTOO_MIRRORS=http://127.0.0.1/shared"
-  
+    ./backup all (binhost upto 6GB) (vfat 4GB limit)
+    mv binhost/distfiles ../shared/distfiles
+    config/portage/make.conf - GENTOO_MIRRORS=http://127.0.0.1/shared"
 -------------
 #############
 
@@ -90,7 +86,7 @@ stuff at the top is unordered raw sewage
 [CURRENT]
 #############
 
-[tracking changes]
+ [tracking changes]
 
  sh .diff - prints diff for every directory (using /etc/config.tar.gz)
 
@@ -98,129 +94,167 @@ stuff at the top is unordered raw sewage
  to much half arsed shit compounding over time
  proof reads are harder than doing partial updates properly
 
+ -------------
+
+ [updating]
+
+ full scope it once,
+ diff last known against newest
+ ./sysctl -a > sysctl.sh
+ ./configure --help > configure.sh
+ ./binary --help > binary.sh
+ ./{man,doc}
+ 1 hour upfront , 5 minutes each bump
+
+ -------------
+
+ [reduce]
+
+  ./z.package <package>
+  ./z.contents <package>
+  ./z.library <libpackage>
+ * contents pull library names
+ * check the package is in DEPENDS
+ * check the library is used in REQUIRES
+ * dependencies that dont link to anything eg x11-misc/compose-tables
+
+ * /binhost/rootfs/{bin,sbin,usr/bin,usr/sbin}/* --help > old/<command>.help
+ * /binhost/rootfs/{bin,sbin,usr/bin,usr/sbin}/* --help > new/<command>.help
+ ^ quickest way to list any binary changes from updates ?
+
+ -------------
+
 #############
 
 ^ attempt to record a list of things actually done
 v attempt to create lists of things to actually do
 
 #############
+gcc - removed /etc/portage symlink ?
+#############
+src/feature.h - VIMRC_FILE = name of vimrc file in current directory
+^ still global paths / home paths / cwd paths
+^ with remote code execution in the config file ?
+#############
+* sec-keys/openpgp-keys-gentoo-{auth,release,developers}
+   sec-keys/openpgp-keys-gentoo-release-20230329
+    curl -o /usr/share/openpgp-keys/gentoo-release.asc https://dev.gentoo.org/~mgorny/dist/openpgp-keys/gentoo-release.asc.${PV}.gz
+   sec-keys/openpgp-keys-gentoo-auth-20230329
+    curl -o /usr/share/openpgp-keys/gentoo-auth.asc https://dev.gentoo.org/~mgorny/dist/openpgp-keys/gentoo-auth.asc.${PV}.gz"
+   sec-keys/openpgp-keys-gentoo-developers-20230515
+    curl -o /usr/share/openpgp-keys/gentoo-developers.asc https://qa-reports.gentoo.org/output/active-devs.gpg
+#############
+ add integrity to secondary usb ?
+ crypt.start /dev/sdc
+ integrity.start /dev/sdc
+#############
+ chromium && discord
 
- afk - partial update 22:05:2023 20:53:00
+ LD_PRELOAD_PATH=/tmp/storage/services/sets/discord:/usr/lib64/firefox
+ libgbm - media-libs/mesa
+ libcups - net-printer/cups
+ libxkbcommon - x11-libs/libxkbcommon
+
+ cups --with-components={all,core,libcups,libcupslite}
+ all - everything
+ core - libcups ipptool
+ libcups - libcups
+ libcupslite - libcups without drivers
+
+ ^ requires libcups libcupslite doesnt have ppdOpenFd()
 
 #############
 
- made ssh user
- added dropbear to nobody...
- fits in with user private stuff nobody / priv seperation public stuff ?
-
-sec-keys/openpgp-keys-{gentoo-auth,gentoo-developers,gentoo-release}
+ swap zram zramctl
+  0) remove the lot
+  1) add it to init, add it to build system
 
 #############
 
- gcc-13 < - doesnt work ?
+  ldns - undefined reference to ui_openssl
 
- # gcc-config 2
- # binutils-config 2
- emerge -av =gcc-12.2.1_p20230428-r1
- first.run
+  maradns - deadwood > maradns (disable coLunacyDNS lua)
+  dnrd
+  pdnsd
+  sed -i '36i\#include <linux/if.h>' src/conff.h
+  sed -i '31i\#include <linux/if.h>' src/dns.h
+
+#############
+
+#############
+
+ [read vs read -r]
+
+ -r --raw < - interpret backslashes literally
+              rather than as escape characters
+ ? variable holds backslash rather than stripping ? or changing them to literal characters ?
+
+ read -r leaves backslashes in ?
+ cant get it to actually interpret them from input
+
+[mutt]
+
+ hostname='localhost' - hides /proc/sys/kernel/hostname
+ ^ gmail forwards incoming ip address (last leak)
+
+  muttrc is fucking brutal
+  easy to fake emails
+^ set encode_from="yes"
+
+  pop_authenticators="user" < - login without sasl
+  smtp_authenticators="login" < - forces sasl...
+
+#############
+made ssh user
+added dropbear to nobody...
+removed sound from server
+qemu reboot - changes vnc output size
+busybox ar - allows extracting .debs (still needs unzip for firmware?)
+usb.{hash,check} - verify usb hasnt corrupted
+vim -p /tmp/a.bootfs/{.hashes,hashes} + (ctrl+n ctrl+p)
+sets_wayland works - (cant priv drop, cant nested priv drop)
+{storage.fde,crypt.start,crypt.stop} added integritysetup
+zramctl + mkswap support
+libcurl needed unix socket support for transmission
+fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1)
+#############
+
+ cant mpv.music - without 127.0.0.1 access (jail cant music)
+ ^ dtach -A socket mpv.music 127.0.0.1
+   dtach -A socket mpv.music /tmp/storage/shared/archive/music
+   empty input default to local ? mpv.{downloads,music,series,films}
+
+ use zramctl + ext2/ext4 for /dev/shm /tmp mounts ? (or delete the lot of it increased attack surface)
+
+ storage.fde - bailed on fsck then deletes device instead of allowing manual recovery (annoying)
+ ^ integrity journal + ext2
+ ^ integrity journal + ext4 journal ?
+ ^ integrity journal + mdadm journal + ext2
+ ^ integrity journal + mdadm journal + ext4 journal ?
+
+ SETPRIV_UDHCPD - now breaks on server start ?
+
+ sec-keys/openpgp-keys-{gentoo-auth,gentoo-developers,gentoo-release}
+ ^ easy ebuild to download the key files hosted on dev.gentoo.org ?
+
+ make nftables examples - connlimit / rate limit
+
+ toybox - 
+
+ tor - 0.4.8.1 alpha
+
+ openssl - didnt finish 3.1.1
 
  mod4 on server doesnt work ?
 
- kernel 6.3.0 < - broke desktop mouse
- kernel 6.2.0 < - broke server gpu
+ openssl - test no-depreacted / reduction
 
- ^ fuck right off ? leaving >6.2.0 package.mask : /
-
- 6.3 enabled CONFIG_SECRETMEM for no reason ?
- 6.3 enabled I2C_ALGOBIT ? (virtual only ?)
- CONFIG_INPUT_LEDS ? laptop let me turn it off ?
-
-#############
-
- kernel bump... (6.1) (6.2) (6.3)
-
-   qemu bump... (big) (restart resizes vnc) (default devices is default emulated hardware)
- auditd bump... (little)
-    vim bump...
-    git bump...
-
-#############
+ busybox - support gzip content encoding, if client supports it, if file.gz exists
+           gzip -c index > index.gz ; curl -I --compressed 127.0.0.1
 
  z.testing/server - setsid nesting ash /etc/services ?
 
--------------
-
- ash /etc/services/httpd/start < - hangs script
-
- ash
- -ash
- --ash
- ---ash
-
- server #!/bin/sh
- ash /etc/service/http/start
- su -l -s /bin/ash
-
- * switching ash for .
- ^ removed a sub shell
-
- ^ assuming something i dont understand ?
-
--------------
-
-setpriv_tftpd - works in cli, hangs in a script ?
-
-        services - (su -l -s /bin/sh -c 'setsid <command> </dev/null &>/dev/null' <user>)
-self(foreground) - setsid setpriv <command>
-self(background) - setsid setpriv <command> </dev/null &>/dev/null &
-
-             cli - setsid command < - detaches
-          script - setsid command < - hangs
-
-^ setsid on cli detaches regardless of background...
-  setsid from a script hangs the script unless &...
-
-^ allows stdin / stdout ? cant really complain ?
-
-! still cant explain why...
-
-  doesnt need (command &) to double fork
-  assuming setsid & acts as a subshell ?
-
--------------
-until pgrep -x <command> &>/dev/null ; do sleep .1 ; done
--------------
-
- [ssdd]
-
-  server calls ash /etc/services/httpd/start
-  ^ server hangs indefinintly
-
--------------
-#############
-
-added wayland support...
-
- * missing build dependency
- - first run no keyboard input
- - second run keyboard input
-
- seatd + wayland + wlroots + sway + foot
-
- su -l -s /bin/sh -c 'setpriv seatd' desktop
- starting as none root without /dev/tty0 permissions...
- ^ keystrokes pass directly to starting tty ?
-
- seatd -u toor -g toor
- starting as root works...
- ^ but then its running as root ?
-
-^ doesnt support any nested priv seperation ?
-  temp group access to socket
-  starting seatd inside itself as desktop ?
-  starting sway inside itself as the same user ?
-
-#############
+ etc/services/<service>/<start> - until pgrep -x <command> &>/dev/null ; do sleep .1 ; done ; renice -u <user> -20
 
 * meson still uses hardcoded job/load
 * running login when pids close ? (never used to)
@@ -229,43 +263,57 @@ added wayland support...
 * remove kernel serial support...
 ^ inittab /dev/ttyS0 once (log spam)
 
-#############
+ * /init /etc/inittab /etc/init /etc/profile - debug output ?
+ 
+ * tftpd -l cant write log files ?
+ 
+ * qemu usb pass through no longer works ?
 
- * cryptsetup/integrity setup...
- ^ crypt.{start,stop}
- ^ storage.fde...
+ * v.client v.server - save .vpn/config nothing to actually use it ? v.{server,client,flush,restore?}
 
- * multiple journals mode
-   journal/bitmap blargh
+ * dtach cant recreate socket ? SIGHUP ignored SIGUSR1 terminates running process
+ * identify dtach from PS1 - shlvl ?
+ * identify mtm from PS1 - $MTM
 
-   current assumption mkfs.ext2 ontop of integrity journal ?
+ * mutt smtp still exposes ip/hostname in headers ? (sending From username $(date) as  well ?)
+
+ * ca-certificates updates - forced to delete manifest
+
+* pkill -x /sbin/<thing> needs pkill -x <thing> ? (only matching wrappers)
+  ^ fucks up accidently killing partial matches... (probably worse ?)
+
+ * httpd/gitd - services/httpd/start GIT_PROJECT_ROOT=/tmp/storage/.git GIT_HTTPD_EXPORT_ALL=
+
+ * grub ebuild ? finishes off udhcpd/tftpd/grub kernel/initramfs/nfsd
+
+ * tor DisableAllSwap as none root...( didnt stderr, used address sanitizer ? shouldnt have executed at all) 
+ ^ test expensive/fragile without DisableAllSwap ?
+
+ * herbe needs /dev/shm/$USER splitting (doesnt support multiplayer) (logread|grep -f file|while read ; do herbe "notifcation" ; done
+ ^ desktop:desktop /dev/shm/desktop.tmp < - herbe as a single user
 
 #############
 
  [busybox]
 
- -settings-
+ * -werror - doesnt build
 
  * default - enable all long options
- ^ some binaries does nothing
+ ^ some binaries do nothing
    others get increased functionality
 
- + more verbose copy error messages - why not ?
- + ioctl names > hex values - why not ? (never seen any of them)
-
- ? vi inline editing CONFIG_FEATURE_EDITING_VI
+ - vi inline editing CONFIG_FEATURE_EDITING_VI
  ^ set -o vi (doesnt turn on when disabled)
  ^ (exists in set -o output regardless)
 
- * -werror - doesnt build
-
+ * track window size changes FEATURE_EDITING_WINCH - turned on the PS1 reprint disabled
  ? query cursor position from terminal
  ^ settings claims 'more robust'
  ^ vi claims last ditch effort
  ^ less claims last ditch effort
- ^^ made it uniform
+ ^^ made it uniform (global+vi+less)
 
- * unicode support - stop printing dump characters on output
+ * unicode support - stop printing dumb characters on output
 
  -archival utilities-
 
@@ -299,7 +347,6 @@ added wayland support...
  -editors-
 
   * diff long options - doesnt do anything
-  * vi tell me cursor position (duplicate from settings on terminal resizing?)
 
  -find utilities-
  -init utilities-
@@ -331,13 +378,7 @@ added wayland support...
 
  -misc utilities-
 
-  * less - tell me cursor position (duplicate from settings on terminal resizing?)
   * microcom - used it to flash openwrt devices...
-
-  * setfattr - edit xattrs on a file ? (drag and drop mode should be enabled to increase functionality) 
-  ^ that reasoning would force chattr lsattr tune2fs etc for ext2 support ? bit meh
-  ^ might have been a shit idea (touching filesystem would be unique to host else tmpfs doesnt have any of that ?)
-  * drag and drop assumes ram only or target would have to have filesystem tools pre installed...
 
  -networking-
  -print utilities-
@@ -347,8 +388,25 @@ added wayland support...
  -shells-
 
  * CONFIG_FEATURE_SH_NOFORK - may significantly speed up shell scripts ?
+ ^ grep APPLET_NOFORK include/applets.h | grep ^IF | wc -l == 40 applets only ?
 
  -system logging utilities-
+
+-------------
+
+ busybox
+  doesnt need
+   libcrypt
+   libm
+   librt
+  needs
+   libresolv
+
+ ^ login/password management utilities - internal crypt stuff removed dependencies
+
+ ? more than nslookup using libresolv... (it uses internal code?)
+
+ ^ qemu silently linking to glibc for alot of libraries...
 
 -------------
   * echo -n -e 
@@ -366,6 +424,10 @@ added wayland support...
    swapon /dev/zram0
    zramctl ; cat /proc/swaps ; free -h
 
+   zramctl /dev/zram1 -s 1G
+   mkfs.ext4 /dev/zram1
+   mount /dev/zram1 /dev/shm
+
  cryptographic api - > compression - > lzo
  CONFIG_CRYPTO_LZO
 
@@ -379,33 +441,6 @@ added wayland support...
 
  CONFIG_ZSWAP - does the above for block device or file ?
               using it for zram would double memory use ?
-
-#############
-
-[kernel]
-
-* virtual - CONFIG_COMMON_CLK disabled...
-
-* networking options - >
-   network packet filtering framework - >
-    core netfilter configuration - CONFIG_NF_LOG_SYSLOG
-    ipv4 netfilter configuration - remove all logging references
-    ipv6 netfilter configuration - remove all logging references
-^ updated for all kernels
-
-* CONFIG_VIRTIO_INPUT
-* -device virtio-{keyboard,mouse,tablet}
-^ prefer the at keyboard / ps2 mouse setup...
-  virtio-mouse doesnt match properly
-  virtio-tablet no button press at all
-
-* qemu - dtach console / vnc console
-
-* CONFIG_SYSFB_SIMPLEFB / CONFIG_DRM_SIMPLEDRM / CONFIG_FB_SIMPLE
-^ doesnt do anything ?
-^ without CONFIG_DRM_FBDEV_EMULATION there is no console output...
-
--------------
 
 #############
 
@@ -427,35 +462,6 @@ added wayland support...
    new /dev/pts with correct privs
    replace running shell with anything passed to it
 -------------
-
-#############
-
-[networking]
-
-* build target is stand alone laptop...
-  until router/server/laptop is viable hardware wise#
-  nat priority is virtual machines and development ?
-  inbound rules yes ?
-  outbound rules no ?
-
- * check glibc updates dont require locale-gen (compile-locale disabled in glibc)
-
- * diskless in grub shouldnt work ? (assumed usb boot not pxe network pulled?)
-
-#############
-
- links2 doh...
- ^ dns_over_https "https://dns.google/dns-query"
- ? cant encrypted client hello ?
-
- curl doh ech...
- * --enable-ech --enable-doh
- ^ --doh-url https://dns.google/dns-query
- ^ automatically attempts encrypted client hello if enabled
-
- openssl s_client -noservername
- openssl s_client -servername domain.tld
- ^ curl equivilent
 
 #############
 
@@ -481,29 +487,21 @@ added wayland support...
 ****
 
 #############
-libcurl needed unix socket support for transmission
-fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1)
-
- -r --raw < - interpret backslashes literally
-              rather than as escape characters
- ? variable holds backslash rather than stripping ? or changing them to literal characters ?
-#############
-
- muttrc: hostname, might get rid of leak in gmail headers ?
- ^ still leaves the ip/rdns used to connect to it...
- 
- read -r leaves backslashes in ?
- cant get it to actually interpret them from input
-
-#############
 
  [qemu]
 
- * -nographic doesnt work ?
+ * /dev/shm/{dtach,vnc}
 
- kernel enable serial
- CONFIG_SERIAL_8250
- CONFIG_SERIAL_8250_CONSOLE
+ * qemu - dtach console / vnc console
+ ^ CONFIG_SERIAL_8250
+   CONFIG_SERIAL_8250_CONSOLE
+   console=ttyS0
+
+ * CONFIG_VIRTIO_INPUT
+ * -device virtio-{keyboard,mouse,tablet}
+ ^ prefer the at keyboard / ps2 mouse setup...
+   virtio-mouse doesnt match properly
+   virtio-tablet no button press at all
 
  [ -deamonize -display none -vnc unix:/dev/shm/qemu ]
 
@@ -512,53 +510,16 @@ fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1
  dtach -A /dev/shm/qemu setsid qemu-system-x86_64
  dtach -a /dev/shm/qemu
 
- ^ dtach setsid double forks qemu
-   leaves stdin stdout stderr pointing to none existent terminal ?
-
  [ -z $console ] && kernel="--append root=/dev/vda" || kernel="--append root=/dev/vda console=ttyS0"
 
- ^ still doesnt work because --append thing0 thing1
-   treats thing1 as a file and fails to start qemu
+ * append doesnt work in q.wrapper "'${variable}'" problems ?
 
  -k(ernel) -i(nitramfs) -b(oot) -f(ile) -e(xtra)
  -l(an) -n(at)
  -c(onsole) -v(nc)
  -u(ser)
 
- * also matches /dev/shm/{dtach,vnc} as an access method
-
 #############
-
- [kernel]
-
- missing input sanitization on server audio... ?
-
- linux-6.1.18 - SND_HDA_CTL_DEV_ID ?
- ^ turn it on for old behaviour ? left it off
-
- [linux-6.2]
-
--------------
-
- * server: CONFIG_DRM_AST is fucked...
-   CONFIG_DRM_NOMODESET
-   CONFIG_VIDEO_NOMODESET
-
- ^ drm nomodeset moved to video nomodeset
-   to allow gpu drivers with drm to control it ?
-
- * X0-log - ShadowFB: preferred YES, enabled YES
-
--------------
-
- * wifi: works well, looks normal...
-   ping gateway - fails
-   setpriv_udhcpc wlan0 - fails
-   w.connect wlan0 ; setpriv_udhcpc wlan0 ; ping gateway < - works again
-   
- ^ no error output
-
- -------------
 
  tl;dr - disabled TIOCSTI, reduced attack surface
 
@@ -583,8 +544,9 @@ fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1
    user - stage3 + dbclient/dnsd/ddns
  nobody - single user mode no proxy + audio/video
   proxy - single user mode proxy only
-   jail - no internet + audio/video
+   jail - no internet + persistent sandbox + audio/video
 
+ nobody - 22,465,995,443,6697,18081,18089
     ssh - 22
    smtp - 465,995
    http - 443
@@ -592,22 +554,18 @@ fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1
     xmr - 18081,18089
 
 -------------
-
-- user lo 9050 + nat 22 (private ssh)
-  nobody lan 22 (public ssh) (browser + audio/video)
-^ implies p.ssh (though not alot of use)
-
-* self contained virtual machine with usb mic/webcam passthrough
-^ image.master + image + image.backups 
-
+* self contained virtual machine usb mic/webcam passthrough
 -------------
 
  xinit
   X
   monitor
 
- dwm-{host,guest}
+ dwm-host
   st
+
+ Xephyr
+  dwm-guest
 
 -------------
 /etc/services/
@@ -631,6 +589,7 @@ fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1
  c.server d.client
  e.setpriv
  f.sets
+ z.testing
 -------------
 /etc/self/c.server
  gnupg g.{setup,conf,agent}
@@ -651,38 +610,8 @@ lsw && xev -
  xev -display :0 -id "${id}" -1 -event structure | 
  while read ; do DISPLAY=:13 XAUTHORITY=/tmp/.X13-auth xrandr ; done
 -------------
-
-#############
-
- * /init /etc/inittab /etc/init /etc/profile - debug output ?
- 
- * tftpd -l cant write log files ?
- 
- * qemu usb pass through no longer works ?
-
- * v.client v.server - save .vpn/config nothing to actually use it ? v.{server,client,flush,restore?}
-
- * dtach cant recreate socket ? SIGHUP ignored SIGUSR1 terminates running process
- * identify dtach from PS1 - shlvl ?
- * identify mtm from PS1 - $MTM
-
- * mutt smtp still exposes ip/hostname in headers ? (sending From username $(date) as  well ?)
-
- * ca-certificates updates - forced to delete manifest
-
-* pkill -x /sbin/<thing> needs pkill -x <thing> ? (only matching wrappers)
-  ^ fucks up accidently killing partial matches... (probably worse ?)
-
- * httpd/gitd - services/httpd/start GIT_PROJECT_ROOT=/tmp/storage/.git GIT_HTTPD_EXPORT_ALL=
-
- * grub ebuild ? finishes off udhcpd/tftpd/grub kernel/initramfs/nfsd
-
- * tor DisableAllSwap as none root...( didnt stderr, used address sanitizer ? shouldnt have executed at all) 
- ^ test expensive/fragile without DisableAllSwap ?
-
- * herbe needs /dev/shm/$USER splitting (doesnt support multiplayer) (logread|grep -f file|while read ; do herbe "notifcation" ; done
- ^ desktop:desktop /dev/shm/desktop.tmp < - herbe as a single user
-
+^ polling Xephyr auto resize vs Xephyr triggering resize on events ?
+-------------
 #############
 
 storage.bootfs -
@@ -703,6 +632,8 @@ $home/xmr/monero
   storage.shared < - code duplication
   efi.get - get values saved in efi
   efi.put - put values into efi
+
+^ would need encrypted usb...
 
 -------------
 
@@ -798,43 +729,7 @@ $home/xmr/monero
 
 #############
 
- busybox
-  doesnt need
-   libcrypt
-   libm
-   librt
-  needs
-   libresolv
-
- ^ login/password management utilities - internal crypt stuff removed dependencies
-
- ? more than nslookup using libresolv... (it uses internal code?)
-
- ^ qemu silently linking to glibc for alot of libraries...
-
-#############
-
-[mutt]
-
-  muttrc is fucking brutal
-  easy to fake emails
-^ set encode_from="yes"
-
-  pop_authenticators="user" < - login without sasl
-  smtp_authenticators="login" < - forces sasl...
-
-  drop sendmail from mutt
-  sendmail with sasl plain base64 without cyrus-sasl ?
-
-* complexity for user hand off is to high (cant full scope it)
-
-#############
-
-[automate]
-
--------------
-
- didnt work out ?
+[automate] - didnt work out ?
 
  endgame was automating new portage/sets entries
 
@@ -885,20 +780,6 @@ $home/xmr/monero
  REQUIRES packages needed to link at run time ?
 
 -------------
-
-#############
-
- [normal stage3 vs hardened stage3]
-
- gcc -Q -v # prints out configured with
-           # prints out default gcc options
-
- gcc -Q --help=target # prints out ?
-
- diff normal hardened
-
- + --enable-esp # isnt documented in configure ?
-                # search returned nothing
 
 #############
 
@@ -1130,24 +1011,6 @@ argon2 default output matches key input length
 
 [OLD]
 #############
- full scope it once,
- diff last known against newest
- ./configure --help
- ./{man,doc}/*
- 1 hour upfront , 5 minutes each bump
-
-  ./z.package <package>
-  ./z.contents <package>
-  ./z.library <libpackage>
-* check the package is in any DEPENDS
-* use contents to pull library names
-* check the library is actually used in REQUIRES
-! removes old dependencies still listed
-
-* still a few dependencies that dont link to anything with libraries
-  eg x11-misc/compose-tables has locales only x11-base/xorg-server
-#############
-
  -------------
  firefox-bin - > firefox-esr
  -------------
