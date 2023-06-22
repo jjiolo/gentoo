@@ -1,6 +1,41 @@
 
 #############
 
+ openssl genpkey -algorithm ed25519 -out key.pem
+ openssl pkey -pubout -in key.pem -out key.pub
+
+ openssl pkeyutl
+  -sign -inkey key.pem
+  -rawin -in file
+  -out file.sig
+
+ openssl pkeyutl
+  -rawin -in file
+  -verify -sigfile file.sig
+  -pubin -inkey key.pub
+
+ openssl pkeyutl
+  -derive
+  -inkey me.private
+  -peerkey you.public
+ ^ doesnt work...
+
+ openssl s_server -dtls1_2
+ openssl s_client -dtls1_2
+ ^ doesnt work with ed25519
+
+  end game ?
+  root - > server - > certificate
+           client - > certificate
+
+-------------
+ openssl pkeyutl -kdf TLS1-PRF -kdflen 64 -digest sha512
+-------------
+
+^ added kdf to key derive ?
+
+#############
+
 openssl-3.0.5
 
 -------------

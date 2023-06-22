@@ -15,5 +15,10 @@ S="${WORKDIR}/phc-winner-${P}"
 #############
 src_configure(){ default ; }
 #############
-src_install(){ default ; rm -rf "${D}/usr/include" "${D}/usr/lib" ; }
+#src_compile(){ make LDFLAGS=-static ${MAKEOPTS} || die "compile failed" ; }
+#############
+src_install(){
+install -d -o root -g root -m 0755 "${D}/bin"
+install    -o root -g root -m 0755 "argon2" "${D}/bin/argon2" || die "install failed"
+}
 #############

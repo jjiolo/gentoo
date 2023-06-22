@@ -33,6 +33,9 @@ ip addr flush "${1}"
 until ip link set dev "${1}" address "$(hexdump -n6 -ve '1/1 "%02X:"' /dev/urandom|head -c17)";do sleep .1;done
 ip link set up "${1}"
 #############
-wpa_supplicant -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant"
+cd / ; caps="-all,+net_admin,+net_raw" ; /bin/setsid /usr/bin/setpriv \
+ --reuid wifi --regid wifi --init-groups --nnp --reset-env \
+ --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
+ /sbin/wpa_supplicant -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant" -e "${storage}/.wifi/entropy"
 #############
 

@@ -9,13 +9,16 @@ LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
-RDEPEND=""
+RDEPEND="
+sys-libs/ncurses
+sys-libs/glibc
+"
 DEPEND="${RDEPEND}"
 #############
 src_configure(){
- sed -i '9s/$/ -ltinfow/' Makefile
- sed -i 's/$(FEATURES)/-D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED/' Makefile
- }
+sed -i '9s/$/ -ltinfow/' Makefile
+sed -i 's/$(FEATURES)/-D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED/' Makefile
+}
 #############
 src_compile(){ make ${MAKEOPTS} ; }
 #############

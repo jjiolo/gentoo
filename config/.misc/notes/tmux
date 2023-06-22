@@ -74,6 +74,27 @@ tmux removal -
 
 #############
 
+ dtach -
+
+-------------
+ su -l -s /bin/sh -c 'dtach -n /dev/shm/test /bin/sh -l' user
+ ^ /proc/4444/fd
+   0 > /dev/null
+   1 > /dev/null
+   2 > /dev/null
+   3 > socket
+   4 > pts
+-------------
+ echo 'exec sleep 30' | dtach -p /dev/shm/test < - replaces running shell
+-------------
+ ^ no controlling tty
+   no stdin stdout stderr
+   new /dev/pts with correct privs
+   replace running shell with anything passed to it
+-------------
+
+#############
+
 #############
 * old tmux notes
 #############

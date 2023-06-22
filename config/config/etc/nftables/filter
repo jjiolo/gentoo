@@ -1,6 +1,6 @@
 
-#############
 table inet filter {
+#############
  chain forward {
 
  type filter hook forward priority 0 ; policy drop
@@ -14,36 +14,34 @@ table inet filter {
  log flags skuid prefix "forward.drop " drop
 
  }
-}
 #############
-table inet filter {
-  chain input { 
+ chain input { 
 
   type filter hook input priority 0 ; policy drop
 
   ct state established accept
 
-  iifname {lo}        goto ilo
-  iifname {lan,wlan0} goto ilan
-  iifname {nat}       goto inat
-  iifname {tun}       goto itun
+  iifname {lo}    goto ilo
+  iifname {nat}   goto inat
+  iifname {tun}   goto itun
+  iifname {lan}   goto ilan
+  iifname {wlan0} goto ilan
 
  }
-}
 #############
-table inet filter {
  chain output {
 
   type filter hook output priority 0 ; policy drop
 
   ct state established accept
 
-  oifname {lo}        goto olo
-  oifname {lan,wlan0} goto olan
-  oifname {nat}       goto onat
-  oifname {tun}       goto otun
+  oifname {lo}    goto olo
+  oifname {nat}   goto onat
+  oifname {tun}   goto otun
+  oifname {lan}   goto olan
+  oifname {wlan0} goto olan
 
  }
-}
 #############
+}
 

@@ -13,10 +13,9 @@ RDEPEND="
 sys-libs/glibc
 sys-libs/ncurses
 "
-DEPEND=""
+DEPEND="${RDEPEND}"
 #############
-src_configure(){
-printf '%s\n' '#define SYS_VIMRC_FILE "/etc/vim/vimrc"' >> "${S}/src/feature.h"
+src_configure(){ printf '%s\n' '#define SYS_VIMRC_FILE "/etc/vim/vimrc"' >> "${S}/src/feature.h"
 ./configure \
 --prefix=/usr \
 --enable-option-checking \

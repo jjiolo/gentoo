@@ -5,10 +5,10 @@
 
 # .gnupg .ssh .vpn .wifi
 
-install -d -o 0 -g 0 -m 0700 "${storage}/.gnupg"
-install -d -o 0 -g 0 -m 0700 "${storage}/.ssh"
-install -d -o 0 -g 0 -m 0700 "${storage}/.vpn"
-install -d -o 0 -g 0 -m 0700 "${storage}/.wifi"
+install -d -o 0  -g 0  -m 0700 "${storage}/.gnupg"
+install -d -o 0  -g 0  -m 0700 "${storage}/.ssh"
+install -d -o 0  -g 0  -m 0700 "${storage}/.vpn"
+install -d -o 13 -g 13 -m 0700 "${storage}/.wifi"
 
 [ -f "${storage}/.gnupg/gpg.conf"       ] || install -o 0 -g 0 -m 0600 "/etc/self/c.server/g.conf"  "${storage}/.gnupg/gpg.conf"
 [ -f "${storage}/.gnupg/gpg-agent.conf" ] || install -o 0 -g 0 -m 0600 "/etc/self/c.server/g.agent" "${storage}/.gnupg/gpg-agent.conf"
@@ -20,7 +20,9 @@ install -d -o 0 -g 0 -m 0700 "${storage}/.wifi"
 
 [ -f "${storage}/.vpn/wireguard" ] || wg genkey > "${storage}/.vpn/wireguard"
 
-chown -R root:root "${storage}/.gnupg" "${storage}/.ssh" "${storage}/.vpn" "${storage}/.wifi"
+chown -R wifi:wifi "${storage}/.wifi"
+
+chown -R root:root "${storage}/.gnupg" "${storage}/.ssh" "${storage}/.vpn"
 
 find "${storage}/.gnupg" "${storage}/.ssh" "${storage}/.vpn" "${storage}/.wifi" -type d -exec chmod 0700 {} \;
 find "${storage}/.gnupg" "${storage}/.ssh" "${storage}/.vpn" "${storage}/.wifi" -type f -exec chmod 0600 {} \;

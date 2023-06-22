@@ -1,13 +1,20 @@
 #!/bin/sh
 #############
+usage(){ printf "%s\n" "ntp client - ${1}" ; exit 1 ; }
+#############
 pkill -x /sbin/ntpd
 #############
-
-cd / ; caps="-all,+sys_time"
-
-/bin/setsid /usr/bin/setpriv \
+[ "${#}" == "0" ] && {
+cd / ; caps="-all,+sys_time" ; /bin/setsid /usr/bin/setpriv \
  --reuid ntpd --regid ntpd --init-groups --nnp --reset-env \
- --inh-caps ${caps} --ambient-caps ${caps} --bounding-set ${caps} \
+ --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
  /sbin/ntpd -dnqN -p 0.pool.ntp.org -p 1.pool.ntp.org -p 2.pool.ntp.org -p 3.pool.ntp.org < /dev/null
-
+}
+#############
+[ "${#}" == "1" ] && {
+cd / ; caps="-all,+sys_time" ; /bin/setsid /usr/bin/setpriv \
+ --reuid ntpd --regid ntpd --init-groups --nnp --reset-env \
+ --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
+ /sbin/ntpd -dnqN -p "${1}" < /dev/null
+}
 #############

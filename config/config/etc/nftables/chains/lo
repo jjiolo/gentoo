@@ -44,8 +44,11 @@ table inet filter {
   udp dport {53}    skuid {ssh,smtp,http,irc,xmr} ct state new log flags skuid prefix "output.lo.new " accept
   udp dport {53}    skuid {p2pd}                  ct state new log flags skuid prefix "output.lo.new " accept
 
-  tcp dport {22,80} skuid {ddns}                  ct state new log flags skuid prefix "output.lo.new " accept
+  tcp dport {22}    skuid {user}                  ct state new log flags skuid prefix "output.lo.new " accept
+  tcp dport {80}    skuid {root,user,nobody}      ct state new log flags skuid prefix "output.lo.new " accept
   tcp dport {9050}  skuid {user,nobody,proxy}     ct state new log flags skuid prefix "output.lo.new " accept
+ 
+  tcp dport {22,80} skuid {ddns}                  ct state new log flags skuid prefix "output.lo.new " accept
 
   # icmp
 

@@ -32,7 +32,7 @@ done | less -S
 cd /tmp/.diff/stage3/config || exit
 #############
 
-for i in config kernels overflow overlay portage .misc
+for i in config kernels repos/overflow repos/overlay repos/wayland portage .misc
 do
 
  diff -r ./$i /tmp/storage/stage3/config/$i | less -S

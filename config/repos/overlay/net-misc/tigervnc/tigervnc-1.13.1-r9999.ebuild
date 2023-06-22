@@ -42,6 +42,11 @@ x11-libs/libXtst
 DEPEND="${RDEPEND}"
 #############
 src_configure(){
+
+mkdir build
+
+cd build
+
 cmake \
 -DBUILD_JAVA=OFF \
 -DBUILD_STATIC=OFF \
@@ -55,11 +60,13 @@ cmake \
 -DENABLE_NETTLE=OFF \
 -DENABLE_NLS=OFF \
 -DENABLE_TSAN=OFF \
--DINSTALL_SYSTEMD_UNITS=OFF
+-DINSTALL_SYSTEMD_UNITS=OFF ..
 }
+#############
+src_compile(){ cd build ; default ; }
 #############
 src_install(){
 install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
-install    -o root -g root -m 0755 vncviewer/vncviewer "${D}/usr/bin" || die "install failed"
+install    -o root -g root -m 0755 build/vncviewer/vncviewer "${D}/usr/bin" || die "install failed"
 }
 #############

@@ -1,49 +1,9 @@
 
 #############
-
-# blargh
-
- # ct new
- # ct established
- # ct count <limit>
- # tcp dport 22 ct count 10 accept
- # tcp dport 22 ct count over 10 reject
-
- # limit rate over <value>/{second,minute,hour,day,week} burst <value> packets
- # limit rate over <value> {bytes,kbytes,mbytes}/{second,minute,hour,day,week} burst <value> {bytes,kbytes,mbytes}
-
- # ct state new my_meter { skuid . dport counter }
-
- # set my_set { type typeof flags timeout counter comment }
-
- # set my_set {
- #  typeof skuid . tcp dport
- #  flags dynamic,timeout
- #  size 65535
- #  timeout 1h
- #  counter
- # }
-
- # meta skuid . tcp dport @my_set drop
- # ct state new add    @my_set { skuid . tcp dport }
- # ct state new update @my_set { skuid . tcp dport }
-
-# mangle
-# table inet filter {
-#  chain prerouting {
-#   type filter hook prerouting priority -300 ; policy accept ;
-#   udp dport 53 udp dport set 5353
-#   udp sport 5353 udp sport set 53
-#  }
-# }
-
-#############
-
-#############
-
 =============
+# current setup...
+# locking inbound to root execution
 # locking inbound to specific uid/gid
-# locking inbound behind root execution (race condition)
 =============
 
  root only binds
@@ -53,7 +13,7 @@
 
 * creates a race condition on any system change
 ^ ephemeral set it up once and leave it or reboot
-^ all firewall rules only open ports below 32768...
+^ assumes firewall rules only open ports below 32768
 
 vs
 
@@ -66,197 +26,165 @@ vs
 ^ hangs inbound and outbound connections spamming conntrack
 
 =============
-
- netstat -tunlep ?
-
 #############
 
 #############
-
- dynamic sets vs meters - old meters functionality updated syntax
-
-sets...
-
-     define - set { typeof <type> . <type> . <type> }
-  duplicate - add/update @set { <type> . <type> . <type> }
-
-     add - add it to the set and let it timeout
-  update - update it in the set and refresh timeout
-
-^ cant mix types ?
-
-meters...
-
- <match> meter mymeter { <type> . <type> . <type> } accept/reject
- timeout
- counter
- ct count
- ratelimit bytes
- ratelimit packets
-
-^ meters auto creates the set from type
-
-[counters]
-[sets]
-[meters]
-[limits]
- nft list limits
- nft list limit <type> <table> <limit>
- tcp dport 80 limit name "httpd" accept 
-
-#############
-
-=============
-# [mangle] - never needed it ?
-=============
-
-nft add table raw
-nft add chain ip raw prerouting { type filter hook prerouting priority -1000 ; policy accept }
-nft add rule ip raw prerouting tcp dport 80 notrack
-nft add rule ip raw prerouting tcp sport 8080 notrack
-nft add rule ip raw prerouting tcp dport 80 tcp dport set 8080
-nft add rule ip raw prerouting tcp sport 8080 tcp sport set 80
-
-#############
-
-=============
-# old ingress blacklist and script + timeout set for mac addresses
-=============
-#############
-set v4 { type ipv4_addr ; flags interval,timeout ; timeout 1h ; }
-set v6 { type ipv4_addr ; flags interval,timeout ; timeout 1h ; }
-#############
-chain <interface> {
- type filter hook ingress device <interface> priority 0
- policy accept
- ip  saddr @v4 drop
- ip6 saddr @v6 drop
-}
-#############
-[ "${#}" == "0" ] && nft -nnn list set netdev interfaces blacklist4
-[ "${#}" == "1" ] && nft add element netdev interfaces blacklist4 { "${1}" timeout 1h }
-[ "${#}" == "2" ] && nft add element netdev interfaces blacklist4 { "${1}" timeout "${2}" }
-#############
-[ "${#}" == "0" ] && nft -nnn list set netdev interfaces blacklist6
-[ "${#}" == "1" ] && nft add element netdev interfaces blacklist6 { "${1}" timeout 1h }
-[ "${#}" == "2" ] && nft add element netdev interfaces blacklist6 { "${1}" timeout "${2}" }
-#############
-set mac { type ether_addr ; timeout 1h ; }
-chain input  { type filter hook input  priority 0 ; policy accept ; set update ether saddr @mac ; }
-chain output { type filter hook output priority 0 ; policy accept ; set update ether daddr @mac ; }
-#############
-
-=============
-# should be the start ?
-=============
-
- <table> - <address types>
- netdev  - match interface
- arp     - match arp
- bridge  - match arparp based on two interfaces
- ip      - match on v4
- ip6     - match on v6
- inet    - match on v4 and v6
-
- <type>  - <table>
- filter  - netdev arp bridge ip ip6 inet
- nat     - ip ip6
- route   - ip ip6
-
- <table> - <type>
- netdev  - filter
- arp     - filter
- bridge  - filter
- ip      - filter,nat,route
- ip6     - filter,nat,route
- inet    - filter
-
- <hook>      - <table>
- ingress     - netdev
- prerouting  - ip,ip6,inet
- input       - bridge,arp,ip,ip6,inet
- forward     - bridge,ip,ip6,inet
- output      - bridge,arp,ip,ip6,inet
- postrouting - ip,ip6,inet
- egress      - netdev
-
- <table>     - <hook>
- netdev      - ingress,egress
- arp         - input,output
- bridge      - forward,input,output
- nat         - prerouting,input,output,postrouting
- inet        - input,forward,output
-
-#############
-
-
-table <type> <name> {
-
-  chain <name> {
-
-   type <type> hook <hook> priority 0
-   policy {accept,drop,queue,continue,return}
-
-   <match> <target>
-
- }
-
-}
 
 -------------
 
-nft add table <type> <table>
-nft add chain <type> <table> <chain> { type <type> hook <hook> priority 0 ; policy {accept,drop,queue,continue,return} ; }
+ table <family> <name> {
+  chain <name> {
+   type <type> hook <hook> priority 0
+   policy {accept,drop}
+   <match> <target>
+  }
+ }
+
+-------------
+
+ nft add table <family> <table>
+ nft flush table <family> <table>
+ nft delete table <family> <table>
+
+ nft add chain <family> <table> <chain> { type <type> hook <hook> priority 0 ; policy {accept,drop} ; }
+ nft add chain <family> <table> <chain> { policy drop ; }
+ nft flush chain <family> <table> <chain>
+ nft delete chain <family> <table> <chain>
+
+-------------
+
+  [table]
+
+ <family> - <address types>
+   netdev - match interface
+      arp - match arp
+   bridge - match arparp
+       ip - match v4
+      ip6 - match v6
+     inet - match v4 v6
+
+-------------
+
+ [chain]
+
+      <type> - 
+      filter - 
+         nat - 
+       route - 
+
+      <hook> -
+     ingress
+  prerouting
+       input
+     forward
+      output
+ postrouting
+      egress
+
+-------------
+
+ [family] - <hook>
+   <type> -
+           ---------------------------------------------------------------------------
+           | ingress | prerouting | input  | forward | output | postrouting | egress |
+  (netdev) ---------------------------------------------------------------------------
+    filter | yes     | no         | no     | no      | no     | no          | yes    |
+       nat | no      | no         | no     | no      | no     | no          | no     |
+     route | no      | no         | no     | no      | no     | no          | no     |
+     (arp) --------------------------------------------------------------------------|
+    filter | no      | no         | yes    | no      | yes    | no          | no     |
+       nat | no      | no         | no     | no      | no     | no          | no     |
+     route | no      | no         | no     | no      | no     | no          | no     |
+  (bridge) --------------------------------------------------------------------------|
+    filter | no      | yes        | yes    | yes     | yes    | yes         | no     |
+       nat | no      | no         | no     | no      | no     | no          | no     |
+     route | no      | no         | no     | no      | no     | no          | no     |
+      (ip) --------------------------------------------------------------------------|
+    filter | yes     | yes        | yes    | yes     | yes    | yes         | yes    |
+       nat | no      | yes        | yes    | no      | yes    | yes         | no     |
+     route | no      | no         | no     | no      | yes    | no          | no     |
+     (ip6) --------------------------------------------------------------------------|
+    filter | yes     | yes        | yes    | yes     | yes    | yes         | yes    |
+       nat | no      | yes        | yes    | no      | yes    | yes         | no     |
+     route | no      | no         | no     | no      | yes    | no          | no     |
+    (inet) --------------------------------------------------------------------------|
+    filter | yes     | yes        | yes    | yes     | yes    | yes         | no     |
+       nat | no      | yes        | yes    | no      | yes    | yes         | no     |
+     route | no      | no         | no     | no      | yes    | no          | no     |
+           --------------------------------------------------------------------------|
+ 
+ [taget]
+
+  accept
+  drop
+  reject
+
+  return
+  continue
+  jump <chain> (comes back)
+  goto <chain> (doesnt come back)
+
+  limit
+  counter
+  log
+
+  queue
+
+  redirect to <port>
+  dnat to <addr>
+  snat to <addr>
+  masquerade {random,fully-random,persistent}
+  notrack
+  set
+
+  dup to 127.0.0.2
+  dup to 127.0.0.2 device lo
+
+-------------
 
 #############
 
+ tables define the type of src/dst address family to match on
  chains with hooks are entry points for packets to be filtered
-
- chains without hooks can be jumped into and out of to further reduce the number of conditional branches each packet has to be checked against
-
- chains can also be used to allow flushing and recreating rules without tearing down the current ruleset (with a race condition)
-
-^ sets allow editing add/del/update rules
+ chains without hooks can be jumped into and out of
 
 #############
 
  create any table and chain structures you feel like
-
  adding a hook to a chain creates the flow of packets
-
  multiple hooks of the same type flow based on priority
 
 #############
 
-everything originates from interface as a match IN= || OUT=
-single routing table vs routing table per interface (iproute2)
-traffic either flows from IN=interface0 && OUT=interface0 or requires a routing lookup
-forwarding chain is used to filter what interfaces are allowed to talk to each other
-eg IN=eth0 DST=some.address < - either global routing table or eth0 routing table lookup searches for DST= then sets OUT=interface from it
+ everything originates from interface as a match IN= || OUT=
+ single routing table vs routing table per interface (CONFIG_IP_MULTIPLE_TABLES)
+ traffic either flows in/out of the same interface or requires a routing lookup
+ forwarding is used to filter which interfaces are allowed to talk to each other
+ eg IN=eth0 DST=some.address < - global routing table or eth0 routing table lookup searches for DST= then sets OUT=interface
 
 #############
 
-dnat client uses whatever interface= was for the original request
-dnat client output changes the src/dst addr and port before it hits the filter chain
-dnat client input  changes the src/dst addr and port back to the original request before it hits the filter chain
+ dnat client uses whatever interface= was for the original request
+ dnat client output changes the src/dst addr and port before it hits the filter chain
+ dnat client input  changes the src/dst addr and port back to the original request before it hits the filter chain
 
 #############
 
-iif vs iifname
+ iif vs iifname
 
-all interfaces when added to the box get an index
+ all interfaces when added to the box get an index
 
-iif matches on the index < - isnt persistent through interface deletion and creation but uses less resources
+ iif matches on the index < - isnt persistent through interface deletion and creation but uses less resources
 
-iifname matches on the interface name string using more resources but persisteing through none existing interfaces
+ iifname matches on the interface name string using more resources but persisteing through none existing interfaces
 
-iifname can take a wildcard value to match multiple interface eth* wlan*
+ iifname can take a wildcard value to match multiple interface eth* wlan*
 
 #############
 
-cat /proc/net/nf_conntrack
+ cat /proc/net/nf_conntrack
 
-conntrack-tools < - can manally update conntrack table from cli
+ conntrack-tools < - can manally update conntrack table from cli
 
 #############
 
@@ -280,153 +208,144 @@ tune any setup to reduce the chain length for the higest frequency packet types 
 
 #############
 
-meta nftrace set 1
+#############
 
-iifname lo ip protocol tcp meta nftrace set 1
-iifname lo ip protocol udp meta nftrace set 1
+ [nftrace]
 
-nft monitor trace
+ iifname lo meta nftrace set 1
+
+ iifname lo ip protocol tcp meta nftrace set 1
+ iifname lo ip protocol udp meta nftrace set 1
+
+ nft monitor trace
 
 #############
 
-# counters - defined in table not chain
+ [counters] (define in table not chain)
 
-nft list counters
-nft list counter <type> <table> <name>
+ nft list counters
+ nft list counter <family> <table> <counter>
 
-nft reset counters
-nft reset counter <type> <table> <name>
+ nft reset counters
+ nft reset counter <type> <table> <name>
 
-cli  - nft add counter <type> <table> <name> { }
-       nft add counter <type> <table> <name> { comment "informational text" }
+ counter name <name> { }
+ counter name <name> { comment "informational text" }
 
-file - counter name <name> { }
-       counter name <name> { comment "informational text" }
+#############
 
-# sets - defined in table not chain (unless {lan,wlan0} {80,443} references)
+ [sets] (define in table not chain)
 
-* set my_set { type <type> ; flags <flags> ; timeout <timeout> ; }
-^ cant full list types
-^ cant full list flags
-^ apparently typeof / counter / size are viable ?
+ nft list sets
+ nft list set <family> <table> <set>
 
-* typeof - allows mapping the match string to a type ?
-* implying set myset { counter } is viable ? (set keeps traffic logs for every entry by default ?)
-* implying size 65535 ? (fifo searches on fixed sizes ? or eg max size number of ports ?)
+        type - ipv4_addr,ipv6_addr,ether_addr,inet_proto,inet_service,mark,ifname
+      typeof - <match>
+     timeout - 1 s/m/h/d
+       flags - constant,dynamic,interval,timeout
+ gc-interval - 1 s/m/h/d
+    elements - elements={<value>,<value>}
+        size - 65534
+      policy - {performance,memory}
+     counter - 
+ 
+ set my_set { typeof ip saddr . ip dport ; flags dynamic,timeout ; timeout 300s ; counter ; }
 
-nft list sets
-nft list set <type> <table> <name>
+ <type> . <type> @my_set drop
+ <type> . <type> @my_set accept
 
-cli -
+ set add    <type> . <type> timeout <timeout> @my_set # doesnt update timeout
+ set update <type> . <type> timeout <timeout> @my_set # does update timeout
 
- nft add set <type> <table> <name>
- {
- type <type> ; typeof <typeof> ; flags <flag>,<flag> ; timeout <timeout> ; comment "informational text" ;
- }
- nft add element <type> <table> <name> { <type> . <type> ; timeout <timeout> ; }
+ nft add element <family> <table> <set> { <type> . <type> ; timeout <timeout> ; }
+ nft delete element <family> <table> <set> { <type> . <type> ; timeout <timeout> ; }
 
- nft add set     <type> <table> <name> { type uid . ipv4_addr . inet_service ; flags interval,timeout,dynamic ; timeout 1h ; }
- nft add element <type> <table> <name> { user . 127.0.0.0/8 . 80 ; timeout 1h ; }
+ * my_set { typeof ip daddr . tcp dport ; } < - creates type ipv4_addr
+ * set add ip saddr . tcp sport @my_set < - allows adding any match of the type created...
 
-file -
+#############
 
- set my_set { type <type> . <type> ; flags <flag>,<flag> ; timeout 1h ; comment "informational text" ; }
- set add    <type> . <type> timeout <timeout> @my_set
- set update <type> . <type> timeout <timeout> @my_set
+ [conntrack limit]
 
- set my_set { type uid . ipv4_addr . inet_service ; flags interval,timeout,dynamic ; timeout 1m ; comment "informational text" ; }
- set add    skuid . ip daddr . tcp dport timeout 1m @my_set
- set update skuid . ip daddr . tcp dport timeout 1m @my_set
+  ct count      <number> accept
+  ct count over <number> drop
 
-    add - doesnt update timeout
- update - does update timeout
+  tcp dport 80 ct count 30 accept # per service
+  tcp dport 80 meter connlimit { ip saddr ct count 3 } accept # per user on service
 
-* tcp dport {80,443} set update ip daddr timeout 60s @my_set
+ [rate limit]
 
-# dynamic sets (replacing meters)
-
-* set myset { type <type> ; flags <flags> ; timeout <timeout> ; }
-  set myset { typeof ip daddr . tcp dport ; counter ; size 65535 ; timeout 1h ; }
-
-  ct count [over] 20 drop
   limit rate [over] <value> <unit> [burst <value> <unit>]
 
-  
+  limit rate      <number>/{second,minute,hour,day,week} burst <number> packets accept
+  limit rate over <number>/{second,minute,hour,day,week} burst <number> packets drop
 
-# meters
+  limit rate      <number> {bytes,kbytes,mbytes}/{second,minute,hour,day,week} burst <number> {bytes,kbytes,mbytes} accept
+  limit rate over <number> {bytes,kbytes,mbytes}/{second,minute,hour,day,week} burst <number> {bytes,kbytes,mbytes} drop
+
+  * tcp dport 80 limit rate 1000 kbytes/second burst 2000 kbytes } accept # per service
+  * tcp dport 80 meter ratelimit { ip saddr limit rate 100 kbytes/second burst 200 kbytes } accept # per user on service
+
+#############
+
+# mixed meters
 
  static match { dynamic match }
 
- counter/limit/connlimit
-
-* counter doesnt support inet forces meters per v4/v6
-* counter doesnt differentiate between inbound and outbound traffic
-* counter looks simple, esculates quickly to get basic coverage ie 4 counters just to cover v4/v6 rx/tx
-
-nft list meters
-nft list meter <type> <table> <name>
+ nft list meters
+ nft list meter <type> <table> <name>
 
  ct state established meter outbound_user_udp { skuid . udp dport counter }
  ct state established meter outbound_user_tcp { skuid . tcp dport counter }
-
-  ct state new         meter user_connlimit { skuid ct count over 3 } drop
-  ct state established meter user_ratelimit { skuid limit rate over 100 kbytes/second burst 200 kbytes } drop
-? ct state new         meter user_newlimit  { skuid limit rate over 1/second burst 3 packets } drop
-
-  ct state new         meter source_connlimit { ip saddr ct count over 3 } drop
-  ct state established meter source_ratelimit { ip saddr limit rate over 100 kbytes/second burst 200 kbytes } drop
-? ct state new         meter source_newlimit  { ip saddr limit rate over 1/second burst 3 packets } drop
-
-ip protocol udp ct state established meter ipudp  { ip saddr . udp dport counter } accept
-ip protocol tcp ct state established meter iptcp  { ip saddr . tcp dport counter } accept
-ip6 nexthdr udp ct state established meter ip6udp { ip6 saddr . udp dport counter } accept
-ip6 nexthdr tcp ct state established meter ip6tcp { ip6 saddr . tcp dport counter } accept
-
-^ counters per match...
-^ connlimit and ratelimit per user...
-^ connlimit and ratelimit per source address...
+ meter usercounter4 { skuid . ip  daddr counter }
+ meter usercounter6 { skuid . ip6 daddr counter }
+ ip protocol udp ct state established meter ipudp  { ip saddr . udp dport counter } accept
+ ip protocol tcp ct state established meter iptcp  { ip saddr . tcp dport counter } accept
+ ip6 nexthdr udp ct state established meter ip6udp { ip6 saddr . udp dport counter } accept
+ ip6 nexthdr tcp ct state established meter ip6tcp { ip6 saddr . tcp dport counter } accept
 
 #############
 
-conntrack limit -
-
-  ct count [over] 20 drop
-
-  cli - nft add rule <type> <table> <chain> tcp dport 80 ct count over 20 drop
- file - tcp dport 80 ct count over 20 drop
-
-rate limit -
-
- limit rate [over] <value> <unit> [burst <value> <unit>]
-
-  cli - nft add rule <type> <table> <chain>
- file - 
-
- limit rate      <number>/{second,minute,hour,day,week}                       burst <number> packets               accept
- limit rate over <number>/{second,minute,hour,day,week}                       burst <number> packets               drop
- limit rate      <number> {bytes,kbytes,mbytes}/{second,minute,hour,day,week} burst <number> {bytes,kbytes,mbytes} accept
- limit rate over <number> {bytes,kbytes,mbytes}/{second,minute,hour,day,week} burst <number> {bytes,kbytes,mbytes} drop
-
- ct state invalid limit rate 3/minute burst 5 packets log flags skuid prefix "invalid: " counter
+ ^ other than connlimit and ratelimit meters dont do alot other than cummulative logs ?
 
 #############
 
 #############
-nft flush ruleset
-nft list -nn ruleset >> nftables.rules
-nft -f nftables.rules
-#############
-nft {add,delete,flush} table <type> <name>
-nft {add,delete,flush} chain <type> <table> <name>
-#############
-nft {add,insert,replace,delete,flush} rule <type> <table> <chain> 
-#############
-targets - accept,drop,queue,continue,return,jump,goto
-#############
-bridge forward policy drop - prevents the bridge from communicating with itself
+table bridge filter { chain forward { type filter hook forward priority 0 ; policy drop ; } ; } # prevent guests on a bridge from communicating
 #############
 
-localhost packets dont use the prerouting chain
+ networking support
+ networking options
+ network packet filtering framework
+ core netfilter configuration
+ nf_tables stateful object reference model
+ CONFIG_NFT_OBJREF
 
-can only manipulate from output
+ statefull objects
+  counters
+  quotas
+  limits
+  connlimits
+
+ ^ allows creating in the table
+   and refering to the object multiple times
+
+ * currently disabled never had any need for it ?
+
+#############
+=============
+# [mangle] - never needed it ?
+=============
+ set - used to change a match without conntrack recording ?
+       breaks everything quiet easily
+=============
+ table inet filter {
+  chain prerouting {
+   type filter hook prerouting priority 0 ; policy accept ;
+   udp dport 53 udp dport set 5353
+   udp sport 5353 udp sport set 53
+  }
+ }
+=============
+#############
 

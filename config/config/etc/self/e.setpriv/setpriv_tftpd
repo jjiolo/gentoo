@@ -2,14 +2,14 @@
 #############
 pkill -x /bin/udpsvd
 #############
-
-cd / ; caps="-all,+net_bind_service,+sys_chroot"
-
-/bin/setsid /usr/bin/setpriv \
+sysctl -w net.ipv4.ip_unprivileged_port_start=0
+#############
+cd / ; caps="-all,+sys_chroot,+net_bind_service" ; /bin/setsid /usr/bin/setpriv \
  --reuid tftpd --regid tftpd --init-groups --nnp --reset-env \
- --inh-caps ${caps} --ambient-caps ${caps} --bounding-set ${caps} \
+ --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
  /bin/udpsvd 0.0.0.0 69 /sbin/tftpd -lr /tmp/storage/shared </dev/null &>/dev/null & sleep 1
-
+#############
+sysctl -w net.ipv4.ip_unprivileged_port_start=32768
 #############
 renice -10 -u tftpd
 #############

@@ -10,8 +10,6 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 RDEPEND="
-app-crypt/libmd
-dev-libs/libbsd
 media-libs/libjpeg-turbo
 media-libs/libpng
 sys-libs/glibc
@@ -51,6 +49,8 @@ src_configure(){
 --disable-xrender \
 \
 --without-abiversion \
+\
+\
 --without-links \
 --with-x
 }

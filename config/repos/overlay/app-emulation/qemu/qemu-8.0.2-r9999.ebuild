@@ -27,22 +27,26 @@ src_configure(){
 ./configure --static \
 --prefix=/usr \
 --target-list=x86_64-softmmu \
+\
 --disable-werror \
 --disable-tsan \
 --disable-sanitizers \
 --enable-stack-protector \
+\
+--disable-plugins \
+--disable-containers \
+\
 --audio-drv-list= \
 --block-drv-ro-whitelist=file,raw \
 --block-drv-rw-whitelist=file,raw \
 --enable-block-drv-whitelist-in-tools \
---disable-plugins \
---disable-containers \
+\
 --enable-lto \
 --disable-cfi \
 --disable-coroutine-pool \
 --disable-hexagon-idef-parser \
---enable-fdt=internal \
 --enable-malloc=system \
+--enable-fdt=internal \
 \
 --disable-alsa \
 --disable-attr \
@@ -173,7 +177,7 @@ src_configure(){
 }
 #############
 src_install(){
-install -d -o root -g root -m 0755 "${D}/bin" "${D}/usr/share" "${D}/usr/share/qemu" "${D}/usr/share/qemu/keymaps"
+install -d -o root -g root -m 0755 "${D}/bin" "${D}/usr" "${D}/usr/share" "${D}/usr/share/qemu" "${D}/usr/share/qemu/keymaps"
 install    -o root -g root -m 0755 "build/qemu-img" "${D}/bin" || die "install failed"
 install    -o root -g root -m 0755 "build/qemu-system-x86_64" "${D}/bin" || die "install failed"
 cp -a pc-bios/*.rom pc-bios/*.bin pc-bios/*.dtb pc-bios/*.img "${D}/usr/share/qemu"

@@ -3,6 +3,12 @@
 man /var/empty/mutt-2.1.5/doc/muttrc.man
 #############
 
+ * mutt - hostname='localhost' last leak, gmail still forwards incoming ip address
+   pop_authenticators="user" < - login without sasl
+   smtp_authenticators="login" < - forces sasl...
+
+#############
+
 torsocks ; m.start
 
 ^ google application password allows pop and smtp over tor now...

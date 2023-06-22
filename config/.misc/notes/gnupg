@@ -1,6 +1,14 @@
 
 #############
 
+gpg --enarmor < file > file.asc
+gpg --dearmor < file.asc > file
+
+^ turn binary into ascii armor
+  turn ascii armor into binary
+
+#############
+
 tl;dr
 
 keyservers never worked very well
@@ -13,14 +21,10 @@ storing it offline in a fire safe doesnt allow for pki
 
 does allow rotating other signing keys to release content
 
-^ release signing offline master key
-
-* pki signing none offline master key
-  dependency on the ability to recover where the public key is hosted...
-
 #############
 
 # badly print information about the file given...
+
 gpg --verbose key.asc
 
 #############

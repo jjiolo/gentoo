@@ -1,36 +1,29 @@
 
 #############
 
-  cd git-A.B.C ; ./configure.sh > configure.sh
-  cd git-X.Y.Z ; ./configure.sh > configure.sh
-
-  diff git-A.B.C/configure.sh git-X.Y.Z/configure.sh
-
-  cd git-A.B.C ; find . -type f -exec grep -H YesPlease {} \; > ffs
-  cd git-X.Y.Z ; find . -type f -exec grep -H YesPlease {} \; > ffs
-
-  diff git-A.B.C/ffs git-X.Y.Z/ffs
+ ./configure --help (ignores most options)
 
 #############
 
- has NO_ICONV
-     NO_INTL ? NO_GETTEXT implies no libintl (having it uses it)
+ cd git-A.B.C ; ./configure.sh > configure.sh
+ cd git-X.Y.Z ; ./configure.sh > configure.sh
 
-     NO_PTHREADS ?
+ diff git-A.B.C/configure.sh git-X.Y.Z/configure.sh
 
- NO_EXPAT - required for git-http-push... (using it for pretendy busybox http)
+ cd git-A.B.C ; find . -type f -exec grep -H YesPlease {} \; > ffs
+ cd git-X.Y.Z ; find . -type f -exec grep -H YesPlease {} \; > ffs
 
-last build attempt...
+ diff git-A.B.C/ffs git-X.Y.Z/ffs
 
  grep '#' Makefile
  grep '#' configure
- ^ prints actual comments ? (./configure --help is full of shit)
+ find . -type f -exec grep -Hi -e '/*' -e '#' {} \; # code comments
 
- find . -type f -exec grep -Hi -e '/*' -e '#' {} \; # code comments ?
+#############
 
  INSTALL_SYMLINKS=YesPlease
  SKIP_DASHED_BUILT_INS=YesPlease
- ^ jsmin cssmin --disable is setting no as the path to a file and enabling it ?
+ ^ jsmin cssmin --disable setting no as path and enabling it ?
 
  stage3/bare    0775
  stage3/working 0700

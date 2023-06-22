@@ -341,3 +341,127 @@ desktop: input:/dev/input video:/dev/dri
 ^ or only competing inside its own nice level restrcitions
 
 #############
+
+ [busybox]
+
+ * -werror - doesnt build
+
+ * default - enable all long options
+ ^ some binaries do nothing
+   others get increased functionality
+
+ - vi inline editing CONFIG_FEATURE_EDITING_VI
+ ^ set -o vi (doesnt turn on when disabled)
+ ^ (exists in set -o output regardless)
+
+ * track window size changes FEATURE_EDITING_WINCH - turned on the PS1 reprint disabled
+ ? query cursor position from terminal
+ ^ settings claims 'more robust'
+ ^ vi claims last ditch effort
+ ^ less claims last ditch effort
+ ^^ made it uniform (global+vi+less)
+
+ * unicode support - stop printing dumb characters on output
+
+ -archival utilities-
+
+ ? unzip - firmware files are always .zip encoded... gets annoying
+
+ -coreutils-
+
+  * CONFIG_FEATURE_PRESERVE_HARDLINKS ?
+  ^ mv does preserve hardlinks 
+  ^ cp doesnt preserve hardlinks misleading ?
+  ^^ tl;dr fuck hardlinks no visability and weird functionality
+
+  * copy long options --reflink (ext4 doesnt support it)
+
+  ? ls - fairly sure -w <width> doesnt do anything ?
+
+  ? head and tail - fancy output options dont match ?
+
+  * expr - more hardened compared to test ?
+  * test - extend test to 64 bit (assuming larger numbers ?)
+  ^ test --help would be awesome...
+
+  ** touch - SUSV3 allows timestamps etc ?
+
+ -console utilities-
+ -debian utilities-
+
+  * run-parts - technically awesome for cronjobs / config directories (hard requirement for acpid)
+
+ -klibc-utils-
+ -editors-
+
+  * diff long options - doesnt do anything
+
+ -find utilities-
+ -init utilities-
+
+  ? linuxrc - remove pid1 check allow init as supervisor daemon in chroots ?
+
+ -login/password management utilities-
+ -linux ext2 fs progs-
+ -linux module utilities-
+ -linux system utilities-
+
+ * setpriv - wish it worked ?
+
+ * mkswap - testing zram zswap
+ * swapon - testing zram zswap
+ * swapoff - testing zram zswap
+
+ * acpid - know what it does provides extra functionality ?
+ * uevent - prints out udev information (suppose to be used with mdev)
+
+ * getopt isnt getopts ?
+ ^ norm: enable shell built-in and applet
+ ^ breaks norm different name / program...
+
+ -miscellaneous utilities-
+
+ * crond - -fd (foreground and log to stderr for debug?)
+ * hdparm - doesnt support hdparm -W /dev/disk to view write cache status...
+
+ -misc utilities-
+
+  * microcom - used it to flash openwrt devices...
+
+ -networking-
+ -print utilities-
+ -mail utilities-
+ -process utilities-
+ -runinit utilities-
+ -shells-
+
+ * CONFIG_FEATURE_SH_NOFORK - may significantly speed up shell scripts ?
+ ^ grep APPLET_NOFORK include/applets.h | grep ^IF | wc -l == 40 applets only ?
+
+ -system logging utilities-
+
+-------------
+
+ busybox
+  doesnt need
+   libcrypt
+   libm
+   librt
+  needs
+   libresolv
+
+ ^ login/password management utilities - internal crypt stuff removed dependencies
+
+ ? more than nslookup using libresolv... (it uses internal code?)
+
+ ^ qemu silently linking to glibc for alot of libraries...
+
+-------------
+  * echo -n -e 
+  ^ check $variable with -tac fuck ups...
+  *  command $variable - always parses -tac options
+  *  "force it to be read as a single arguement"
+  *  ^ anything with a space dies
+-------------
+#############
+

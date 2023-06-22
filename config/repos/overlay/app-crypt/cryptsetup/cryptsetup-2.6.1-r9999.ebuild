@@ -59,7 +59,6 @@ src_configure(){
 --with-aix-soname=aix \
 --with-gnu-ld \
 --with-sysroot \
---with-gnu-ld \
 --without-libiconv-prefix \
 --without-libintl-prefix \
 --with-crypto_backend=kernel \

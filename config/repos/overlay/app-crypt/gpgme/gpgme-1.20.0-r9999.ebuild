@@ -47,7 +47,7 @@ src_configure() {
 --with-sysroot \
 --without-python-sys-prefix \
 --without-python_prefix \
---with-python_exec_prefix \
+--without-python_exec_prefix \
 --with-libgpg-error-prefix \
 --with-libassuan-prefix
 

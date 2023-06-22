@@ -4,6 +4,7 @@ EAPI=8
 DESCRIPTION="Common CA Certificates PEM files"
 HOMEPAGE="https://www.ccadb.org"
 SRC_URI="https://ccadb-public.secure.force.com/mozilla/IncludedRootsPEMTxt?TrustBitsInclude=Websites -> ca-certificates.crt"
+SRC_URI="https://ccadb.my.salesforce-sites.com/mozilla/IncludedRootsPEMTxt?TrustBitsInclude=Websites -> ca-certificates.crt"
 #############
 LICENSE="MPL-1.1"
 SLOT="0"

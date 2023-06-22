@@ -1,5 +1,7 @@
 
 #############
+fc00::feed:beef/64
+#############
 [0|129|153|165|189|195|219|231|255]
 #############
 no idea what stupid has gathered itself in here
@@ -40,6 +42,8 @@ stuff at the top is unordered raw sewage
 
 [INFORMATIONAL]:
 #############
+* qemu reboot - corrects vnc output size
+* gcc - removed /etc/portage symlink ?
 * mandoc: sys-boot/efibootmgr - > sys-libs/efi-var - > mandoc ./file.1 | less -S
 * pkg_postinst isnt recorded in CONTENTS
 * raw pasting into st/vim is bad mode...
@@ -130,25 +134,63 @@ stuff at the top is unordered raw sewage
 v attempt to create lists of things to actually do
 
 #############
-gcc - removed /etc/portage symlink ?
+updated nftables documentation and examples
+removed libnatpmp miniupnpc (transmission using built in)
+proof read repos (lot of failure)
+added equal cost multipath (multiple ip route add default rules)
+su -l -s /bin/sh -c 'setsid <binary> & exit' <user> (removing exit hangs the shell when executed in scripts)
+updated integritysetup to use ext4...
+auditd added new users updated wxa tracking to all paths (keeps adding entries on read?)
+added setpriv and -e entropy_file to wpa_supplicant (CONFIG_SETPRIV didnt work)
+added wifi user
+added ssh user
+added ssh to nobody
+removed sound from server
+removed zram and swap from kernels
+zramctl + mkswap support
+busybox ar - allows extracting .debs (still needs unzip for firmware?)
+{storage.fde,crypt.start,crypt.stop} added integritysetup
+added usb.{hash,check} - verify usb hasnt corrupted
+vim -p /tmp/a.bootfs/{.hashes,hashes} + (ctrl+n ctrl+p)
+sets_wayland works - (cant priv drop, cant nested priv drop)
+libcurl needed unix socket support for transmission
+fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1)
 #############
-src/feature.h - VIMRC_FILE = name of vimrc file in current directory
-^ still global paths / home paths / cwd paths
-^ with remote code execution in the config file ?
+
+
+
 #############
-* sec-keys/openpgp-keys-gentoo-{auth,release,developers}
-   sec-keys/openpgp-keys-gentoo-release-20230329
-    curl -o /usr/share/openpgp-keys/gentoo-release.asc https://dev.gentoo.org/~mgorny/dist/openpgp-keys/gentoo-release.asc.${PV}.gz
-   sec-keys/openpgp-keys-gentoo-auth-20230329
-    curl -o /usr/share/openpgp-keys/gentoo-auth.asc https://dev.gentoo.org/~mgorny/dist/openpgp-keys/gentoo-auth.asc.${PV}.gz"
-   sec-keys/openpgp-keys-gentoo-developers-20230515
-    curl -o /usr/share/openpgp-keys/gentoo-developers.asc https://qa-reports.gentoo.org/output/active-devs.gpg
+update udhcpc_{default,oneshot,ping} ? (ip route del default dev ${interface})
+need to proof read sys-apps, www-client, x11-wm
+config files {mutt,vim,firefox,wpa_supplicant}
+add integrity.{start,stop} for secondary usb device ?
 #############
- add integrity to secondary usb ?
- crypt.start /dev/sdc
- integrity.start /dev/sdc
+! setpriv_udhcpd < - ignores first sleep ? wtf would be an understatement
+* tested until pgrep -x /bin/binary ; do sleep .1 ; done
+^ made it worse, had to be removed
+* setsid
 #############
- chromium && discord
+
+[nftables]
+
+ nat inbound makes sense for hosting virtual machines
+ nat outbound only makes sense running this as a virtual machine
+ ^ should be based on sandboxing ? (prevent users internet access)
+ ^ should be based on development ? (access to any running vm)
+
+ host as gateway drops udp requests out
+ allows access to local networks resources
+ false assumption its safe to run nat on other networks ?
+ (cant assume private address range)
+
+ lan - only secure out
+ nat - allows insecure out (under the assumption my network blocks the gateway)
+
+#############
+
+ [chromium && discord]
+
+ ^ got chromium to run but the pid froze and wouldnt display the gui ?
 
  LD_PRELOAD_PATH=/tmp/storage/services/sets/discord:/usr/lib64/firefox
  libgbm - media-libs/mesa
@@ -165,12 +207,6 @@ src/feature.h - VIMRC_FILE = name of vimrc file in current directory
 
 #############
 
- swap zram zramctl
-  0) remove the lot
-  1) add it to init, add it to build system
-
-#############
-
   ldns - undefined reference to ui_openssl
 
   maradns - deadwood > maradns (disable coLunacyDNS lua)
@@ -181,43 +217,18 @@ src/feature.h - VIMRC_FILE = name of vimrc file in current directory
 
 #############
 
-#############
+ * read -r --raw < - interpret backslashes literally, rather than as escape characters
+ ^ need a test script to demonstrate the difference
 
- [read vs read -r]
+* console has the wrong key layout
+  host has mtm-256color
+  chroot does not have mtm-256color
+  ^^ cant do dev from tmux(dtach+mtm)
+  (exec showkey > /run/logs/keylogger &)&
+  dumpkmap - get keyboard map
+  loadkmap - set keyboard map
 
- -r --raw < - interpret backslashes literally
-              rather than as escape characters
- ? variable holds backslash rather than stripping ? or changing them to literal characters ?
-
- read -r leaves backslashes in ?
- cant get it to actually interpret them from input
-
-[mutt]
-
- hostname='localhost' - hides /proc/sys/kernel/hostname
- ^ gmail forwards incoming ip address (last leak)
-
-  muttrc is fucking brutal
-  easy to fake emails
-^ set encode_from="yes"
-
-  pop_authenticators="user" < - login without sasl
-  smtp_authenticators="login" < - forces sasl...
-
-#############
-made ssh user
-added dropbear to nobody...
-removed sound from server
-qemu reboot - changes vnc output size
-busybox ar - allows extracting .debs (still needs unzip for firmware?)
-usb.{hash,check} - verify usb hasnt corrupted
-vim -p /tmp/a.bootfs/{.hashes,hashes} + (ctrl+n ctrl+p)
-sets_wayland works - (cant priv drop, cant nested priv drop)
-{storage.fde,crypt.start,crypt.stop} added integritysetup
-zramctl + mkswap support
-libcurl needed unix socket support for transmission
-fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1)
-#############
+* gnupg - scdaemon tpm2daemon config files ?
 
  cant mpv.music - without 127.0.0.1 access (jail cant music)
  ^ dtach -A socket mpv.music 127.0.0.1
@@ -292,248 +303,30 @@ fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1
  * herbe needs /dev/shm/$USER splitting (doesnt support multiplayer) (logread|grep -f file|while read ; do herbe "notifcation" ; done
  ^ desktop:desktop /dev/shm/desktop.tmp < - herbe as a single user
 
-#############
-
- [busybox]
-
- * -werror - doesnt build
-
- * default - enable all long options
- ^ some binaries do nothing
-   others get increased functionality
-
- - vi inline editing CONFIG_FEATURE_EDITING_VI
- ^ set -o vi (doesnt turn on when disabled)
- ^ (exists in set -o output regardless)
-
- * track window size changes FEATURE_EDITING_WINCH - turned on the PS1 reprint disabled
- ? query cursor position from terminal
- ^ settings claims 'more robust'
- ^ vi claims last ditch effort
- ^ less claims last ditch effort
- ^^ made it uniform (global+vi+less)
-
- * unicode support - stop printing dumb characters on output
-
- -archival utilities-
-
- ? unzip - firmware files are always .zip encoded... gets annoying
-
- -coreutils-
-
-  * CONFIG_FEATURE_PRESERVE_HARDLINKS ?
-  ^ mv does preserve hardlinks 
-  ^ cp doesnt preserve hardlinks misleading ?
-  ^^ tl;dr fuck hardlinks no visability and weird functionality
-
-  * copy long options --reflink (ext4 doesnt support it)
-
-  ? ls - fairly sure -w <width> doesnt do anything ?
-
-  ? head and tail - fancy output options dont match ?
-
-  * expr - more hardened compared to test ?
-  * test - extend test to 64 bit (assuming larger numbers ?)
-  ^ test --help would be awesome...
-
-  ** touch - SUSV3 allows timestamps etc ?
-
- -console utilities-
- -debian utilities-
-
-  * run-parts - technically awesome for cronjobs / config directories (hard requirement for acpid)
-
- -klibc-utils-
- -editors-
-
-  * diff long options - doesnt do anything
-
- -find utilities-
- -init utilities-
-
-  ? linuxrc - remove pid1 check allow init as supervisor daemon in chroots ?
-
- -login/password management utilities-
- -linux ext2 fs progs-
- -linux module utilities-
- -linux system utilities-
-
- * setpriv - wish it worked ?
-
- * mkswap - testing zram zswap
- * swapon - testing zram zswap
- * swapoff - testing zram zswap
-
- * acpid - know what it does provides extra functionality ?
- * uevent - prints out udev information (suppose to be used with mdev)
-
- * getopt isnt getopts ?
- ^ norm: enable shell built-in and applet
- ^ breaks norm different name / program...
-
- -miscellaneous utilities-
-
- * crond - -fd (foreground and log to stderr for debug?)
- * hdparm - doesnt support hdparm -W /dev/disk to view write cache status...
-
- -misc utilities-
-
-  * microcom - used it to flash openwrt devices...
-
- -networking-
- -print utilities-
- -mail utilities-
- -process utilities-
- -runinit utilities-
- -shells-
-
- * CONFIG_FEATURE_SH_NOFORK - may significantly speed up shell scripts ?
- ^ grep APPLET_NOFORK include/applets.h | grep ^IF | wc -l == 40 applets only ?
-
- -system logging utilities-
-
--------------
-
- busybox
-  doesnt need
-   libcrypt
-   libm
-   librt
-  needs
-   libresolv
-
- ^ login/password management utilities - internal crypt stuff removed dependencies
-
- ? more than nslookup using libresolv... (it uses internal code?)
-
- ^ qemu silently linking to glibc for alot of libraries...
-
--------------
-  * echo -n -e 
-  ^ check $variable with -tac fuck ups...
-  *  command $variable - always parses -tac options
-  *  "force it to be read as a single arguement"
-  *  ^ anything with a space dies
--------------
-#############
-
-* zram + zswap
-
-   zramctl /dev/zram0 -s 1G
-   mkswap /dev/zram0
-   swapon /dev/zram0
-   zramctl ; cat /proc/swaps ; free -h
-
-   zramctl /dev/zram1 -s 1G
-   mkfs.ext4 /dev/zram1
-   mount /dev/zram1 /dev/shm
-
- cryptographic api - > compression - > lzo
- CONFIG_CRYPTO_LZO
-
- device drivers - > block devices - > compressed ram block device support
- CONFIG_ZRAM
-
- memory management options - > support for paging of anonymous memory
- CONFIG_SWAP
-
-^ short and sweet...
-
- CONFIG_ZSWAP - does the above for block device or file ?
-              using it for zram would double memory use ?
-
-#############
-
- dtach -
-
--------------
- su -l -s /bin/sh -c 'dtach -n /dev/shm/test /bin/sh -l' user
- ^ /proc/4444/fd
-   0 > /dev/null
-   1 > /dev/null
-   2 > /dev/null
-   3 > socket
-   4 > pts
--------------
- echo 'exec sleep 30' | dtach -p /dev/shm/test < - replaces running shell
--------------
- ^ no controlling tty
-   no stdin stdout stderr
-   new /dev/pts with correct privs
-   replace running shell with anything passed to it
--------------
-
-#############
-
- dropbear Xephyr forwarding -
-
- setsid Xephyr -ac -nolisten tcp -listen unix -nolisten local :4444 </dev/null &>/dev/null
-
- local: nc local:/tmp/.X11-unix/X4444 -e dbclient user@172.16.0.1 nc -ls local:/tmp/.X11-unix/X4444
-
- remote: dbclient user@172.16.0.1 DISPLAY=:4444 setsid dwm-guest </dev/null &>/dev/null
-
- ^ works then terminates the nc session in dropbear ? (missing -lk because no -e)
-
- ? nc local:/tmp/.X11-unix/X4444 -e dbclient user@172.16.0.1 nc -lks local:/tmp/.X11-unix/X4444 -e dwm-guest ?
-
- ^ that would keep netcat open but attaches dwm to input output ?
-   dwm stdout/stderr now goes into X socket ? </dev/null &>/dev/null to fix it : /
-   took ages to get testing environment up...
-
-****
-  local: Xephyr -ac -listen tcp :13
- remote: DISPLAY=172.16.0.1:13 dwm-guest
-****
-
-#############
-
- [qemu]
-
- * /dev/shm/{dtach,vnc}
-
- * qemu - dtach console / vnc console
- ^ CONFIG_SERIAL_8250
-   CONFIG_SERIAL_8250_CONSOLE
-   console=ttyS0
-
- * CONFIG_VIRTIO_INPUT
- * -device virtio-{keyboard,mouse,tablet}
- ^ prefer the at keyboard / ps2 mouse setup...
-   virtio-mouse doesnt match properly
-   virtio-tablet no button press at all
-
- [ -deamonize -display none -vnc unix:/dev/shm/qemu ]
-
- [ -serial stdio -display none -nographic -append console=ttyS0 ]
-
- dtach -A /dev/shm/qemu setsid qemu-system-x86_64
- dtach -a /dev/shm/qemu
-
- [ -z $console ] && kernel="--append root=/dev/vda" || kernel="--append root=/dev/vda console=ttyS0"
-
- * append doesnt work in q.wrapper "'${variable}'" problems ?
-
- -k(ernel) -i(nitramfs) -b(oot) -f(ile) -e(xtra)
- -l(an) -n(at)
- -c(onsole) -v(nc)
- -u(ser)
-
-#############
-
- tl;dr - disabled TIOCSTI, reduced attack surface
-
- CALL_DEPTH_TRACKING - mitigations for speculative execution vulnerabilities
- ^ virtual - CONFIG_PROCESSOR_SELECT (intel only)
-
- ACPI_FFH - fixed function hardware address space (define platform specific opregion)
- KVM_SMM - emulate system management mode (allow secure boot)
- SLAB/SLUB/SLOB - deprecated slob ?
- SLUB_TINY - sacrifice scalability,debugging and other features <16MB
- LEGACY_TIOCSTI - legacy functionality used for priv esc... disable
- DRM_ACCEL - framework for compute acceleration devices
- CONFIG_HID_MCP2221 - i2c and smbus over usb-hid ?
- CONFIG_IOMMUFD - /dev/iommu userspace iommu api
+* denial of service / stability
+
+   tmp space/inode exhaustion bricks running system ?
+   top level directory root write only
+   dhcpd:dhcpd - overwrite /run/leases till full
+   dhcpc:dhcpc - overwrite /run/udhcpc till full
+   desktop:desktop - overwrite /tmp/.X0-{auth,lock,log,log.old} till full
+   /run/services - ddns dnsd p2pd full directory write inode+space exhaustion
+                     
+   z.ephemeral ? user,nobody,proxy,desktop,ddns,dnsd,p2pd
+   full denial of service from every possible rce point
+
+* tmpfs doesnt support diskquota
+  ramfs+ext4 ?
+
+* config/portage/profile/packages
+ virtual/man doesnt depclean anything ?
+ sys-apps/man-pages removes an extra 50 packages ?
+ man-db or man-pages < - depends on systemd-tmpfiles ?
+
+^ weird dependency chain
+
+! basically -virtual/man should depclean everything...
+  couldnt figure out why ?
 
 #############
 
@@ -617,10 +410,11 @@ lsw && xev -
 storage.bootfs -
 $storage/{.gnupg,.ssh,.vpn,.wifi}
 $services/ddns/{public,private}
-$home/{user,nobody,proxy,smtp,http,irc,xmr}/.ssh
-$home/irc/irc
-$home/http/.browser
+$home/{user,nobody,proxy,jail,ssh,smtp,http,irc,xmr}/.ssh
+$home/ssh/.ssh
 $home/smtp/mail
+$home/http/.browser
+$home/irc/irc
 $home/xmr/monero
 
  usb.persistence -
@@ -655,77 +449,6 @@ $home/xmr/monero
   cp gnupg/ssh/vpn/wifi ddns irc/mail/monero
 
 -------------
-
-#############
-
- openssl genpkey -algorithm ed25519 -out key.pem
- openssl pkey -pubout -in key.pem -out key.pub
-
- openssl pkeyutl
-  -sign -inkey key.pem
-  -rawin -in file
-  -out file.sig
-
- openssl pkeyutl
-  -rawin -in file
-  -verify -sigfile file.sig
-  -pubin -inkey key.pub
-
- openssl pkeyutl
-  -derive
-  -inkey me.private
-  -peerkey you.public
- ^ doesnt work...
-
- openssl s_server -dtls1_2
- openssl s_client -dtls1_2
- ^ doesnt work with ed25519
-
-  end game ?
-  root - > server - > certificate
-           client - > certificate
-
--------------
- openssl pkeyutl -kdf TLS1-PRF -kdflen 64 -digest sha512
--------------
-
-^ added kdf to key derive ?
-
-#############
-
- [pxe]
-
-  grub/linux/initrd
-  grub/linux/rootfs
-  grub/linux/nfsroot
-
- * net-fs/nfs-utils
-   net-libs/libtirpc
-   sys-apps/keyutils
-
- ^ sys-boot/grub - error memdisk, drops into recovery shell ?
-
-  * firmware checksum grub with embedded public key ?
-
-    grub-mkstandalone -k --pubkey
-    boot/internal/path=/tmp/external/path
-
-#############
-
- console has the wrong key layout
- host has mtm-256color
- chroot does not have mtm-256color
- ^^ cant do dev from tmux(dtach+mtm)
-  (exec showkey > /run/logs/keylogger &)&
-  dumpkmap - get keyboard map
-  loadkmap - set keyboard map
-
-#############
-
- tor - libevent error operation not permitted while writing response to port
-       creates dropped udp spt=53 dpt=51898
-     ^ assuming 60 second conntrack timeout ?
-       dns isnt up, tor allows longer to fail, linux cleans conntrack
 
 #############
 
@@ -847,123 +570,6 @@ $home/xmr/monero
 
 #############
 
-[ebuilds]
-
-6.2.0 last known working
-7.0.0 cuts of the bottom of the console in vnc output
-7.1.0 cuts of the bottom of the console in vnc output
-
-* qemu - 
-
-   --firmwarepath=/usr/share/qemu ?
-
-   --with-devices --without-default-devices (tried bricked everything, possible attack surface reduction ?)
-
-   --enable-capstone auto disabled enabled internal system... 
-
-   --with-coroutine=BACKEND ucontext sigaltstack windows
-   --disable-coroutine-pool coroutine freelist (better performance)... as in better off ? or better on defaulted to off ? guess work
-
-   --disable-plugins ? (no idea what plugins actually are)
-
-   --enable-fdt auto disabled enabled internal system (library doesnt exist in gentoo last post said internal being removed ?) libfdt
-   --enable-malloc jemalloc system tcmalloc (system ? no idea assuming extra lib dependency)
-   --enable-slirp auto disabled enabled internal system ? internal just makes sense
-   
-   additional kernel modules - kms aio io-ring membarrier
-
-   xkbcommon doesnt fix sticky keys in tigervnc... only occurs after startx ?
-
-* openssl - dtls implies test itterations with s_server s_client
-
-* dropbear - max unauthed per ip 5, max unauthed clients 30, max auth tries 10
-  really easy to ddos ? (tor uses 127.0.0.1 but private address ?)
-
-* git - configure just does nothing ?
-
-* wpa_supplicant - attempt privdrop again... few options commented that imply defaults and being enabled regardless ?
-
-[configs]
-
- vim - huge ? could full scope but still number of options i dont understand
- mutt - alot of muttrc options i dont understand
- firefox - huge... :policies > :config > :settings
-
-[misc]
-
-* openssl and wpa_supplicant - using /dev/{random,urandom} over getrandom syscall ?
-* iwd - experimental kernel hand off to crypto libs ? makes it more like cryptsetup/wireguard
-
-* qemu/tigervnc - sticky keys... 
-   qemu - tried libxkbcommon ? did nothing
-   tigervnc - doesnt have any related options ?
-   fltk - tried with cairo + every x11 library enabled
-
-#############
-
-* build.rootfs
-
- installs package list to host deps only
- installs package list to chroot nodeps
- ^ only way to avoid pulling un needed dependencies
- * attempts to build packages with missing dependencies cause silent failure
- cp -a /binhost/packages /binhost/packages.first
- cp -a /binhost/packages /binhost/packages.chroot
- ^ backup before building
-
-#############
-
-* denial of service / stability
-
-   tmp space/inode exhaustion bricks running system ?
-   top level directory root write only
-   dhcpd:dhcpd - overwrite /run/leases till full
-   dhcpc:dhcpc - overwrite /run/udhcpc till full
-   desktop:desktop - overwrite /tmp/.X0-{auth,lock,log,log.old} till full
-   /run/services - ddns dnsd p2pd full directory write inode+space exhaustion
-                     
-   z.ephemeral ? user,nobody,proxy,desktop,ddns,dnsd,p2pd
-   full denial of service from every possible rce point
-
-* tmpfs doesnt support diskquota
-  ramfs+ext4 ?
-
-#############
-
-[use flags]
-
-BLARGH
-
- @revdep rebuild 
-
- nettle gmp (gnupg forces)
-
- gtk+ X
- harfbuzz glib truetype (gtk+ forces)
- cairo X glib svg (gtk+ forces)
-
- libepoxy X (firefox ?)
- freetype -png (firefox ?)
-
- mesa X
- libglvnd X
-
- libpcre2 unicode ?
-
-#############
-
-config/portage/profile/packages
- virtual/man doesnt depclean anything ?
- sys-apps/man-pages removes an extra 50 packages ?
- man-db or man-pages < - depends on systemd-tmpfiles ?
-
-^ weird dependency chain
-
-! basically -virtual/man should depclean everything...
-  couldnt figure out why ?
-
-#############
-
 [crypto]
 
 tpm2-tools
@@ -1011,6 +617,34 @@ argon2 default output matches key input length
 
 [OLD]
 #############
+
+ [pxe]
+
+  grub/linux/initrd
+  grub/linux/rootfs
+  grub/linux/nfsroot
+
+ * net-fs/nfs-utils
+   net-libs/libtirpc
+   sys-apps/keyutils
+
+ ^ sys-boot/grub - error memdisk, drops into recovery shell ?
+
+  * firmware checksum grub with embedded public key ?
+
+    grub-mkstandalone -k --pubkey
+    boot/internal/path=/tmp/external/path
+
+#############
+
+ tor - 
+ 'libevent error operation not permitted while writing response to port'
+  creates dropped udp spt=53 dpt=51898
+  60 second conntrack timeout
+  dns isnt up, tor allows longer to fail, linux cleans conntrack entries
+
+#############
+
  -------------
  firefox-bin - > firefox-esr
  -------------
@@ -1510,6 +1144,9 @@ svd     + has the ability to recieve packets over udp or tcp
 #############
 
 *** wtf raw format
+
+delete default route for interface
+ip route del default dev <interface>
 
 add route via interface...
 ip route add <ip>/<mask> via <interface>

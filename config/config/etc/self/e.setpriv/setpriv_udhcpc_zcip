@@ -4,15 +4,15 @@
 #############
 [ -z "${interface}" ] || [ -z "${ip}" ] && return 0
 #############
-cat << EOF
+
+
+
+
+
+
+
 #############
-interface: ${interface}
-#############
-ip: ${ip}
-#############
-EOF
-#############
-read -rp 'continue ?'
+
 #############
 ip addr add "${ip}/16" broadcast "169.254.255.255" dev "${interface}"
 #############

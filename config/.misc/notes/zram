@@ -1,0 +1,40 @@
+
+#############
+
+* zram + zswap
+
+   zramctl /dev/zram0 -s 1G
+   mkswap /dev/zram0
+   swapon /dev/zram0
+   zramctl ; cat /proc/swaps ; free -h
+
+   zramctl /dev/zram0 -s 1G
+   mkfs.ext4 /dev/zram0
+   mount /dev/zram0 /tmp
+
+   zramctl /dev/zram1 -s 1G
+   mkfs.ext4 /dev/zram1
+   mount /dev/zram1 /dev/shm
+
+-------------
+
+ cryptographic api - > compression - > lzo
+
+  CONFIG_CRYPTO_LZO
+
+ device drivers - > block devices - > compressed ram block device support
+
+  CONFIG_ZRAM
+
+ memory management options - > support for paging of anonymous memory
+
+  CONFIG_SWAP
+
+-------------
+
+ CONFIG_ZSWAP - does the above for block device or file ?
+                using it for zram would double memory use ?
+
+#############
+
+

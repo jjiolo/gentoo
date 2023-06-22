@@ -4,7 +4,7 @@ cat << EOF
 
 ROOT
 ----
-su -l -s /bin/sh -c 'SEATD_VTBOUND=7 setsid seatd </dev/null &>/dev/null' desktop
+su -l -s /bin/sh -c 'SEATD_VTBOUND=7 setsid seatd </dev/null &>/dev/null & exit' desktop
 chown desktop:toor /dev/shm/seatd.sock
 chmod 0660 /dev/shm/seatd.sock
 

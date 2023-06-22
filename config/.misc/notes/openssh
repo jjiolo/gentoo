@@ -46,6 +46,29 @@ tldr ;
 
 #############
 
+ dropbear Xephyr forwarding -
+
+ setsid Xephyr -ac -nolisten tcp -listen unix -nolisten local :4444 </dev/null &>/dev/null
+
+ local: nc local:/tmp/.X11-unix/X4444 -e dbclient user@172.16.0.1 nc -ls local:/tmp/.X11-unix/X4444
+
+ remote: dbclient user@172.16.0.1 DISPLAY=:4444 setsid dwm-guest </dev/null &>/dev/null
+
+ ^ works then terminates the nc session in dropbear ? (missing -lk because no -e)
+
+ ? nc local:/tmp/.X11-unix/X4444 -e dbclient user@172.16.0.1 nc -lks local:/tmp/.X11-unix/X4444 -e dwm-guest ?
+
+ ^ that would keep netcat open but attaches dwm to input output ?
+   dwm stdout/stderr now goes into X socket ? </dev/null &>/dev/null to fix it : /
+   took ages to get testing environment up...
+
+****
+  local: Xephyr -ac -listen tcp :13
+ remote: DISPLAY=172.16.0.1:13 dwm-guest
+****
+
+#############
+
 sshfs -o allow_other,reconnect,auto_unmount root@172.16.0.1:/tmp/storage/stage3 /tmp/storage/stage3
 cd /tmp/storage/stage3 ; ./2.shell ; emerge -av busybox...
 
@@ -80,6 +103,8 @@ random errors on stage3 chroot, did actually build, couldnt pin a single cpu cor
 
 
 
+#############
+old notes
 #############
 #
 sftp

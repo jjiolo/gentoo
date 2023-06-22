@@ -1,33 +1,49 @@
 
 #############
 
+ [q.wrapper]
+
+ -k(ernel) -i(nitramfs) -b(oot) -f(ile) -e(xtra)
+ -l(an) -n(at)
+ -c(onsole) -v(nc)
+ -u(ser)
+
+#############
+
+ --firmwarepath /usr/share/qemu-firmware
+
+ ^ still using /usr/share/qemu
+   updated -L /usr/share/qemu instead ?
+
+ --with-devices --without-default-devices
+ ^ remove unneeded devices from default vms
+   possible attack surface reduction ?
+
+ could enable - kms aio io-ring membarrier
+
+ * still have sticky key problems with tigervnc
+
+#############
+
  CONFIG_VIRTIO_INPUT - 
  -device virtio-keyboard
  -device virtio-mouse
  -device virtio-tablet
  ^ qemu-system-x86_64 -device help | grep virtio
 
+ virtio-mouse - doesnt match properly
+ virtio-tablet - no button press at all
+
+#############
+
  CONFIG_SERIAL_8250 - enables /dev/ttyS{0-3}
  CONFIG_SERIAL_8250_CONSOLE - console=ttyS0
 
- qemu -serial stdio (-nographic)
- ^ ctrl-a + h to switch between console and monitor
+ -daemonize
+ -nographic -disaply none -vnc unix:/dev/shm/qemu
 
-#############
-
- -vnc very useful to enable -device usb-tablet ?
-
- * currently dont have usb hid devices enabled in the kernel...
-
- tried with virtio-tablet and it did literally nothing ?
-
- was assuming not updating mouse position and tablet presses
- was to reduce network bandwidth
- google now full of shit teir mongtard logic implying it aligned mouse output properly ?
-
-#############
-
- -bios - clean up /usr/share/qemu files ? (select a known working bios only)
+ --append console=ttyS0
+ -nographic -display none -serial stdio
 
 #############
 

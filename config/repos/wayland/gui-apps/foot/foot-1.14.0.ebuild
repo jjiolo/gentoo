@@ -22,7 +22,10 @@ sys-libs/zlib
 x11-libs/libxkbcommon
 x11-libs/pixman
 "
-DEPEND="dev-libs/wayland-protocols"
+DEPEND="
+${RDEPEND}
+dev-libs/wayland-protocols
+"
 S="${WORKDIR}/${PN}"
 #############
 src_configure(){
@@ -54,8 +57,6 @@ meson build \
 }
 #############
 src_compile(){ ninja -C build -j16 -l16 || die "compile failed" ; }
-#############
-#src_install(){ DESTDIR="${D}" ninja -C build install || die "install failed" ; }
 #############
 src_install(){
 

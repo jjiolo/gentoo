@@ -3,6 +3,8 @@ app-crypt/argon2
 app-crypt/cryptsetup
 app-crypt/gnupg
 app-crypt/gpgme
+sec-keys/openpgp-keys-gentoo-auth
+sec-keys/openpgp-keys-gentoo-developers
 sec-keys/openpgp-keys-gentoo-release
 app-crypt/pinentry
 app-editors/vim
@@ -23,9 +25,7 @@ dev-vcs/git
 mail-client/mutt
 net-firewall/nftables
 net-libs/libmnl
-net-libs/libnatpmp
 net-libs/libnftnl
-net-libs/miniupnpc
 net-misc/curl
 net-misc/dropbear
 net-p2p/monero

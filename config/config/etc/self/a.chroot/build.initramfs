@@ -174,7 +174,6 @@ cp -a /lib64/libblkid.so* lib64
 cp -a /bin/lsblk bin
 cp -a /lib64/libsmartcols* lib64
 #
-cp -a /sbin/zramctl sbin
 cp -a /usr/bin/setpriv usr/bin
 cp -a /usr/lib64/libcap-ng.so* usr/lib64
 #

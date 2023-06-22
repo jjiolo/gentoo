@@ -1,0 +1,108 @@
+
+#############
+flush ruleset
+#############
+table netdev interfaces {
+#nft -nnn list set netdev interfaces v4 ; nft add element netdev interfaces v4 { "${1}" timeout 3600s } ; nft delete element netdev interfaces v4 { "${1}" }
+#nft -nnn list set netdev interfaces v6 ; nft add element netdev interfaces v6 { "${1}" timeout 3600s } ; nft delete element netdev interfaces v6 { "${1}" }
+ set v4 { type ipv4_addr ; timeout 3600s ; flags dynamic,timeout ; }
+ set v6 { type ipv6_addr ; timeout 3600s ; flags dynamic,timeout ; }
+ chain ilo { type filter hook ingress device lo priority 0 ; policy accept ; ip saddr @v4 drop ; ip6 saddr @v6 drop ; }
+ chain olo { type filter hook egress device lo priority 0 ; policy accept ; ip daddr @v4 drop ; ip6 daddr @v6 ; }
+}
+#############
+table arp filter {
+ set mac { typeof iifname . ether daddr ; timeout 3600s ; flags dynamic,timeout ; }
+ chain input { type filter hook input priority 0 ; policy accept ; set update iifname . ether daddr @mac ; }
+ chain output { type filter hook output priority 0 ; policy accept ; set update oifname . ether saddr @mac ; }
+}
+#############
+table bridge filter {
+ chain prerouting { type filter hook prerouting priority 0 ; policy accept ; }
+ chain input { type filter hook input priority 0 ; policy accept ; }
+ chain forward { type filter hook forward priority 0 ; policy drop ; }
+ chain output { type filter hook output priority 0 ; policy accept ; }
+ chain postrouting { type filter hook postrouting priority 0 ; policy accept ; }
+}
+#############
+table inet nat {
+ chain prerouting { type nat hook prerouting priority 0 ; policy accept ; ip daddr 172.16.0.1 tcp dport 80 dnat to 172.16.0.2-172.16.0.254:80-8080 ; tcp dport 80 redirect to 8080 ; }
+ chain input { type nat hook input priority 0 ; policy accept ; ip saddr 172.16.0.1 tcp dport 80 snat to 172.16.0.2:8080 ; }
+ chain output { type nat hook output priority 0 ; policy accept ; ip daddr 172.16.0.1 tcp dport 80 dnat to 172.16.0.2-172.16.0.254:80-8080 ; tcp dport 80 redirect to 8080 ; }
+ chain postrouting { type nat hook postrouting priority 0 ; policy accept ; ip saddr 172.16.0.1 tcp dport 80 snat to 172.16.0.2-172.16.0.254:80-8080 ; oifname lan masquerade fully-random ; }
+}
+#############
+table inet filter {
+
+ set knock_ipv4 { type ipv4_addr . inet_service ; timeout 60s ; flags dynamic,timeout ; }
+ set knock_ipv6 { type ipv6_addr . inet_service ; timeout 60s ; flags dynamic,timeout ; }
+
+ set knocked_ipv4 { type ipv4_addr ; timeout 60s ; flags dynamic,timeout ; }
+ set knocked_ipv6 { type ipv6_addr ; timeout 60s ; flags dynamic,timeout ; }
+
+ chain lo { type filter hook ingress device lo priority 0 ; policy accept ; }
+
+ chain prerouting { type filter hook prerouting priority 0 ; policy accept ; }
+
+ chain input {
+
+  type filter hook input priority 0 ; policy drop
+
+  meter service_connlimit { ip saddr ct count over 7 } drop
+
+  meter service_ratelimit { ip saddr limit rate over 300 kbytes/second burst 200 kbytes } drop
+
+  tcp dport 123 set add ip saddr . 234 @knock_ipv4
+  tcp dport 234 ip saddr . tcp dport @knock_ipv4 set add ip saddr . 345 @knock_ipv4   set delete ip saddr . 234 @knock_ipv4
+  tcp dport 345 ip saddr . tcp dport @knock_ipv4 set add ip saddr . 456 @knock_ipv4   set delete ip saddr . 345 @knock_ipv4
+  tcp dport 456 ip saddr . tcp dport @knock_ipv4 set add ip saddr       @knocked_ipv4 set delete ip saddr . 456 @knock_ipv4 log flags skuid prefix "successful knock "
+
+  tcp dport 123 set add ip6 saddr . 234 @knock_ipv6
+  tcp dport 234 ip6 saddr . tcp dport @knock_ipv6 set add ip6 saddr . 345 @knock_ipv6   set delete ip6 saddr . 234 @knock_ipv6
+  tcp dport 345 ip6 saddr . tcp dport @knock_ipv6 set add ip6 saddr . 456 @knock_ipv6   set delete ip6 saddr . 345 @knock_ipv6
+  tcp dport 456 ip6 saddr . tcp dport @knock_ipv6 set add ip6 saddr       @knocked_ipv6 set delete ip6 saddr . 456 @knock_ipv6 log flags skuid prefix "successful knock "
+
+  ip  saddr @knocked_ipv4 set update ip  saddr @knocked_ipv4
+  ip6 saddr @knocked_ipv6 set update ip6 saddr @knocked_ipv6
+
+  ip  saddr != @knocked_ipv4 drop
+  ip6 saddr != @knocked_ipv6 drop
+
+  ct state established accept
+
+  ct state new log flags skuid prefix "input.new " accept
+
+  ct state invalid log flags skuid prefix "input.invalid " drop
+                   log flags skuid prefix "input.drop " drop
+
+ }
+
+ chain forward {
+  type filter hook forward priority 0 ; policy drop
+  ct state established accept
+  ct state new log flags skuid prefix "forward.new " accept
+  ct state invalid log flags skuid prefix "forward.invalid " drop
+                   log flags skuid prefix "forward.drop " drop
+ }
+
+ chain output {
+
+  type filter hook output priority 0 ; policy drop
+
+  meter user_connlimit { skuid ct count over 7 } drop
+
+  meter user_ratelimit { skuid limit rate over 300 kbytes/second burst 200 kbytes } drop
+
+  ct state established accept
+
+  ct state new log flags skuid prefix "output.new " accept
+
+  ct state invalid log flags skuid prefix "output.invalid " drop
+                   log flags skuid prefix "output.drop " drop
+
+ }
+
+ chain postrouting { type filter hook postrouting priority 0 ; policy accept ; }
+}
+#############
+

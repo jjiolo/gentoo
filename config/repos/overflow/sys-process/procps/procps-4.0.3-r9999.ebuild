@@ -11,7 +11,7 @@ KEYWORDS="amd64"
 IUSE=""
 RDEPEND="sys-libs/glibc"
 DEPEND="${RDEPEND}"
-S="${WORKDIR}/procps-v${PV}"
+S="${WORKDIR}/${PN}-v${PV}"
 #############
 src_configure(){
 ./autogen.sh
@@ -22,7 +22,7 @@ LDFLAGS=-static ./configure \
 --disable-dependency-tracking \
 --enable-largefile \
 --disable-nls \
---disable-shared \
+--enable-shared \
 --enable-static \
 --disable-fast-install \
 --enable-libtool-lock \

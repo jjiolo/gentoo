@@ -3,6 +3,7 @@
 
 opensmtpd 6.4.2_p1
 
+-I include path -i include -i :exact_include.h
 -L library path -l library -l :exact_library.so -l :exact_library.a
 
 C_INCLUDE_PATH="/usr/libressl:/usr/include"

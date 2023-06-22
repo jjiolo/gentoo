@@ -10,7 +10,10 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 RDEPEND=""
-DEPEND="dev-libs/wayland"
+DEPEND="
+${RDEPEND}
+dev-libs/wayland
+"
 #############
 src_configure(){
 meson build \

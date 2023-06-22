@@ -10,7 +10,7 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 RDEPEND="sys-libs/glibc"
-DEPEND=""
+DEPEND="${RDEPEND}"
 #############
 src_configure(){
 ./configure \

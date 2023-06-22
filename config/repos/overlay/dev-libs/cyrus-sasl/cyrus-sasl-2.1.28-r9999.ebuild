@@ -87,6 +87,6 @@ src_configure(){
 --with-sphinx-build=no
 } 
 #############
-src_install(){ default; }
+src_install(){ default ; }
 #############
 

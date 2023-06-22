@@ -8,7 +8,8 @@ jail:x:4:
 audio:x:7:nobody,jail
 video:x:9:nobody
 desktop:x:11:
-qemu:x:13:
+wifi:x:13:
+qemu:x:15:
 
 ddns:x:5353:
 dnsd:x:53:

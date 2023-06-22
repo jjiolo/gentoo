@@ -29,12 +29,12 @@ ip addr flush dev "${interface}"
 
 ip link set up "${interface}"
 
-ip route del default
+ip route del default dev "${interface}"
 ip route add default via "${router}" dev "${interface}" scope global metric 0
 
 #############
 [ -z "${opt96}" ] || ip addr add "${opt96}::${ip//./:}/64" dev "${interface}"
-[ -z "${opt96}" ] || ip -6 route del default
+[ -z "${opt96}" ] || ip -6 route del default dev "${interface}"
 [ -z "${opt96}" ] || ip -6 route add default via "${opt96}::${router//./:}" dev "${interface}" scope global metric 0
 #############
 

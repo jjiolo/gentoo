@@ -91,6 +91,7 @@ renice +20 -u jail    2>/dev/null
 renice +0  -u audio   2>/dev/null
 renice +0  -u video   2>/dev/null
 renice +0  -u desktop 2>/dev/null
+renice -10 -u wifi    2>/dev/null
 renice +10 -u qemu    2>/dev/null
 
 renice -10 -u ddns    2>/dev/null

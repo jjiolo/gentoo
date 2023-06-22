@@ -21,7 +21,10 @@ media-libs/mesa
 sys-auth/seatd
 sys-libs/glibc
 sys-libs/mtdev
+x11-libs/libXau
+x11-libs/libXdmcp
 x11-libs/libdrm
+x11-libs/libxcb
 x11-libs/libxkbcommon
 x11-libs/pixman
 "

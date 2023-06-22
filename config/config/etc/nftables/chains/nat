@@ -43,14 +43,18 @@ table inet filter {
   udp dport {53}   skuid {ntpd} ct state new log flags skuid prefix "output.nat.new " accept
   udp dport {53}   skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept
   udp dport {53}   skuid {ssh,smtp,http,irc,xmr} ct state new log flags skuid prefix "output.nat.new " accept
-  udp dport {67}   skuid {root,dhcpc} ct state new log flags skuid prefix "output.nat.new " accept
-  udp dport {68}   skuid {root,dhcpd} ct state new log flags skuid prefix "output.nat.new " accept
-  udp dport {69}   skuid {root,tftpd} ct state new log flags skuid prefix "output.net.new " accept
-  udp dport {123}  skuid {root,ntpd} ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {53}   skuid {p2pd} ct state new log flags skuid prefix "output.nat.new " accept
+
+  udp dport {67}   skuid {dhcpc} ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {68}   skuid {dhcpd} ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {69}   skuid {tftpd} ct state new log flags skuid prefix "output.net.new " accept
+  udp dport {123}  skuid {ntpd} ct state new log flags skuid prefix "output.nat.new " accept
+
   udp dport {6771} skuid {p2pd} ct state new log flags skuid prefix "output.nat.new " accept
   udp dport {9091} skuid {p2pd} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {9091} skuid {p2pd} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {80}   skuid {p2pd} ct state new log flags skuid prefix "output.nat.new " accept
+
 
   tcp dport {22}          skuid {user} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {80}          skuid {root,user,nobody} ct state new log flags skuid prefix "output.nat.new " accept

@@ -12,5 +12,5 @@ pkill -x /sbin/zcip
 #############
 ip link set up "${1}"
 #############
-env -i /sbin/zcip -vfq "${1}" /bin/zcip_script
+env -i /sbin/zcip -vfq "${1}" /bin/udhcpc_zcip
 #############

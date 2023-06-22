@@ -37,8 +37,10 @@ table inet filter {
 
   # client
 
+  udp dport {53}   skuid {ntpd}                  ct state new log flags skuid prefix "output.tun.new " accept
   udp dport {53}   skuid {nobody}                ct state new log flags skuid prefix "output.tun.new " accept
   udp dport {53}   skuid {ssh,smtp,http,irc,xmr} ct state new log flags skuid prefix "output.tun.new " accept
+  udp dport {53}   skuid {p2pd}                  ct state new log flags skuid prefix "output.tun.new " accept
 
   tcp dport {22}   skuid {user}                  ct state new log flags skuid prefix "output.tun.new " accept
   tcp dport {80}   skuid {root,user,nobody}      ct state new log flags skuid prefix "output.tun.new " accept

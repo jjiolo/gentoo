@@ -172,11 +172,9 @@ install -o portage -g portage -m 0755 "${DISTDIR}/waf"* "${S}/waf" || die "waf f
 #############
 src_compile(){ ./waf build || die "compile failed" ; }
 #############
-#src_install(){ ./waf --destdir="${D}" install || die "install failed" ; }
-#############
 src_install(){
 install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
-install    -o root -g root -m 0755 "build/mpv" "${D}/usr/bin"
+install    -o root -g root -m 0755 "build/mpv" "${D}/usr/bin" || die "install failed"
 }
 #############
 

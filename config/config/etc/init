@@ -31,7 +31,7 @@ umask 0007
 
 [ "$(hostname)" == "virtual" ] && {
 
- ash /etc/self/e.setpriv/setpriv_udhcpc nat virtual
+ ash /etc/self/e.setpriv/setpriv_network_default nat virtual
  ash /etc/services/httpd/start
  ash /etc/services/p2pd/start
  sshd -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null

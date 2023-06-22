@@ -44,8 +44,8 @@ cryptsetup --key-file - --hash sha256 --cipher aes-cbc-essiv:sha256 --key-size 2
 [ "${#}" == "2" ] && { integritysetup open --integrity sha256 "/dev/mapper/mount.crypt" "mount.integrity" || usage "integritysetup failed" ; }
 [ "${#}" == "1" ] && { integritysetup open --integrity sha256 "/dev/mapper/mount.crypt" "mount.integrity" || usage "integritysetup failed" ; }
 #############
-[ "${#}" == "2" ] && { mkfs.ext2 -m 0 -L mount "/dev/mapper/mount.integrity" || usage "mkfs failed"; }
-[ "${#}" == "1" ] && { fsck.ext2 -pvf "/dev/mapper/mount.integrity" ; fsck.ext2 -pv "/dev/mapper/mount.integrity" || usage "fsck failed"; }
+[ "${#}" == "2" ] && { mkfs.ext4 -m 0 -L mount "/dev/mapper/mount.integrity" || usage "mkfs failed"; }
+[ "${#}" == "1" ] && { fsck.ext4 -pvf "/dev/mapper/mount.integrity" ; fsck.ext4 -pv "/dev/mapper/mount.integrity" || usage "fsck failed"; }
 #############
 
 install -d -o 0 -g 0 -m 0700 "${mount}"

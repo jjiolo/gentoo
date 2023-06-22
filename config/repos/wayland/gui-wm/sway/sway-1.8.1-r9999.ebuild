@@ -62,7 +62,7 @@ meson build \
 -Db_staticpic=true \
 \
 -Dbash-completions=false \
--Ddefault-wallpaper=false \
+-Ddefault-wallpaper=true \
 -Dfish-completions=false \
 -Dgdk-pixbuf=disabled \
 -Dman-pages=disabled \

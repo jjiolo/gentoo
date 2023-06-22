@@ -10,7 +10,7 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 RDEPEND=""
-DEPEND=""
+DEPEND="${RDEPEND}"
 #############
 src_install(){
 

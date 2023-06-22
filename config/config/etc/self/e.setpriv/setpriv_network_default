@@ -1,8 +1,10 @@
 #!/bin/sh
 #############
-[ "${#}" == "1" ] || [ "${#}" == "2" ] || exit
+usage(){ printf "%s\n" "takes interface and or hostname - ${1}" ; exit 1 ; }
 #############
-[ -d "/sys/class/net/${1}" ] || exit
+[ "${#}" == "1" ] || [ "${#}" == "2" ] || usage "no input"
+#############
+[ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
 #############
 [ -z "${2}" ] || hostname="-xhostname:${2}"
 #############
@@ -14,12 +16,12 @@ ip link set up "${1}"
 install -d -o 68 -g 68 -m 0775 /run/udhcpc
 install    -o 68 -g 68 -m 0664 /dev/null /run/resolv.conf
 
-cd / ; caps="-all,+net_bind_service,+net_raw,+net_admin"
+cd / ; caps="-all,+net_admin,+net_raw,+net_bind_service"
 
 /bin/setsid /usr/bin/setpriv \
  --reuid dhcpc --regid dhcpc --init-groups --nnp --reset-env \
- --inh-caps ${caps} --ambient-caps ${caps} --bounding-set ${caps} \
- /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /etc/self/e.setpriv/setpriv_udhcpc_script "${hostname}" < /dev/null
+ --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
+ /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /etc/self/e.setpriv/setpriv_udhcpc_default "${hostname}" < /dev/null
 
 #############
 if [ "${1}" == "nat" ]

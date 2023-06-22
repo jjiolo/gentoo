@@ -9,7 +9,7 @@ LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
-RDEPEND=""
+RDEPEND="sys-libs/glibc"
 DEPEND="${RDEPEND}"
 #############
 src_install(){
