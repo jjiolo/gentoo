@@ -3,6 +3,7 @@
 
  openssl genpkey -algorithm ed25519 -out key.pem
  openssl pkey -pubout -in key.pem -out key.pub
+ openssl ec -pubout -in ed25519 -out ed25519.pub;
 
  openssl pkeyutl
   -sign -inkey key.pem
@@ -36,62 +37,17 @@
 
 #############
 
-openssl-3.0.5
-
--------------
-
- no-cached-fetch ? left enable- 'reduce runtime memory usage' for 'introduces a significant performance penalty'
-          no-cmp ? certificate management protocol
-       no-legacy ? dont build legacy provider, disables md2 ?
-       no-module ?
-       no-uplink ? windows crap ?
-
+no-engines -
 no-static-engines -
 no-dynamic-engines - 
 no-module
-^ cant dynamically load engines
-  tor still forces enable-engines tho ?
+^ disabled engines completly ?
 
-no-pinshared - still wtf ?
+! kernel-build < - breaks without engines ?
+
+no-pinshared -
  enable - try to stay in memory ?
  no - dont try to stay in memory ?
-
-enabled dtls with bios
-   no-sock socket bios
-^ one udp one tcp ?
-
-enabled sse2 because its in one of the CPU_FLAGS ?
-386 and no-asm, imply no-sse2...
-
-tor still forces threading ?
-
-no-ubsan ? doesnt exist using disable-ubsan
-
-no-ui-console - it still built the binary applications ?
-
-no-tls1_1-method ? no idea why it was on if its disabled in protocols ?
-^ something probably forcing it
--------------
-
- perl configdata.pm --dump
- 
-  missing
-   pic ?  (static)
-   shared ?  (cascade)
-   threads ?  (static)
-
-  added
-   secure-memory ?
-
-#############
-
-
-#############
-openssl genpkey -algorithm ed25519 -out ed25519;
-openssl ec -pubout -in ed25519 -out ed25519.pub;
-#############
-app-misc/ca-certificates depends on openssl being located at /usr/bin/openssl
-#############
 
 ############# generic descriptions (got sick of searching)
 cmp  - cryptographic management protocol ? 
@@ -108,29 +64,34 @@ sse2 - cpu flags enabled in ffmpeg already
 
 locked configure options...
 
- enable-deprecated - python
- enable-engine     - tor
+ enable-deprecated - python wpa_supplicant wget tor
  enable-sock       - curl mutt links wget python transmission tor
  enable-threads    - tor/python
  enable-tls        - (no-tls does not disable tls if tls1_1 tls1_2 are in use)
- enable-dh         - curl python transmission tor
- enable-rc4        - transmission
+ enable-dh         - python tor
+ enable-ecdh       - tor
+ enable-ecsda      - tor
  enable-scrypt     - python
 
 now works without...
 
+ no-engine - tor
+ no-tls - ?
+ no-tls1_1-method - ?
+ no-chacha - ?
+ no-cmac - ?
+ no-des - ?
+ no-md4 - ?
+ no-poly1305 - ?
+ no-rc4 - ?
  enable-rmd160 < - Net-SSLeay(perl) crda
-
  enable-blake2 < - python
  enable-cmac   < - python
  enable-dsa    < - python
-
-# enable-des    < - hostapd wpa_supplicant
-# enable-md4    < - hostapd wpa_supplicant
-
+ enable-des    < - hostapd wpa_supplicant
+ enable-md4    < - hostapd wpa_supplicant
  enable-bf     < - crda (uninstalled crda)
  enable-cast   < - crda (uninstalled crda)
-
 
 #############
 

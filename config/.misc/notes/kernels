@@ -29,6 +29,17 @@ make INSTALL_MOD_PATH='/path/to/install/modules' modules_install
 [KERNEL]
 #############
 
+ linux-headers-6.4
+
+ CONFIG_ADDRESS_MASKING < - linear address masking (useful for asan and jit)
+ DMAPOOL_TEST < - memory management options allocate and free memory to test times
+ MAX_SKB_FRAGS < - if unsure say 17 ?
+ FW_DEVLINK_SYNC_STATE_TIMEOUT < - almost always want to say N ???
+
+ DRM_VIRTIO_GPU_KMS < - kernel mode setting support for virtio gpu ?
+
+#############
+
 * didnt add tpm support
 * didnt add disk quota
 * didnt add QoS

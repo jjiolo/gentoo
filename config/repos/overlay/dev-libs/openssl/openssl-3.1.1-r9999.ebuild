@@ -7,7 +7,7 @@ SRC_URI="https://www.openssl.org/source/${P}.tar.gz"
 #############
 LICENSE="openssl"
 SLOT="0"
-KEYWORDS="" #amd64"
+KEYWORDS="amd64"
 IUSE="+static-libs -bindist"
 RDEPEND="sys-libs/glibc sys-libs/zlib"
 DEPEND="${RDEPEND}"
@@ -41,7 +41,7 @@ no-crypto-mdebug \
 no-crypto-mdebug-backtrace \
 no-ct \
 enable-deprecated \
-enable-dgram \
+no-dgram \
 no-dso \
 no-devcryptoeng \
 no-dynamic-engine \
@@ -95,21 +95,21 @@ no-zlib-dynamic \
 \
 no-ssl \
 no-ssl3 \
-enable-tls \
+no-tls \
 no-tls1 \
 no-tls1_1 \
 enable-tls1_2 \
 enable-tls1_3 \
-enable-dtls \
+no-dtls \
 no-dtls1 \
-enable-dtls1_2 \
+no-dtls1_2 \
 \
 no-ssl3-method \
 no-tls1-method \
-enable-tls1_1-method \
+no-tls1_1-method \
 enable-tls1_2-method \
 no-dtls1-method \
-enable-dtls1_2-method \
+no-dtls1_2-method \
 \
 no-md2 \
 no-rc5 \
@@ -119,20 +119,20 @@ no-bf \
 no-blake2 \
 no-camellia \
 no-cast \
-enable-chacha \
-enable-cmac \
-enable-des \
+no-chacha \
+no-cmac \
+no-des \
 enable-dh \
 no-dsa \
 enable-ecdh \
 enable-ecdsa \
 no-idea \
-enable-md4 \
+no-md4 \
 no-mdc2 \
 no-ocb \
-enable-poly1305 \
+no-poly1305 \
 no-rc2 \
-enable-rc4 \
+no-rc4 \
 no-rmd160 \
 enable-scrypt \
 no-seed \

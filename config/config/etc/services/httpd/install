@@ -18,5 +18,8 @@
 [ -L "${service_storage}/webroot/shared" ] || ln -sf "${shared}" "${service_storage}/webroot/shared"
 
 #############
+# [ -f "${service_storage}/webroot/cgi-bin/project.cgi" ] || printf "%s\n\n" "Content-type: text/html" > "${service_storage}/webroot/cgi-bin/project.cgi"
+# [ -f "${service_storage}/webroot/cgi-bin/project.git" ] || printf "%s\n" "GIT_PROJECT_ROOT=/run/git GIT_HTTP_EXPORT_ALL= exec /usr/libexec/git-core/git-http-backend" > "${service_storage}/webroot/cgi-bin/project.git"
+#############
 . /etc/services/permissions root httpd 0750 0640
 #############

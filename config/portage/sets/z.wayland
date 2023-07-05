@@ -1,8 +1,4 @@
 
-sys-auth/seatd
-sys-libs/glibc
-
-gui-wm/sway
 dev-libs/expat
 dev-libs/fribidi
 dev-libs/glib
@@ -13,7 +9,11 @@ dev-libs/libinput
 dev-libs/libpcre2
 dev-libs/libudev-zero
 dev-libs/wayland
+gui-apps/foot
 gui-libs/wlroots
+gui-wm/sway
+media-fonts/liberation-fonts
+media-libs/fcft
 media-libs/fontconfig
 media-libs/freetype
 media-libs/harfbuzz
@@ -35,21 +35,4 @@ x11-libs/libxcb
 x11-libs/libxkbcommon
 x11-libs/pango
 x11-libs/pixman
-
-gui-apps/foot
-dev-libs/expat
-dev-libs/libffi
-dev-libs/wayland
-media-libs/fcft
-media-libs/fontconfig
-media-libs/freetype
-media-libs/libpng
-sys-libs/glibc
-sys-libs/zlib
-x11-libs/libxkbcommon
-x11-libs/pixman
-
 x11-misc/xkeyboard-config
-
-media-fonts/liberation-fonts
-

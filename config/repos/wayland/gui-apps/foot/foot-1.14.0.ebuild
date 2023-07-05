@@ -56,7 +56,7 @@ meson build \
 -Dthemes=false
 }
 #############
-src_compile(){ ninja -C build -j16 -l16 || die "compile failed" ; }
+src_compile(){ ninja -C build ${MAKEOPTS} || die "compile failed" ; }
 #############
 src_install(){
 

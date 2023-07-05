@@ -6,9 +6,9 @@ include "/etc/nftables/bridge"
 include "/etc/nftables/nat"
 #############
 include "/etc/nftables/chains/lo"
+include "/etc/nftables/chains/lan"
 include "/etc/nftables/chains/nat"
 include "/etc/nftables/chains/tun"
-include "/etc/nftables/chains/lan"
 #############
 include "/etc/nftables/filter"
 #############

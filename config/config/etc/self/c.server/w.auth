@@ -8,7 +8,7 @@ usage(){ printf "\n${0} - ${1}\n\n takes interface, ssid, identity and passphras
 #############
 pkill -x wpa_supplicant
 #############
-install -o root -g root -m 0600 "/dev/null" "${storage}/.wifi/wpa_supplicant"
+install -o 13 -g 13 -m 0600 "/dev/null" "${storage}/.wifi/wpa_supplicant"
 #############
 cat >> "${storage}/.wifi/wpa_supplicant" << EOF
 
@@ -36,6 +36,6 @@ ip link set up "${1}"
 cd / ; caps="-all,+net_admin,+net_raw" ; /bin/setsid /usr/bin/setpriv \
  --reuid wifi --regid wifi --init-groups --nnp --reset-env \
  --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
- /sbin/wpa_supplicant -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant" -e "${storage}/.wifi/entropy"
+ /sbin/wpa_supplicant -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant" -e "${storage}/.wifi/entropy" </dev/null &>/dev/null &
 #############
 

@@ -2,9 +2,6 @@
 #############
 now with more privdrop and less y u run dis as root
 #############
-dropped all xorg/xephyr extensions bar... RENDER RANDR
-^ should disable screenshots and recording the screen (makes malware easier)
-#############
 
 [xorg]
 
@@ -48,6 +45,113 @@ startx {user,nobody,proxy}
  /tmp/.X0-auth - set permissions to whatever user arg1 is
  start dwm-host on the empty hung xorg-server
  start Xephyr/dwm-guest nested multiple times inside dwm-host
+
+#############
+
+#############
+
+ [xorg-server]
+ -------------
+
+ https://gitlab.freedesktop.org/xorg/
+
+ https://www.x.org/
+ https://www.x.org/releases/individual/
+
+ https://xcb.freedesktop.org
+ https://xcb.freedesktop.org/dist/
+
+ -------------
+
+  xorg-server + xorg-proto / xcb-proto
+
+  libmd libbsd zlib
+
+  libpciacess
+
+  libdrm
+  libXdmcp
+  libXau
+  libxcvt
+
+  libxcb
+  xcb-util
+  xcb-util-image
+  xcb-util-keysyms
+  xcb-util-renderutil
+  xcb-util-wm
+
+  libXfont2 libfontenv 
+ 
+ * libxcvt wont static - last xorg-server library !!!!!!
+
+ -------------
+ -Dsha1=libmd < - uses libmd regardless ?
+ -Dxdmcp=true < - uses libXdmcp regardless ?
+ -Dlibdrm=true < - uses libdrm regardless ?
+ -------------
+
+ --enable-listen-{tcp,unix,local}
+
+ --enable-unix-transport
+ --enable-tcp-transport
+ --enable-local-transport < - breaks because stropts.h ?
+
+ -------------
+ -Dpciaccess=true (required for udev)
+ -Dudev=true
+ -Dudev_kms=true
+ -------------
+ -Dxinerama=true (only way to have multiple monitors)
+ -------------
+ -Dxephyr=true (only way to privdrop)
+ -Dmitshm=true (Xephyr complains it cant shm ximage?)
+ -------------
+#############
+
+ [libXfont2]
+
+ --disable-builtins < - fails undefinined reference to
+  
+#############
+
+ * future PYTHON= problems ?
+
+ xorg-proto / xcb-proto / libxcb
+
+ ^ all require python directory paths ?
+   commented out xcb-proto paths ?
+   defaulted to current python version
+
+#############
+
+ [firefox]
+
+ refuses to play video
+ downloading the video
+ ffmpeg play the video
+
+ tl;dr - tried re enabling half of it and achieved nothing ?
+
+ xvideo extensions
+  testing xorg-server -Dxv
+  forces libxcb --enable-xv
+ ^ failed
+
+ testing xorg-server -Dxvmc
+  ^ failed
+
+ testing xorg-server -Dxvfb (framebuffer?)
+  ^ failed
+
+ xorg complains its missing
+
+  xcb-xinput
+  xcb-damage
+  xcb-sync
+
+ ^ still complains missing codecs
+   ffmpeg can play outside the browser
 
 #############
 

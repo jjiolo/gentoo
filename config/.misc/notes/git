@@ -1,67 +1,33 @@
 
 #############
 
- ./configure --help (ignores most options)
+ [./configure --help] (ignores most options)
 
-#############
+  cd git-A.B.C ; ./configure.sh > configure.sh
+  cd git-X.Y.Z ; ./configure.sh > configure.sh
 
- cd git-A.B.C ; ./configure.sh > configure.sh
- cd git-X.Y.Z ; ./configure.sh > configure.sh
+  diff git-A.B.C/configure.sh git-X.Y.Z/configure.sh
 
- diff git-A.B.C/configure.sh git-X.Y.Z/configure.sh
+  cd git-A.B.C ; find . -type f -exec grep -H YesPlease {} \; > ffs
+  cd git-X.Y.Z ; find . -type f -exec grep -H YesPlease {} \; > ffs
 
- cd git-A.B.C ; find . -type f -exec grep -H YesPlease {} \; > ffs
- cd git-X.Y.Z ; find . -type f -exec grep -H YesPlease {} \; > ffs
+  diff git-A.B.C/ffs git-X.Y.Z/ffs
 
- diff git-A.B.C/ffs git-X.Y.Z/ffs
+  grep '#' Makefile
+  grep '#' configure
+  find . -type f -exec grep -Hi -e '/*' -e '#' {} \; # code comments
 
- grep '#' Makefile
- grep '#' configure
- find . -type f -exec grep -Hi -e '/*' -e '#' {} \; # code comments
+  -------------
 
-#############
-
- INSTALL_SYMLINKS=YesPlease
- SKIP_DASHED_BUILT_INS=YesPlease
- ^ jsmin cssmin --disable setting no as path and enabling it ?
-
- stage3/bare    0775
- stage3/working 0700
- stage3/binhost 0775
+  INSTALL_SYMLINKS=YesPlease
+  SKIP_DASHED_BUILT_INS=YesPlease
+  ^ jsmin cssmin --disable setting no as path and enabling it ?
 
 #############
 
  [busybox httpd + git]
 
-  # setup bare repository and working directory
-   git init --bare /srv/git
-   git clone --depth=1 file:///srv/git $HOME/git
-   echo first >> $HOME/git/README.md
-   GIT_DIR=$HOME/git/.git git add -A
-   GIT_DIR=$HOME/git/.git git commit -m first
-   GIT_DIR=$HOME/git/.git git push
-
-  # add git-http-backend to any .git executable
-   httpd.conf - *.git:/usr/libexec/git-core/git-http-backend
-
-  # basic_auth (allows git push with REMOTE_USER AUTH_TYPE)
-   httpd.conf - /cgi-bin/project.git:root:password
-
-  # allow git push (none authenticated)
-   printf "\n%s\n\n%s\n\n" "[http]" "receivepack = true" > .git/config
-
-  # create project.git
-   install -o root -g root -m 0600 /dev/null webroot/cgi-bin/project.git
-
-  # start httpd
-  env -i GIT_PROJECT_ROOT=/srv/git GIT_HTTP_EXPORT_ALL= /sbin/httpd -p 80 -h webroot -c config
-
-  # remote access
-  git clone http://root:password@127.0.0.1/cgi-bin/project.git
-  echo second >> project/README.md
-  git add -A
-  git commit -m second
-  git push
+-------------
 
  [variables]
 
@@ -71,42 +37,78 @@
   .git/git-daemon-export-ok - export directories with magic file
 
 -------------
-dumb_http - mv .git/hooks/post-update.sample .git/hooks/post-update
+
+  # setup bare repository and working directory
+   git init --bare --initial-branch master /run/git/bare
+   git clone --depth=1 file:///run/git/bare /run/git/working
+   echo readme >> /run/git/working/README.md
+   GIT_DIR=/run/git/working/.git git add -A
+   GIT_DIR=/run/git/working/.git git commit -m readme
+   GIT_DIR=/run/git/working/.git git push
+
+  # add git-http-backend to httpd config file
+   httpd.conf - *.git:/usr/libexec/git-core/git-http-backend
+
+  # create project.git in httpd webroot/cgi-bin
+   install -o root -g root -m 0600 /dev/null webroot/cgi-bin/project.git
+
+  # start httpd
+   env -i GIT_PROJECT_ROOT=/srv/git GIT_HTTP_EXPORT_ALL= /sbin/httpd -p 80 -h webroot -c config
+
+  # clone
+   git clone --depth=1 http://root:password@127.0.0.1/cgi-bin/project.git $HOME/project # authenticated
+   git clone --depth=1 http://127.0.0.1/cgi-bin/project.git $HOME/project # unauthenticated
+
+  # pull
+   GIT_DIR=$HOME/project/.git git pull
+
+  # git push - basic_auth
+    httpd.conf - /cgi-bin/project.git:root:password
+
+  # git push - unauthenticated
+   printf "\n%s\n\n%s\n\n" "[http]" "receivepack = true" > .git/config
+
+  # git push
+   echo first >> $HOME/project/first
+   GIT_DIR=$HOME/project/.git git add -A
+   GIT_DIR=$HOME/project/.git git commit -m first
+   GIT_DIR=$HOME/project/.git git push
+
+  # git push
+   cgi scripts execute as httpd:
+   read only access to /run/git
+   blocks the ability to push updates
+   regardless of httpd config # authenticated
+   regardless of git config # unauthenticated
+
 -------------
 
-gitweb - tar xf git.tar.gz && cd git/gitweb && make gitweb && make install-gitweb
+ [UPDATED]
+
+ git init --bare --initial-branch master /tmp/git ; chown -R httpd:httpd /tmp/git
+
+ /tmp/storage/services/httpd/webroot/cgi-bin/project.git
+ GIT_PROJECT_ROOT=/tmp/git GIT_HTTP_EXPORT_ALL= exec /usr/libexec/git-core/git-http-backend
+
+ git clone http://127.0.0.1/cgi-bin/project.git
+
+ ^ cgi scripts allow pointing to any git repository
+   read only access
+   read write authenticated access
+   /cgi-bin/one:root:password
+   /cgi-bin/two:user:password
+
+ * allows multiple read or read write repositories
 
 -------------
 
-umask 0022 ; git init --bare /tmp/git ; umask 0077
-
-printf "%s\n" "chmod -R 0755 /tmp/git" >> /tmp/git/hooks/post-update
-
-* strict umask leaves git in no read at all state ?
+ gitweb - tar xf git.tar.gz && cd git/gitweb && make gitweb && make install-gitweb
 
 -------------
 
-#############
+ umask 0022 ; git init --bare --initial-branch master /tmp/git ; umask 0077
 
- [multiplayer]
-
-  /tmp/storage/.git gitd:gitd 1775 -
-
-  gitd group can create new repositories as user:project_group || user:gitd
-
-  3 admins with gitd write
-  3 admins with project write
-  3 underlings with read only and patch submission
-
-  public 
-
-   1775 - 
-   0755 -
-
-  private
-
-   1770 -
-   0750 -
+-------------
 
 #############
 =============
@@ -142,7 +144,7 @@ find . -type f -exec openssl sha512 {} \; | sort | gpg --verify /tmp/manifest -
 
 #############
 
-git init --bare "/tmp/git/bare"
+git init --bare --initial-branch master "/tmp/git/bare"
 
 git clone --depth=1 "file:///tmp/git/bare" "/tmp/git/working_directory"
 
@@ -162,13 +164,60 @@ git stash drop # delete changes
 
 ### git fetch
 git fetch
-git fetch --depth 1 --all
+git fetch --depth 1 --all --prune
 
 ### git merge
 git merge
 
+### git add
+git add -A
+
+### git commit
+git commit -m message
+
 ### git push
-git push -all # push all local branches to the remote repository
+git push -all --prune # push all local branches to the remote repository
+
+#############
+-------------
+ git init --bare --initial-branch production "${HOME}/project.bare" # create bare repository
+ git clone --depth=1 "file://${HOME}/project.bare" "${HOME}/project.working" # create working repository
+ export GIT_DIR="${HOME}/project.working/.git" # set git directory
+ printf "%s\n" "readme" > "${HOME}/project.working/README.md"
+ git add -A
+ git commit -m "readme"
+ git push
+ git branch development # create development branch (local)
+ git branch staging # create staging branch (remote)
+ git checkout staging # switch to local development branch
+ git push --all --prune # push newly created branches remotely ?
+ git pull --all --prune # pull all newly created branches locally ?
+-------------
+ git checkout -b new
+ git push --all --prune
+ git pull --all --prune
+-------------
+ git clone --depth=1 http://127.0.0.1/cgi-bin/project.git
+ git remote set-branches origin '*'
+ git pull --depth=1 --all --prune
+-------------
+ * sync only --depth=1 for all local and remote branches ?
+-------------
+
+ TODO
+
+ merge staging into development
+ push development into staging
+
+ merge prod into staging
+ push staging into prod
+
+ ^ ???
+
+ create tags for version releases...
+ create releases for tarball pulls...
+
+-------------
 
 #############
 git add . -u          # add files and update (removes deleted)
@@ -198,9 +247,8 @@ git push -d new_branch    # delete remote branch
 #############
 
 ### git rebase
-git rebase
 
-^ assuming ability to merge multiple diff checksums into a single checksum ?
+git rebase
 
 #############
 

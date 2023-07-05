@@ -26,9 +26,9 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:06:14 08:33:33
+ lastest - 2023:06:23 15:00:00
 -------------
- * linux-6.3 - current
+ * linux-6.4 - current
  * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
  ^ X0-log - ShadowFB: preferred NO, enabled NO (something about no/modesetting)
  * app-alternatives - FEATURES='-collision-protect' (remove after its in stage3)
@@ -134,91 +134,156 @@ stuff at the top is unordered raw sewage
 v attempt to create lists of things to actually do
 
 #############
-updated nftables documentation and examples
-removed libnatpmp miniupnpc (transmission using built in)
-proof read repos (lot of failure)
-added equal cost multipath (multiple ip route add default rules)
-su -l -s /bin/sh -c 'setsid <binary> & exit' <user> (removing exit hangs the shell when executed in scripts)
+setpriv_udhcpd < - ignores first sleep ? wtf would be an understatement
+#############
+openssl-3.1.1 - disabled dtls (ed25519 still doesnt work)
+sets_wayland works - (cant priv drop, cant nested priv drop)
+xorg-server + all dependencies ebuilt
+updated git notes
+updated git httpd (multiple read/read+write repositories)
+updated nftables notes and examples
 updated integritysetup to use ext4...
-auditd added new users updated wxa tracking to all paths (keeps adding entries on read?)
-added setpriv and -e entropy_file to wpa_supplicant (CONFIG_SETPRIV didnt work)
-added wifi user
-added ssh user
-added ssh to nobody
-removed sound from server
-removed zram and swap from kernels
-zramctl + mkswap support
-busybox ar - allows extracting .debs (still needs unzip for firmware?)
+updated storage.fde crypt.start leave fsck failed maps open
 {storage.fde,crypt.start,crypt.stop} added integritysetup
+attempt /dev/ttyS0 once at boot (serial console enabled in virtual kernel)
+added setpriv and -e entropy_file to wpa_supplicant (CONFIG_SETPRIV didnt work)
+updated setpriv_udhcpc - > setpriv_network_{default,oneshot,ping,zcip} (matches busybox embed)
+removed libnatpmp miniupnpc (transmission using built in)
+added equal cost multipath (multiple ip route add default rules)
+su -l -s /bin/sh -c 'setsid <binary> & exit' <user> (removing exit hangs the shell swapped exec for setsid)
+auditd added new users updated wxa tracking to all paths (keeps adding entries on read?)
+added ssh to nobody nftables
+added ssh user
+added wifi user
+removed sound from server
+removed zramctl zram swap, dont need it increases complexity + attack surface
+busybox ar - allows extracting .debs (still needs unzip for firmware?)
 added usb.{hash,check} - verify usb hasnt corrupted
 vim -p /tmp/a.bootfs/{.hashes,hashes} + (ctrl+n ctrl+p)
-sets_wayland works - (cant priv drop, cant nested priv drop)
-libcurl needed unix socket support for transmission
 fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1)
+libcurl needed unix socket support for transmission
 #############
 
 
 
 #############
-update udhcpc_{default,oneshot,ping} ? (ip route del default dev ${interface})
+
+ iw dev scan - never prints last result
+               single result doesnt print
+
+ ^ blargh
+
+#############
+
+ integrity + ext2
+
+ ext2 doesnt wait for the filesystem to reply successful writes
+ ext4 waits for the filesystem to reply successful writes
+
+ integritysetup performs that function...
+
+ ext2 triggering fsck because integrity returns failed ?
+
+ * test pushing ext4 and poweroff to see if transmission files still corrupt ?
+   or if ext4 prevents the fsck fail regardless
+
+#############
+
+ build.initramfs - controls all perms in rootfs...
+
+ ^ viable over github ? no need to track config file permissions
+
+#############
+
+ erm : /
+
+ testing git httpd,{gitd,p2pd}
+ ^ version tracking
+ ^ release distribution
+
+ gitd only runs as a cgi script
+ httpd does technically webseed the client
+ but transmission-daemon isnt cgi based
+
+ [basic authentication]
+
+ /cgi-bin:root:password
+ /cgi-bin/project.git:toor:drowsapp
+
+ ^ doesnt work
+
+ /cgi-bin/project.git:toor:drowsapp
+ /cgi-bin:root:password
+
+ ^ does work
+
+  /cgi-bin:root:password # applies to all new files
+  /cgi-bin/new.cgi:root:password # restart to secure individual files
+
+-------------
+
+ default to root owned read only directory ?
+
+ ^ no ability to push regardless of basic:auth@127.0.0.1
+
+ * would imply a git group that can write to the path ?
+   serving 
+
+ git might have rce in write paths ? shouldnt just let people shit httpd owned files everywhere 
+
+ off by default doesnt work with example config file:
+
+-------------
+
+#############
 need to proof read sys-apps, www-client, x11-wm
 config files {mutt,vim,firefox,wpa_supplicant}
 add integrity.{start,stop} for secondary usb device ?
-#############
-! setpriv_udhcpd < - ignores first sleep ? wtf would be an understatement
-* tested until pgrep -x /bin/binary ; do sleep .1 ; done
-^ made it worse, had to be removed
-* setsid
 #############
 
 [nftables]
 
  nat inbound makes sense for hosting virtual machines
  nat outbound only makes sense running this as a virtual machine
- ^ should be based on sandboxing ? (prevent users internet access)
- ^ should be based on development ? (access to any running vm)
+ ^ should be based on sandboxing ? (prevent uid internet access)
+ ^ should be based on development ? (access any vm from a uid)
 
  host as gateway drops udp requests out
- allows access to local networks resources
+ nat guest access to local network resources
  false assumption its safe to run nat on other networks ?
- (cant assume private address range)
+ ^ local network trust doesnt imply uid sandbox out to internet
 
- lan - only secure out
- nat - allows insecure out (under the assumption my network blocks the gateway)
-
-#############
-
- [chromium && discord]
-
- ^ got chromium to run but the pid froze and wouldnt display the gui ?
-
- LD_PRELOAD_PATH=/tmp/storage/services/sets/discord:/usr/lib64/firefox
- libgbm - media-libs/mesa
- libcups - net-printer/cups
- libxkbcommon - x11-libs/libxkbcommon
-
- cups --with-components={all,core,libcups,libcupslite}
- all - everything
- core - libcups ipptool
- libcups - libcups
- libcupslite - libcups without drivers
-
- ^ requires libcups libcupslite doesnt have ppdOpenFd()
+ pretty much never going to use this a gateway ? stop pretending
 
 #############
 
-  ldns - undefined reference to ui_openssl
+ * shortest path to mx records ?
 
-  maradns - deadwood > maradns (disable coLunacyDNS lua)
-  dnrd
-  pdnsd
-  sed -i '36i\#include <linux/if.h>' src/conff.h
-  sed -i '31i\#include <linux/if.h>' src/dns.h
+ ldns - undefined reference to ui_openssl
+ maradns - deadwood > maradns (disable coLunacyDNS lua)
+ dnrd
+ pdnsd
 
 #############
 
- * read -r --raw < - interpret backslashes literally, rather than as escape characters
- ^ need a test script to demonstrate the difference
+ * httpd: read/(write) group access to repositories ?
+ * home/ git repo projects
+ * services/ git repo projects
+ ^ inside httpd is no other write
+ ^ or cgi-bin/create repo ? doesnt really work with basic auth
+ * shared/ git repo projects (downloads/torrents owned by p2pd)
+ ? needs http and git uid/gid write access ?
+
+#############
+
+* tor - 0.4.8.1 alpha
+
+* read -r --raw < - interpret backslashes literally, rather than as escape characters
+^ need a test script to demonstrate the difference
+
+* p2pd/p2p - split downloads/uploads
+             p2pd needs write on downloads only
+             p2p writes on uploads only
 
 * console has the wrong key layout
   host has mtm-256color
@@ -230,49 +295,17 @@ add integrity.{start,stop} for secondary usb device ?
 
 * gnupg - scdaemon tpm2daemon config files ?
 
- cant mpv.music - without 127.0.0.1 access (jail cant music)
+* mpv.{downloads,films,music,series}
  ^ dtach -A socket mpv.music 127.0.0.1
    dtach -A socket mpv.music /tmp/storage/shared/archive/music
-   empty input default to local ? mpv.{downloads,music,series,films}
+   empty input default to local ?
 
- use zramctl + ext2/ext4 for /dev/shm /tmp mounts ? (or delete the lot of it increased attack surface)
+* toybox - complains -lcurses is missing ? (doesnt have an init system)
 
- storage.fde - bailed on fsck then deletes device instead of allowing manual recovery (annoying)
- ^ integrity journal + ext2
- ^ integrity journal + ext4 journal ?
- ^ integrity journal + mdadm journal + ext2
- ^ integrity journal + mdadm journal + ext4 journal ?
+* busybox - gzip content encoding, if file / file.gz exists
+            gzip -c -9 index > index.gz ; curl -I --compressed 127.0.0.1
 
- SETPRIV_UDHCPD - now breaks on server start ?
-
- sec-keys/openpgp-keys-{gentoo-auth,gentoo-developers,gentoo-release}
- ^ easy ebuild to download the key files hosted on dev.gentoo.org ?
-
- make nftables examples - connlimit / rate limit
-
- toybox - 
-
- tor - 0.4.8.1 alpha
-
- openssl - didnt finish 3.1.1
-
- mod4 on server doesnt work ?
-
- openssl - test no-depreacted / reduction
-
- busybox - support gzip content encoding, if client supports it, if file.gz exists
-           gzip -c index > index.gz ; curl -I --compressed 127.0.0.1
-
- z.testing/server - setsid nesting ash /etc/services ?
-
- etc/services/<service>/<start> - until pgrep -x <command> &>/dev/null ; do sleep .1 ; done ; renice -u <user> -20
-
-* meson still uses hardcoded job/load
-* running login when pids close ? (never used to)
 * firefox - still network activity on browser open...
-
-* remove kernel serial support...
-^ inittab /dev/ttyS0 once (log spam)
 
  * /init /etc/inittab /etc/init /etc/profile - debug output ?
  
@@ -286,19 +319,11 @@ add integrity.{start,stop} for secondary usb device ?
  * identify dtach from PS1 - shlvl ?
  * identify mtm from PS1 - $MTM
 
- * mutt smtp still exposes ip/hostname in headers ? (sending From username $(date) as  well ?)
-
- * ca-certificates updates - forced to delete manifest
-
-* pkill -x /sbin/<thing> needs pkill -x <thing> ? (only matching wrappers)
-  ^ fucks up accidently killing partial matches... (probably worse ?)
-
- * httpd/gitd - services/httpd/start GIT_PROJECT_ROOT=/tmp/storage/.git GIT_HTTPD_EXPORT_ALL=
+ * mutt smtp only exposes ip in headers ?
+ * mutt sending From $USER $(date) ?
+ ^ no user / username / uid value in muttrc ?
 
  * grub ebuild ? finishes off udhcpd/tftpd/grub kernel/initramfs/nfsd
-
- * tor DisableAllSwap as none root...( didnt stderr, used address sanitizer ? shouldnt have executed at all) 
- ^ test expensive/fragile without DisableAllSwap ?
 
  * herbe needs /dev/shm/$USER splitting (doesnt support multiplayer) (logread|grep -f file|while read ; do herbe "notifcation" ; done
  ^ desktop:desktop /dev/shm/desktop.tmp < - herbe as a single user
@@ -369,14 +394,14 @@ add integrity.{start,stop} for secondary usb device ?
  p2pd
  sets
 -------------
- dbclient - user,nobody
- smtp     - nobody,smtp
- http     - root,nobody,http
- p2p      - root,user,nobody
- irc      - nobody,irc
- xmr      - nobody,xmr
- qemu     - user/nobody
- media    - jail,nobody
+ ssh   - user,nobody,ssh
+ smtp  - nobody,smtp
+ http  - root,user,nobody,http
+ p2p   - root,user,nobody
+ irc   - nobody,irc
+ xmr   - nobody,xmr
+ qemu  - user,nobody,qemu
+ media - nobody,jail
 -------------
  a.chroot b.init (c.keys)
  c.server d.client
@@ -389,8 +414,8 @@ add integrity.{start,stop} for secondary usb device ?
  dropbear s.{flush,client,server}
  wireguard v.{flush,client,server}
  wifi w.{scan,public,private,connect,auth}
- xephyr {x.nobody,x.proxy}
- xephyr {p.smtp,p.http,p.irc,p.xmr}
+ xephyr {x.nobody,x.proxy,x.jail}
+ xephyr {p.ssh,p.smtp,p.http,p.irc,p.xmr}
 -------------
 per application file access
 per application firewall access

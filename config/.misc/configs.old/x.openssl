@@ -15,31 +15,30 @@
 
 emerge -vC openssl
 
-#ebuild /root/overlay/dev-libs/openssl/openssl-1.1.1n-r9999.ebuild manifest || exit
+ebuild /root/repos/overlay/dev-libs/openssl/openssl-3.0.9-r9999.ebuild manifest || exit
 
 emerge -v openssl
 
 #############
 
-emerge -v1 --keep-going y \
+script -c 'emerge -v1 --keep-going y \
  app-arch/libarchive \
  dev-lang/python \
  x11-base/xorg-server \
- app-misc/ca-certificates \
  dev-libs/libevent \
  dev-vcs/git \
- net-misc/curl \
  net-misc/wget \
- \
+ net-misc/curl \
+\
  net-wireless/wpa_supplicant \
- xorg-server \
- app-misc/ca-certificates \
+ x11-base/xorg-server \
  net-vpn/tor \
  dev-libs/libevent \
  mail-client/mutt \
  dev-vcs/git \
  net-p2p/transmission \
- www-client/links
+ net-misc/curl \
+ www-client/links' /tmp/x.openssl
 
 #############
 

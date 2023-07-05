@@ -5,7 +5,9 @@ E404:/tmp/storage/services/httpd/error
 
 *.cgi:/bin/ash
 
-*.git:/usr/libexec/git-core/git-http-backend
+*.git:/bin/ash
 
+/cgi-bin/project.cgi:toor:drowsapp
+/cgi-bin/project.git:toor:drowsapp
 /cgi-bin:root:password
 
