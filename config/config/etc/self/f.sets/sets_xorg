@@ -3,9 +3,6 @@
 script -c 'emerge                     -avbkuDN --onlydeps @desktop' /tmp/desktop.host
 script -c 'emerge --root /run/desktop -avbkuDN --nodeps @desktop' /tmp/desktop.rootfs
 #############
-#script -c 'emerge                     -avbkuDN --onlydeps @z.firefox' /tmp/firefox.host
-#script -c 'emerge --root /run/firefox -avbkuDN --nodeps @z.firefox' /tmp/firefox.rootfs
-#############
 for i in /usr/lib/gcc/x86_64-pc-linux-gnu/*
 do
  cp -a ${i}/libstdc* /run/desktop/lib64
@@ -14,7 +11,7 @@ done
 #############
 #cp -a /lib64/libblkid.* /run/desktop/lib64 # firefox dep
 #cp -a /lib64/libmount.* /run/desktop/lib64 # firefox dep
-cp -a /lib64/libuuid.so* /run/desktop/lib64 # desktop
+#cp -a /lib64/libuuid.so* /run/desktop/lib64 # desktop
 #############
 install -d -o root -g root -m 0755 /run/desktop/usr/lib/locale
 cp -a /usr/lib/locale/locale-archive /run/desktop/usr/lib/locale

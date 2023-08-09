@@ -9,9 +9,7 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
-RDEPEND="
-sys-libs/glibc
-"
+RDEPEND="sys-libs/glibc"
 DEPEND="${RDEPEND}"
 #############
 src_configure(){
@@ -20,8 +18,8 @@ meson build \
 -Dbuildtype=release \
 -Ddebug=false \
 -Ddefault_library=both \
--Dprefer_static=true \
--Dwerror=true \
+-Dprefer_static=false \
+-Dwerror=false \
 \
 -Db_asneeded=true \
 -Db_lto=true \

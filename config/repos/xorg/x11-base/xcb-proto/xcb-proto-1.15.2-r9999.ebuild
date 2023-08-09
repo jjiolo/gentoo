@@ -4,7 +4,6 @@ EAPI=8
 DESCRIPTION="X C-language Bindings protocol headers"
 HOMEPAGE="https://xcb.freedesktop.org"
 SRC_URI="https://xcb.freedesktop.org/dist/${P}.tar.xz"
-SRC_URI="https://x.org/releases/individual/proto/${P}.tar.xz"
 #############
 LICENSE="X11 License Distribution Modification Variant"
 SLOT="0"

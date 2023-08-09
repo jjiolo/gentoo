@@ -5,7 +5,6 @@ dev-libs/libbsd
 dev-libs/libevdev
 dev-libs/libinput
 dev-libs/libudev-zero
-dev-libs/openssl
 media-fonts/liberation-fonts
 media-libs/fontconfig
 media-libs/freetype
@@ -55,4 +54,3 @@ x11-wm/dwm-guest
 x11-wm/dwm-host
 x11-wm/herbe
 x11-wm/st
-

@@ -14,7 +14,7 @@ DEPEND="${RDEPEND}"
 S="${WORKDIR}/monero-x86_64-linux-gnu-v${PV}"
 #############
 src_install(){
- install -d -o root -g root -m 0755 "${D}/bin" "${D}/sbin"
+ install -d -o root -g root -m 0755 "${D}/bin"
  install    -o root -g root -m 0755 "monero-wallet-cli" "${D}/bin/moneroc" || die "install failed"
 }
 #############

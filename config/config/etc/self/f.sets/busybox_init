@@ -87,6 +87,8 @@ cat > "etc/init" << EOF
 
  for i in \$(seq 10 63) ; do [ -c "/dev/tty\${i}" ] && rm "/dev/tty\${i}" ; done
 
+ rm /dev/vcs*
+
  chown desktop:desktop /dev/tty7
 
  chown -R root:toor /dev/snd
@@ -186,9 +188,9 @@ cat > "etc/profile" << EOF
  ulimit -v unlimited
  ulimit -x unlimited
 
- renice -10 -u root
- renice +10 -u desktop
- renice +10 -u toor
+ renice -10 -u root 2>/dev/null
+ renice +10 -u desktop 2>/dev/null
+ renice +10 -u toor 2>/dev/null
 
 EOF
 

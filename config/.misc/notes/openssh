@@ -1,16 +1,8 @@
 
 #############
-
 dropped openssh for dropbear - sharing notes file
-
 #############
 
- * dropbear without -r /path/to/key refuses to start
-   Default hostkey paths - Homedir prepended if path begins with ~
- ^ doesnt work
-
- * forces /tmp/z.{ephemeral,local,remote} 0755
-   0775 refuses to read authorized_keys
 
 #############
 
@@ -20,8 +12,7 @@ dropped openssh for dropbear - sharing notes file
 
 tldr ;
 
- forces
-
+ * init dropbear -r /tmp/storage/.sshd (no ${HOME})
  * nftables outbound root rules (doesnt privdrop forwarding)
 
  doesnt
@@ -39,10 +30,6 @@ tldr ;
  * nc -lks local:/dev/shm/qemu -e dbclient user@172.16.0.1 nc local:/dev/shm/qemu
  * dbclient 172.16.0.1 tar cC /path . | tar xC /path
  * tar cC /path . | dbclient 172.16.0.1 tar xC /path
-
- improvements
-
- +DEFAULT_RECV_WINDOW == 1024000 == 1000 * 1024
 
 #############
 

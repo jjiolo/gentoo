@@ -10,8 +10,7 @@ table inet filter {
  iifname {nat} oifname {lan,wlan0} ip protocol tcp ct state new log flags skuid prefix "forward.new " accept
 
  ct state invalid log flags skuid prefix "forward.invalid " drop
-
- log flags skuid prefix "forward.drop " drop
+                  log flags skuid prefix "forward.drop " drop
 
  }
 #############
@@ -27,6 +26,9 @@ table inet filter {
   iifname {lan}   goto ilan
   iifname {wlan0} goto ilan
 
+  ct state invalid log flags skuid prefix "input.invalid " drop
+                   log flags skuid prefix "input.drop " drop
+
  }
 #############
  chain output {
@@ -40,6 +42,9 @@ table inet filter {
   oifname {tun}   goto otun
   oifname {lan}   goto olan
   oifname {wlan0} goto olan
+
+  ct state invalid log flags skuid prefix "output.invalid " drop
+                   log flags skuid prefix "output.drop " drop
 
  }
 #############

@@ -9,10 +9,7 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
-RDEPEND="
-sys-libs/glibc
-sys-libs/libxcrypt
-"
+RDEPEND="sys-libs/glibc sys-libs/libxcrypt"
 DEPEND="${RDEPEND}"
 #############
 src_configure(){

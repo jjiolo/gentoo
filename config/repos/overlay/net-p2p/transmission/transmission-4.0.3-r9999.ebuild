@@ -55,6 +55,9 @@ cmake \
 \
 -DRUN_CLANG_TIDY=OFF \
 \
+-DUSE_GTK_VERSION=OFF \
+-DUSE_QT_VERSION=OFF \
+\
 -DUSE_SYSTEM_B64=OFF \
 -DUSE_SYSTEM_DEFLATE=OFF \
 -DUSE_SYSTEM_DHT=OFF \
@@ -78,9 +81,9 @@ src_compile(){ cd build ; default ; }
 src_install(){
 install -d -o root -g root -m 0755 "${D}/bin" "${D}/sbin"
 install    -o root -g root -m 0755 "build/utils/transmission-create"  "${D}/bin" || die "install failed"
-install    -o root -g root -m 0755 "build/utils/transmission-show"    "${D}/bin" || die "install failed"
 install    -o root -g root -m 0755 "build/utils/transmission-edit"    "${D}/bin" || die "install failed"
 install    -o root -g root -m 0755 "build/utils/transmission-remote"  "${D}/bin" || die "install failed"
+install    -o root -g root -m 0755 "build/utils/transmission-show"    "${D}/bin" || die "install failed"
 install    -o root -g root -m 0755 "build/daemon/transmission-daemon" "${D}/sbin" || die "install failed"
 ln -s "/sbin/transmission-daemon" "${D}/sbin/p2pd"
 }

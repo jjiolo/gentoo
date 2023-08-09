@@ -1,7 +1,6 @@
 
 #############
-[ "${#}" == "0" ] && user="root"
-[ "${#}" == "1" ] && user="nobody"
+[ "${#}" == "0" ] && user="root" || user="nobody"
 #############
 
      mountpoint -q rootfs/dev || { install -d -o 0 -g 0 -m 0700 rootfs/dev     ; mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime,size=0%                 stage3 rootfs/dev;     }

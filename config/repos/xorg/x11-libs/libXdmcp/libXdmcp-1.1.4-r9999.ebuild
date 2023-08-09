@@ -9,13 +9,8 @@ LICENSE="Other"
 SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
-RDEPEND="
-sys-libs/glibc
-"
-DEPEND="
-x11-base/xorg-proto
-${RDEPEND}
-"
+RDEPEND="sys-libs/glibc"
+DEPEND="${RDEPEND} x11-base/xorg-proto"
 #############
 src_configure(){
 ./configure \

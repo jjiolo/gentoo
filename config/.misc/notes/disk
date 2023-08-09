@@ -5,7 +5,7 @@
 
   metadata_csum_seed - store metadata checksum seed in superblock (change uuid on a mounted filesystem)
 
- orphan_file - tune2fs -O orphan_file /dev/block (speed up parallel file deletion?)
+  orphan_file - tune2fs -O orphan_file /dev/block (speed up parallel file deletion?)
 
 #############
 

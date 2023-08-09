@@ -26,7 +26,7 @@ dev-libs/elfutils -bzip2 -utils
 dev-libs/expat -unicode
 dev-libs/glib -elf -mime
 dev-libs/gmp -asm -cpudetection -cxx
-dev-libs/libevent -clock-gettime -threads ssl
+dev-libs/libevent -clock-gettime -threads -ssl
 dev-libs/libgcrypt -asm -getentropy
 dev-libs/libnl -debug
 dev-libs/libpcre -bzip2 -cxx -readline -zlib

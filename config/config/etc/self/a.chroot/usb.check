@@ -1,22 +1,28 @@
 #!/bin/sh
 #############
-cd "/tmp/a.bootfs" || exit ; echo '#############'
+cd "/tmp/a.bootfs" || exit
 #############
 
 {
+
+ [ -f "EFI/boot/bootx64.efi" ] && openssl sha256 "EFI/boot/bootx64.efi" || printf "%s\n" "SHA2-256(EFI/boot/bootx64.efi)= missing"
+
+ for i in images/client kernels/desktop kernels/laptop kernels/server kernels/virtual
+  do [ -f "${i}" ] && openssl sha256 "${i}" || printf "%s\n" "SHA2-256(${i})= missing" ; done
+
+ for i in images/.client kernels/.desktop kernels/.laptop kernels/.server kernels/.virtual
+  do [ -f "${i}" ] && openssl sha256 "${i}" || printf "%s\n" "SHA2-256(${i})= missing" ; done
+
+ [ -f "config.tar.gz" ] && openssl sha256 "config.tar.gz" || printf "%s\n" "SHA-256(config.tar.gz)= missing"
+ [ -f "config.torrent" ] && openssl sha256 "config.torrent" || printf "%s\n" "SHA-256(config.torrent)= missing"
+ [ -f "binhost.tar.gz" ] && openssl sha256 "binhost.tar.gz" || printf "%s\n" "SHA-256(binhost.tar.gz)= missing"
+
+} > .hashes
+
 #############
-[ -f "EFI/boot/bootx64.efi" ] && openssl sha256 "EFI/boot/bootx64.efi" || printf "%s\n" "SHA2-256(EFI/boot/bootx64.efi)= missing"
+openssl sha256 .hashes
+openssl sha256  hashes
 #############
-                       for i in client ; do [ -f "images/${i}" ] && openssl sha256 "images/${i}" || printf "%s\n" "SHA2-256(images/${i})= missing" ; done
-for i in desktop laptop server virtual ; do [ -f "kernels/${i}" ] && openssl sha256 "kernels/${i}" || printf "%s\n" "SHA-256(kernels/${i})= missing" ; done
+diff hashes .hashes
 #############
-                          for i in .client ; do [ -f "images/${i}" ] && openssl sha256 "images/${i}" || printf "%s\n" "SHA2-256(images/${i})= missing" ; done
-for i in .desktop .laptop .server .virtual ; do [ -f "kernels/${i}" ] && openssl sha256 "kernels/${i}" || printf "%s\n" "SHA-256(kernels/${i})= missing" ; done
-#############
-for i in config.tar.gz config.torrent ; do [ -f "${i}" ] && openssl sha256 "${i}" || printf "%s\n" "SHA-256(${i})= missing" ; done ;
-#############
-[ -f "binhost.tar.gz" ] && openssl sha256 binhost.tar.gz || printf "%s\n" "SHA-256(binhost.tar.gz)= missing"
-#############
-} | tee .hashes | openssl sha256 ; echo '#############'
-                  openssl sha256 hashes ; echo '#############'
 

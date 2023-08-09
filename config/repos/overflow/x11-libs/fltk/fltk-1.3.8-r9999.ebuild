@@ -55,6 +55,6 @@ src_configure(){
 --with-x
 }
 #############
-src_install(){ default ; mv "${D}/usr/lib" "${D}/usr/lib64" ; }
+src_install(){ default ; }
 #############
 

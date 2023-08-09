@@ -9,10 +9,8 @@ LICENSE="MIT Open Group Variant"
 SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
-RDEPEND="
-sys-libs/glibc
-"
-DEPEND="x11-base/xorg-proto"
+RDEPEND="sys-libs/glibc"
+DEPEND="${RDEPEND} x11-base/xorg-proto"
 #############
 src_configure(){
 ./configure \

@@ -1,0 +1,15 @@
+#!/bin/sh -l
+#############
+
+ brctl delif lan eth0
+ brctl addif nat eth0
+
+ ash /etc/self/e.setpriv/setpriv_network_default nat virtual
+ ash /etc/services/httpd/start
+ ash /etc/services/p2pd/start
+ sshd -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null
+ echo yes | ash /etc/self/c.server/s.client 172.16.0.1
+ echo yes | ash /etc/self/c.server/v.server 172.16.0.1 10.0.0.2
+
+#############
+

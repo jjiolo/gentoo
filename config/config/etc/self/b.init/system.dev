@@ -37,3 +37,5 @@ ln -sf "$(findfs LABEL=storage 2>/dev/null || echo /dev/null)" /dev/storage
 ln -sf "$(findfs LABEL=shared 2>/dev/null || echo /dev/null)" /dev/shared
 #############
 
+rm /dev/vcs* # virtual console buffers ? (cat /proc/devices)
+

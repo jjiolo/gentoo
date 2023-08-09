@@ -10,9 +10,7 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 RDEPEND="
-app-crypt/libmd
 dev-libs/expat
-dev-libs/libbsd
 media-libs/fontconfig
 media-libs/freetype
 media-libs/libpng

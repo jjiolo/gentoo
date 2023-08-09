@@ -9,10 +9,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
-RDEPEND="
-sys-libs/ncurses
-sys-libs/glibc
-"
+RDEPEND="sys-libs/glibc sys-libs/ncurses"
 DEPEND="${RDEPEND}"
 #############
 src_configure(){

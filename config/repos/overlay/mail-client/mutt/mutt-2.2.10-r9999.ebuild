@@ -40,8 +40,8 @@ src_configure(){
 --disable-imap \
 --enable-smtp \
 --disable-debug \
---enable-flock \
---disable-fcntl \
+--disable-flock \
+--enable-fcntl \
 --disable-filemonitor \
 --disable-warnings \
 --disable-nfs-fix \

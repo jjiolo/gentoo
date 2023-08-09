@@ -10,19 +10,19 @@
               chown 0:0 "${stage3}/binhost/config.torrent"
              chmod 0664 "${stage3}/binhost/config.torrent"
 
- install -o 0 -g 9091 -m 0644 "${stage3}/binhost/config.tar.gz" "${shared}/downloads/config.tar.gz"
- install -o 0 -g 9091 -m 0644 "${stage3}/binhost/config.torrent" "${shared}/torrents/config"
+ install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/config.tar.gz" "${shared}/downloads/config.tar.gz"
+ install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/config.torrent" "${shared}/torrents/config"
 
 }
 #############
 [ "${#}" == "1" ] && {
 
          tar zcf "${shared}/downloads/binhost.tar.gz" -C "${stage3}" "binhost"
-    chown 0:9091 "${shared}/downloads/binhost.tar.gz"
+ chown 9091:9091 "${shared}/downloads/binhost.tar.gz"
       chmod 0644 "${shared}/downloads/binhost.tar.gz"
 
  transmission-create -o "${shared}/torrents/binhost" -w "http://172.16.0.1/shared/downloads/binhost.tar.gz" "${shared}/downloads/binhost.tar.gz"
-           chown 0:9091 "${shared}/torrents/binhost"
+        chown 9091:9091 "${shared}/torrents/binhost"
              chmod 0644 "${shared}/torrents/binhost"
 
 }

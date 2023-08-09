@@ -6,7 +6,7 @@ usage(){ printf "\n${0} - ${1}\n\n takes interface, ssid and passphrase\n\n" ; e
 [ "${#}" == "3" ] || usage "no input"
 [ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
 #############
-pkill -x wpa_supplicant
+pkill -x /sbin/wpa_supplicant
 #############
 install -o 13 -g 13 -m 0600 "/dev/null" "${storage}/.wifi/wpa_supplicant"
 #############

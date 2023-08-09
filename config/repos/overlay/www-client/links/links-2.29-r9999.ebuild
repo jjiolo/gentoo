@@ -11,6 +11,7 @@ KEYWORDS="amd64"
 IUSE=""
 RDEPEND="
 app-crypt/libmd
+dev-libs/expat
 dev-libs/libbsd
 dev-libs/openssl
 media-libs/fontconfig

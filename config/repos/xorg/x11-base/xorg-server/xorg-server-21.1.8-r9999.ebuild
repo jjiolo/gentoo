@@ -3,7 +3,7 @@ EAPI=8
 #############
 DESCRIPTION="X.Org X servers"
 HOMEPAGE="https://x.org"
-SRC_URI="https://www.x.org/releases/individual/xserver/${P}.tar.xz"
+SRC_URI="https://x.org/releases/individual/xserver/${P}.tar.xz"
 #############
 LICENSE="MIT"
 SLOT="0/${PV}"
@@ -31,9 +31,9 @@ x11-libs/xcb-util-renderutil
 x11-libs/xcb-util-wm
 "
 DEPEND="
+${RDEPEND}
 x11-apps/xkbcomp
 x11-libs/libxkbfile
-${RDEPEND}
 "
 #############
 src_configure(){

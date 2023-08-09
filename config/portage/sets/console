@@ -3,9 +3,6 @@ app-crypt/argon2
 app-crypt/cryptsetup
 app-crypt/gnupg
 app-crypt/gpgme
-sec-keys/openpgp-keys-gentoo-auth
-sec-keys/openpgp-keys-gentoo-developers
-sec-keys/openpgp-keys-gentoo-release
 app-crypt/pinentry
 app-editors/vim
 app-emulation/qemu
@@ -35,6 +32,9 @@ net-vpn/torsocks
 net-vpn/wireguard-tools
 net-wireless/iw
 net-wireless/wpa_supplicant
+sec-keys/openpgp-keys-gentoo-auth
+sec-keys/openpgp-keys-gentoo-developers
+sec-keys/openpgp-keys-gentoo-release
 sys-apps/busybox
 sys-apps/busybox-suid
 sys-fs/dosfstools
@@ -48,4 +48,3 @@ sys-libs/ncurses
 sys-libs/zlib
 sys-process/audit
 sys-process/procps
-

@@ -167,18 +167,19 @@ cp -a ${i}/libstdc++.* usr/lib64
 cp -a ${i}/libgcc_s.*  usr/lib64
 done
 #
-cp -a /lib64/libmount*    lib64
 cp -a /lib64/libuuid.so*  lib64
-cp -a /lib64/libblkid.so* lib64
 #
 cp -a /bin/lsblk bin
+cp -a /lib64/libblkid.so* lib64
+cp -a /lib64/libmount*    lib64
 cp -a /lib64/libsmartcols* lib64
 #
 cp -a /usr/bin/setpriv usr/bin
 cp -a /usr/lib64/libcap-ng.so* usr/lib64
 #
 #############
-cp -a /usr/lib/locale/locale-archive usr/lib/locale
+install -d -o 0 -g 0 -m 0755 usr/lib/locale
+cp -a /usr/lib/locale/locale-archive usr/lib/locale/locale-archive
 #############
 
 # enforce rootfs permissions
@@ -196,7 +197,8 @@ chown -R 0:0 .
 find . -type d -exec chmod 0775 {} \;
 find . -type f -exec chmod 0664 {} \;
 #
-find init etc/init etc/self etc/qemu-lan etc/qemu-nat etc/qemu-template -type f -exec chmod 0775 {} \;
+find init etc/init etc/self -type f -exec chmod 0775 {} \;
+find etc/qemu-lan etc/qemu-nat etc/qemu-template -type f -exec chmod 0775 {} \;
 find bin sbin usr/bin usr/sbin -type f -exec chmod 0775 {} \;
 find lib64 usr/lib usr/lib64 -type f -exec chmod 0775 {} \;
 find usr/libexec -type f -exec chmod 0775 {} \;

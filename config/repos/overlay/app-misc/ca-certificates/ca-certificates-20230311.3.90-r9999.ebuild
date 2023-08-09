@@ -11,7 +11,7 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 RDEPEND="dev-libs/openssl"
-DEPEND="${RDEPEND}"
+DEPEND="${RDEPEND} app-alternatives/awk"
 S="${WORKDIR}"
 #############
 src_install(){

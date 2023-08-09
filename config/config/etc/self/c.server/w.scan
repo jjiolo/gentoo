@@ -6,32 +6,23 @@ usage(){ printf "\n${0} - ${1}\n\n takes interface\n\n" ; exit ; }
 [ "${#}" == "1" ] || usage "no input"
 [ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
 #############
-pgrep -x wpa_supplicant &>/dev/null && usage "wpa_supplicant already running"
-#############
-export BSS="BSS" SSID=" SSID" CHANNEL=" CHANNEL" SIGNAL=" SIGNAL" AUTH=" AUTH"
+pgrep -x /sbin/wpa_supplicant &>/dev/null && usage "wpa_supplicant already running"
 #############
 ip link set up "${1}"
 #############
-iw dev "${1}" scan | while read -r;do
 
- [ "${REPLY:0:4}" == "BSS " ] && {
+iw dev "${1}" scan | while read -r ; do
 
-  until [ "${#BSS}" -gt "16" ];do BSS="${BSS} ";done
-  until [ "${#SSID}" -gt "31" ];do SSID="${SSID} ";done
-  until [ "${#CHANNEL}" -gt "12" ];do CHANNEL="${CHANNEL} ";done
-  until [ "${#SIGNAL}" -gt "12" ];do SIGNAL="${SIGNAL} ";done
+ # printf "%s\n" "${REPLY}" | grep -e "^BSS " -e "^.*signal: " -e "^.*SSID: " -e "^.*DS Parameter set: " -e "^.*Authentication suites: "
 
-  printf "%s\n" "${BSS:0:17}:${SSID:0:32}:${CHANNEL:0:13}:${SIGNAL:0:13}:${AUTH}"
-
-  unset BSS SIGNAL CHANNEL AUTH;
-
- }
-
- [ "${REPLY:0:4}" == "BSS " ] && BSS="${REPLY:4:17}"
- [ "${REPLY:1:6}" == "SSID: " ] && SSID="${REPLY##*:}"
- [ "${REPLY:1:18}" == "DS Parameter set: " ] && CHANNEL="${REPLY##*:}"
- [ "${REPLY:1:8}" == "signal: " ] && SIGNAL="${REPLY##*:}"
- [ "${REPLY:5:23}" == "Authentication suites: " ] && AUTH="${AUTH}${REPLY##*:}"
+   [ "${REPLY:0:4}" == "BSS " ] && printf "\n%s" "[${REPLY:4:17}]"
+   [ "${REPLY:1:8}" == "signal: " ] && printf "%s" "[${REPLY##*: }]"
+   [ "${REPLY:1:6}" == "SSID: " ] && printf "%s" "[${REPLY##*: }]"
+   [ "${REPLY:1:18}" == "DS Parameter set: " ] && printf "%s" "[${REPLY##*: }]"
+   [ "${REPLY:5:23}" == "Authentication suites: " ] && printf "%s" "[${REPLY##*: }]"
 
 done
+
+#############
+printf "\n\n"
 #############

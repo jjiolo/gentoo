@@ -14,7 +14,7 @@
 #############
 
  stage3="https://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-nomultilib-openrc/"
- match='<a href="stage3-amd64-nomultilib-openrc.................\.tar\.xz">'
+ match='<a href="stage3-amd64-nomultilib-openrc-................\.tar\.xz">'
  file="$(curl --connect-timeout 3 -sL ${stage3}|grep -o "${match}"|cut -d'"' -f2)"
 
  printf "%s\n" "#############"

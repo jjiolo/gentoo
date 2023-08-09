@@ -19,18 +19,13 @@ setsid xinit /etc/xinitrc -- /usr/bin/X \
 -extension 'MIT-SHM' \
 -extension 'XTEST' \
 -extension 'XINERAMA' \
--extension 'XFIXES' \
++extension 'XFIXES' \
 +extension 'RENDER' \
 +extension 'RANDR' \
 -extension 'COMPOSITE' \
 -extension 'DAMAGE' \
--extension 'MIT-SCREEN-SAVER' \
 -extension 'DOUBLE-BUFFER' \
 -extension 'RECORD' \
--extension 'DPMS' \
--extension 'X-Resource' \
--extension 'XVideo' \
--extension 'XVideo-MotionCompensation' \
 -s 0 -auth /tmp/.X0-auth -logfile /tmp/.X0-log \
 -nolisten tcp -nolisten unix -listen local \
 vt7 :0 </dev/null &>/dev/null & exit

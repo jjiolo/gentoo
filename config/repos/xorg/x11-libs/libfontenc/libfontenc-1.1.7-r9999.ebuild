@@ -14,8 +14,8 @@ sys-libs/glibc
 sys-libs/zlib
 "
 DEPEND="
-x11-base/xorg-proto
 ${RDEPEND}
+x11-base/xorg-proto
 "
 #############
 src_configure(){

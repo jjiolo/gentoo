@@ -1,6 +1,35 @@
 
 #############
 
+ [gitd]
+
+ z.testing/project - default read only
+
+ httpd,{gitd,p2pd}
+ ^ version tracking
+ ^ release distribution
+
+ [basic authentication]
+
+ /cgi-bin:root:password
+ /cgi-bin/project.git:toor:drowsapp
+ ^ doesnt work
+
+ /cgi-bin/project.git:toor:drowsapp
+ /cgi-bin:root:password
+ ^ does work
+
+ /cgi-bin:root:password # applies to all new files
+ /cgi-bin/new.cgi:root:password # restart to secure individual files
+
+ ! dont have a git repository path ?
+   $HOME/<user>/git - no httpd:git(d) access ?
+   $HOME/git(d) - needs optional httpd write ?
+   $services/git(d) - needs optional httpd write ?
+
+
+#############
+
  [./configure --help] (ignores most options)
 
   cd git-A.B.C ; ./configure.sh > configure.sh

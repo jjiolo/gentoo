@@ -1,0 +1,20 @@
+
+#############
+pkill -x /sbin/wpa_supplicant
+pkill -x dnsd
+pkill -x p2pd
+pkill -x sshd
+#############
+
+[ -z "${1}" ] || {
+
+sleep 3
+#############
+w.connect wlan0 ; sleep 3 ; setpriv_network_default wlan0
+ash /etc/services/dnsd/start
+ash /etc/services/p2pd/start
+sshd
+#############
+
+}
+

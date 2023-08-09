@@ -11,7 +11,7 @@ usage(){ printf "%s\n" "${1}" ; exit 1 ; }
        cpu="-cpu host -smp 4,sockets=1,cores=4 -enable-kvm" mem="-m 8G" gpu="-vga virtio"
    network="-netdev tap,id=nd0,script=/etc/qemu-nat,downscript=no"
  interface="-device virtio-net-pci,netdev=nd0,mac=52:54:00:00:00:00"
-    kernel="-kernel /tmp/storage/stage3/binhost/kernels/virtual -append root=/dev/vda"
+    kernel="-kernel /tmp/storage/stage3/binhost/kernels/virtual"
     initrd="-initrd /tmp/storage/stage3/binhost/images/client"
        vnc="-nographic -display none -vnc unix:/dev/shm/qemu"
 

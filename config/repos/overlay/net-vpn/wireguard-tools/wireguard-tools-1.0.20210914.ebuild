@@ -12,8 +12,11 @@ IUSE=""
 RDEPEND="sys-libs/glibc"
 DEPEND="${RDEPEND}"
 #############
+src_configure(){ default ; }
+#############
+src_compile(){ LDFLAGS=-static make -C src ${MAKEOPTS} ; }
+#############
 src_install(){
-LDFLAGS=-static make -C src
 install -d -o root -g root -m 0755 "${D}/sbin"
 install    -o root -g root -m 0755 "src/wg" "${D}/sbin" || die "install failed"
 }

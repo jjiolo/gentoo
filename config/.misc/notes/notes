@@ -26,7 +26,7 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:06:23 15:00:00
+ lastest - 2023:08:09 15:00:00
 -------------
  * linux-6.4 - current
  * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
@@ -136,9 +136,11 @@ v attempt to create lists of things to actually do
 #############
 setpriv_udhcpd < - ignores first sleep ? wtf would be an understatement
 #############
+quick fix on w.scan - print relevent information one after the other ? (+ fallback grep version no testing yet)
+default ethernet to lan (not nat)
 openssl-3.1.1 - disabled dtls (ed25519 still doesnt work)
-sets_wayland works - (cant priv drop, cant nested priv drop)
 xorg-server + all dependencies ebuilt
+sets_wayland works - (cant priv drop, cant nested priv drop)
 updated git notes
 updated git httpd (multiple read/read+write repositories)
 updated nftables notes and examples
@@ -168,77 +170,117 @@ libcurl needed unix socket support for transmission
 
 #############
 
+ [update]
+
+  gentoo-developers 20230731 - > 20230807
+  linux kernels...
+  auditd-3.1.1 - > 3.1.2
+  vim-9.0.1627 - > 9.0.1679
+  tor-0.4.7.13 - > 0.4.7.14
+
+ CPU_SRSO - amd speculative execution
+
+-------------
+
+ e2fsprogs - libuuid libblkid
+ compiling xorg got rid of openssl desktop dependency
+ dont use libuuid anywhere other than e2fsprogs ?
+ ^ has its own
+ * still leaves lsblk with libmount ?
+
+-------------
+
+ muttrc - understand all the options
+        - proof read 3 times
+
+ mutt shits the bed oauth keys are still smtp:smtp dac
+ ^ tpm hand off private key || as good as saved password
+ ^ gmail forces application not account + minimum length pass
+ * can easily update gnupg scdaemon tpmd2
+
+-------------
+
+ etc/udhcpd.conf
+ udhcpc_{default,oneshot,ping},{zcip}
+ ^ msstaticroutes
+     staticroutes
+ ^^ more complex template ie forwarding vlan access ?
+
+#############
+
+sysctl - ipv4 options tidy ?
+         ipv6 options tidy ?
+       ^ arp and ndp
+
+ sysctl -a | grep arp
+ accept
+ announce
+ evict_nocarrier
+ filter
+ ignore
+ notify
+
+#############
+* virtual set 4 cores scripts set 2 ?
+#############
+
+qemu usb pass through test (pipewire broke it?)
+dropbear cheat sheet
+ dbclient -J proxy_command
+  server - nc -e dbclient
+  server - dbclient -J nc
+  client - nc -e dbclient
+  client - dbclient -J nc
+  ^ forward or reverse connections...
+  * dbclient nc might stop closing listening socket ?
+
+#############
+mpv/ffmpeg updated (slow now :'()
+#############
+
+ * 0.binhost - uses stage3 variables ?
+ * backup - uses stage3 variables ?
+ ^ should install / setup on any liveusb ?
+
  iw dev scan - never prints last result
                single result doesnt print
 
- ^ blargh
+ * meson - -Db_lundef
+           -Db_ndebug
+     ^ refuse to build libraries with undeclared dependencies ?
+     ^ refuse to use assert ?
+
+ * {dwm,herbe,st} - libmd libbsd no longer needed ?
+
+ * mpv meson didnt package.env nopie ?
+
+ * transmission-daemon --dump-settings
+ ^ missing "peer-id-ttl-hours": 6,
+
+ * ip addr scope {host,link,global}
+ ^ private address as global wrong scope ?
+ * ip route scope {host,link,global}
+ ^ private address as link correct scope ?
+ ^^ suppose to set it manually ?
+
+ * added ip_route_multipath
+   setpriv_network_{default,oneshot,ping,zcip}
+           network_{default,oneshot,ping,zcip}
+ ^ rather than screw up primary dns with multiple dhcp servers
+   forcing it to delete a route
+ ? leave support to oneshot and add multiple defaults ?
+ ^ no functionality hint (cant test it shouldnt support it)
+ ^^^ using network_oneshot protect network_default
 
 #############
 
- integrity + ext2
+ 2.shell - setsid chroot . /bin/busybox
+ ^ ability to remove pts injection ?
 
- ext2 doesnt wait for the filesystem to reply successful writes
- ext4 waits for the filesystem to reply successful writes
+ * su -l -s /bin/sh -c 'setsid' <user>
+ * login shell executes rc/profile with insecure pts...
+ * setsid su -l -s /bin/sh -c 'setsid' <user>
 
- integritysetup performs that function...
-
- ext2 triggering fsck because integrity returns failed ?
-
- * test pushing ext4 and poweroff to see if transmission files still corrupt ?
-   or if ext4 prevents the fsck fail regardless
-
-#############
-
- build.initramfs - controls all perms in rootfs...
-
- ^ viable over github ? no need to track config file permissions
-
-#############
-
- erm : /
-
- testing git httpd,{gitd,p2pd}
- ^ version tracking
- ^ release distribution
-
- gitd only runs as a cgi script
- httpd does technically webseed the client
- but transmission-daemon isnt cgi based
-
- [basic authentication]
-
- /cgi-bin:root:password
- /cgi-bin/project.git:toor:drowsapp
-
- ^ doesnt work
-
- /cgi-bin/project.git:toor:drowsapp
- /cgi-bin:root:password
-
- ^ does work
-
-  /cgi-bin:root:password # applies to all new files
-  /cgi-bin/new.cgi:root:password # restart to secure individual files
-
--------------
-
- default to root owned read only directory ?
-
- ^ no ability to push regardless of basic:auth@127.0.0.1
-
- * would imply a git group that can write to the path ?
-   serving 
-
- git might have rce in write paths ? shouldnt just let people shit httpd owned files everywhere 
-
- off by default doesnt work with example config file:
-
--------------
-
-#############
-need to proof read sys-apps, www-client, x11-wm
-config files {mutt,vim,firefox,wpa_supplicant}
-add integrity.{start,stop} for secondary usb device ?
 #############
 
 [nftables]
@@ -253,26 +295,9 @@ add integrity.{start,stop} for secondary usb device ?
  false assumption its safe to run nat on other networks ?
  ^ local network trust doesnt imply uid sandbox out to internet
 
- pretty much never going to use this a gateway ? stop pretending
-
-#############
-
- * shortest path to mx records ?
-
- ldns - undefined reference to ui_openssl
- maradns - deadwood > maradns (disable coLunacyDNS lua)
- dnrd
- pdnsd
-
-#############
-
- * httpd: read/(write) group access to repositories ?
- * home/ git repo projects
- * services/ git repo projects
- ^ inside httpd is no other write
- ^ or cgi-bin/create repo ? doesnt really work with basic auth
- * shared/ git repo projects (downloads/torrents owned by p2pd)
- ? needs http and git uid/gid write access ?
+ pretty much never going to use this as gateway ?
+ ^ defaults to laptop profile hosting || building ?
+   then .init editing server for building||hosting ?
 
 #############
 
@@ -282,8 +307,8 @@ add integrity.{start,stop} for secondary usb device ?
 ^ need a test script to demonstrate the difference
 
 * p2pd/p2p - split downloads/uploads
-             p2pd needs write on downloads only
-             p2p writes on uploads only
+             p2pd write on downloads / read on uploads
+             p2p read on downloads / write on uploads
 
 * console has the wrong key layout
   host has mtm-256color
@@ -1168,49 +1193,65 @@ svd     + has the ability to recieve packets over udp or tcp
 ^ write a custom script set for network analysis
 #############
 
-*** wtf raw format
+ [route]
 
-delete default route for interface
-ip route del default dev <interface>
+ CONFIG_IP_ADVANCED_ROUTER=y
+ CONFIG_IP_ROUTE_MULTIPATH=y
 
-add route via interface...
-ip route add <ip>/<mask> via <interface>
-blackhole... (unreachable prohibit throw)
-ip route add blackhole 192.168.0.0/24
-metric... (lowest first)
-ip route add 192.168.0.0/24 via 192.168.0.1 metric 10
-multipath routing... (busybox wont support it?)
-ip route add 192.168.0.0/24 nexthop via 192.168.0.1 weight 1 nexthop via 192.168.0.2 weight 2
-ip route add 192.168.0.0/24 nexthop via dev wlan0 weight 1 nexthop via dev wlan1 weight 2
+ net.ipv4.fib_multipath_hash_
 
-* cached multipath routing re uses the same route so nat translation occurs
-* hashed multipath routing same logic (src & dst == hash)
+   neigh - check arp before forwarding
+  policy - 0 (l3) 1 (l4) 2 (l3) 3 (custom hash)
+  fields - custom hash bitmask
 
-tos    - route by tos
-table  - /etc/iproute2/rt_table -
-proto  - /etc/iproute2/rt_proto - 
-scope  - /etc/iproute2/rt_scope - global/nowhere/host/link/site - (host lo, link real devices, link tap interfaces, global bridges ?)
-metric - 0 (default highest 32 bit number)
+ net.ipv6.fib_multipath_hash_
 
-ip route add default
- nexthop via 172.16.0.1 dev eth0 weight 1
- nexthop via 172.16.0.1 dev eth1 weight 1
+  policy - 0 (l3) 1 (l4) 2 (l3) 3 (custom hash)
+  fields - custom hash bitmask
 
-* appending metric to existing routes...
-ip route list|flush|add|del|change|append|replace|test
-add     - duplicates
-del     - deletes
-change  - duplicates
-append  - duplicates
-replace - duplicates
-test    - file exists
+ * equal cost none deterministic routing
 
-bond:
-creates a single mac addresses and uses it through every interface
-interfaces must be on the same network
-failover mode (no multiplexing) vs switch aware (multiplexing)
-ip link add name bond0 type bond
-brctl addif bond0 wan
+ ip route {list,flush,add,del,change,append,replace,test}
+          {default,0.0.0.0}
+          via 0.0.0.0
+          dev interface
+          scope {host,link,global}
+          metric 0
+
+ ip route add default via <address> dev <interface> scope global metric 0
+
+ delete default route...
+  ip route del default dev <interface>
+ add route via interface...
+  ip route add <ip>/<mask> via <interface>
+ add blackhole route...
+  ip route add blackhole 192.168.0.0/24
+ metric... (lowest first)
+  ip route add 192.168.0.0/24 via 192.168.0.1 metric 0
+ multipath routing...
+  ip route add 192.168.0.0/24
+  nexthop via 192.168.0.1 dev eth0 weight 1
+  nexthop via 192.168.0.2 dev eth1 weight 2
+
+ CONFIG_IP_MULTIPLE_TABLES
+  tos    - route by tos
+  table  - /etc/iproute2/rt_table -
+  proto  - /etc/iproute2/rt_proto - 
+  scope  - /etc/iproute2/rt_scope -
+  metric - 0-4294967295 (32 bit integer)
+
+ bond:
+
+  creates single mac addresses used through every interface
+  interfaces must be on the same network
+  failover mode (no multiplexing)
+  switch aware (multiplexing)
+  ip link add name bond0 type bond
+  brctl addif bond0 lan
+
+ bgp:
+
+  required to host an address range across multiple providers
 
 #############
 
