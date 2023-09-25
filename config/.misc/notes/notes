@@ -26,9 +26,10 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:08:09 15:00:00
+ lastest - 2023:09:16 21:11:00
 -------------
- * linux-6.4 - current
+ no changes only playing with .ebuilds.old
+-------------
  * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
  ^ X0-log - ShadowFB: preferred NO, enabled NO (something about no/modesetting)
  * app-alternatives - FEATURES='-collision-protect' (remove after its in stage3)
@@ -42,39 +43,36 @@ stuff at the top is unordered raw sewage
 
 [INFORMATIONAL]:
 #############
-* qemu reboot - corrects vnc output size
 * gcc - removed /etc/portage symlink ?
+* qemu reboot - corrects vnc output size
 * mandoc: sys-boot/efibootmgr - > sys-libs/efi-var - > mandoc ./file.1 | less -S
 * pkg_postinst isnt recorded in CONTENTS
-* raw pasting into st/vim is bad mode...
-* opening httpd pages is bad mode (no sanitization)
 * busybox/ip - no nexthop, no multicast, no netns
 * /bin/login sets USER HOME ; /bin/ash /init /sbin/init have no USER HOME
-* mkfs.ext4 -m0 - remove space reserved for root... (5% 1TB == 50GB)
 * dropbear socks || wg/microsocks nc -lks local:/path -e dbclient user@host nc local:/path
-* keepalive points - crond,monitor,udhcpd_script,udhcpc_persist  ntpd ?
-* file(mv *match* ffs) directory(mv *match*/* /tmp/why; rmdir *match*;)
+* keepalive points - monitor,crond,udhcpc_script,udhcpd_script  ntpd ?
 * for i in $(seq 0 64) ; do trap false $i ; done ; exec command </dev/null &>/dev/null
 * gcc -lto -pgo 00:18:31 +00:00:00 || gcc +lto -pgo 00:24:44 +00:06:00 || gcc +lto +pgo 00:36:48 +00:12:00
 * sysctl -w kernel.yama.ptrace_scope=3 CONFIG_SECURITY CONFIG_SECURITY_YAMA
+* file(mv *match* ffs) directory(mv *match*/* /tmp/why; rmdir *match*;)
+* opening httpd pages is bad mode (no sanitization)
+* raw pasting into st/vim is bad mode...
 #############
 
 [TODO]
 #############
 * vim - :h vimrc-intro || :h option-list
-* vim / mutt < - only things not really full scoped
-* dnssec verified cache (optionally over tor) (still no real competition)
 * privdrop stage3 initial pull, stage3 portage update, stage3 fetch
+* dnssec verified cache (optionally over tor) (dnscrypt-proxy wins)
 * alsa environment variable as default soundcard ?
 #############
 
 [PROBLEMS]:
 #############
-* w.scan < - literally says dont attempt to parse the output 
+* ebuild scheduled for merge, causes rebuilds (doesnt install into /binhost/rootfs?)
+* Xephyr, -auth fails silently and allows global access to :display
 * inability to add wifi interfaces to bridges (breaks ability to dedupe commands)
 * monitor diskio reads every drive then every block device doubling the values ? (sda && md127)
-* Xephyr, -auth fails silently and allows global access to :display
-* ebuild scheduled for merge, causes rebuilds (doesnt install into /binhost/rootfs?)
 * sysctl -w net.ipv4.ip_unprivileged_port_start={0,32768} vs inbound skuid (breaks conntrack)
 * icmp doesnt ct state, forces invalid traffic
 * multicast and broadcast, force invalid traffic < - should be related ?
@@ -82,9 +80,7 @@ stuff at the top is unordered raw sewage
 * openssl pkeyutl doesnt support ed25519
 * qemu < - libusb stopped working completly ?
 * qemu < - tigervnc has sticky keys with xorg-server open...
-* qemu-7.{0,1}.0 < - vnc output doesnt resize bottom of the console hangs off
 * dwm, holding down alt+i increments the number indefinintly ? (requires multiple alt+d to recover)
-* proxy dox without privesc, /shared key_fingerprints (dedicated hardware not shared)
 #############
 
 [CURRENT]
@@ -136,77 +132,221 @@ v attempt to create lists of things to actually do
 #############
 setpriv_udhcpd < - ignores first sleep ? wtf would be an understatement
 #############
-quick fix on w.scan - print relevent information one after the other ? (+ fallback grep version no testing yet)
-default ethernet to lan (not nat)
-openssl-3.1.1 - disabled dtls (ed25519 still doesnt work)
-xorg-server + all dependencies ebuilt
-sets_wayland works - (cant priv drop, cant nested priv drop)
-updated git notes
-updated git httpd (multiple read/read+write repositories)
-updated nftables notes and examples
-updated integritysetup to use ext4...
-updated storage.fde crypt.start leave fsck failed maps open
-{storage.fde,crypt.start,crypt.stop} added integritysetup
-attempt /dev/ttyS0 once at boot (serial console enabled in virtual kernel)
-added setpriv and -e entropy_file to wpa_supplicant (CONFIG_SETPRIV didnt work)
-updated setpriv_udhcpc - > setpriv_network_{default,oneshot,ping,zcip} (matches busybox embed)
-removed libnatpmp miniupnpc (transmission using built in)
-added equal cost multipath (multiple ip route add default rules)
-su -l -s /bin/sh -c 'setsid <binary> & exit' <user> (removing exit hangs the shell swapped exec for setsid)
-auditd added new users updated wxa tracking to all paths (keeps adding entries on read?)
-added ssh to nobody nftables
-added ssh user
-added wifi user
-removed sound from server
-removed zramctl zram swap, dont need it increases complexity + attack surface
-busybox ar - allows extracting .debs (still needs unzip for firmware?)
-added usb.{hash,check} - verify usb hasnt corrupted
-vim -p /tmp/a.bootfs/{.hashes,hashes} + (ctrl+n ctrl+p)
-fixed storage.mount (reset 775 on /tmp/z.local) (breaks dbclient root@172.16.0.1)
-libcurl needed unix socket support for transmission
+* resolv.conf - search localdomain / options edns0 no-aaaa
+#############
+* been waiting for dtls ed25519 support...
+^ was suppose to dtls psk/srp ?
+^^ share password over any medium then dtls hole punch two openssl s_clients
+   test ffmpeg desktop / webcam sharing
+#############
+tmpfiles.d
+^ atomic creation <thing>:<owner>:<permissions>
+^ every correct order
+  every incorrect order
+  initial uid:gid/umask
+  owner - > permissions
+  permissions - > owner
+* shell that can wrap any binary
+^ given binaries can apparently 'fix' the problem
+  implies pre existing binaries dont work...
+#############
+ z.testing/shared.bootfs ? (storage.bootfs)
+ tor public and private addresses suck ?
+ cp -a contacts/self bootfs/contacts
+ cp -a ddns/private/hostname bootfs/contacts/private
+ cp -a bootfs/contacts contacts/self
+ ^ leave dropbear port exposed ? or hide private somewhere ?
+ ^ ddos protection and pow ?
+   rotating privates to prevent ddos...
+ ^ DoSDefense low upstream to prevent dos downstream
+ ! need real remote to test it
+#############
+gcc hardening rebuild tests ?
+ -ftrapv - traps signed overflow
+ -mcet -fcf-protection - control flow protection
+ -Wl,-z,defs - detect and reject underlinking
+ -fexceptions - hardening of multi threaded c and c++ code thread cancellation handlers use unprotected function pointer on the stack
+ -fvtable-verify -
+#############
+* {binutils,gcc}-config 2 (doesnt flip on updates)
+* first.run scratch pad for visualising @toolchain
+* grub still has hardcoded not variables
+* every script refers to kernels by name ?
+* gnupg updated alot... check g.conf g.agent
+* sysctl.conf is horrible to maintain / verify
+#############
+ulimits -a for individual pids/users ?
+printf "Max processes=3:3" >> /proc/1234/limits
+printf "Max nice priority=20:40" >> /proc/1234/limits
+^ correct format, doesnt edit the values ?
+prlimit - util-linux (busybox missing alot of functionality)
+#############
+add $HOSTNAME to /etc/hosts
+^ remove firefox timeout ?
+#############
+bootfs does discard
+storage doesnt discard
+^ cant remember why ?
+#############
+ xorg/x11-base/xcb-proto
+ ^ broke ? gentoos pulling gitlab link
+   main website hasnt updated nearly a month...
+ ^^ alot of gitlab or gtfo coming ?
+#############
+ shared/contacts/self/
+ known.{user,nobody,jail
+ authorized.{user,nobody
+ ^ groups them in the directory so it looks less shit
+ * only gnupg,public,private,wireguard ?
 #############
 
+ PS1 colors for ssh and stage3 chroot are horrible...
+ ^ add a word or [r] remote ? to the line
+   and only use bright white for chroot ?
 
+ [user][host][path][depth][-] host
+ [user][host][path][depth][c] chroot
+ [user][host][path][depth][r] remote
+ ^ still doesnt allow color
+   and still lose SSH_CONNECTION when chrooting ?
+
+ tl;dr cant identify remote chroot...
+ ^ turns out thats really annoying
 
 #############
 
- [update]
+ xephyr escapes
 
-  gentoo-developers 20230731 - > 20230807
-  linux kernels...
-  auditd-3.1.1 - > 3.1.2
-  vim-9.0.1627 - > 9.0.1679
-  tor-0.4.7.13 - > 0.4.7.14
+  x.user - exec sudo -l
+  alt+m monocle mode
+  x.nobody 
+  alt+shift 3
 
- CPU_SRSO - amd speculative execution
+  ^ leaves enter pinned inside Xephyr
+
+  ^^ fairly sure theres another one ?
+  move focus to different monitor
+  opens terminal closes terminal
+  leaves focus in old window not current monitor ?
+
+#############
+
+ openssl-3.2.0 alpha
+
+ test dtls ed25519
+
+ kdf support for argon2d argon2i argon2id (drop argon2)
+
+ openssl s_client -ktls support
+ openssl s_client -adv - type {help} ?
+ openssl s_client -quic (-adv -alpn)
+ no-http option (disable -www -http ?)
+
+ x509 ca req produce x.509 v3 certificates ?
+ ^ keyUsage - codeSigning
+
+ aes-gcm-siv - gcm with nonce reuse protection
+
+#############
+
+tl;dr
+
+ encrypted signed recursive caching forwarding proxy
+ + authoritive dns server
+ ^^ really small really easy to maintain
+
+ opensmtpd disabled open relay
+ ^ muttrc - mailboxes ~/inbox/public ~/inbox/private ~/inbox/junk
+
+ ngircd - passwordless oper + tor : /
+ ^ hate not having 127.0.0.1 as an oper whitelist
+
+ no idea how to integrate back into the liveusb ?
 
 -------------
 
- e2fsprogs - libuuid libblkid
- compiling xorg got rid of openssl desktop dependency
- dont use libuuid anywhere other than e2fsprogs ?
- ^ has its own
- * still leaves lsblk with libmount ?
+ dnscrypt-proxy cloaking-rules = /etc/hosts
+ ^ breaks list to long ?
+
+ dnscrypt-proxy doesnt forward ptr ?
+ ^ tinydns ptr lookups fail regardless
+
+ dnscrypt-proxy openssl missing libraries ?
+ ^ restricted upstream kex/cipher or illegal tls parameter
 
 -------------
 
- muttrc - understand all the options
-        - proof read 3 times
-
- mutt shits the bed oauth keys are still smtp:smtp dac
- ^ tpm hand off private key || as good as saved password
- ^ gmail forces application not account + minimum length pass
- * can easily update gnupg scdaemon tpmd2
+ smtpd defaults to /proc/sys/kernel/hostname
+ ^ implies fqdn and /proc/sys/kernel/domainname
+ ^^ having no real meaning
 
 -------------
 
- etc/udhcpd.conf
- udhcpc_{default,oneshot,ping},{zcip}
- ^ msstaticroutes
-     staticroutes
- ^^ more complex template ie forwarding vlan access ?
+ /etc/services/variables service_system + /filesa
+ ^ only ever used to refer to files directory...
+
+-------------
+
+ z.testing/pxe - takes stage3 copys to shared/downloads/bootfs
+ ^ usb version copy grub/kernel/image + keys to keys/$hostname ?
+ ^ same as the old version
+
+ ^ backup should be running z.testing/pxe ?
+   update shared/downloads/bootfs 
+ ^ even adding torrent files for easy sharing
+
+ usb.bootfs < - added usb.hash
+                usb.check verify usb
 
 #############
+nftables is still a bit shit...
+nat doesnt do everything...
+tun does stuff it cant even do...
+lo works
+lan works
+nat/tun dont really make sense
+#############
+
+played around for to long
+no idea how to integrate it
+
+dnscrypt-proxy query log is really good visability ?
+stacking 4 dns related services feels wrong ?
+
+drop ddns
+mv dnsd to vpnd
+dnsd as dnscrypt
+
+liked the idea doesnt integrate nicely ?
+
+#############
+
+ grub hardcodes 172.16.0.1 (siaddr)
+ grub hardcodes downloads/bootfs/<kernel>
+ grub hardcodes downloads/bootfs/<image>
+ ^ should be pulling dhcp variables ?
+
+ go-bootstrap FEATURES="mirror"
+ ^ takes to fucking long
+
+#############
+
+ * chunk up repos...
+   overflow
+   overlay
+   xorg
+   testing
+  ^ makes it feel less horrific when proof reading
+
+ * ability to update usr/share/tor/geoip...
+
+#############
+ * repos/xorg - runtime deps work, build time deps fluked
+#############
+ firefox-esr < - libstdc++ libgcc_s + glibc:libmount
+#############
+
+ /etc/sysctl.conf < - adding arp/ndp settings
 
 sysctl - ipv4 options tidy ?
          ipv6 options tidy ?
@@ -220,8 +360,6 @@ sysctl - ipv4 options tidy ?
  ignore
  notify
 
-#############
-* virtual set 4 cores scripts set 2 ?
 #############
 
 qemu usb pass through test (pipewire broke it?)
@@ -242,17 +380,10 @@ mpv/ffmpeg updated (slow now :'()
  * backup - uses stage3 variables ?
  ^ should install / setup on any liveusb ?
 
- iw dev scan - never prints last result
-               single result doesnt print
-
  * meson - -Db_lundef
            -Db_ndebug
      ^ refuse to build libraries with undeclared dependencies ?
      ^ refuse to use assert ?
-
- * {dwm,herbe,st} - libmd libbsd no longer needed ?
-
- * mpv meson didnt package.env nopie ?
 
  * transmission-daemon --dump-settings
  ^ missing "peer-id-ttl-hours": 6,
@@ -283,24 +414,6 @@ mpv/ffmpeg updated (slow now :'()
 
 #############
 
-[nftables]
-
- nat inbound makes sense for hosting virtual machines
- nat outbound only makes sense running this as a virtual machine
- ^ should be based on sandboxing ? (prevent uid internet access)
- ^ should be based on development ? (access any vm from a uid)
-
- host as gateway drops udp requests out
- nat guest access to local network resources
- false assumption its safe to run nat on other networks ?
- ^ local network trust doesnt imply uid sandbox out to internet
-
- pretty much never going to use this as gateway ?
- ^ defaults to laptop profile hosting || building ?
-   then .init editing server for building||hosting ?
-
-#############
-
 * tor - 0.4.8.1 alpha
 
 * read -r --raw < - interpret backslashes literally, rather than as escape characters
@@ -324,8 +437,6 @@ mpv/ffmpeg updated (slow now :'()
  ^ dtach -A socket mpv.music 127.0.0.1
    dtach -A socket mpv.music /tmp/storage/shared/archive/music
    empty input default to local ?
-
-* toybox - complains -lcurses is missing ? (doesnt have an init system)
 
 * busybox - gzip content encoding, if file / file.gz exists
             gzip -c -9 index > index.gz ; curl -I --compressed 127.0.0.1

@@ -1,6 +1,66 @@
 
 #############
 
+ userbase
+ action name method userbase <table>
+  public  465:465:/tmp/storage/home/smtp
+  private 465:465:/tmp/storage/home/smtp
+  junk    465:465:/tmp/storage/home/smtp
+
+#############
+smtp/smtpd/smtpctl
+encrypt/lockspool/mail.{lmtp,local,maildir,mboxfile,mda}
+#############
+
+ smtp - sendmail
+
+  cat > message << EOF
+  From: [me] me@localhost
+  To: [you] you@localhost
+  Subject: subject
+
+  message
+
+  --
+  signature
+  EOF
+
+  smtp
+   -H domain
+   -F user@domain
+   -S smtp://host.nat:25
+   user@domain < message
+
+#############
+
+ smtpd -
+
+  smtpd
+   -v verbose
+   -d foreground to stderr
+   -F foreground to syslog
+   -f config (-n check config)
+   -P mda/mta/smtp (pause subsystem at startup)
+   -T trace
+   -D macro=value ???
+
+#############
+
+ smtpctl - requires suid execution
+           never going to happen
+
+#############
+
+ smtpd.conf
+
+  listen on 0.0.0.0
+  action name method [options]
+  match from * for * [options] <action>
+
+#############
+   
+#############
+
 opensmtpd 6.4.2_p1
 
 -I include path -i include -i :exact_include.h
@@ -20,7 +80,7 @@ LDFLAGS="${LDFLAGS} -lpthread /usr/lib64/libcrypto.a /usr/lib64/libssl.a"
 
 #############
 
-ways to send mail...
+ways to send mail... (smtp from opensmtp is really easy)
 
 mutt - > m(new_mail) - > root@localhost - > subject:testing - > data:testing - > y(send_mail)
 sendmail - > /usr/sbin/smtpctl
@@ -28,13 +88,13 @@ sendmail -F name -f nobody@localhost -t root@localhost
 printf "%s\n" "lock messages to /usr/sbin/smtpctl access... and uid:gid lock port 25 firewall"|/usr/sbin/sendmail -F bob -f bob@internets -t root@localhost
 
 openssl s_client -connect smtp.gmail.com:465 -crlf -ign_eof|
-ehlo test.com
+ehlo localhost
 auth $(printf "\00user@domain.tld\00passphrase"|base64)
-mail from:<test@test.com>
-rcpt to:<root@localhost>
+mail from:<me@localhost>
+rcpt to:<you@localhost>
 data
-From: me
-To: you
+From: [me] me@localhost
+To: [you] you@localhost
 Subject: subject
 Mime-Version: 1.0
 Content-Type:multipart/mixed; boundary="abcdefghijklmnopqrstuvwxyz1234567890"
@@ -79,14 +139,21 @@ Content-Description
 EHLO domain.tld             sending from
 MAIL FROM:<user@domain.tld> sending on behalf of
 RCPT TO:<user@domain.tld>   sending to
-#############
-
-drop
-
- user@domain
- @domain
- @ip
-
+DATA
+From:
+To:
+Subject:
+message
+.
+-------------
+^ data segment From: To: can be spoofed ?
+  confused as to why its sent twice
+-------------
+recieves from server... checks ptr
+recieves from sender... checks mx spf dkim dmarc
+-------------
+drop - server
+drop - sender user@domain @domain
 #############
 
 debuggery...
@@ -94,71 +161,15 @@ debuggery...
 on start - reads /proc/sys/kernel/hostname and does a dns lookup < - hangs if it cant resolv its own username
 printf "%s\n" "127.0.0.1 $(cat /proc/sys/kernel/hostname).$(cat /proc/sys/kernel/domainname)" >> /etc/hosts
 
+
 vdomain
-cant wildcard
-
+vuserbase
 vusers
-root public
-random private
-random private
-random private
-@ junk
-
-#############
-
-!negative [optional] "variable" <file>
-
-accept|reject
-
-!authenticated
-
-tagged !tag
-
-from any
-from !local
-from !source <table>
-
-sender !<senders>
-
-for any [alias <aliases>]
-for any virtual <vmap>
-for !domain "*.domain" [alias <aliases>]
-for !domain <domains> [alias <aliases>]
-for !domain "*.domain" virtual <users>
-for !domain <domains> virtual <users>
-
-for !local [alias <aliases>]
-for !local virtual <vmap>
-
-recipient !<recipients>
-
-[userbase <table>]
-
-forward-only
-
-deliver to lmtp ["host":"port"|"socket"] [rcpt-to] [as "user"]
-deliver to maildir ["path"]
-deliver to mbox
-deliver to mda "program" [as "user"]
-
-relay [backup ["mx"]] [as "address"] [source <source>] [hostname "name"] [hostnames <names>] [pki "pkiname"] [tls [verify]]
-relay via "host" [auth <auth>] [as "address"] [source <source>] [hostname "name"] [hostnames <names>] [pki "pkiname"] [verify]
-
-#############
-
-expire "s|m|h|d"
-
-bound-warn "s|m|h|d"
-
-ca "hostname" certificate "cafile"
-
-ciphers "cipher-list"
-
-limit session "max-rcpt" "max-mails"
-
-limit mta [for domain "domain"] "family"
-
-limit scheduler max-inflight "num"
+ root public
+ random private
+ random private
+ random private
+ @ junk
 
 #############
 
@@ -178,126 +189,6 @@ listen on "interface"
  [no-dsn]
 
 listen on socket [mask-source]
-
-#############
-
-max-message-size "0"
-
-pki "hostname" certificate "certfile"
-
-pki "hostname" key "keyfile"
-
-pki "hostname" dhe "params"
-
-queue compression
-
-queue encryption [key "key"]
-
-subaddressing-delimiter "delimiter"
-
-table "name" ["type":] "config"
-
-table "name" "value"
-
-#############
-
-{variable[0]}
-{variable[8:]}
-{variable[-3:]}
-{variable[0:6]}
-{variable[0:-4]}
-
-{variable:lowercase}
-{variable:uppercase}
-{variable:strip}
-{variable:lowercase|strip}
-{variable|raw}
-
-%{sender}
-%{sender.user}
-%{sender.domain}
-%{rcpt}
-%{rcpt.user}
-%{rcpt.domain}
-%{dest}
-%{dest.user}
-%{dest.domain}
-%{user.username}
-%{user.directory}
-
-#############
-
-various table types assuming individual functions to read each type...
-
- table mylist { value0, value1, value2 }
- table mymapping { key0=value0, key1=value1, key2=value2 }
- table name file:/path/to/file
- table name db:/path/to/db
-
-aliases -
-
- assign an arbitrary name to an email address or group of email addresses
-
- key                   - forced lower case before any matches
- user                  - user in passwd
- /path/to/file         - append message to file
- |command              - pipe message to command
- :include:/file        - include definitions in file as alias entries
- user-part@domain-part - wtf ?
- error:code message    - status code and message to return
- maildir:/path         - deliver messages to maildir at path
-
- alias <aliases>   - key must exist in passwd
- virtual <aliases> - key doesnt need to exist in passwd?
-
-domain - list of domains
-
- example.org
- *.example.org
-
-credentials - 
-
- listen context - listen... auth <credentials>
-  user0 $2b$10$hIJ4QfMcp.90nJwKqGbKM.MybArjHOTpEtoTV.DgLYAiThuoYmTSe
-  user1 $2b$10$bwSmUOBGcZGamIfRuXGTvuTo3VLbPG9k5yeKNMBtULBhksV5KdGsK
-
- relay context - relay... auth <credentials>
-  label1 user:password
-  user0 password
-
-netaddr - accept from source <netaddr>
-
- 192.168.1.1
- ::1
- ipv6:::1
- 192.168.1.0/24
-
-userinfo - map virtual users to uid:gid and home directory
-
- joe  1000:100:/home/virtual/joe
- jack 1000:100:/home/virtual/jack
-
-source - relay source <addresses> (bind to address no subnets)
-
- 192.168.1.2
- 192.168.1.3
- ::1
- ::2
- ipv6:::3
- ipv6:::4
-
-Maidaddr - 
-
- user
- @domain
- user@domain
- user@*.domain
-
-Addrname -
-
- ::1 localhost
- 127.0.0.1 localhost
- 88.190.23.165 www.opensmtpd.org
 
 #############
 

@@ -1,10 +1,12 @@
 #!/bin/sh
 #############
-. /etc/services/dnsd/install
+. /etc/services/dnscrypt/install
 #############
-su -ls /bin/sh -c "exec dnscrypt-proxy --config ${service_storage}/dnscrypt-proxy.toml --pidfile ${service_storage}/pid </dev/null &>/dev/null &" dnsd
+pgrep -x dnscrypt-proxy &>/dev/null && exit
 #############
-printf "%s\n" "nameserver 127.0.0.1" > /etc/resolv.conf
-chown root:root /etc/resolv.conf
-chmod 0644 /etc/resolv.conf
+sysctl -w net.ipv4.ip_unprivileged_port_start=0
+su -l -s /bin/ash -c "setsid dnscrypt-proxy --config ${service_storage}/dnscrypt-proxy.toml </dev/null &>/dev/null & exit" dnscrypt ; sleep 1
+sysctl -w net.ipv4.ip_unprivileged_port_start=32768
+#############
+renice -10 -u "dnscrypt"
 #############

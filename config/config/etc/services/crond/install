@@ -9,7 +9,7 @@
 [ -d "${service_storage}/month"   ] || install -d -o root -g root -m 0700 "${service_storage}/month"
 [ -d "${service_storage}/year"    ] || install -d -o root -g root -m 0700 "${service_storage}/year"
 #############
-[ -f "${service_storage}/root"    ] || install    -o root -g root -m 0600 "${service_system}/files/root" "${service_storage}/root"
+[ -f "${service_storage}/root"    ] || install    -o root -g root -m 0600 "${service_system}/root" "${service_storage}/root"
 #############
 . /etc/services/permissions root root 0700 0600
 #############

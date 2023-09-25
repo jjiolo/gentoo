@@ -1,8 +1,0 @@
-
-{
-openvpn --show-ciphers
-openvpn --show-digests
-openvpn --show-engines
-openvpn --show-tls
-}|less
-

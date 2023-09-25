@@ -3,7 +3,7 @@ EAPI=8
 #############
 DESCRIPTION="X.Org fontenc library"
 HOMEPAGE="https://www.x.org"
-SRC_URI="https://x.org/releases/individual/lib/${P}.tar.xz"
+SRC_URI="https://www.x.org/releases/individual/lib/${P}.tar.xz"
 #############
 LICENSE="MIT"
 SLOT="0"

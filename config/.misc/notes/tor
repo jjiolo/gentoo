@@ -1,5 +1,54 @@
 
 #############
+
+ confluxEnabled 0|1|auto - auto
+ ^ multipath tcp ?
+   traffic splitting among multiple circuits...
+ entry relay exit - > site
+ entry relay exit - > site
+
+ new things
+
+  conflux - multipath tcp defaults to auto more backend than client
+  ^ might be useful for mixnets allows changing packet size
+
+ExtORPort 0
+^ doesnt complain about it being active
+  claims its to listen to connections from pluggable transports
+  ORPort is the relay port ? which is disabled ?
+
+automaphostsonresolve 1
+^ assuming if thats on and dnsport is used ?
+  it returns a tmp address thats routed through tor ?
+  could do with defining it
+  
+
+connection padding < - effectively sends fake traffic
+ but doesnt account for mixing input/output order ?
+
+ turned off ipv6 might stop fucking upstream dns ?
+ and allow local ipv6 for testing...
+
+ track host exists... host.domain.tld
+ ^ attempt to use the same exit per host
+   session cookies arriving from the same exit node
+
+ consensus parameters everywhere...
+ ^ asks the network what the client should do...
+   network apparnetly votes ?
+  assuming it allows reacting to various ddos attempts ?
+  ability to dynamically change clients based on network use ?
+
+ directory authorities hold all the nodes in the network
+ rendevouz holds onion information
+ 
+ should probably draw a default picture to explain concepts ?
+
+ bridges - > guard directory entry relay rendevouz exit
+
+ feels alot like these settings should have been removed : /
+
+#############
 * tor geoip file edit to create full network view ?
 * obfs4proxy and meeks localhost access is a random port ? (cant preconfigure nftables)
 #############

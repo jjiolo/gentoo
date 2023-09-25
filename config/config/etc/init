@@ -17,9 +17,6 @@ umask 0007
 
 [ "$(hostname)" == "server"  ] && {
 
- brctl delif lan eth0 ; brctl addif nat eth0
- brctl delif lan eth1 ; brctl addif nat eth1
-
  ash /etc/services/crond/start
  ash /etc/self/e.setpriv/setpriv_udhcpd
  ash /etc/self/e.setpriv/setpriv_tftpd
@@ -34,10 +31,7 @@ umask 0007
 
 [ "$(hostname)" == "virtual" ] && {
 
- brctl delif lan eth0
- brctl addif nat eth0
-
- ash /etc/self/e.setpriv/setpriv_network_default nat virtual
+ echo yes | ash /etc/self/e.setpriv/setpriv_network_default nat virtual
  ash /etc/services/httpd/start
  ash /etc/services/p2pd/start
  sshd -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null

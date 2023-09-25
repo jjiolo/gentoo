@@ -1,290 +1,202 @@
 
-##################################
-#         Global settings        #
-##################################
+#############
 
-## https://dnscrypt.info/public-servers < - pulls all servers from a hardcoded domain.tld
+server_names = []
 
-# leave it empty asks for require_* settings only listed below
-# or pull for server name ignoring require_* settings listed below
-# server_names = ['scaleway-fr', 'google', 'yandex', 'cloudflare']
+max_clients = 250
 
-## List of local addresses and ports to listen to. Can be IPv4 and/or IPv6.
-## Example with both IPv4 and IPv6:
-## listen_addresses = ['127.0.0.1:53', '[::1]:53']
+listen_addresses = ['127.0.0.1:53','172.16.0.1:53']
 
- listen_addresses = ['127.0.0.1:53','[::1]:53','172.16.0.1:53','[fd01::1]:53']
- max_clients = 250
-#user_name = 'dnsd'
+user_name = ''
 
-## Require servers (from static + remote sources) to satisfy specific properties
 ipv4_servers = true
-ipv6_servers = true
+ipv6_servers = false
 dnscrypt_servers = true
 doh_servers = true
+odoh_servers = true
 
-## Require servers defined by remote sources to satisfy specific properties
 require_dnssec = true
 require_nolog = true
 require_nofilter = true
 
-# Server names to avoid even if they match all criteria
 disabled_server_names = []
 
-#############
+force_tcp = false
+http3 = false
+proxy = ''
+http_proxy = ''
 
-# force tcp to route through socks proxy (will increase latency)
- force_tcp = false
-#proxy = 'socks5://127.0.0.1:9050'
+timeout = 500 #5000
+keepalive = 60 #30
 
-## HTTP/HTTPS proxy Only for DoH servers (force an http/https proxy ? point to itself ?)
-# http_proxy = 'http://127.0.0.1:8888'
-
-#############
-
-timeout = 5000
-keepalive = 30
-
-blocked_query_response = 'hinfo' # refused/hinfo/ip_response? format 'a:<ipv4>,aaaa:<ipv6>'
-
-lb_strategy = 'p2' # p2/ph/first/random
+edns_client_subnet = []
+blocked_query_response = 'refused'
+lb_strategy = 'p2'
 lb_estimator = true
 
-log_level = 2 # 0 very - 6 only fatal
-#log_file = '/storage/services/dnsd/logs'
+log_level = 2
+log_file = ''
+log_file_latest = false
+
 use_syslog = true
 
-
-## Delay, in minutes, after which certificates are reloaded
 cert_refresh_delay = 240
 
-# enable ephemeral keys for dnscrypt and DoH (by removing sessions)
-dnscrypt_ephemeral_keys = true
-tls_disable_session_tickets = true
+cert_ignore_timestamp = false
+
+dnscrypt_ephemeral_keys = false
+tls_disable_session_tickets = false
 
 ## 49199 = TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 ## 49195 = TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
 ## 52392 = TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
 ## 52393 = TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
-##  4865 = TLS_AES_128_GCM_SHA256
-##  4867 = TLS_CHACHA20_POLY1305_SHA256
-tls_cipher_suite = []
+tls_cipher_suite = [52393,49195]
 
+tls_key_log_file = ''
 
-# check system configuration... then fallback to cleartext dns to cache server list
-fallback_resolvers = ['1.1.1.1:53','8.8.8.8:53', '9.9.9.9:53']
+bootstrap_resolvers = ['1.1.1.1:53','8.8.8.8:53']
 
-## Always use the fallback resolver before the system DNS settings.
 ignore_system_dns = true
 
-# wait upto 60, or 0 dont test or -1 wait forever (network connectivity test before starting local server)
 netprobe_timeout = 60
 
-# address to check if the internet exists... (still starts as none root ? no raw sockets)
-netprobe_address = '127.0.0.1:53'
+netprobe_address = '1.1.1.1:53'
 
-# forwarding and cloaking... apparently a thing plugins ?
+offline_mode = false
 
-# run the local server regardless of upstream for local resolv
-# offline_mode = false
+query_meta = []
 
-# add txt records to all outgoing queries ? access control section ?
-# query_meta = ["key1:value1", "key2:value2", "token:MySecretToken"]
+log_files_max_size = 10
+log_files_max_age = 7
+log_files_max_backups = 1
 
-# max size in MB - 0 for unlimited.
-#log_files_max_size = 10
+#############
+ block_ipv6 = true
+ block_unqualified = true
+ block_undelegated = true
+ reject_ttl = 10
+#############
+ forwarding_rules = 'forwarding-rules.txt'
+#############
+#cloaking_rules = '/etc/hosts'
+ cloak_ttl = 600
+ cloak_ptr = true
+#############
+ cache = true
+ cache_size = 4096
+ cache_min_ttl = 2400
+ cache_max_ttl = 86400
+ cache_neg_min_ttl = 60
+ cache_neg_max_ttl = 600
+#############
 
-# How long to keep backup files, in days
-#log_files_max_age = 7
+[captive_portals]
 
-# Maximum log files backups to keep (or 0 to keep all backups)
-#log_files_max_backups = 1
+ map_file = ''
 
-#########################
-#        Filters        #
-#########################
-
-block_ipv6 = false
-
-## Immediately respond to A and AAAA queries for host names without a domain name
-block_unqualified = true
-
-## Immediately respond to queries for local zones instead of leaking them to upstream resolvers (always causing errors or timeouts).
-block_undelegated = true
-
-## TTL for synthetic responses sent when a request has been blocked (due to IPv6 or blacklists).
-reject_ttl = 600
-
-##################################################################################
-#        Route queries for specific domains to a dedicated set of servers        #
-##################################################################################
-
-# forwarding_rules = '/storage/services/dnsd/forwarding'
-
-###############################
-#        Cloaking rules       #
-###############################
-
-cloaking_rules = '/storage/services/dnsd/hosts'
-cloak_ttl = 600
-
-###########################
-#        DNS cache        #
-###########################
-
-cache = true
-cache_size = 4096
-cache_min_ttl = 1800  #30m
-cache_max_ttl = 86400 #24h
-cache_neg_min_ttl = 60  #1m
-cache_neg_max_ttl = 600 #10m
-
-##################################
-#        Local DoH server        #
-##################################
 [local_doh]
-# listen_addresses = ['127.0.0.1:3000','::1:3000']
-# path = "/dns-query" # http(s)::/127.0.0.1:3000/dns-query
-# cert_file = "/storage/keys/ssl/service.crt"
-# cert_key_file = "/storage/keys/ssl/service"
 
-###############################
-#        Query logging        #
-###############################
+ listen_addresses = []
+ path = '/dns-query'
+ cert_file = ''
+ cert_key_file = ''
+
+#############
 
 [query_log]
 
-file = '/storage/services/dnsd/logs/queries'
-format = 'tsv' # tsv,ltsv
-ignored_qtypes = []
-
-############################################
-#        Suspicious queries logging        #
-############################################
+ file = 'logs/query.log'
+ format = 'tsv'
+ ignored_qtypes = []
 
 [nx_log]
 
-file = '/storage/services/dnsd/logs/suspect'
-format = 'tsv' # tsv ltsv
+ file = 'logs/nx.log'
+ format = 'tsv'
 
-######################################################
-#        Pattern-based blocking (blacklists)        #
-######################################################
+[blocked_names]
 
-[blacklist]
+ blocked_names_file = ''
+ log_file = ''
+ log_format = 'tsv'
 
-blacklist_file = '/storage/services/dnsd/blacklist.domain'
-log_file = '/storage/services/dnsd/logs/blacklist.domain'
-log_format = 'tsv' # tsv ltsv
+[blocked_ips]
 
-###########################################################
-#        Pattern-based IP blocking (IP blacklists)        #
-###########################################################
+ blocked_ips_file = ''
+ log_file = ''
+ log_format = 'tsv'
 
-[ip_blacklist]
+[allowed_names]
 
-blacklist_file = '/storage/services/dnsd/blacklist.ip'
-log_file = '/storage/services/dnsd/logs/blacklist.ip'
-log_format = 'tsv' # tsv ltsv
+ allowed_names_file = ''
+ log_file = ''
+ log_format = 'tsv'
 
-######################################################
-#   Pattern-based whitelisting (blacklists bypass)   #
-######################################################
+[allowed_ips]
 
-[whitelist]
-# whitelist_file = '/storage/services/dnsd/whitelist'
-# log_file = '/storage/services/dnsd/logs/whitelist'
-# log_format = 'tsv' # tsv ltsv
+ allowed_ips_file = ''
+ log_format = ''
+ log_file = ''
 
-##########################################
-#        Time access restrictions        #
-##########################################
+#############
 
 [schedules]
 
-#########################
-#        Servers        #
-#########################
+#############
 
 [sources]
 
-  ## An example of a remote source from https://github.com/DNSCrypt/dnscrypt-resolvers
-
-  [sources.'public-resolvers']
-  urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v2/public-resolvers.md', 'https://download.dnscrypt.info/resolvers-list/v2/public-resolvers.md']
-  cache_file = '/storage/services/dnsd/public-resolvers.md'
-  minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
-  prefix = ''
-
-  ## Anonymized DNS relays
-
-  [sources.'relays']
-  urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v2/relays.md', 'https://download.dnscrypt.info/resolvers-list/v2/relays.md']
-  cache_file = '/storage/services/dnsd/relays.md'
+ [sources.public-resolvers]
+  urls = ['https://download.dnscrypt.info/resolvers-list/v3/public-resolvers.md']
+  cache_file = 'resolvers/public-resolvers.md'
   minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
   refresh_delay = 72
   prefix = ''
 
-  ## Quad9 over DNSCrypt - https://quad9.net/
+ [sources.relays]
+  urls = ['https://download.dnscrypt.info/resolvers-list/v3/relays.md']
+  cache_file = 'resolvers/relays.md'
+  minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
+  refresh_delay = 72
+  prefix = ''
 
-  # [sources.quad9-resolvers]
-  # urls = ['https://www.quad9.net/quad9-resolvers.md']
-  # minisign_key = 'RWQBphd2+f6eiAqBsvDZEBXBGHQBJfeG6G+wJPPKxCZMoEQYpmoysKUN'
-  # cache_file = '/var/cache/dnscrypt-proxy/quad9-resolvers.md'
-  # prefix = 'quad9-'
+ #[sources.odoh-servers]
+ # urls = ['https://download.dnscrypt.info/resolvers-list/v3/odoh-servers.md']
+ # cache_file = 'resolvers/odoh-servers.md'
+ # minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
+ # refresh_delay = 24
+ # prefix = ''
 
-  # censors some websites...
-
-  #  [sources.'parental-control']
-  #  urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v2/parental-control.md', 'https://download.dnscrypt.info/resolvers-list/v2/parental-control.md']
-  #  cache_file = '/var/cache/dnscrypt-proxy/parental-control.md'
-  #  minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
-
-#########################################
-#        Servers with known bugs        #
-#########################################
-
-[broken_implementations]
-
-fragments_blocked = ['cisco', 'cisco-ipv6', 'cisco-familyshield', 'cisco-familyshield-ipv6', 'quad9-dnscrypt-ip4-filter-alt', 'quad9-dnscrypt-ip4-filter-pri', 'quad9-dnscrypt-ip4-nofilter-alt', 'quad9-dnscrypt-ip4-nofilter-pri', 'quad9-dnscrypt-ip6-filter-alt', 'quad9-dnscrypt-ip6-filter-pri', 'quad9-dnscrypt-ip6-nofilter-alt', 'quad9-dnscrypt-ip6-nofilter-pri', 'cleanbrowsing-adult', 'cleanbrowsing-family-ipv6', 'cleanbrowsing-family', 'cleanbrowsing-security']
-
-################################
-#   TLS Client Authentication  #
-################################
-
-[tls_client_auth]
-
-# no idea ? client cert for incoming DoH server ?
-
-# creds = [ { server_name='myserver', client_cert='client.crt', client_key='client.key' } ]
-
-
-################################
-#        Anonymized DNS        #
-################################
-
-[anonymized_dns]
-
-# yes...
-
-# routes = [
-#    { server_name='example-server-1', via=['anon-example-1', 'anon-example-2'] },
-#    { server_name='example-server-2', via=['sdns://gRIxMzcuNzQuMjIzLjIzNDo0NDM'] }
-# ]
-
-# skip resolvers incompatible with anonymization instead of using them directly
-
-skip_incompatible = false
+ #[sources.odoh-relays]
+ # urls = ['https://download.dnscrypt.info/resolvers-list/v3/odoh-relays.md']
+ # cache_file = 'resolvers/odoh-relays.md'
+ # minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
+ # refresh_delay = 24
+ # prefix = ''
 
 #############
 
-## Optional, local, static list of additional servers
-## Mostly useful for testing your own servers.
+[broken_implementations]
+
+ fragments_blocked = []
+
+[doh_client_x509_auth]
+
+ creds = []
+
+[anonymized_dns]
+
+ routes = [ { server_name='*', via=['*'] } ]
+ skip_incompatible = false
+ direct_cert_fallback = true
+
+[dns64]
+
+prefix = []
+resolver = []
 
 [static]
-
-  # [static.'myserver']
-  # stamp = 'sdns:AQcAAAAAAAAAAAAQMi5kbnNjcnlwdC1jZXJ0Lg'
 
 #############
 

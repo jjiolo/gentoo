@@ -28,7 +28,7 @@ flush chain inet filter otun
 table inet filter {
 
  chain ilo  { ct state new log flags skuid prefix "input.lo.new "   accept ; ip protocol icmp log flags skuid prefix "input.lo.icmp "   accept ; ip6 nexthdr icmpv6 log flags skuid prefix "input.lo.icmp "   accept ; ct state invalid log flags skuid prefix "input.lo.invalid "  drop ; log flags skuid prefix "input.lo.drop "   drop ; }
- chain ilan { ct state new log flags skuid prefix "input.lan.new "  drop   ; ip protocol icmp log flags skuid prefix "input.lan.icmp "  accept ; ip6 nexthdr icmpv6 log flags skuid prefix "input.lan.icmp "  accept ; ct state invalid log flags skuid prefix "input.lan.invalid " drop ; log flags skuid prefix "input.lan.drop "  drop ; }
+ chain ilan { ct state new log flags skuid prefix "input.lan.new "  drop   ; ip protocol icmp log flags skuid prefix "input.lan.icmp "  drop   ; ip6 nexthdr icmpv6 log flags skuid prefix "input.lan.icmp "  drop   ; ct state invalid log flags skuid prefix "input.lan.invalid " drop ; log flags skuid prefix "input.lan.drop "  drop ; }
  chain inat { ct state new log flags skuid prefix "input.nat.new "  accept ; ip protocol icmp log flags skuid prefix "input.nat.icmp "  accept ; ip6 nexthdr icmpv6 log flags skuid prefix "input.nat.icmp "  accept ; ct state invalid log flags skuid prefix "input.nat.invalid " drop ; log flags skuid prefix "input.nat.drop "  drop ; }
  chain itun { ct state new log flags skuid prefix "input.tun.new "  accept ; ip protocol icmp log flags skuid prefix "input.tun.icmp "  accept ; ip6 nexthdr icmpv6 log flags skuid prefix "input.tun.icmp "  accept ; ct state invalid log flags skuid prefix "input.tun.invalid " drop ; log flags skuid prefix "input.tun.drop "  drop ; }
 

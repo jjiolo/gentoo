@@ -16,12 +16,10 @@ busybox only log server...
 tl;dr - end goal: template sane defaults regardless of whats executed
 -------------
 
- exec setsid command </dev/null &>/dev/null & exit
-
- ^ exec irrelivent with force detach (backgrounding)
-   & exit force close the initialising shell
+ (setsid command </dev/null &>/dev/null & exit)
 
  su -l -s /bin/sh -c 'setsid command </dev/null &>/dev/null & exit' user
+
  setsid setpriv --reuid --regid --init-groups --reset-env --nnp --securebits command </dev/null &>/dev/null & exit
 
 -------------

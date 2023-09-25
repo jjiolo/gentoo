@@ -1,8 +1,0 @@
-#!/bin/sh
-#############
-[ "${#}" == "0" ] && nft -nnn list set netdev interfaces blacklist6
-#############
-[ "${#}" == "1" ] && nft add element netdev interfaces blacklist6 { "${1}" timeout 1h }
-#############
-[ "${#}" == "2" ] && nft add element netdev interfaces blacklist6 { "${1}" timeout "${2}" }
-#############

@@ -154,8 +154,8 @@ rm -r var/tmp
 install -d -o 0 -g 0 -m 0775 "var/empty"
 #
 ln -sf /tmp/.run run
-ln -sf /run var/run
 ln -sf /run/logs var/log
+ln -sf /run var/run
 ln -sf /tmp var/tmp
 #############
 
@@ -167,8 +167,6 @@ cp -a ${i}/libstdc++.* usr/lib64
 cp -a ${i}/libgcc_s.*  usr/lib64
 done
 #
-cp -a /lib64/libuuid.so*  lib64
-#
 cp -a /bin/lsblk bin
 cp -a /lib64/libblkid.so* lib64
 cp -a /lib64/libmount*    lib64
@@ -179,7 +177,7 @@ cp -a /usr/lib64/libcap-ng.so* usr/lib64
 #
 #############
 install -d -o 0 -g 0 -m 0755 usr/lib/locale
-cp -a /usr/lib/locale/locale-archive usr/lib/locale/locale-archive
+install    -o 0 -g 0 -m 0644 /usr/lib/locale/locale-archive usr/lib/locale/locale-archive
 #############
 
 # enforce rootfs permissions

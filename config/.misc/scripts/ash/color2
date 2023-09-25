@@ -1,21 +1,9 @@
 #!/bin/sh
 #############
 
-for i in $(seq 30 39);do
+while :;do
 
- printf " "
- printf "\033[${i}m"
- printf "${i}:testing"
- printf "\033[0m"
- printf " "
- printf "\033[01;${i}m"
- printf "${i}:testing"
- printf "\033[0m\n"
- printf " "
-
- sleep .1
+ printf "\033[38;5;$(shuf -i0-256 -n1)m$(tr -cd 'a-zA-Z0-9'</dev/urandom|head -c1)\033[0m"
 
 done
-
-#############
 

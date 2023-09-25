@@ -1,0 +1,110 @@
+
+#############
+https://cr.yp.to/djbdns
+#############
+shortest path to authoritive nameserver
+anything easier quicker and less to maintain wins
+#############
+
+ [tl;dr]
+
+  create directory
+  add data file (format below)
+  tinydns-data (turns ./data into ./data.cdb)
+  start tinydns
+
+#############
+
+ install -d -o 0 -g 0 -m 0750 /run/tinydns
+
+ cat >> /run/tinydns/data << EOF
+
+ .local:127.0.0.1:.local
+ @local:127.0.0.1:.local:0
+ 'local:txtrecord
+
+ =hostname.local:127.0.0.3
+ @hostname.local:127.0.0.3:hostname.local:0
+ 'hostname.local:txtrecord
+
+ EOF
+
+ tinydns-data
+
+ UID=dnsd GID=dnsd ROOT=/run/tinydns IP=127.0.0.1
+
+#############
+
+ [data]
+
+-------------
+
+ :lo (location)
+
+ %lan:192.168
+ %nat:172.16
+ %tun:10
+
+ =host.local:192.168.0.1:::lan
+ =host.local:172.16.0.1:::nat
+ =host.local:10.0.0.1:::tun
+
+ ^ only use line in response to prefix
+
+-------------
+
+  ns: .fqdn:ip:ns.fqdn:ttl:timestamp:lo
+
+  .local:127.0.0.1:ns.local
+
+  ^ creates NS/A/SOA for local at ns.local using 127.0.0.1
+
+-------------
+
+  ns: &fqdn:ip:x:ttl:timestamp:lo
+
+  &host.local:127.0.1.1:ns.host.local
+
+  ^ creates NS/A for host.local at ns.host.local
+    hq.local -> site0.local -> site1.local ?
+
+-------------
+
+ host: =fqdn:ip:ttl:timestamp:lo
+
+  =local:127.0.0.1
+
+ host: +fqdn:ip:ttl:timestamp:lo
+
+  +local:127.0.0.1
+
+ ^ = creates ptr record
+ ^ + omits ptr record
+ * ptr records 1.0.0.127.in-addr.arpa dont work ?
+
+-------------
+
+ mail: @fqdn:ip:x:dist:ttl:timestamp:lo
+
+  @.local:127.0.0.1:mail.local:0
+
+ ^ creates mx record for local at mail.local using 127.0.0.1
+
+-------------
+
+ txt: 'fqdn:string:ttl:timestamp:lo
+
+  'local:txt record
+
+ ^ creates txt record for local with 'txt record'
+
+-------------
+
+ ptr: ^fqdn:p:ttl:timestamp:lo
+
+  ^???:???
+
+ ^ cant get any 1.0.0.127.in-addr.arpa queries to respond
+
+-------------
+

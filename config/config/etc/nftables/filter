@@ -8,6 +8,7 @@ table inet filter {
  ct state established accept
 
  iifname {nat} oifname {lan,wlan0} ip protocol tcp ct state new log flags skuid prefix "forward.new " accept
+ iifname {nat} oifname {lan,wlan0} ip6 nexthdr tcp ct state new log flags skuid prefix "forward.new " accept
 
  ct state invalid log flags skuid prefix "forward.invalid " drop
                   log flags skuid prefix "forward.drop " drop

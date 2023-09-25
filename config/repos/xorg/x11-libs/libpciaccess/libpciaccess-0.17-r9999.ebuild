@@ -2,7 +2,7 @@
 EAPI=8
 #############
 DESCRIPTION="Library providing generic access to the PCI bus and devices"
-HOMEDIR="https://www.x.org"
+HOMEPAGE="https://www.x.org"
 SRC_URI="https://www.x.org/releases/individual/lib/libpciaccess-0.17.tar.xz"
 #############
 LICENSE="MIT"

@@ -1,9 +1,3 @@
 
 sys-apps/systemd-utils -kmod -tmpfiles -udev
 
-sys-auth/seatd builtin server
-gui-wm/sway -man -swaybar -swaynag
-gui-libs/wlroots -hwdata -seatd -udev
-gui-apps/foot -grapheme-clustering
-media-libs/fcft -harfbuzz -libutf8proc
-

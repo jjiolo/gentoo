@@ -129,7 +129,7 @@ renice +20 -u xmr     2>/dev/null
  alias log='tail -F /run/logs/syslog'
  alias ffs='tail -F /run/logs/syslog|grep -v "^....................kernel:"'
 
- alias hex="hexdump -ve '1/1 \"%02x\"'"
+ alias hex="hexdump -ve '1/1 \"%02x\"';echo"
  alias random="tr -cd 'a-zA-Z0-9'</dev/urandom|head -c16;echo"
 
  alias suid='find / -xdev -perm -4000 -exec ls -lah {} \;|less'
@@ -142,34 +142,37 @@ renice +20 -u xmr     2>/dev/null
 
  alias torsocks="export LD_PRELOAD='/usr/lib64/libtorsocks.so'"
 
- alias screen="ffmpeg -f alsa -i hw:1 -f x11grab -i :0.0 /tmp/screen.mp4"
- alias screenshot="ffmpeg -f x11grab -i :0.0 -frames:v 1 /tmp/screenshot.jpg"
+ alias play="aplay /tmp/record.wav"
+ alias record="arecord /tmp/record.wav"
 
  alias cam="ffmpeg -f alsa -i hw:1 -f video4linux2 -i /dev/video0 /tmp/webcam.mp4"
  alias camshot="ffmpeg -f video4linux2 -i /dev/video0 -frames:v 1 /tmp/webshot.jpg"
 
- alias record="arecord /tmp/record.wav"
- alias play="aplay /tmp/record.wav"
+ alias screen="ffmpeg -f alsa -i hw:1 -f x11grab -i :0.0 /tmp/screen.mp4"
+ alias screenshot="ffmpeg -f x11grab -i :0.0 -frames:v 1 /tmp/screenshot.jpg"
+
+ alias tmux="dtach -A ${HOME}/socket mtm -t mtm-256color"
 
  alias mpv="mpv --sid=no"
 
- alias tmux="dtach -A ${HOME}/socket mtm -t mtm-256color"
+ alias vim="vim -Z"
 
 #############
 
 #############
 alsa(){ sed -i -e "s/defaults.ctl.card ./defaults.ctl.card ${1}/" -e "s/defaults.pcm.card ./defaults.pcm.card ${1}/" /run/alsa.conf ; }
+#############
 deps(){ ldd "$(which ${1})" | while read ; do find /var/db/pkg -name CONTENTS -exec grep -l ${REPLY%% *} {} \; ; done ; }
 #############
 
 #############
-[ -d "${HOME:-.}/.vim"      ] && { chattr -i "${HOME:-.}/.vim"      ; rm -rf "${HOME:-.}/.vim" ;      }
-[ -f "${HOME:-.}/.exrc"     ] && { chattr -i "${HOME:-.}/.exrc"     ; rm -rf "${HOME:-.}/.exrc" ;     }
-[ -f "${HOME:-.}/_exrc"     ] && { chattr -i "${HOME:-.}/_exrc"     ; rm -rf "${HOME:-.}/_exrc" ;     }
-[ -f "${HOME:-.}/.vimrc"    ] && { chattr -i "${HOME:-.}/.vimrc"    ; rm -rf "${HOME:-.}/.vimrc" ;    }
-[ -f "${HOME:-.}/_vimrc"    ] && { chattr -i "${HOME:-.}/_vimrc"    ; rm -rf "${HOME:-.}/_vimrc" ;    }
+[ -f "${HOME:-.}/.profile"  ] && { chattr -i "${HOME}/.profile"  ; rm -rf "${HOME}/.profile" ;  }
+[ -f "${HOME:-.}/.terminfo" ] && { chattr -i "${HOME}/.terminfo" ; rm -rf "${HOME}/.terminfo" ; }
 #############
-[ -f "${HOME:-.}/.terminfo" ] && { chattr -i "${HOME:-.}/.terminfo" ; rm -rf "${HOME:-.}/.terminfo" ; }
-[ -f "${HOME:-.}/.profile"  ] && { chattr -i "${HOME:-.}/.profile"  ; rm -rf "${HOME:-.}/.profile" ;  }
+[ -d "${HOME:-.}/.vim"      ] && { chattr -i "${HOME}/.vim"      ; rm -rf "${HOME}/.vim" ;      }
+[ -f "${HOME:-.}/.exrc"     ] && { chattr -i "${HOME}/.exrc"     ; rm -rf "${HOME}/.exrc" ;     }
+[ -f "${HOME:-.}/_exrc"     ] && { chattr -i "${HOME}/_exrc"     ; rm -rf "${HOME}/_exrc" ;     }
+[ -f "${HOME:-.}/.vimrc"    ] && { chattr -i "${HOME}/.vimrc"    ; rm -rf "${HOME}/.vimrc" ;    }
+[ -f "${HOME:-.}/_vimrc"    ] && { chattr -i "${HOME}/_vimrc"    ; rm -rf "${HOME}/_vimrc" ;    }
 #############
 

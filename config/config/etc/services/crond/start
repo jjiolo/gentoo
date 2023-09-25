@@ -5,7 +5,7 @@
 pgrep -x crond &>/dev/null && exit
 #############
 
-setsid crond -bSc "${service_storage}" </dev/null &>/dev/null & sleep 1
+(setsid crond -bSc "${service_storage}" </dev/null &>/dev/null & exit) ; sleep 1
 
 #############
 renice -10 -u "root"

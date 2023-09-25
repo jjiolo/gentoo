@@ -2,8 +2,8 @@
 EAPI=8
 #############
 DESCRIPTION="X.Org combined protocol headers"
-HOMEPAGE="https://x.org"
-SRC_URI="https://x.org/releases/individual/proto/${PN//-}-${PV}.tar.xz"
+HOMEPAGE="https://www.x.org"
+SRC_URI="https://www.x.org/releases/individual/proto/${PN//-}-${PV}.tar.xz"
 #############
 LICENSE="MIT"
 SLOT="0"

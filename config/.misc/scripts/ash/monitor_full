@@ -14,11 +14,7 @@ right(){ tmp="${1}";until [ "${#tmp}" -ge "${2}" ];do tmp=" ${tmp}";done;printf 
 
 #############
 
-while :
-
-do
-
-clear
+while :; do clear
 
 printf "%s\n" "##############################################"
 

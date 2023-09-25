@@ -2,10 +2,10 @@
 #############
 
 network={
- ssid="ssid"
  mode=2
- key_mgmt=WPA-PSK
+ ssid="ssid"
  psk="passphrase"
+ key_mgmt=WPA-PSK
  frequency=2437
 }
 
@@ -31,20 +31,11 @@ brctl addif lan wlan0
 wpa_supplicant -sBi wlan0 -c /tmp/.wpa_supplicant
 #############
 
- sae_password= allows assigning multiple vlans based on nothing but password filtering 
-
- turned off hostapd vlan support nothing currently supported it 
-
-#############
-
- 5g automatic channel selection refused to work
-
-#############
-
 SAE testing
 
 hostapd.conf
 sae_password=passphrase|mac=ff:ff:ff:ff:ff:ff|vlanid=01|id=identifier
+sae_password=passphrase|mac=ff:ff:ff:ff:ff:ff|vlanid=02|id=identifier
 
 wpa_supplicant.conf
 psk=

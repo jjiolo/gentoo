@@ -42,7 +42,7 @@ ip addr flush dev "${i}"
 until ip link set dev "${i}" address "$(hexdump -n6 -ve '1/1 "%02X:"' /dev/urandom|head -c17)" ; do sleep .1 ; done
 sysctl -w "net.ipv6.conf.${i}.accept_ra=0"
 ip link set up "${i}"
-brctl addif lan "${i}"
+brctl addif nat "${i}"
 }
 
 done

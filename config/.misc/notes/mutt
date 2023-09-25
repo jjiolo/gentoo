@@ -9,20 +9,12 @@ man /var/empty/mutt-2.1.5/doc/muttrc.man
 
 #############
 
-torsocks ; m.start
+  torsocks ; m.start
 
-^ google application password allows pop and smtp over tor now...
+^ gmail application password allows smtp and pop over tor
 
-  gmail automatically appends a Received from header...
-
-  leaks hostname ?
-  leaks the incoming address as seen by gmail
-
-  multiple line output destroying tui ?
-
--------------
-
-* didnt really look at spam or scoring...
+  leaks incoming address as seen by gmail
+  leaks hostname ; set hostname="localhost"
 
 -------------
 

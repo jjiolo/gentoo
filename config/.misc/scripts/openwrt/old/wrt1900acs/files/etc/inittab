@@ -1,2 +1,0 @@
-::sysinit:/etc/init
-ttyS0::respawn:/bin/login -f root

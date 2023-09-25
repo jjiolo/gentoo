@@ -71,7 +71,7 @@ random shuffle 1 nick  from exit
   relay2 - > exit   (relay1, relay2, exit)
     exit - > server (relay2, exit,   server)
 
- every node in the chain is only aware off,
+ every node in the chain is only aware of,
  the sender itself and the target to forward the packet to
 
 client joins irc...

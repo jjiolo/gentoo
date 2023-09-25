@@ -4,7 +4,7 @@ export services_system="/etc/services"
 export services_storage="/tmp/storage/services"
 export services_tmp="/run/services"
 #############
-export service_system="${services_system}/${1}"
+export service_system="${services_system}/${1}/files"
 export service_storage="${services_storage}/${1}"
 export service_tmp="${services_tmp}/${1}"
 #############

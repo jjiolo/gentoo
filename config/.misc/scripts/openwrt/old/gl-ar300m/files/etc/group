@@ -1,4 +1,0 @@
-root:x:0:
-unbound:x:53:
-udhcpd:x:67:
-ntpd:x:123:

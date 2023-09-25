@@ -1,18 +1,15 @@
 
 #############
-* server needs audio for exercise music
+ linux-6.5
+  cachestat system call
+  amdgpu werror
+  midi2 over usb ? sound related 
 #############
 * kvm werror
 * FORCE_NR_CPUS
 * device drivers - > x86-platform-specific-device-drivers ? huge
 #############
-
-  only thing preventing this being a real liveusb
-  module loading at boot...
-^ tried atleast 7 times in the last 5 years got no where
-
-? fairly sure it just enables all eth and wifi
-
+ CONFIG_SCHED_CORE - core scheduling for smt (any cpu with threads ?)
 #############
 
 #############
@@ -35,25 +32,10 @@ make INSTALL_MOD_PATH='/path/to/install/modules' modules_install
  DMAPOOL_TEST < - memory management options allocate and free memory to test times
  MAX_SKB_FRAGS < - if unsure say 17 ?
  FW_DEVLINK_SYNC_STATE_TIMEOUT < - almost always want to say N ???
-
  DRM_VIRTIO_GPU_KMS < - kernel mode setting support for virtio gpu ?
 
 #############
-
-* didnt add tpm support
-* didnt add disk quota
-* didnt add QoS
-* didnt add vlans
-
-* didnt same page merging + madvise + membarrier + aio + io_uring (qemu)
-
-* qemu virtio disk/net/gpu no_sound no_usb_passthrough + full networking
-^ qemu no raid/cryptsetup/tap
-
-  laptop
-* reduce bluetooth
-* sdcard reader
-
+qemu - same page merging, madvise, membarrier, aio, io_uring
 #############
 
 kernel alsa...
@@ -70,15 +52,6 @@ kernel alsa...
 
   CONFIG_SND_CTL_INPUT_VALIDATION
   harden sound card drivers
-
-#############
-
- CONFIG_SCHED_CORE - core scheduling for smt (any cpu with threads ?)
-
-               aio - 
-          io uring - 
-   madvise/fadvise - 
-        membarrier - 
 
 #############
 

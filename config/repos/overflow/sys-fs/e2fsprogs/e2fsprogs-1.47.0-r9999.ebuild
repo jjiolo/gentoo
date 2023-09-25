@@ -32,8 +32,8 @@ src_configure(){
 --disable-blkid-debug \
 --disable-testio-debug \
 --disable-developer-features \
---disable-libuuid \
---disable-libblkid \
+--enable-libuuid \
+--enable-libblkid \
 --disable-subset \
 --disable-backtrace \
 --disable-debugfs \

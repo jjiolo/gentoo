@@ -16,7 +16,7 @@ sys-libs/glibc
 sys-libs/zlib
 x11-libs/libfontenc
 "
-DEPEND="${RDEPEND}"
+DEPEND="${RDEPEND} x11-libs/xtrans"
 #############
 src_configure(){
 ./configure \

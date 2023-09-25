@@ -23,7 +23,7 @@ done
 #############
 hash="$(printf "%s" "${name}"|openssl sha1|tail -c8)"
 #############
-defaults="-nodefaults -runas qemu -daemonize -chroot /var/empty -sandbox on -k en-gb -L /usr/share/qemu"
+defaults="-nodefaults -daemonize -runas qemu -run-with chroot=/var/empty -sandbox on -k en-gb -L /usr/share/qemu"
 cpu="-cpu host -smp 2,sockets=1,cores=2 -enable-kvm"
 mem="-m $(((($(awk '/MemTotal:/{print$2}' /proc/meminfo)/100)*20)/1000))"
 gpu="-vga virtio"

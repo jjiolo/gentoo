@@ -30,6 +30,7 @@ usenix + enigma
 youtube channel 2600
 44 con
 wisec
+troopers.de
 #############
 [SOFTWARE]:
 bird internet routing deamon - https://bird.network.cz
@@ -59,6 +60,7 @@ nprobe - sniff interface and generate flow data
 lokinet
 ricochet-refresh
 https://github.com/corna/me_cleaner
+nftlb - l2/l3/l4 (doesnt explain how to do it yourself)
 #############
 https://bombaster.com < - rfidtags and sensors for physical shops 8.2mhz
 https://deceptive.design < - formely dark patterns

@@ -3,9 +3,9 @@
 
 the bad...
 
- busybox setpriv doesnt work, (build.initramfs work around over a clean install)
+ busybox setpriv doesnt work
 
- implementation is bloated, doesnt integrate with the whole very well
+ util-linux doesnt integrate very well
 
 the good...
 
@@ -19,21 +19,23 @@ the good...
 
 [setpriv]
 -------------
- * not using it to allow none root access, using it to restrict scope of compromise when executed by root
+ * not using it to allow none root access
+ * using it to restrict scope when executed by root
  * wont set cwd
  * wont clear environment
  * --reset-env - HOME SHELL USER LOGNAME PATH (PATH is currently wrong, set at compile time)
 -------------
- * etc/init - updated udhcpd and ntpd init
- * etc/self/a.chroot/build.initramfs - added setpriv
- * etc/self/setpriv/setpriv_{udhcpd,ntpd,udhcpc,ntpc,sshd,crond}
--------------
- dropbear -
-  +setuid +setgid +chown +fowner
-  sed -i '273,282d' svr-auth.c
-  sed -i '996,1007d' svr-chansession.c
-  sed -i '985,987d' svr-chansession.c
- ^ leaves capabilities enabled on the calling shell ?
+
+ ntpc
+
+ network_{ping,oneshot,default,zcip}
+
+ udhcpd
+ tftpd
+ ntpd
+
+ w.{public,private,auth,connect}
+ 
 -------------
 
  - find a toggle to optionally...

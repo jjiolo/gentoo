@@ -1,0 +1,9 @@
+
+.desktop:172.16.0.1:.desktop
+@desktop:172.16.0.1:.desktop:0
+'desktop:txtrecord
+
+.virtual:172.16.0.3:.virtual
+@virtual:172.16.0.3:.virtual:0
+'virtual:txtrecord
+

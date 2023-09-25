@@ -1,5 +1,7 @@
 
 #############
+aes-gcm-siv < - shiny new new (added nonce reuse protection)
+#############
 
  openssl genpkey -algorithm ed25519 -out key.pem
  openssl pkey -pubout -in key.pem -out key.pub
@@ -73,26 +75,13 @@ locked configure options...
  enable-ecsda      - tor
  enable-scrypt     - python
 
-now works without...
-
- no-engine - tor
- no-tls - ?
- no-tls1_1-method - ?
- no-chacha - ?
- no-cmac - ?
- no-des - ?
- no-md4 - ?
- no-poly1305 - ?
- no-rc4 - ?
- enable-rmd160 < - Net-SSLeay(perl) crda
- enable-blake2 < - python
- enable-cmac   < - python
- enable-dsa    < - python
- enable-des    < - hostapd wpa_supplicant
- enable-md4    < - hostapd wpa_supplicant
- enable-bf     < - crda (uninstalled crda)
- enable-cast   < - crda (uninstalled crda)
-
+#############
+ech - encrypted client hello
+crl           < - old shit pulls the entire list in a single file doesnt scale
+oscp          < - interface to request individual certificates
+oscp stapling < - interface for clients to request a signed timestamp, proving time since last revoke check to reduce load on the ocsp server
+hpkp < - http public key pinning
+hsts < - http strict transport security (always use https)
 #############
 
 openssl client
@@ -133,16 +122,12 @@ fingerprint changes every 4 months
 
 ^ still implies generating as much historical information as possible to predict future actions
 
-^ sharing this data globally (the proofs in the maths it cant be spoofed)
+^ sharing this data globally (proofs in the maths it cant be spoofed)
   allows painting a larger picture of the current environment
 
 #############
 
 cert revoke
-
-crl           < - old shit pulls the entire list in a single file doesnt scale
-oscp          < - interface to request individual certificates
-oscp stapling < - interface for clients to request a signed timestamp, proving time since last revoke check to reduce load on the ocsp server
 
 revoke server needs the ability to lookup individual certificates
 revoke server needs the ability for cert providers to request timestamps

@@ -1,0 +1,12 @@
+#!/bin/sh
+#############
+. /etc/services/tinydns/install
+#############
+pgrep -x tinydns &>/dev/null && exit
+#############
+
+(UID=5353 GID=5353 ROOT="${service_storage}" IP=127.0.0.53 setsid tinydns </dev/null &>/dev/null & exit) ; sleep 1
+
+#############
+renice +10 -u "tinydns"
+#############

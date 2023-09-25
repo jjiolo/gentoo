@@ -9,9 +9,7 @@ LICENSE="BSD GPL-2"
 SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
-RDEPEND="
-sys-libs/glibc
-"
+RDEPEND="sys-libs/glibc"
 DEPEND=""
 #############
 src_configure() {

@@ -1,8 +1,0 @@
-
-network={
- bssid=3c:89:94:20:9b:d2
- ssid="tehwifi"
- key_mgmt=WPA-PSK
- psk="passphrase"
-}
-

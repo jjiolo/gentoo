@@ -1,17 +1,15 @@
 #!/bin/sh
 #############
-. /etc/services/variables dnsd
+. /etc/services/variables dnscrypt
 #############
-
-[ -d "${service_storage}/logs"                ] || install -d -o dnsd -g dnsd -m 2770 "${service_storage}/logs"
-[ -f "${service_storage}/dnscrypt-proxy.toml" ] || install    -o dnsd -g dnsd -m 0660 "${service_system}/files/dnscrypt-proxy.toml" "${service_storage}"
-[ -f "${service_storage}/hosts"               ] || install    -o dnsd -g dnsd -m 0660 "${service_system}/files/hosts"               "${service_storage}"
-[ -f "${service_storage}/blacklist.ip"        ] || install    -o dnsd -g dnsd -m 0660 "${service_system}/files/blacklist.ip"        "${service_storage}"
-[ -f "${service_storage}/blacklist.domain"    ] || install    -o dnsd -g dnsd -m 0660 "${service_system}/files/blacklist.domain"    "${service_storage}"
-
-
-
-
+[ -d "${service_storage}/logs" ] || install -d -o 53 -g 53 -m 0700 "${service_storage}/logs"
+[ -d "${service_storage}/resolvers" ] || install -d -o 53 -g 53 -m 0700 "${service_storage}/resolvers"
+[ -f "${service_storage}/dnscrypt-proxy.toml" ] || install -o 53 -g 53 -m 0600 "${service_system}/files/dnscrypt-proxy.toml" "${service_storage}"
+[ -f "${service_storage}/forwarding-rules.txt" ] || install -o 53 -g 53 -m 0600 "${service_system}/files/forwarding-rules.txt" "${service_storage}"
 #############
-. /etc/services/permissions dnsd dnsd 2770 0660
+printf "%s\n" "nameserver 127.0.0.1" > /etc/resolv.conf
+chown root:root /etc/resolv.conf
+chmod 0664 /etc/resolv.conf
+#############
+. /etc/services/permissions dnscrypt dnscrypt 0700 0600
 #############

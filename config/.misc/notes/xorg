@@ -1,7 +1,5 @@
 
 #############
-now with more privdrop and less y u run dis as root
-#############
 
 [xorg]
 
@@ -16,8 +14,9 @@ now with more privdrop and less y u run dis as root
  dwm-guest
  \_st
 
-startx {user,nobody,proxy}
- x.{nobody,proxy}
+ startx {user,nobody,proxy,jail}
+  x.{user,nobody,proxy,jail}
+  p.{ssh,smtp,http,irc,xmr}
 
 #############
 
@@ -35,15 +34,15 @@ startx {user,nobody,proxy}
 
 #############
 
- start Xorg as desktop
+ start Xorg as desktop:desktop
  hang sleep infinite inside /etc/xinitrc
   /dev/tty7 - desktop access to console
-   /dev/snd - desktop access to audio
  /dev/input - desktop access to input
    /dev/dri - desktop access to video
+   /dev/snd - user access to audio
 
- /tmp/.X0-auth - set permissions to whatever user arg1 is
- start dwm-host on the empty hung xorg-server
+ /tmp/.X0-auth - set permissions to desktop:user
+ start dwm-host on the empty hung xorg-server as user
  start Xephyr/dwm-guest nested multiple times inside dwm-host
 
 #############

@@ -62,7 +62,7 @@
   "RequestedLocales": "en-US",
   "SanitizeOnShutdown": { "Cache": true, "Cookies": true, "Downloads": true, "FormData": true, "History": true, "Sessions": true, "SiteSettings": true, "OfflineApps": true, "Locked": true },
   "SearchBar": "separate",
-  "SearchEngines": { "Add": [ { "Name": "default", "URLTemplate": "https://google.com/search?cr=countryUS&q={searchTerms}" } ], "Default": "default", "PreventInstalls": true, "Remove": ["Google","Amazon.com","Bing","DuckDuckGo","eBay","Wikipedia (en)"] },
+  "SearchEngines": { "Remove": ["Google","Amazon.com","Bing","eBay","Wikipedia (en)"] },
   "SearchSuggestEnabled": false,
   "ShowHomeButton": false,
   "SSLVersionMax": "tls1.3",

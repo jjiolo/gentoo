@@ -2,8 +2,8 @@
 EAPI=8
 #############
 DESCRIPTION="X.Org X servers"
-HOMEPAGE="https://x.org"
-SRC_URI="https://x.org/releases/individual/xserver/${P}.tar.xz"
+HOMEPAGE="https://www.x.org"
+SRC_URI="https://www.x.org/releases/individual/xserver/${P}.tar.xz"
 #############
 LICENSE="MIT"
 SLOT="0/${PV}"

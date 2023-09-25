@@ -21,7 +21,7 @@ cd / ; caps="-all,+net_admin,+net_raw,+net_bind_service"
 /bin/setsid /usr/bin/setpriv \
  --reuid dhcpc --regid dhcpc --init-groups --nnp --reset-env \
  --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
- /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /etc/self/e.setpriv/setpriv_udhcpc_ping "${hostname}" < /dev/null
+ /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /bin/udhcpc_ping "${hostname}" < /dev/null
 
 #############
 

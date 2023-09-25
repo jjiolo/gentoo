@@ -1,4 +1,0 @@
-root:x:0:
-dnsd:x:53:
-udhcpd:x:67:
-httpd:x:80:

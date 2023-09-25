@@ -1,12 +1,12 @@
 
 #############
 
-* zram + zswap
-
    zramctl /dev/zram0 -s 1G
    mkswap /dev/zram0
    swapon /dev/zram0
    zramctl ; cat /proc/swaps ; free -h
+
+-------------
 
    zramctl /dev/zram0 -s 1G
    mkfs.ext4 /dev/zram0
@@ -36,5 +36,4 @@
                 using it for zram would double memory use ?
 
 #############
-
 

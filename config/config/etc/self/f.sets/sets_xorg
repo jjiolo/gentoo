@@ -3,23 +3,10 @@
 script -c 'emerge                     -avbkuDN --onlydeps @desktop' /tmp/desktop.host
 script -c 'emerge --root /run/desktop -avbkuDN --nodeps @desktop' /tmp/desktop.rootfs
 #############
-for i in /usr/lib/gcc/x86_64-pc-linux-gnu/*
-do
- cp -a ${i}/libstdc* /run/desktop/lib64
- cp -a ${i}/libgcc_s* /run/desktop/lib64
-done
-#############
-#cp -a /lib64/libblkid.* /run/desktop/lib64 # firefox dep
-#cp -a /lib64/libmount.* /run/desktop/lib64 # firefox dep
-#cp -a /lib64/libuuid.so* /run/desktop/lib64 # desktop
-#############
 install -d -o root -g root -m 0755 /run/desktop/usr/lib/locale
 cp -a /usr/lib/locale/locale-archive /run/desktop/usr/lib/locale
 #############
 install -o root -g root -m 0755 /etc/self/f.sets/sets_startx /run/desktop/usr/bin/startx
 install -o root -g root -m 0755 /etc/self/f.sets/sets_startx_xinitrc /run/desktop/etc/xinitrc
-#############
-#cp -a /run/desktop /run/browser
-#cp -a /run/firefox/* /run/browser
 #############
 
