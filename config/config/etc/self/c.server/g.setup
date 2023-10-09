@@ -22,7 +22,7 @@ install -o "${USER}" -m 0600 "/etc/self/c.server/g.conf" "${GNUPGHOME}/gpg.conf"
 install -o "${USER}" -m 0600 "/etc/self/c.server/g.agent" "${GNUPGHOME}/gpg-agent.conf"
 #############
 printf "%s\n" "#############"
-printf "9\n1\n0\n${name}\n${email}\n${comment}\n" | gpg --quiet --homedir "${GNUPGHOME}" --expert --full-generate-key --allow-freeform-uid --no-tty --command-fd /dev/stdin --pinentry-mode loopback --passphrase '' 2>/dev/null
+printf "9\n1\n0\n${name}\n${email}\n${comment}\n" | gpg --quiet --no-tty --homedir "${GNUPGHOME}" --full-generate-key --allow-freeform-uid --command-fd /dev/stdin --pinentry-mode loopback --passphrase '' 2>/dev/null
 printf "%s\n" "#############"
 gpg --quiet --export "${name}" 2>/dev/null | tee "${GNUPGHOME}/public.key"
 printf "%s\n" "#############"

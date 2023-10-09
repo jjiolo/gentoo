@@ -11,7 +11,7 @@
   "CaptivePortal": false,
   "Cookies": { "Behavior": "reject", "BehaviorPrivateBrowsing": "reject-foreign", "Locked": true },
   "DefaultDownloadDirectory": "${home}/downloads",
-  "DisableAppUpdate": true,
+  "DisableAppUpdate": false,
   "DisableBuiltinPDFViewer": true,
   "DisableDeveloperTools": true,
   "DisableFeedbackCommands": true,
@@ -35,16 +35,16 @@
   "DisplayMenuBar": "never",
   "DontCheckDefaultBrowser": true,
   "DownloadDirectory": "${home}/downloads",
-  "EnableTrackingProtection": { "Value": true, "Locked": true, "Cryptomining": true, "Fingerprinting": true },
+  "EnableTrackingProtection": { "Value": true, "Locked": true, "Cryptomining": true, "Fingerprinting": true, "EmailTracking": true },
   "EncryptedMediaExtensions": { "Enabled": false, "Locked": true },
   "ExtensionUpdate": false,
   "FirefoxHome": { "Search": false, "TopSites": false, "SponsoredTopSites": false, "Highlights": false, "Pocket": false, "SponsoredPocket": false, "Snippets": false, "Locked": true },
-  "FlashPlugin": { "Default": false, "Locked": true },
+  "FirefoxSuggest": { "WebSuggestions": false, "SponsoredSuggestions": false, "ImproveSuggest": false, "Locked": true },
   "GoToIntranetSiteForSingleWordEntryInAddressBar": true,
   "HardwareAcceleration": false,
   "Homepage": { "URL": "about:blank", "Locked": true, "StartPage": "none" },
   "InstallAddonsPermission": { "Default": true },
-  "ManualAppUpdateOnly": true,
+  "ManualAppUpdateOnly": false,
   "NetworkPrediction": false,
   "NewTabPage": false,
   "NoDefaultBookmarks": true,
@@ -60,7 +60,7 @@
   "PrimaryPassword": false,
   "PromptForDownloadLocation": false,
   "RequestedLocales": "en-US",
-  "SanitizeOnShutdown": { "Cache": true, "Cookies": true, "Downloads": true, "FormData": true, "History": true, "Sessions": true, "SiteSettings": true, "OfflineApps": true, "Locked": true },
+  "SanitizeOnShutdown": true,
   "SearchBar": "separate",
   "SearchEngines": { "Remove": ["Google","Amazon.com","Bing","eBay","Wikipedia (en)"] },
   "SearchSuggestEnabled": false,
@@ -68,7 +68,7 @@
   "SSLVersionMax": "tls1.3",
   "SSLVersionMin": "tls1.2",
   "StartDownloadsInTempDirectory": false,
-  "UserMessaging": { "WhatsNew": false, "ExtensionRecommendations": false, "FeatureRecommendations": false, "UrlbarInterventions": false, "SkipOnboarding": true, "MoreFromMozilla": false }
+  "UserMessaging": { "WhatsNew": false, "ExtensionRecommendations": false, "FeatureRecommendations": false, "UrlbarInterventions": false, "SkipOnboarding": true, "MoreFromMozilla": false, "Locked": true }
 
  }
 

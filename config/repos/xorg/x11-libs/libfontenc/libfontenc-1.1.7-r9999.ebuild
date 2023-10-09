@@ -9,14 +9,8 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
-RDEPEND="
-sys-libs/glibc
-sys-libs/zlib
-"
-DEPEND="
-${RDEPEND}
-x11-base/xorg-proto
-"
+RDEPEND="sys-libs/glibc sys-libs/zlib"
+DEPEND="${RDEPEND} x11-base/xorg-proto"
 #############
 src_configure(){
 ./configure \

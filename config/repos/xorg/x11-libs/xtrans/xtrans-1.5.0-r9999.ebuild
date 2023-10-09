@@ -12,7 +12,20 @@ IUSE=""
 RDEPEND=""
 DEPEND="${RDEPEND}"
 #############
-src_configure(){ default ; }
+src_configure(){
+./configure \
+--prefix=/usr \
+--enable-option-checking \
+--enable-silent-rules \
+--disable-dependency-tracking \
+--enable-selective-werror \
+--disable-strict-compilation \
+--disable-docs \
+\
+--without-xmlto \
+--without-fop \
+--without-xsltproc
+}
 #############
 src_install(){ default ; }
 #############

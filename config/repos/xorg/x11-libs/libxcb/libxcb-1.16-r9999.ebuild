@@ -14,10 +14,7 @@ sys-libs/glibc
 x11-libs/libXau
 x11-libs/libXdmcp
 "
-DEPEND="
-${RDEPEND}
-x11-base/xcb-proto
-"
+DEPEND="${RDEPEND} x11-base/xcb-proto"
 #############
 src_configure(){
 ./configure \

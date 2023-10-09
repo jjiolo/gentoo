@@ -10,8 +10,6 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 RDEPEND="
-app-crypt/libmd
-dev-libs/libbsd
 sys-libs/glibc
 sys-libs/zlib
 x11-libs/libfontenc

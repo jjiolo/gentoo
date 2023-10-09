@@ -26,16 +26,13 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:09:16 21:11:00
--------------
- no changes only playing with .ebuilds.old
+ lastest - 2023:10:02 22:57:00
 -------------
  * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
  ^ X0-log - ShadowFB: preferred NO, enabled NO (something about no/modesetting)
  * app-alternatives - FEATURES='-collision-protect' (remove after its in stage3)
 -------------
- * trim binhost/distfiles
-    ./backup all (binhost upto 6GB) (vfat 4GB limit)
+ * trim binhost/distfiles - (binhost upto 6GB) (vfat 4GB limit)
     mv binhost/distfiles ../shared/distfiles
     config/portage/make.conf - GENTOO_MIRRORS=http://127.0.0.1/shared"
 -------------
@@ -69,6 +66,7 @@ stuff at the top is unordered raw sewage
 
 [PROBLEMS]:
 #############
+* {binutils,gcc}-config doesnt flip on updates
 * ebuild scheduled for merge, causes rebuilds (doesnt install into /binhost/rootfs?)
 * Xephyr, -auth fails silently and allows global access to :display
 * inability to add wifi interfaces to bridges (breaks ability to dedupe commands)
@@ -132,47 +130,183 @@ v attempt to create lists of things to actually do
 #############
 setpriv_udhcpd < - ignores first sleep ? wtf would be an understatement
 #############
-* resolv.conf - search localdomain / options edns0 no-aaaa
+
+ [ more harder ]
+
+  * /proc hardening ? meminfo+stat required for xorg ?
+  * /sys hardening ? block/bus/class/firmware/kernel/module
+  * removed access to all /proc /sys files ?
+
 #############
-* been waiting for dtls ed25519 support...
-^ was suppose to dtls psk/srp ?
-^^ share password over any medium then dtls hole punch two openssl s_clients
-   test ffmpeg desktop / webcam sharing
+
+ [repos/xorg]
+-------------
+  [libmd]
+   archive.hadrons.org/software/libmd/${P}.tar.xz
+  ^ no alternative
+
+  [libbsd] *
+   libbsd.freedesktop.org/releases/${P}.tar.xz
+   gitlab.freedesktop.org/libbsd/libbsd
+  ^ both have current version
+-------------
+  [libudev-zero]
+   github.com/illiliti/libudev-zero
+   codeberg.org/illiliti/libudev-zero
+  ^ hasnt moved yet
+-------------
+  [sys-libs/zlib]
+   zlib.net/${P}.tar.gz
+-------------
+  [x11-base/xcb-proto]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/proto/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/proto/xcbproto
+
+  [x11-base/xorg-proto]
+   www.x.org/releases/individual/proto/xorgproto-2023.2.tar.xz
+   gitlab.freedesktop.org/xorg/proto/xcbproto
+
+  [x11-base/xorg-server]
+   www.x.org/releases/individual/xserver/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/xserver
+-------------
+  [x11-libs/libXau]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libXau/
+
+  [x11-libs/libXdmcp]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libXdmcp
+
+  [x11-libs/libXfont2]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxfont
+
+  [x11-libs/libdrm]
+   dri.freedesktop.org/libdrm/${P}.tar.xz
+   gitlab.freedesktop.org/mesa/drm
+
+  [x11-libs/libfontenc]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libfontenc
+
+  [x11-libs/libpciaccess]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libpciaccess
+
+  [x11-libs/libxcb]
+   www.xcb.freedesktop.org/dist/${P}.tar.xz
+   x.org/releases/individual/xcb/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb
+
+  [x11-libs/libxcvt]
+   www.xorg/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcvt
+
+  [x11-libs/pixman]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcvt
+
+  [x11-libs/pixman]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/pixman/pixman
+
+  [x11-libs/xcb-util]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb-util
+
+  [x11-libs/xcb-util-image]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb-util-image
+
+  [x11-libs/xcb-util-keysyms]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb-util-keysyms
+
+  [x11-libs/xcb-util-renderutil]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb-util-renderutil
+
+  [x11-libs/xcb-util-wm]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb-util-wm
+
+-------------
+* few that have xorg and gitlab links ?
+^ pick which ever one makes checking for updates easier ?
+* libXfont2 RDEPEND=libmd/libbsd < apparently doesnt need them
 #############
-tmpfiles.d
-^ atomic creation <thing>:<owner>:<permissions>
-^ every correct order
-  every incorrect order
-  initial uid:gid/umask
-  owner - > permissions
-  permissions - > owner
-* shell that can wrap any binary
-^ given binaries can apparently 'fix' the problem
-  implies pre existing binaries dont work...
+install - chown no longer resets suid/guid...
+? chown should remove suid/guid because its no longer safe
 #############
- z.testing/shared.bootfs ? (storage.bootfs)
- tor public and private addresses suck ?
- cp -a contacts/self bootfs/contacts
- cp -a ddns/private/hostname bootfs/contacts/private
- cp -a bootfs/contacts contacts/self
- ^ leave dropbear port exposed ? or hide private somewhere ?
- ^ ddos protection and pow ?
-   rotating privates to prevent ddos...
- ^ DoSDefense low upstream to prevent dos downstream
- ! need real remote to test it
+git+curl --enable-bearer-auth or push is broken ? boo
 #############
-gcc hardening rebuild tests ?
- -ftrapv - traps signed overflow
- -mcet -fcf-protection - control flow protection
- -Wl,-z,defs - detect and reject underlinking
- -fexceptions - hardening of multi threaded c and c++ code thread cancellation handlers use unprotected function pointer on the stack
- -fvtable-verify -
++enable-dgram
++enable-psk
++enable-dtls
++enable-dtls1_2
++enable-dtls1_2-method
+-------------
+openssl s_server -nocert -dtls -psk $(echo test|hexdump '1/1 "%02x"') -accept 127.0.0.1:4444
+openssl s_client -dtls -psk $(echo test|hexdump '1/1 "%02x"') -connect 127.0.0.1:4444
+-------------
+while sleep .1 ; do openssl s_client -dtls -psk 746573740a -bind 127.0.0.1:3333 -connect 127.0.0.1:4444 ; done
+while sleep .1 ; do openssl s_client -dtls -psk 746573740a -bind 127.0.0.1:4444 -connect 127.0.0.1:3333 ; done
+-------------
+^ CONNECT unexpected message...
+^ one needs to open a client backend piped through netcat...
+^ one needs to open a server backend piped through netcat...
+-------------
+nc -u -s 127.0.0.1 -p 4444 127.0.0.1 3333
+nc -u -s 127.0.0.1 -p 3333 127.0.0.1 4444
+-------------
+forced to netcat -udp dtls is irrelivent ? (tcp over udp)
 #############
-* {binutils,gcc}-config 2 (doesnt flip on updates)
-* first.run scratch pad for visualising @toolchain
-* grub still has hardcoded not variables
+
+firefox - 
+
+ fucked it forgot to do firefox.domains ?
+ policies.json AppUpdateURL (removes all http:// refernces)
+
+ update prompt -
+  DisableAppUpdate - false*
+  ManualAppUpdateOnly - false*
+
+ password manager
+  DisableMasterPasswordCreation - effectively a password manager
+  OfferToSaveLogins - part of password manager
+  OfferToSaveLoginsDefault - part of password manager
+  PasswordManagerEnabled - actual password manager
+  PrimaryPassword -
+
+#############
+/etc/self/z.testing - no promises (everything else should be proof read and tested)
+#############
+ gcc hardening
+  -fvtable-verify -
+  -ftrapv - trap signed overflow
+  -mcet -fcf-protection - control flow protection
+  -fexceptions - harden multi threaded c/c++ code thread cancellation handlers use unprotected function pointer on the stack
+  -Wl,-z,defs - detect and reject underlinking
+#############
+
+ [gnupg]
+
+  removed encryption uid
+  removed signature uid
+  removed embedded filename
+
+ ^ defaulted to no keyservers
+   removing all metadata to match (in theory?)
+
+#############
 * every script refers to kernels by name ?
-* gnupg updated alot... check g.conf g.agent
 * sysctl.conf is horrible to maintain / verify
 #############
 ulimits -a for individual pids/users ?
@@ -181,12 +315,7 @@ printf "Max nice priority=20:40" >> /proc/1234/limits
 ^ correct format, doesnt edit the values ?
 prlimit - util-linux (busybox missing alot of functionality)
 #############
-add $HOSTNAME to /etc/hosts
-^ remove firefox timeout ?
-#############
-bootfs does discard
-storage doesnt discard
-^ cant remember why ?
+bootfs discard ? storage doesnt discard ? cant remember why
 #############
  xorg/x11-base/xcb-proto
  ^ broke ? gentoos pulling gitlab link
@@ -249,76 +378,17 @@ storage doesnt discard
 
 #############
 
-tl;dr
+ tl;dr
 
- encrypted signed recursive caching forwarding proxy
- + authoritive dns server
- ^^ really small really easy to maintain
+  mutt + opensmtpd + dnscrypt-proxy + tinydns
 
- opensmtpd disabled open relay
- ^ muttrc - mailboxes ~/inbox/public ~/inbox/private ~/inbox/junk
+  updated ebuilds and config files
 
- ngircd - passwordless oper + tor : /
- ^ hate not having 127.0.0.1 as an oper whitelist
-
- no idea how to integrate back into the liveusb ?
-
--------------
-
- dnscrypt-proxy cloaking-rules = /etc/hosts
- ^ breaks list to long ?
-
- dnscrypt-proxy doesnt forward ptr ?
- ^ tinydns ptr lookups fail regardless
-
- dnscrypt-proxy openssl missing libraries ?
- ^ restricted upstream kex/cipher or illegal tls parameter
-
--------------
-
- smtpd defaults to /proc/sys/kernel/hostname
- ^ implies fqdn and /proc/sys/kernel/domainname
- ^^ having no real meaning
-
--------------
-
- /etc/services/variables service_system + /filesa
- ^ only ever used to refer to files directory...
-
--------------
-
- z.testing/pxe - takes stage3 copys to shared/downloads/bootfs
- ^ usb version copy grub/kernel/image + keys to keys/$hostname ?
- ^ same as the old version
-
- ^ backup should be running z.testing/pxe ?
-   update shared/downloads/bootfs 
- ^ even adding torrent files for easy sharing
-
- usb.bootfs < - added usb.hash
-                usb.check verify usb
+  really quick throw up dns and mail server
 
 #############
-nftables is still a bit shit...
-nat doesnt do everything...
-tun does stuff it cant even do...
-lo works
-lan works
-nat/tun dont really make sense
-#############
-
-played around for to long
-no idea how to integrate it
-
-dnscrypt-proxy query log is really good visability ?
-stacking 4 dns related services feels wrong ?
-
-drop ddns
-mv dnsd to vpnd
-dnsd as dnscrypt
-
-liked the idea doesnt integrate nicely ?
-
+nftables - lo lan/nat/tun log
+^ nat and tun dont really make sense ?
 #############
 
  grub hardcodes 172.16.0.1 (siaddr)

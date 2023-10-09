@@ -26,8 +26,18 @@ ln -sf /proc/self/fd/2 /dev/stderr
 #############
 [ -c /dev/kvm ] && { chown qemu:qemu /dev/kvm ; chmod 0660 /dev/kvm ; }
 [ -c /dev/net/tun ] && { chown qemu:qemu /dev/net/tun ; chmod 0660 /dev/net/tun ; }
-[ -d /proc/bus ] && { chown root:root /proc/bus ; chmod 0700 /proc/bus ; }
 #############
+
+find /sys -type d -mindepth 1 -maxdepth 1 -exec chmod 0700 {} \;
+
+chown root:desktop /sys/dev /sys/devices # xorg
+chmod 0750 /sys/dev /sys/devices # xorg
+
+find /proc -type d -mindepth 1 -maxdepth 1 -exec chmod 0700 {} \;
+find /proc -type f -mindepth 1 -maxdepth 1 -exec chmod 0600 {} \;
+
+chown root:desktop /proc/meminfo /proc/stat # xorg
+chmod 0640 /proc/meminfo /proc/stat # xorg
 
 #############
 mdadm --assemble --no-degraded --scan

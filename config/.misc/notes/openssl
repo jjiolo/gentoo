@@ -53,14 +53,17 @@ no-pinshared -
 
 ############# generic descriptions (got sick of searching)
 cmp  - cryptographic management protocol ? 
+crmf - certificate request message format ?
 cms  - cryptographic message syntax ? smime... (openssl cms -help)
-ct   - certificate transparency
 comp - compression support with static/dynamic zlib
+ct   - certificate transparency
 npn  - next protocol negotiation (port 443 spdy hand off ? irrelivent imo http2)
+crl  - certificate revocation list
+ocsp - online certificate status protocol (crl replacement)
 psk  - pre shared key cipher suites
 srp  - secure remote password cipher suites
-sctp - stream control transmission protocol dtls over sctp and or dtls over udp
 srtp - secure real-time transport protocol (dtls extension)
+sctp - stream control transmission protocol dtls over sctp and or dtls over udp
 sse2 - cpu flags enabled in ffmpeg already
 #############
 

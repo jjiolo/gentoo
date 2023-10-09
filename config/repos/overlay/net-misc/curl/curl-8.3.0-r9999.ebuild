@@ -66,7 +66,7 @@ src_configure(){
 --disable-verbose \
 --disable-sspi \
 --enable-basic-auth \
---disable-bearer-auth \
+--enable-bearer-auth \
 --disable-digest-auth \
 --disable-kerberos-auth \
 --disable-negotiate-auth \
