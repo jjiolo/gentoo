@@ -1,0 +1,12 @@
+#!/bin/sh
+#############
+script -c 'emerge                     -avbkuDN --onlydeps @desktop' /tmp/desktop.host
+script -c 'emerge --root /run/desktop -avbkuDN --nodeps @desktop' /tmp/desktop.rootfs
+#############
+install -d -o root -g root -m 0755 /run/desktop/usr/lib/locale
+cp -a /usr/lib/locale/locale-archive /run/desktop/usr/lib/locale
+#############
+install -o root -g root -m 0755 /etc/self/f.sets/sets_startx /run/desktop/usr/bin/startx
+install -o root -g root -m 0755 /etc/self/f.sets/sets_startx_xinitrc /run/desktop/etc/xinitrc
+#############
+

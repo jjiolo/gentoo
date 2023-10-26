@@ -8,6 +8,8 @@ no idea what stupid has gathered itself in here
 stuff at the bottom tends to get rewritten and kept
 stuff at the top is unordered raw sewage
 #############
+
+#############
 |-----------------|
 | [REBUILD]       |
 |-----------------|
@@ -26,7 +28,7 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:10:02 22:57:00
+ lastest - 2023:10:23 06:47:00
 -------------
  * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
  ^ X0-log - ShadowFB: preferred NO, enabled NO (something about no/modesetting)
@@ -128,186 +130,125 @@ stuff at the top is unordered raw sewage
 v attempt to create lists of things to actually do
 
 #############
-setpriv_udhcpd < - ignores first sleep ? wtf would be an understatement
+setpriv_udhcpd < - ignores first sleep ?
 #############
 
- [ more harder ]
+ openssl and xorg-server security bumps
 
-  * /proc hardening ? meminfo+stat required for xorg ?
-  * /sys hardening ? block/bus/class/firmware/kernel/module
-  * removed access to all /proc /sys files ?
+ etc/profile
+ ^ doesnt kill ~/.xinitrc ~/.xserverrc ?
+   but nothing i run uses it anyway ?
+
+ xinit [client] -- [server]
+ xinit ssh -X user@hostname <command> -- :0
+ ^ apparently starts local xserver ?
+   uses ssh as the client and forwards that remote command...
+
+ startx and xinitrc are dumb ?
+
+ su -l -s /bin/ash
+ ^ fluked it starting a shell
+    then xinit /etc/xinitrc passed that raw file to current running shell
+    then -- executes the server...
+ ??? hopefully
+     or its randomly reading a file with no shebang?!!?!?
+     #!/bin/derp
+
+#############
+
+  /dev
+  /dev/pts
+  /dev/shm
+  /proc
+  /sys
+  /tmp
+
+ ^ group access to chroot mount paths ?
+
+   busybox_init
 
 #############
 
- [repos/xorg]
--------------
-  [libmd]
-   archive.hadrons.org/software/libmd/${P}.tar.xz
-  ^ no alternative
+ commiting to /proc /sys hardening ?
 
-  [libbsd] *
-   libbsd.freedesktop.org/releases/${P}.tar.xz
-   gitlab.freedesktop.org/libbsd/libbsd
-  ^ both have current version
--------------
-  [libudev-zero]
-   github.com/illiliti/libudev-zero
-   codeberg.org/illiliti/libudev-zero
-  ^ hasnt moved yet
--------------
-  [sys-libs/zlib]
-   zlib.net/${P}.tar.gz
--------------
-  [x11-base/xcb-proto]
-   xcb.freedesktop.org/dist/${P}.tar.xz
-   www.x.org/releases/individual/proto/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/proto/xcbproto
+ etc/auditd/
 
-  [x11-base/xorg-proto]
-   www.x.org/releases/individual/proto/xorgproto-2023.2.tar.xz
-   gitlab.freedesktop.org/xorg/proto/xcbproto
 
-  [x11-base/xorg-server]
-   www.x.org/releases/individual/xserver/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/xserver
--------------
-  [x11-libs/libXau]
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libXau/
+t.put
+t.get
 
-  [x11-libs/libXdmcp]
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libXdmcp
+^ put defaults to 172.16.0.1
 
-  [x11-libs/libXfont2]
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libxfont
+ only works from host to nat
+ nat cant execute it without pointing to hosts http server ?
 
-  [x11-libs/libdrm]
-   dri.freedesktop.org/libdrm/${P}.tar.xz
-   gitlab.freedesktop.org/mesa/drm
-
-  [x11-libs/libfontenc]
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libfontenc
-
-  [x11-libs/libpciaccess]
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libpciaccess
-
-  [x11-libs/libxcb]
-   www.xcb.freedesktop.org/dist/${P}.tar.xz
-   x.org/releases/individual/xcb/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libxcb
-
-  [x11-libs/libxcvt]
-   www.xorg/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libxcvt
-
-  [x11-libs/pixman]
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libxcvt
-
-  [x11-libs/pixman]
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/pixman/pixman
-
-  [x11-libs/xcb-util]
-   xcb.freedesktop.org/dist/${P}.tar.xz
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libxcb-util
-
-  [x11-libs/xcb-util-image]
-   xcb.freedesktop.org/dist/${P}.tar.xz
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libxcb-util-image
-
-  [x11-libs/xcb-util-keysyms]
-   xcb.freedesktop.org/dist/${P}.tar.xz
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libxcb-util-keysyms
-
-  [x11-libs/xcb-util-renderutil]
-   xcb.freedesktop.org/dist/${P}.tar.xz
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libxcb-util-renderutil
-
-  [x11-libs/xcb-util-wm]
-   xcb.freedesktop.org/dist/${P}.tar.xz
-   www.x.org/releases/individual/lib/${P}.tar.xz
-   gitlab.freedesktop.org/xorg/lib/libxcb-util-wm
-
--------------
-* few that have xorg and gitlab links ?
-^ pick which ever one makes checking for updates easier ?
-* libXfont2 RDEPEND=libmd/libbsd < apparently doesnt need them
-#############
-install - chown no longer resets suid/guid...
-? chown should remove suid/guid because its no longer safe
-#############
-git+curl --enable-bearer-auth or push is broken ? boo
-#############
-+enable-dgram
-+enable-psk
-+enable-dtls
-+enable-dtls1_2
-+enable-dtls1_2-method
--------------
-openssl s_server -nocert -dtls -psk $(echo test|hexdump '1/1 "%02x"') -accept 127.0.0.1:4444
-openssl s_client -dtls -psk $(echo test|hexdump '1/1 "%02x"') -connect 127.0.0.1:4444
--------------
-while sleep .1 ; do openssl s_client -dtls -psk 746573740a -bind 127.0.0.1:3333 -connect 127.0.0.1:4444 ; done
-while sleep .1 ; do openssl s_client -dtls -psk 746573740a -bind 127.0.0.1:4444 -connect 127.0.0.1:3333 ; done
--------------
-^ CONNECT unexpected message...
-^ one needs to open a client backend piped through netcat...
-^ one needs to open a server backend piped through netcat...
--------------
-nc -u -s 127.0.0.1 -p 4444 127.0.0.1 3333
-nc -u -s 127.0.0.1 -p 3333 127.0.0.1 4444
--------------
-forced to netcat -udp dtls is irrelivent ? (tcp over udp)
-#############
-
-firefox - 
-
- fucked it forgot to do firefox.domains ?
- policies.json AppUpdateURL (removes all http:// refernces)
-
- update prompt -
-  DisableAppUpdate - false*
-  ManualAppUpdateOnly - false*
-
- password manager
-  DisableMasterPasswordCreation - effectively a password manager
-  OfferToSaveLogins - part of password manager
-  OfferToSaveLoginsDefault - part of password manager
-  PasswordManagerEnabled - actual password manager
-  PrimaryPassword -
+ ./t.put <file>
+ ./t.get <ip> <file>
 
 #############
-/etc/self/z.testing - no promises (everything else should be proof read and tested)
+* ddns public/private addresses public in $shared/$contacts
 #############
- gcc hardening
-  -fvtable-verify -
-  -ftrapv - trap signed overflow
-  -mcet -fcf-protection - control flow protection
-  -fexceptions - harden multi threaded c/c++ code thread cancellation handlers use unprotected function pointer on the stack
-  -Wl,-z,defs - detect and reject underlinking
+* remove mount directory...
 #############
-
- [gnupg]
-
-  removed encryption uid
-  removed signature uid
-  removed embedded filename
-
- ^ defaulted to no keyservers
-   removing all metadata to match (in theory?)
-
+* ddns/dnsd - hangs on boot, pkill no longer works ?
 #############
+* harder /sys /proc && brokeit script
+^ breaks kernel.build
+  breaks monitor script
+  breaks ps pmem + etime...
+??? add /sys /proc updates to busybox_init ???
+commiting to 0750 /proc /sys /dev ?
+psuedo file system access from a group ?
+/dev/shm /tmp tmpfs still both 1777...
+#############
+-------------
+ wpa_supplicant ap...
+ wpa_supplicant station...
+-------------
+ w.ap <interface> <ssid> <password>
+ w.public <interface> <ssid>
+ w.private <interface> <ssid> <password>
+ w.connect - load existing config file
+ w.scan <interface>
+-------------
+* key_mgmt=WPA-PSK everything else fails ?
+* SAE WPA-PSK-SHA256 - both fail to start
+* pmf / ieee80211w - both fail to start
+-------------
+ ieee80211w=2
+ key_mgmt=SAE
+ sae_password=
+ sae_password_id
+ sae_groups=19 20 21
+ sae_pwe= 0 1 2
+ sae_pk=
+^ sae wouldnt turn on
+-------------
+ passive_scan - station doesnt ask for ssid
+ network={ scan_ssid=1 } # scan for hidden ssid using empty ssid ?
+ network={ ignore_broadcast_ssid=1 } # access point hidden ssid ?
+-------------
+ only the weakest form of authentication works ?
+-------------
+#############
+* config/.misc/configs.old/c.services/gitd
+^ self hosted password protected git repository
+* massive network hang on qemu dhcpd ?
+* busybox install - chown no longer resets suid/guid - should remove suid/guid on owner change
 * every script refers to kernels by name ?
 * sysctl.conf is horrible to maintain / verify
+#############
+gcc hardening
+ -mcet -fcf-protection - control flow protection
+ -ftrapv - trap signed overflow
+ -fvtable-verify -
+ -fexceptions - harden multi threaded c/c++ code thread cancellation handlers use unprotected function pointer on the stack
+ -Wl,-z,defs - detect and reject underlinking
+#############
+[gnupg]
+ removed encryption uid
+ removed signature uid
+ removed embedded filename
 #############
 ulimits -a for individual pids/users ?
 printf "Max processes=3:3" >> /proc/1234/limits
@@ -316,55 +257,20 @@ printf "Max nice priority=20:40" >> /proc/1234/limits
 prlimit - util-linux (busybox missing alot of functionality)
 #############
 bootfs discard ? storage doesnt discard ? cant remember why
-#############
- xorg/x11-base/xcb-proto
- ^ broke ? gentoos pulling gitlab link
-   main website hasnt updated nearly a month...
- ^^ alot of gitlab or gtfo coming ?
-#############
- shared/contacts/self/
- known.{user,nobody,jail
- authorized.{user,nobody
- ^ groups them in the directory so it looks less shit
- * only gnupg,public,private,wireguard ?
+storage.fde ?
 #############
 
- PS1 colors for ssh and stage3 chroot are horrible...
- ^ add a word or [r] remote ? to the line
-   and only use bright white for chroot ?
-
- [user][host][path][depth][-] host
- [user][host][path][depth][c] chroot
- [user][host][path][depth][r] remote
- ^ still doesnt allow color
-   and still lose SSH_CONNECTION when chrooting ?
-
- tl;dr cant identify remote chroot...
- ^ turns out thats really annoying
-
-#############
-
- xephyr escapes
-
-  x.user - exec sudo -l
-  alt+m monocle mode
-  x.nobody 
-  alt+shift 3
-
-  ^ leaves enter pinned inside Xephyr
-
-  ^^ fairly sure theres another one ?
-  move focus to different monitor
-  opens terminal closes terminal
-  leaves focus in old window not current monitor ?
+* cant identify remote chroot
+  PS1= (removes SSH_CONNECTION)
+  [user][host][path][depth][-] host
+  [user][host][path][depth][c] chroot
+  [user][host][path][depth][r] remote
 
 #############
 
  openssl-3.2.0 alpha
-
- test dtls ed25519
-
- kdf support for argon2d argon2i argon2id (drop argon2)
+  test dtls ed25519
+  kdf support for argon2d argon2i argon2id (drop argon2)
 
  openssl s_client -ktls support
  openssl s_client -adv - type {help} ?
@@ -375,16 +281,6 @@ bootfs discard ? storage doesnt discard ? cant remember why
  ^ keyUsage - codeSigning
 
  aes-gcm-siv - gcm with nonce reuse protection
-
-#############
-
- tl;dr
-
-  mutt + opensmtpd + dnscrypt-proxy + tinydns
-
-  updated ebuilds and config files
-
-  really quick throw up dns and mail server
 
 #############
 nftables - lo lan/nat/tun log
@@ -410,8 +306,6 @@ nftables - lo lan/nat/tun log
 
  * ability to update usr/share/tor/geoip...
 
-#############
- * repos/xorg - runtime deps work, build time deps fluked
 #############
  firefox-esr < - libstdc++ libgcc_s + glibc:libmount
 #############

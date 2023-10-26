@@ -120,11 +120,14 @@ renice +20 -u xmr     2>/dev/null
  alias c='clear'
  alias ..='cd ..'
 
-[ -L /bin/ps ] && alias ps="ps -o sid,pid,ppid,user,group,nice,etime,comm|awk '\$1 != 2 && \$2 != 2'"
-[ -L /bin/ps ] && alias psw="watch -t ps -o sid,pid,ppid,user,group,nice,etime,comm|awk '\$1 != 2 && \$2 != 2'"
+[ -L /bin/ps ] && alias ps="ps -o sid,pid,ppid,user,group,nice,etime,comm|awk '\$2 != 2 && \$3 != 2'"
+[ -L /bin/ps ] && alias psw="watch -t ps -o sid,pid,ppid,user,group,nice,etime,comm|awk '\$2 != 2 && \$3 != 2'"
 
-[ -L /bin/ps ] || alias ps='/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pmem,pri,ni,tty,etime,comm --pid 2 --ppid 2 -N'
-[ -L /bin/ps ] || alias psw='watch -t /bin/ps fo sid,pid,ppid,uid,gid,pcpu,pmem,pri,ni,tty,etime,comm --pid 2 --ppid 2 -N'
+[ -L /bin/ps ] || alias ps='/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pri,ni,tty,comm --pid 2 --ppid 2 -N'
+[ -L /bin/ps ] || alias psw='watch -t /bin/ps fo sid,pid,ppid,uid,gid,pcpu,pri,ni,tty,comm --pid 2 --ppid 2 -N'
+
+# [ -L /bin/ps ] || alias ps='/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pmem,pri,ni,tty,etime,comm --pid 2 --ppid 2 -N'
+# [ -L /bin/ps ] || alias psw='watch -t /bin/ps fo sid,pid,ppid,uid,gid,pcpu,pmem,pri,ni,tty,etime,comm --pid 2 --ppid 2 -N'
 
  alias log='tail -F /run/logs/syslog'
  alias ffs='tail -F /run/logs/syslog|grep -v "^....................kernel:"'

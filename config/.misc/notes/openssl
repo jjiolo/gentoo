@@ -87,7 +87,7 @@ hpkp < - http public key pinning
 hsts < - http strict transport security (always use https)
 #############
 
-openssl client
+[openssl client]
 
  log every request and fingerprint every certificate in the chain
 
@@ -130,23 +130,22 @@ fingerprint changes every 4 months
 
 #############
 
-cert revoke
+ [cert revoke]
 
-revoke server needs the ability to lookup individual certificates
-revoke server needs the ability for cert providers to request timestamps
+  ocsp > crl - ability to lookup individual certificates (reduce load)
 
-removes the need for clients to ddos the revoke server allowing the providers to distrbute validity periods
+  ??? - pushes timestamp from server to remove revoke lookup (reduce load)
 
-#############
-
-oids - let you assign more key value pairs in -subj
-
-^ never found any software that can safely parse any of them
+  ^ cant remember the name ?
 
 #############
+
+ [env]
 
 HOME=.
 path=$ENV::HOME/keyring
+
+ [oids] - assign more key value pairs in -subj
 
 oid_section=new_oids
 
@@ -157,6 +156,29 @@ two = 1.2.3.4.2
 [ ca ]
 crl = crl.pem # current crl
 crlnumber = crlnumber # current crl number
+
+#############
+
++enable-psk
++enable-dtls
++enable-dtls1_2
++enable-dtls1_2-method
++enable-dgram
+-------------
+openssl s_server -nocert -dtls -psk $(echo test|hexdump '1/1 "%02x"') -accept 127.0.0.1:4444
+openssl s_client -dtls -psk $(echo test|hexdump '1/1 "%02x"') -connect 127.0.0.1:4444
+-------------
+while sleep .1 ; do openssl s_client -dtls -psk 746573740a -bind 127.0.0.1:3333 -connect 127.0.0.1:4444 ; done
+while sleep .1 ; do openssl s_client -dtls -psk 746573740a -bind 127.0.0.1:4444 -connect 127.0.0.1:3333 ; done
+-------------
+^ CONNECT unexpected message...
+^ one needs to open a client backend piped through netcat...
+^ one needs to open a server backend piped through netcat...
+-------------
+nc -u -s 127.0.0.1 -p 4444 127.0.0.1 3333
+nc -u -s 127.0.0.1 -p 3333 127.0.0.1 4444
+-------------
+forced to netcat -udp dtls is irrelivent ? (tcp over udp)
 
 #############
 

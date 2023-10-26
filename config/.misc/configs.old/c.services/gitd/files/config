@@ -1,0 +1,12 @@
+
+I:index
+
+E404:/tmp/storage/services/gitd/error
+
+*.cgi:/bin/ash
+*.git:/bin/ash
+
+/cgi-bin/project.cgi:toor:drowssap
+/cgi-bin/project.git:toor:drowssap
+/cgi-bin:root:password
+

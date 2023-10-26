@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+ <link rel="stylesheet" href="/css" >
+</head>
+
+<body>
+ <div class='outer'><div class='middle'><div class='inner'>
+  <fieldset class='header'> <a href=/cgi-bin/project.cgi>[spareProject]</a> </fieldset>
+  <fieldset class='footer'> <p>git clone http://root:password@172.16.0.1:9418/cgi-bin/project.git</p> </fieldset>
+ </div></div></div>
+</body>
+
+</html>
+

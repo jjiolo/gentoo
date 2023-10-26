@@ -48,3 +48,21 @@ overall goal,
 
 #############
 
+firefox - 
+
+ update prompt -
+
+  DisableAppUpdate - false*
+  ManualAppUpdateOnly - false*
+
+  policies.json AppUpdateURL (removes all http:// refernces)
+
+ password manager
+  DisableMasterPasswordCreation - effectively a password manager
+  OfferToSaveLogins - part of password manager
+  OfferToSaveLoginsDefault - part of password manager
+  PasswordManagerEnabled - actual password manager
+  PrimaryPassword -
+
+#############
+

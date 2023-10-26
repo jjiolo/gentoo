@@ -1,6 +1,6 @@
 
 #############
-# | /tmp/storage/shared | .directory | archive | contacts | downloads | torrents | magnets |
+# | /tmp/storage/shared | .directory | archive | contacts | downloads | torrents |
 #############
 
 # .directory
@@ -14,12 +14,12 @@ find "shared/contacts"       -type f -print0 2>/dev/null | sort > "${shared}/.di
 find "shared/downloads"      -type f -print0 2>/dev/null | sort > "${shared}/.directory/downloads"
 find "shared/torrents"       -type f -print0 2>/dev/null | sort > "${shared}/.directory/torrents"
 
+cd -
+
 chown -R root:root "${shared}/.directory" &
 
 find "${shared}/.directory" -type d -exec chmod 0775 {} \; &
 find "${shared}/.directory" -type f -exec chmod 0664 {} \; &
-
-cd -
 
 #############
 
@@ -39,7 +39,9 @@ cd "${shared}/contacts/self" || exit
 gpg --homedir "${storage}/.gnupg" --export "$(hostname)" > "gnupg" 2>/dev/null
 
 install -o 0 -g 0 -m 0664 "${services}/ddns/public/hostname" "public"
-printf "%s%s\n" "$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)" ".onion" > "private"
+install -o 0 -g 0 -m 0664 "${services}/ddns/private/hostname" "private"
+#printf "%s%s\n" "$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)" ".onion" > "public"
+#printf "%s%s\n" "$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)" ".onion" > "private"
 
 dropbearkey -y -f "${storage}/.ssh/sshd" 2>/dev/null | grep "^ssh-ed25519" | cut -d' ' -f1,2 > "sshd"
 install -o 0 -g 0 -m 0664 "${storage}/.ssh/authorized_keys" "sshd.authorized"
@@ -54,12 +56,12 @@ done
 
 wg pubkey < "${storage}/.vpn/wireguard" > "wireguard"
 
+cd -
+
 chown -R root:root "${shared}/contacts" &
 
 find "${shared}/contacts" -type d -exec chmod 0775 {} \; &
 find "${shared}/contacts" -type f -exec chmod 0664 {} \; &
-
-cd -
 
 #############
 
@@ -78,14 +80,6 @@ chown -R p2pd:p2pd "${shared}/torrents" &
 
 find "${shared}/torrents" -type d -mindepth 1 -exec chmod 0755 {} \; &
 find "${shared}/torrents" -type f -exec chmod 0644 {} \; &
-
-#############
-
-# magnets
-
-install -o 0 -g 0 -m 0664 "/dev/null" "${shared}/magnets"
-
-for i in "${shared}/torrents/"* ; do transmission-show --magnet "${i}" >> "${shared}/magnets" ; done
 
 #############
 

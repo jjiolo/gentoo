@@ -84,5 +84,7 @@ sync ; ls -lah --group-directories-first /tmp/a.bootfs ; printf "%s\n" "########
 
 } | tee hashes
 
+printf "%s\n" "#############"
+
 #############
 

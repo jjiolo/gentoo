@@ -57,8 +57,6 @@ table inet filter {
   tcp dport {6697}        skuid {irc}  ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {18081,18089} skuid {xmr}  ct state new log flags skuid prefix "output.lan.new " accept
 
-  tcp dport {443} skuid {root,250} ct state new log flags skuid prefix "output.lan.new " accept # 0.binhost chroot.update
-
   # icmp
 
   ip protocol {icmp}   log flags skuid prefix "output.lan.icmp " accept

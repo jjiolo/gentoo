@@ -12,19 +12,23 @@ install -o 13 -g 13 -m 0600 "/dev/null" "${storage}/.wifi/wpa_supplicant"
 #############
 cat >> "${storage}/.wifi/wpa_supplicant" << EOF
 
-network={
-ssid="${2}"
-#bssid=ff:ff:ff:ff:ff:ff
-key_mgmt=NONE
+passive_scan=1
+mac_addr=1
+preassoc_mac_addr=1
 
-ieee80211w=1
-ocv=1
+network={
+
+ key_mgmt=NONE
+
+ ssid="${2}"
+ scan_ssid=1
+ ieee80211w=1
+ beacon_prot=1
+ ocv=1
+
 }
 
 EOF
-
-
-
 #############
 sysctl -w "net.ipv6.conf.${1}.accept_ra=2"
 #############

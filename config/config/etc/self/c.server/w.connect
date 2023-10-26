@@ -25,6 +25,10 @@ pkill -x /sbin/wpa_supplicant
 
 
 
+
+
+
+
 #############
 sysctl -w "net.ipv6.conf.${1}.accept_ra=2"
 #############

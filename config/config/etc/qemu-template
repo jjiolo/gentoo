@@ -21,8 +21,6 @@ vnc="-nographic -display none -vnc unix:/dev/shm/qemu"
 #############
 qemu-system-x86_64 ${defaults} ${cpu} ${mem} ${gpu} ${network} ${interface} ${kernel} ${initrd} ${boot} ${file} ${extra} ${vnc} ${usb}
 #############
-
-#############
 chown user:user /dev/shm/qemu
 #############
 

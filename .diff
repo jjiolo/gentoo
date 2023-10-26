@@ -19,7 +19,7 @@
 cd /tmp/.diff/stage3 || exit
 #############
 
-for i in 0.binhost 1.rootfs 2.shell 3.umount backup console qemu .diff
+for i in 0.binhost 1.rootfs 2.shell 3.umount backup qemu .diff
 do
 
  diff ./$i /tmp/storage/stage3/$i

@@ -1,5 +1,0 @@
-
-#############
-printf "%s\n" "update /usr/share/tor/geoip"
-#############
-

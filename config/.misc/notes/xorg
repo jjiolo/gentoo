@@ -124,33 +124,107 @@
 
 #############
 
- [firefox]
+#############
+-------------
+ [repos/xorg]
+-------------
+  [libmd]
+   archive.hadrons.org/software/libmd/${P}.tar.xz
+  ^ no alternative
 
- refuses to play video
- downloading the video
- ffmpeg play the video
+  [libbsd] *
+   libbsd.freedesktop.org/releases/${P}.tar.xz
+   gitlab.freedesktop.org/libbsd/libbsd
+  ^ both have current version
+-------------
+  [libudev-zero]
+   github.com/illiliti/libudev-zero
+   codeberg.org/illiliti/libudev-zero
+  ^ hasnt moved yet
+-------------
+  [sys-libs/zlib]
+   zlib.net/${P}.tar.gz
+-------------
+  [x11-base/xcb-proto]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/proto/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/proto/xcbproto
 
- tl;dr - tried re enabling half of it and achieved nothing ?
+  [x11-base/xorg-proto]
+   www.x.org/releases/individual/proto/xorgproto-2023.2.tar.xz
+   gitlab.freedesktop.org/xorg/proto/xcbproto
 
- xvideo extensions
-  testing xorg-server -Dxv
-  forces libxcb --enable-xv
- ^ failed
+  [x11-base/xorg-server]
+   www.x.org/releases/individual/xserver/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/xserver
+-------------
+  [x11-libs/libXau]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libXau/
 
- testing xorg-server -Dxvmc
-  ^ failed
+  [x11-libs/libXdmcp]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libXdmcp
 
- testing xorg-server -Dxvfb (framebuffer?)
-  ^ failed
+  [x11-libs/libXfont2]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxfont
 
- xorg complains its missing
+  [x11-libs/libdrm]
+   dri.freedesktop.org/libdrm/${P}.tar.xz
+   gitlab.freedesktop.org/mesa/drm
 
-  xcb-xinput
-  xcb-damage
-  xcb-sync
+  [x11-libs/libfontenc]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libfontenc
 
- ^ still complains missing codecs
-   ffmpeg can play outside the browser
+  [x11-libs/libpciaccess]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libpciaccess
 
+  [x11-libs/libxcb]
+   www.xcb.freedesktop.org/dist/${P}.tar.xz
+   x.org/releases/individual/xcb/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb
+
+  [x11-libs/libxcvt]
+   www.xorg/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcvt
+
+  [x11-libs/pixman]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcvt
+
+  [x11-libs/pixman]
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/pixman/pixman
+
+  [x11-libs/xcb-util]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb-util
+
+  [x11-libs/xcb-util-image]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb-util-image
+
+  [x11-libs/xcb-util-keysyms]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb-util-keysyms
+
+  [x11-libs/xcb-util-renderutil]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb-util-renderutil
+
+  [x11-libs/xcb-util-wm]
+   xcb.freedesktop.org/dist/${P}.tar.xz
+   www.x.org/releases/individual/lib/${P}.tar.xz
+   gitlab.freedesktop.org/xorg/lib/libxcb-util-wm
+-------------
+ gitlab > x.org > unique.org ?
+-------------
 #############
 

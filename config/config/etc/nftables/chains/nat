@@ -38,12 +38,18 @@ table inet filter {
 
   # client
 
-  udp dport {51820} udp sport {51820}  ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {51820} udp sport {51820} ct state new log flags skuid prefix "output.nat.new " accept
 
-  udp dport {53}   skuid {ntpd} ct state new log flags skuid prefix "output.nat.new " accept
-  udp dport {53}   skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept
-  udp dport {53}   skuid {ssh,smtp,http,irc,xmr} ct state new log flags skuid prefix "output.nat.new " accept
-  udp dport {53}   skuid {p2pd} ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {53}  skuid {ntpd} ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {123} skuid {ntpd} ct state new log flags skuid prefix "output.nat.new " accept
+
+  udp dport {53} skuid {nobody}                ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {53} skuid {ssh,smtp,http,irc,xmr} ct state new log flags skuid prefix "output.nat.new " accept
+  udp dport {53} skuid {p2pd}                  ct state new log flags skuid prefix "output.nat.new " accept
+
+  tcp dport {22}   skuid {user}              ct state new log flags skuid prefix "output.nat.new " accept
+  tcp dport {80}   skuid {root,user,nobody}  ct state new log flags skuid prefix "output.nat.new " accept
+  tcp dport {9050} skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.nat.new " accept
 
   udp dport {67}   skuid {dhcpc} ct state new log flags skuid prefix "output.nat.new " accept
   udp dport {68}   skuid {dhcpd} ct state new log flags skuid prefix "output.nat.new " accept
@@ -55,21 +61,17 @@ table inet filter {
   tcp dport {9091} skuid {p2pd} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {80}   skuid {p2pd} ct state new log flags skuid prefix "output.nat.new " accept
 
-  tcp dport {22}          skuid {user} ct state new log flags skuid prefix "output.nat.new " accept
-  tcp dport {80}          skuid {root,user,nobody} ct state new log flags skuid prefix "output.nat.new " accept
-  tcp dport {9050}        skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.nat.new " accept
-
   tcp dport {22}          skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {465,995}     skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {443}         skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {6697}        skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {18081,18089} skuid {nobody} ct state new log flags skuid prefix "output.nat.new " accept
 
-  tcp dport {22}          skuid {ssh} ct state new log flags skuid prefix "output.nat.new " accept
+  tcp dport {22}          skuid {ssh}  ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {465,995}     skuid {smtp} ct state new log flags skuid prefix "output.nat.new " accept
   tcp dport {443}         skuid {http} ct state new log flags skuid prefix "output.nat.new " accept
-  tcp dport {6697}        skuid {irc} ct state new log flags skuid prefix "output.nat.new " accept
-  tcp dport {18081,18089} skuid {xmr} ct state new log flags skuid prefix "output.nat.new " accept
+  tcp dport {6697}        skuid {irc}  ct state new log flags skuid prefix "output.nat.new " accept
+  tcp dport {18081,18089} skuid {xmr}  ct state new log flags skuid prefix "output.nat.new " accept
 
   # icmp
 

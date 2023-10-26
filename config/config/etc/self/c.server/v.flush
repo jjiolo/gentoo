@@ -5,6 +5,8 @@
 
 [ "${#}" == "1" ] && {
 
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/config"
+
 ip link del tun
 ip link add tun type wireguard
 wg set tun listen-port 51820 private-key "${storage}/.vpn/wireguard"

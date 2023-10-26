@@ -29,10 +29,12 @@ table inet nat {
 
 #nft list map inet nat lb4 ; nft add element inet nat lb4 { 0 : 172.16.0.2, 1 : 172.16.0.3 } ; nft delete element inet nat lb4 { 0 : 172.16.0.1 }
 #nft list map inet nat lb6 ; nft add element inet nat lb6 { 0 : 172.16.0.2, 1 : 172.16.0.3 } ; nft delete element inet nat lb6 { 0 : 172.16.0.1 }
+
 #map lb4 { type integer : ipv4_addr ; flags dynamic,interval ; elements = { 0-2:172.16.0.2, 3-9:172.16.0.3 } ; }
 #map lb6 { type integer : ipv6_addr ; flags dynamic,interval ; elements = { 0-2:fc00::172:16:0:2, 3-9:fc00::172:16:0:3 } ; }
+
 #ip daddr 172.16.0.1 dnat to numgen inc mod 2 map @lb4
-#ip6 daddr fc00::172:16:0:1 dnat to numgen incc mod 2 map @lb6
+#ip6 daddr fc00::172:16:0:1 dnat to numgen inc mod 2 map @lb6
 # ^^^ type : load balancer doesnt exist for a dynamic map ?
 
  chain prerouting {

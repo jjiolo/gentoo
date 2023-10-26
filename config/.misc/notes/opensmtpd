@@ -1,6 +1,19 @@
 
 #############
 
+ [mandoc smtpd.conf.5]
+
+ action local maildir /tmp/storage/home/smtp/inbox userbase <vuserbase> virtual <vusers>
+
+ ^ listen with listed virtual users (all smtp:465:465 clones)
+
+ action "relay" relay
+
+ listen on 0.0.0.0 port 25 auth <authtable>
+ 
+
+#############
+
  userbase
  action name method userbase <table>
   public  465:465:/tmp/storage/home/smtp

@@ -3,10 +3,10 @@
 
  printf "%s\n" "#############"
 
-                                                             printf "%s%s\n" " system: " "$(moneroc --version)"
- [ -f ${services}/sets/monero/monero*/monero-wallet-cli ] && printf "%s%s\n" "storage: " "$(${services}/sets/monero/monero*/monero-wallet-cli --version)"
- [ -f ${services}/sets/monero/monero*/monero-wallet-cli ] || printf "%s%s\n" "storage: " "not installed"
-                                                             printf "%s%s\n" " latest: " "$(curl -sLI 'https://downloads.getmonero.org/cli/linux64' | grep -i '^location')"
+                                                               printf "%s%s\n" " system: " "$(moneroc --version)"
+ [ -f "${services}/sets/monero/monero*/monero-wallet-cli" ] && printf "%s%s\n" "storage: " "$(${services}/sets/monero/monero*/monero-wallet-cli --version)"
+ [ -f "${services}/sets/monero/monero*/monero-wallet-cli" ] || printf "%s%s\n" "storage: " "not installed"
+                                                               printf "%s%s\n" " latest: " "$(curl -sLI 'https://downloads.getmonero.org/cli/linux64' | grep -i '^location')"
 
  printf "%s\n" "#############"
 

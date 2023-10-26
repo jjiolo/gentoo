@@ -1,5 +1,70 @@
 
 #############
+-------------
+
+ "wpa_supplicant-${P}/wpa_supplicant/wpa_supplicant.conf"
+
+-------------
+#############
+802.1X eapol
+ EAP-TLS - server cert / client cert
+ EAP-PEAP - server cert / without client cert
+
+#############
+eapol - extensible authentication protocol
+mpm residency - mesh peering manager
+80211s - layer2 routing and forwarding
+PMKSA - pairwise master key security accociation
+DPP - device provisioning protocol
+okc - oppertunistic key caching
+80211w pmf - protected management frames
+beacon_prot=1 - beacon protection ?
+80211u interworking - 
+#############
+ ssid - 
+ bssid - 
+ SS - service set
+ BSS - basic service set
+ PBSS - personal basic service set
+ ESS - extended service set
+#############
+|80211g |54MB   2.4GHz                      |20MHz  |          |
+|80211n |300MB  2.4GHz 5.0GHz               |40MHz  |3 antennas|
+|80211ac|866MB  2.4GHz 5.0GHz               |160MHz |4 antennas|
+|80211ax|3.5GHz 2.4GHz 5.0GHz 6.0GHZ        |160MHz |8 antennas|
+|80211ad|7.0GHz                      60.0GHZ|2160MHz|          |
+#############
+ bgscan="" # disable roaming ? ess with shared bssid ?
+ scan_freq=2412 2437 2462 # pick channels to scan for ssid
+#############
+network={ network block ?
+
+ proto=WPA3 WPA2
+ auth_alg=OPEN
+ pairwise=CCMP
+ group=CCMP
+ psk="password" # hashes ssid+psk ?
+ sae_password="password" # SAE password...
+ sae_pk=1 # WPA-PSK/SAE support from single psk
+
+}
+
+ passive_scan=1 # dont scan for ssids, wait for beacons
+ scan_ssid=1 # hidden networks
+ 
+ ignore_broadcast_ssid=1 # require stations know ssid ? implies hotspot ?
+
+ dtim - time to wait before flushing multi/broadcast queue
+ ^ higher can increase battery life
+   would make dhcp take longer ?
+   would make arp take longer ?
+
+ beacon - access point advertising ssid
+
+^ no idea which is client and server ? 
+
+
+#############
 
 network={
  mode=2
@@ -33,24 +98,23 @@ wpa_supplicant -sBi wlan0 -c /tmp/.wpa_supplicant
 
 SAE testing
 
+tl;dr
+hostapd implied per passphrase vlan in config file no radius,
+only sae not wpa ?
+
 hostapd.conf
+dynamic_vlan=1 (optional) 2 (required)
 sae_password=passphrase|mac=ff:ff:ff:ff:ff:ff|vlanid=01|id=identifier
 sae_password=passphrase|mac=ff:ff:ff:ff:ff:ff|vlanid=02|id=identifier
+wpa_psk_file=/etc/users (claims ff: wildcard blog claimed 00:)
+00:00:00:00:00:00 passphrase vlan.100
+00:00:00:00:00:00 passphrase
 
 wpa_supplicant.conf
-psk=
 sae_password=
+psk=
 
-^ couldnt find psk equivilent without forcing radius
-
-* further more
-wpa_psk_file=/etc/users (mac psk < - space delimeted sae claims ff: wildcard blog claimed 00:)
-00:00:00:00:00:00 passphrase
-00:00:00:00:00:00 passphrase vlan.100
-
-* implied wpa2 would allow per passphrase vlan but couldnt find any reference to an example ?
-
-dynamic_vlan=1 (optional) 2 (required)
+^ next router build - passphrase isolated vlans
 
 #############
 
@@ -89,12 +153,6 @@ couldnt get wpa_supplicant priv_seperation to work !bail
 wpa_priv -Bc/tmp/wpa_supplicant nl80211:wlan0
 
 wpa_supplicant -Bi wlan0 -c /tmp/wpa_supplicant.conf -C /tmp/wpa_supplicant/wlan0 -G wheel -Dprivsep
-
-#############
-
-wpa_supplicant can operate in hotspot mode making it a weaker version of hostapd...
-
-^ that with multiplexed interface would be good for red teaming
 
 #############
 

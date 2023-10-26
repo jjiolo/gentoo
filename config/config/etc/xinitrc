@@ -1,9 +1,11 @@
 
 #############
 
- setxkbmap gb &
+ setxkbmap gb
 
- exec monitor -x </dev/null &>/dev/null # exec sleep infinity
+ xsetroot -name "[${USER}][$(date +%Y:%m:%d:%H:%M:%S)] "
+
+ exec sleep infinity
 
 #############
 
