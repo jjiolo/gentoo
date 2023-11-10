@@ -7,6 +7,12 @@
 
   orphan_file - tune2fs -O orphan_file /dev/block (speed up parallel file deletion?)
 
+  ^ both on by default now...
+
+* tune2fs -O quota /dev/block # enable filesystem quota 
+
+  ^ can turn on to use with setquota and repquota
+
 #############
 
 * tune2fs -m 0 /dev/block # 5% of 2.7tb equates to an extra 135gb of space
@@ -51,6 +57,18 @@
 * old information implied aligning filesystems at block boundries was relevent...
    prevent reading two blocks instead of one
    aligns itself at block boundries < - raid , partition and filesystem levels ?
+
+-------------
+
+ ^ integritysetup - now works
+   mdadm would ???
+   raid1 metadata across all disk
+   raid6 dual parity
+   integritysetup /dev/md/storage /dev/mapper/storage
+   mkfs.ext4 /dev/mapper/storage
+   fsck.ext4 /dev/mapper/storage
+
+-------------
 
 #############
 

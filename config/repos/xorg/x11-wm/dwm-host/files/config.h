@@ -38,16 +38,18 @@ static const Layout layouts[] = {
 #define TAGKEYS(KEY,TAG) { MODKEY, KEY, view, {.ui = 1 << TAG} }, { MODKEY|ShiftMask, KEY, tag, {.ui = 1 << TAG} },
 /*************/
 static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *termcmd[]  = { "st", NULL };
-static const char *nobody[]   = { "links", "-g", "-no-connect", NULL };
-static const char *proxy[]    = { "links", "-g", "-no-connect", "-socks-proxy", "127.0.0.1:9050", "-only-proxies", "1", NULL };
-static const char *browser[]  = { "browser", NULL };
+static const char *termcmd[] = { "st", NULL };
+static const char *links_public[] = { "links", "-g", "-no-connect", NULL };
+static const char *links_private[] = { "links", "-g", "-no-connect", "-socks-proxy", "127.0.0.1:9050", "-only-proxies", "1", NULL };
+static const char *browser_private[] = { "browser.private", NULL };
+static const char *browser_public[] = { "browser.public", NULL };
 /*************/
 static const Key keys[] = {
  { MODKEY|ShiftMask, XK_Return,    spawn,          {.v = termcmd } },
- { MODKEY|ShiftMask, XK_BackSpace, spawn,          {.v = nobody } },
- { MODKEY|ShiftMask, XK_equal,     spawn,          {.v = proxy } },
- { MODKEY|ShiftMask, XK_minus,     spawn,          {.v = browser } },
+ { MODKEY|ShiftMask, XK_BackSpace, spawn,          {.v = browser_private } },
+ { MODKEY|ShiftMask, XK_equal,     spawn,          {.v = browser_public } },
+ { MODKEY|ShiftMask, XK_minus,     spawn,          {.v = links_public } },
+ { MODKEY|ShiftMask, XK_0,         spawn,          {.v = links_private } },
  { MODKEY,           XK_b,         togglebar,      {0} },
  { MODKEY,           XK_j,         focusstack,     {.i = +1 } },
  { MODKEY,           XK_k,         focusstack,     {.i = -1 } },

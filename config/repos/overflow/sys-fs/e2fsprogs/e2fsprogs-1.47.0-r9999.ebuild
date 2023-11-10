@@ -58,19 +58,19 @@ src_configure(){
 --disable-fuzzing \
 --enable-largefile
 
-#--with-diet-libc \
-#--with-cc \
-#--with-ccopts \
-#--with-ldopts \
+#--without-diet-libc \
+#--without-cc \
+#--without-ccopts \
+#--without-ldopts \
 #--with-root-prefix \
 #--without-pthread \
 #--with-gnu-ld \
 #--without-libiconv-prefix \
 #--without-libintl-prefix \
-#--with-multiarch \
-#--with-udev-rules-dir \
-#--with-crond-dir \
-#--with-systemd-unit-dir
+#--without-multiarch \
+#--without-udev-rules-dir \
+#--without-crond-dir \
+#--without-systemd-unit-dir
 
 }
 #############

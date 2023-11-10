@@ -142,6 +142,7 @@ renice +20 -u xmr     2>/dev/null
 
  alias t='transmission-remote --unix-socket ${services}/p2pd/.config/socket'
  alias tt='watch -tn3 transmission-remote --unix-socket ${services}/p2pd/.config/socket -l'
+ alias ttt='for i in ${HOME}/downloads/*.torrent ; do transmission-remote --unix-socket ${services}/p2pd/.config/socket -a ${i} ; done'
 
  alias torsocks="export LD_PRELOAD='/usr/lib64/libtorsocks.so'"
 

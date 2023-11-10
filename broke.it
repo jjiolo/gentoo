@@ -1,7 +1,0 @@
-
-#############
-find /sys -type d -mindepth 1 -maxdepth 1 -exec chmod 0755 {} \;
-find /proc -type d -mindepth 1 -maxdepth 1 -exec chmod 0755 {} \;
-find /proc -type f -mindepth 1 -maxdepth 1 -exec chmod 0644 {} \;
-#############
-

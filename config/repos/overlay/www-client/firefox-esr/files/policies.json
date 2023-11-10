@@ -9,7 +9,7 @@
   "BlockAboutProfiles": true,
   "BlockAboutSupport": true,
   "CaptivePortal": false,
-  "Cookies": { "Behavior": "reject", "BehaviorPrivateBrowsing": "reject-foreign", "Locked": true },
+  "Cookies": { "Behavior": "reject-foreign", "BehaviorPrivateBrowsing": "reject", "Locked": true },
   "DefaultDownloadDirectory": "${home}/downloads",
   "DisableAppUpdate": false,
   "DisableBuiltinPDFViewer": true,

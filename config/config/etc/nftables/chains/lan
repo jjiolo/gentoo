@@ -34,6 +34,8 @@ table inet filter {
 
   # client
 
+  tcp dport {443} skuid {root,250} ct state new log flags skuid prefix "output.lan.new " accept # stage3
+
   udp dport {51820} udp sport {51820} ct state new log flags skuid prefix "output.lan.new " accept
 
   udp dport {53}  skuid {ntpd} ct state new log flags skuid prefix "output.lan.new " accept

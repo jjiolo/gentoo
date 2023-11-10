@@ -3,7 +3,7 @@
 
  setxkbmap gb
 
- xsetroot -name "[${USER}][$(date +%Y:%m:%d:%H:%M:%S)] "
+ xsetroot -name " [$(date +%Y:%m:%d:%H:%M:%S)] "
 
  exec sleep infinity
 

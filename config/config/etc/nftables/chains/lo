@@ -37,6 +37,8 @@ table inet filter {
 
   # client
 
+  udp dport {53}  skuid {root,250} ct state new log flags skuid prefix "output.lo.new " accept # stage3
+
   udp dport {53}  skuid {ntpd} ct state new log flags skuid prefix "output.lo.new " accept
   udp dport {123} skuid {ntpd} ct state new log flags skuid prefix "output.lo.new " accept
 

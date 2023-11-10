@@ -1,4 +1,6 @@
 
+sys-fs/quota
+
 app-crypt/argon2
 app-crypt/cryptsetup
 app-crypt/gnupg

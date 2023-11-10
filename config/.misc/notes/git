@@ -19,14 +19,13 @@
  /cgi-bin:root:password
  ^ does work
 
- /cgi-bin:root:password # applies to all new files
  /cgi-bin/new.cgi:root:password # restart to secure individual files
+ /cgi-bin:root:password # applies to all new files
 
- ! dont have a git repository path ?
-   $HOME/<user>/git - no httpd:git(d) access ?
-   $HOME/git(d) - needs optional httpd write ?
-   $services/git(d) - needs optional httpd write ?
-
+ /tmp/storage/services/gitd/webroot
+ /tmp/storage/services/gitd/repo
+ /tmp/storage/services/gitd/config
+ /tmp/storage/services/gitd/error
 
 #############
 

@@ -41,7 +41,8 @@ for i in /root/kernels/* ; do
  cd "/var/empty/${kernel}/${config}"
 
  make oldconfig
- make -j$(grep -c MHz /proc/cpuinfo) -l$(grep -c MHz /proc/cpuinfo)
+ make -j16 -l16
+#make -j$(grep -c MHz /proc/cpuinfo) -l$(grep -c MHz /proc/cpuinfo)
 
  cd -
 

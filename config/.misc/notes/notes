@@ -4,6 +4,8 @@ fc00::feed:beef/64
 #############
 [0|129|153|165|189|195|219|231|255]
 #############
+[5|7|11|13|17|19|23|29|31|37|41|43|47]
+#############
 no idea what stupid has gathered itself in here
 stuff at the bottom tends to get rewritten and kept
 stuff at the top is unordered raw sewage
@@ -28,15 +30,14 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:10:23 06:47:00
+ lastest - 2023:11:10 12:00:00
 -------------
+ build notes -
+-------------
+ broken -
  * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
  ^ X0-log - ShadowFB: preferred NO, enabled NO (something about no/modesetting)
  * app-alternatives - FEATURES='-collision-protect' (remove after its in stage3)
--------------
- * trim binhost/distfiles - (binhost upto 6GB) (vfat 4GB limit)
-    mv binhost/distfiles ../shared/distfiles
-    config/portage/make.conf - GENTOO_MIRRORS=http://127.0.0.1/shared"
 -------------
 #############
 
@@ -124,6 +125,15 @@ stuff at the top is unordered raw sewage
 
  -------------
 
+ [distfiles]
+
+ trim binhost/distfiles
+ binhost.tar.gz upto 6GB
+ vfat 4GB limit
+
+ * mv binhost/distfiles ../shared/distfiles
+ * config/portage/make.conf - GENTOO_MIRRORS=http://127.0.0.1/shared"
+
 #############
 
 ^ attempt to record a list of things actually done
@@ -132,74 +142,117 @@ v attempt to create lists of things to actually do
 #############
 setpriv_udhcpd < - ignores first sleep ?
 #############
+xrandr --output VGA-1 --mode 1440x900
+xrandr --output DP-1 HDMI-1 HDMI-2 --mode 1920x1080
+#############
 
- openssl and xorg-server security bumps
+ apparently decided to change
+ every chmod chown refernce to...
+  chmod first (fixed layout length)
+  chown second (spew out random length)
+ chmod 0660 /file ; chown user:user /file
 
- etc/profile
- ^ doesnt kill ~/.xinitrc ~/.xserverrc ?
-   but nothing i run uses it anyway ?
+ /dev/null 0666 - wpa_supplicant breaks with 0664 ?
 
- xinit [client] -- [server]
- xinit ssh -X user@hostname <command> -- :0
- ^ apparently starts local xserver ?
-   uses ssh as the client and forwards that remote command...
+#############
+* e2fsprogs notes clean up ?
+#############
+etc/profile
+-------------
+build=16
+kernels='laptop desktop server virtual'
+CFLAGS=
+CXXFLAGS=
+-------------
+getting sick of repeating things that change ?
+#############
+! find /binhost/logs/portage -type f -exec grep -H ' QA ' {} \;
+#############
 
- startx and xinitrc are dumb ?
+ system.dev - work arounds for desktop:desktop
+ startx - work arounds for desktop:desktop
+ ^ get rid of temporary /proc /sys access
+   so its always hardened after startx (mimics system.lock)
+ ? and any system.unlock or startx exposes a race condition...
 
- su -l -s /bin/ash
- ^ fluked it starting a shell
-    then xinit /etc/xinitrc passed that raw file to current running shell
-    then -- executes the server...
- ??? hopefully
-     or its randomly reading a file with no shebang?!!?!?
-     #!/bin/derp
+#############
+wpa_supplicant - CONFIG_AP
+^ wifi disconnects now remove default route ?
+  should probably test it, really fucking annoying
+#############
+-------------
+default=rw,nodev,nosuid,noexec,noatime
+tmpfs=size=50%,mode=1777
+quota=quota,usrquota,grpquota
+quota=usrquota_block_hardlimit=1G
+quota=usrquota_inode_hardlimit=1000
+quota=grpquota_block_hardlimit=1G
+quota=grpquota_inode_hardlimit=1000
+mount -t tmpfs -o ${default},${tmpfs},${quota} tmpfs /tmp
+-------------
+quotaon - on/off
+setquota - set limits
+repquot - view limits
+^ tl;dr short and sweer version
+-------------
+#############
+
+ KVM_PROVE_MMU=y
+ X86_USER_SHADOW_STACK=y
+ RANDOM_KMALLOC_CACHES=y
+ LIST_HARDENED=y
+ TMPFS_QUOTA=y
+
+ ^ extra kernel hardening
+   +tmpfs quota (not implemented yet)
+
+ [gcc hardening]
+
+ -ftrapv -fwrapv - trap/wrap signed overflow
+ -fvtable-verify - validate vtable pointers before using them (CXXFLAGS?)
+
+ -fcf-protection=full - control flow protection
+ -mfunction-return and -fcf-protection are not compatible
+
+ tl;dr cant enable cf-protection because retpoline ?
 
 #############
 
-  /dev
-  /dev/pts
-  /dev/shm
-  /proc
-  /sys
-  /tmp
+ [system.dev]
 
- ^ group access to chroot mount paths ?
+ moar harder psuedo filesystem access
 
-   busybox_init
+ /dev 0775 + chmod o-rwx + exceptions list
 
-#############
+ turns out 666 on random/urandom was really dump
+ ^ write initial seed to requests from other pids
 
- commiting to /proc /sys hardening ?
+ /proc /sys 0770 - full remove top level access ?
 
- etc/auditd/
+ startx - temporary 0775 /proc /sys ?
 
+ then remove after file descriptors are opened ?
 
-t.put
-t.get
+ -------------
 
-^ put defaults to 172.16.0.1
+ currently just 0555 mounts itself
+ controls mindepth 1 maxdepth 1
 
- only works from host to nat
- nat cant execute it without pointing to hosts http server ?
-
- ./t.put <file>
- ./t.get <ip> <file>
+ ^ makes to many annoying cant change proc directory errors
 
 #############
-* ddns public/private addresses public in $shared/$contacts
-#############
-* remove mount directory...
+t.{put,get} - defaults to 172.16.0.1
+./t.put <ip> <file> # set webseed ?
+./t.get <ip> <file>
 #############
 * ddns/dnsd - hangs on boot, pkill no longer works ?
-#############
-* harder /sys /proc && brokeit script
-^ breaks kernel.build
-  breaks monitor script
-  breaks ps pmem + etime...
-??? add /sys /proc updates to busybox_init ???
-commiting to 0750 /proc /sys /dev ?
-psuedo file system access from a group ?
-/dev/shm /tmp tmpfs still both 1777...
+* ddns public/private addresses in $shared/$contacts
+^ remove public/private leave a single hidden_service
+! forward to 172.16.0.1 ssh/smtp/http/irc
+  ssh remote access for wireguard
+  http download torrents
+  smtp slow comms
+  irc real time comms
 #############
 -------------
  wpa_supplicant ap...
@@ -230,20 +283,15 @@ psuedo file system access from a group ?
 -------------
  only the weakest form of authentication works ?
 -------------
+end game - public or private local area network
+           only allow routing through a vpn interface
+-------------
 #############
-* config/.misc/configs.old/c.services/gitd
-^ self hosted password protected git repository
-* massive network hang on qemu dhcpd ?
+* ability to update usr/share/tor/geoip...
 * busybox install - chown no longer resets suid/guid - should remove suid/guid on owner change
-* every script refers to kernels by name ?
 * sysctl.conf is horrible to maintain / verify
 #############
-gcc hardening
- -mcet -fcf-protection - control flow protection
- -ftrapv - trap signed overflow
- -fvtable-verify -
- -fexceptions - harden multi threaded c/c++ code thread cancellation handlers use unprotected function pointer on the stack
- -Wl,-z,defs - detect and reject underlinking
+
 #############
 [gnupg]
  removed encryption uid
@@ -265,6 +313,7 @@ storage.fde ?
   [user][host][path][depth][-] host
   [user][host][path][depth][c] chroot
   [user][host][path][depth][r] remote
+  [user][host][path][depth][rc] remote chroot
 
 #############
 
@@ -282,9 +331,6 @@ storage.fde ?
 
  aes-gcm-siv - gcm with nonce reuse protection
 
-#############
-nftables - lo lan/nat/tun log
-^ nat and tun dont really make sense ?
 #############
 
  grub hardcodes 172.16.0.1 (siaddr)
@@ -304,7 +350,7 @@ nftables - lo lan/nat/tun log
    testing
   ^ makes it feel less horrific when proof reading
 
- * ability to update usr/share/tor/geoip...
+ & still want to but, nothing splits evenly ?
 
 #############
  firefox-esr < - libstdc++ libgcc_s + glibc:libmount
@@ -336,8 +382,6 @@ dropbear cheat sheet
   ^ forward or reverse connections...
   * dbclient nc might stop closing listening socket ?
 
-#############
-mpv/ffmpeg updated (slow now :'()
 #############
 
  * 0.binhost - uses stage3 variables ?
@@ -452,6 +496,8 @@ mpv/ffmpeg updated (slow now :'()
 
 ! basically -virtual/man should depclean everything...
   couldnt figure out why ?
+
+#############
 
 #############
 
@@ -2184,6 +2230,10 @@ xz -T0 --check=crc32 > <image>
 #############
 grub-standalone: --modules "part_msdos part_gpt" # gpt partitioned storage requires early loading of modules
 #############
+cat file | ssh 172.16.0.1 'cat > file'
+-------------
+tar c path/ | dbclient 172.16.0.1 tar x
+-------------
 dbclient 172.16.0.1 tar cC /path .|tar xC /path
 tar cC /path .|dbclient 172.16.0.1 tar xC /path
 #############

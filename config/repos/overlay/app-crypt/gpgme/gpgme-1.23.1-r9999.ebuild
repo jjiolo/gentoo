@@ -32,6 +32,7 @@ src_configure() {
 --disable-glibtest \
 --disable-w32-glib \
 --enable-fixed-path=/bin \
+--disable-no-direct-extern-access \
 --disable-languages \
 --disable-build-timestamp \
 --disable-gpgconf-test \
@@ -45,7 +46,7 @@ src_configure() {
 --with-pic \
 --with-gnu-ld \
 --with-sysroot \
---without-libtool-modifiction \
+--without-libtool-modification \
 --without-python-sys-prefix \
 --without-python_prefix \
 --without-python_exec_prefix \

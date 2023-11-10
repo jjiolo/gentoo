@@ -1,5 +1,5 @@
 #############
-EAPI=7
+EAPI=8
 #############
 DESCRIPTION="Linux quota tools"
 HOMEPAGE="https://sourceforge.net/projects/linuxquota/"
@@ -9,7 +9,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
-RDEPEND=""
+RDEPEND="sys-libs/glibc"
 DEPEND="${RDEPEND}"
 #############
 src_configure(){
