@@ -14,6 +14,8 @@ table inet filter {
 
   udp dport {53}   ct state new log flags skuid prefix "input.lo.new " accept
   tcp dport {9050} ct state new log flags skuid prefix "input.lo.new " accept
+  tcp dport {6667} ct state new log flags skuid prefix "input.lo.new " accept # testing
+  tcp dport {25}   ct state new log flags skuid prefix "input.lo.new " accept # testing
   tcp dport {22}   ct state new log flags skuid prefix "input.lo.new " accept
   tcp dport {80}   ct state new log flags skuid prefix "input.lo.new " accept
 
@@ -42,15 +44,19 @@ table inet filter {
   udp dport {53}  skuid {ntpd} ct state new log flags skuid prefix "output.lo.new " accept
   udp dport {123} skuid {ntpd} ct state new log flags skuid prefix "output.lo.new " accept
 
-  udp dport {53} skuid {nobody}                ct state new log flags skuid prefix "output.lo.new " accept
-  udp dport {53} skuid {ssh,smtp,http,irc,xmr} ct state new log flags skuid prefix "output.lo.new " accept
-  udp dport {53} skuid {p2pd}                  ct state new log flags skuid prefix "output.lo.new " accept
+  udp dport {53} skuid {nobody}            ct state new log flags skuid prefix "output.lo.new " accept
+  udp dport {53} skuid {ssh,smtp,http,irc} ct state new log flags skuid prefix "output.lo.new " accept
+  udp dport {53} skuid {ddns,dnsd,p2pd}    ct state new log flags skuid prefix "output.lo.new " accept
 
   tcp dport {22}   skuid {user}              ct state new log flags skuid prefix "output.lo.new " accept
   tcp dport {80}   skuid {root,user,nobody}  ct state new log flags skuid prefix "output.lo.new " accept
   tcp dport {9050} skuid {user,nobody,proxy} ct state new log flags skuid prefix "output.lo.new " accept
  
-  tcp dport {22,80} skuid {ddns} ct state new log flags skuid prefix "output.lo.new " accept # hidden service
+  tcp dport {22,80}   skuid {ddns} ct state new log flags skuid prefix "output.lo.new " accept # hidden service
+  tcp dport {25,6667} skuid {ddns} ct state new log flags skuid prefix "output.lo.new " accept # hidden service
+
+  tcp dport {25} skuid {smtp} ct state new log flags skuid prefix "output.lo.new " accept # testing
+  tcp dport {6667} skuid {irc} ct state new log flags skuid prefix "output.lo.new " accept # testing
 
   # icmp
 

@@ -51,13 +51,11 @@ table inet filter {
   tcp dport {465,995}     skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {443}         skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {6697}        skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {18081,18089} skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
 
   tcp dport {22}          skuid {ssh}  ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {465,995}     skuid {smtp} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {443}         skuid {http} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {6697}        skuid {irc}  ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {18081,18089} skuid {xmr}  ct state new log flags skuid prefix "output.lan.new " accept
 
   # icmp
 

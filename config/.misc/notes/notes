@@ -43,10 +43,10 @@ stuff at the top is unordered raw sewage
 
 [INFORMATIONAL]:
 #############
+* pkg_postinst isnt recorded in CONTENTS
 * gcc - removed /etc/portage symlink ?
 * qemu reboot - corrects vnc output size
 * mandoc: sys-boot/efibootmgr - > sys-libs/efi-var - > mandoc ./file.1 | less -S
-* pkg_postinst isnt recorded in CONTENTS
 * busybox/ip - no nexthop, no multicast, no netns
 * /bin/login sets USER HOME ; /bin/ash /init /sbin/init have no USER HOME
 * dropbear socks || wg/microsocks nc -lks local:/path -e dbclient user@host nc local:/path
@@ -101,10 +101,10 @@ stuff at the top is unordered raw sewage
 
  full scope it once,
  diff last known against newest
- ./sysctl -a > sysctl.sh
  ./configure --help > configure.sh
  ./binary --help > binary.sh
  ./{man,doc}
+ ./sysctl -a > sysctl.sh
  1 hour upfront , 5 minutes each bump
 
  -------------
@@ -142,18 +142,70 @@ v attempt to create lists of things to actually do
 #############
 setpriv_udhcpd < - ignores first sleep ?
 #############
+
+ [updates]
+
+  qemu-8.1.2 - > qemu-8.1.3 # no changes ?
+  mpv-0.37 -> mpv-0.38 # libplacebo ?
+  firefox-esr-115.4.0 -> firefox-esr-115.5.0 # disable printing in policies.json
+  git-2.42.1 - > git-2.43 # no changes ?
+  tor-0.4.8.7 -> tor-0.4.8.9 # no changes ?
+  vim-9.0.1777 -> vim-9.0.2092 # no changes ?
+
+ ^ do updates then make release for friday ?
+   play with tor + smtp/irc
+
+ busybox needs to be dynamic ?
+ LD_PRELOAD=/usr/lib64/libtorsocks.so
+ cant test irc...
+
+ readme.md - ...
+
+#############
 xrandr --output VGA-1 --mode 1440x900
 xrandr --output DP-1 HDMI-1 HDMI-2 --mode 1920x1080
 #############
-
- apparently decided to change
- every chmod chown refernce to...
-  chmod first (fixed layout length)
-  chown second (spew out random length)
- chmod 0660 /file ; chown user:user /file
-
- /dev/null 0666 - wpa_supplicant breaks with 0664 ?
-
+* added ngircd
+* added opensmtpd
+? remove ddns # comment v3 in dnsd ?
+? add .misc/configs.old/c.services/avahi.conf
+? add dnscrypt-proxy (move tor to ddns)
+* tor ebuild - accept_keywords (doesnt support alpha and rc)
+#############
+su -l -s /bin/sh nobody
+^ leaves /dev/pts with caller uid:gid
+  leaves /proc/self/fd as shell uid:gid
+  TIOCSTI esk remote code execution
+user - > root worked
+user - > pivot allows user execution
+-------------
+pivot(){
+[ -z ${1} ] && printf "%s\n" "words"
+[ -z ${1} ] || sudo -l -s /bin/sh -c "dtach -A $HOME/socket /bin/sh" "${1}"
+}
+#############
+-------------
+ [service updates]
+-------------
+ tmpfs quota - quotaon/setquota/repquota
+-------------
+ [smtp client]
+  curl ddns provider
+  set mx record
+  set txt record with spf
+  set txt record with dkim
+  set txt record with dmarc
+  sign headers with dkim private key
+-------------
+ [smtpd]
+  
+-------------
+ [ircd]
+  
+-------------
+#############
+* chmod 1777 /path ; chown user:group /path
+^ update all old references to uniform style ?
 #############
 * e2fsprogs notes clean up ?
 #############
@@ -167,14 +219,6 @@ CXXFLAGS=
 getting sick of repeating things that change ?
 #############
 ! find /binhost/logs/portage -type f -exec grep -H ' QA ' {} \;
-#############
-
- system.dev - work arounds for desktop:desktop
- startx - work arounds for desktop:desktop
- ^ get rid of temporary /proc /sys access
-   so its always hardened after startx (mimics system.lock)
- ? and any system.unlock or startx exposes a race condition...
-
 #############
 wpa_supplicant - CONFIG_AP
 ^ wifi disconnects now remove default route ?
@@ -215,30 +259,6 @@ repquot - view limits
  -mfunction-return and -fcf-protection are not compatible
 
  tl;dr cant enable cf-protection because retpoline ?
-
-#############
-
- [system.dev]
-
- moar harder psuedo filesystem access
-
- /dev 0775 + chmod o-rwx + exceptions list
-
- turns out 666 on random/urandom was really dump
- ^ write initial seed to requests from other pids
-
- /proc /sys 0770 - full remove top level access ?
-
- startx - temporary 0775 /proc /sys ?
-
- then remove after file descriptors are opened ?
-
- -------------
-
- currently just 0555 mounts itself
- controls mindepth 1 maxdepth 1
-
- ^ makes to many annoying cant change proc directory errors
 
 #############
 t.{put,get} - defaults to 172.16.0.1
@@ -422,8 +442,6 @@ dropbear cheat sheet
 
 #############
 
-* tor - 0.4.8.1 alpha
-
 * read -r --raw < - interpret backslashes literally, rather than as escape characters
 ^ need a test script to demonstrate the difference
 
@@ -439,25 +457,14 @@ dropbear cheat sheet
   dumpkmap - get keyboard map
   loadkmap - set keyboard map
 
-* gnupg - scdaemon tpm2daemon config files ?
-
-* mpv.{downloads,films,music,series}
- ^ dtach -A socket mpv.music 127.0.0.1
-   dtach -A socket mpv.music /tmp/storage/shared/archive/music
-   empty input default to local ?
-
 * busybox - gzip content encoding, if file / file.gz exists
             gzip -c -9 index > index.gz ; curl -I --compressed 127.0.0.1
-
-* firefox - still network activity on browser open...
 
  * /init /etc/inittab /etc/init /etc/profile - debug output ?
  
  * tftpd -l cant write log files ?
  
  * qemu usb pass through no longer works ?
-
- * v.client v.server - save .vpn/config nothing to actually use it ? v.{server,client,flush,restore?}
 
  * dtach cant recreate socket ? SIGHUP ignored SIGUSR1 terminates running process
  * identify dtach from PS1 - shlvl ?
@@ -469,23 +476,9 @@ dropbear cheat sheet
 
  * grub ebuild ? finishes off udhcpd/tftpd/grub kernel/initramfs/nfsd
 
- * herbe needs /dev/shm/$USER splitting (doesnt support multiplayer) (logread|grep -f file|while read ; do herbe "notifcation" ; done
+ * herbe needs /dev/shm/$USER splitting (doesnt support multiplayer)
+ * (logread|grep -f file|while read ; do herbe "notifcation" ; done
  ^ desktop:desktop /dev/shm/desktop.tmp < - herbe as a single user
-
-* denial of service / stability
-
-   tmp space/inode exhaustion bricks running system ?
-   top level directory root write only
-   dhcpd:dhcpd - overwrite /run/leases till full
-   dhcpc:dhcpc - overwrite /run/udhcpc till full
-   desktop:desktop - overwrite /tmp/.X0-{auth,lock,log,log.old} till full
-   /run/services - ddns dnsd p2pd full directory write inode+space exhaustion
-                     
-   z.ephemeral ? user,nobody,proxy,desktop,ddns,dnsd,p2pd
-   full denial of service from every possible rce point
-
-* tmpfs doesnt support diskquota
-  ramfs+ext4 ?
 
 * config/portage/profile/packages
  virtual/man doesnt depclean anything ?
@@ -498,128 +491,6 @@ dropbear cheat sheet
   couldnt figure out why ?
 
 #############
-
-#############
-
-[services]
--------------
-
-   root - console only
-   user - stage3 + dbclient/dnsd/ddns
- nobody - single user mode no proxy + audio/video
-  proxy - single user mode proxy only
-   jail - no internet + persistent sandbox + audio/video
-
- nobody - 22,465,995,443,6697,18081,18089
-    ssh - 22
-   smtp - 465,995
-   http - 443
-    irc - 6697
-    xmr - 18081,18089
-
--------------
-* self contained virtual machine usb mic/webcam passthrough
--------------
-
- xinit
-  X
-  monitor
-
- dwm-host
-  st
-
- Xephyr
-  dwm-guest
-
--------------
-/etc/services/
- crond
- ddns
- dnsd
- httpd
- p2pd
- sets
--------------
- ssh   - user,nobody,ssh
- smtp  - nobody,smtp
- http  - root,user,nobody,http
- p2p   - root,user,nobody
- irc   - nobody,irc
- xmr   - nobody,xmr
- qemu  - user,nobody,qemu
- media - nobody,jail
--------------
- a.chroot b.init (c.keys)
- c.server d.client
- e.setpriv
- f.sets
- z.testing
--------------
-/etc/self/c.server
- gnupg g.{setup,conf,agent}
- dropbear s.{flush,client,server}
- wireguard v.{flush,client,server}
- wifi w.{scan,public,private,connect,auth}
- xephyr {x.nobody,x.proxy,x.jail}
- xephyr {p.ssh,p.smtp,p.http,p.irc,p.xmr}
--------------
-per application file access
-per application firewall access
-all system binaries vs chroot ?
--------------
-while sleep 3 ; do DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth xrandr --auto ; done
--------------
-lsw && xev -
- id="$(lsw|awk '/Xephyr.*:13/{print$1}')" ;
- xev -display :0 -id "${id}" -1 -event structure | 
- while read ; do DISPLAY=:13 XAUTHORITY=/tmp/.X13-auth xrandr ; done
--------------
-^ polling Xephyr auto resize vs Xephyr triggering resize on events ?
--------------
-#############
-
-storage.bootfs -
-$storage/{.gnupg,.ssh,.vpn,.wifi}
-$services/ddns/{public,private}
-$home/{user,nobody,proxy,jail,ssh,smtp,http,irc,xmr}/.ssh
-$home/ssh/.ssh
-$home/smtp/mail
-$home/http/.browser
-$home/irc/irc
-$home/xmr/monero
-
- usb.persistence -
-  storage.shared < - takes gnupg/public/private/sshd/user/nobody/proxy/vpn
-  usb.get - get values saved in bootfs
-  usb.put - put values into bootfs
-
- efi.persistence -
-  storage.shared < - code duplication
-  efi.get - get values saved in efi
-  efi.put - put values into efi
-
-^ would need encrypted usb...
-
--------------
-
- init: mount bootfs
-
-  # install bootfs to host
-
-  install -d $shared/downloads/bootfs
-  cp bootx64.efi/client/{laptop,desktop,server,virtual}
-
-  # install bootfs keys to host
-
-  install -d $shared/contacts/$hostname
-  cp gnupg/ssh/vpn/wifi ddns irc/mail/monero
-
-  # install host keys to bootfs
-
-  install -d $bootfs/contacts/$hostname
-  cp gnupg/ssh/vpn/wifi ddns irc/mail/monero
-
--------------
 
 #############
 

@@ -5,7 +5,7 @@ rm -r "${storage}/.ssh"
 rm -r "${storage}/.vpn"
 rm -r "${storage}/.wifi"
 ############# home
-for i in user nobody proxy jail ssh smtp http irc xmr
+for i in user nobody proxy jail ssh smtp http irc
 do
  rm -r "${home}/${i}/.gnupg" "${home}/${i}/.ssh"
 done

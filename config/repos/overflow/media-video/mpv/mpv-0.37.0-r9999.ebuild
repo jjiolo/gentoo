@@ -19,6 +19,7 @@ media-libs/fontconfig
 media-libs/freetype
 media-libs/harfbuzz
 media-libs/libass
+media-libs/libplacebo
 media-libs/libpng
 media-video/ffmpeg
 sys-libs/glibc
@@ -29,7 +30,6 @@ x11-libs/libXau
 x11-libs/libXdmcp
 x11-libs/libXext
 x11-libs/libXfixes
-x11-libs/libXinerama
 x11-libs/libXpresent
 x11-libs/libXrandr
 x11-libs/libXrender
@@ -100,12 +100,7 @@ meson build \
 -Dlibavdevice=disabled \
 -Dlibbluray=disabled \
 -Dlibmpv=false \
--Dlibplacebo=disabled \
--Dlibplacebo-next=disabled \
 -Dlua=disabled \
--Dmacos-10-11-features=disabled \
--Dmacos-10-12-2-features=disabled \
--Dmacos-10-14-features=disabled \
 -Dmacos-cocoa-cb=disabled \
 -Dmacos-media-player=disabled \
 -Dmacos-touchbar=disabled \
@@ -129,7 +124,6 @@ meson build \
 -Dsixel=disabled \
 -Dsndio=disabled \
 -Dspirv-cross=disabled \
--Dstdatomic=disabled \
 -Dswift-build=disabled \
 -Dswift-flags=disabled \
 -Dta-leak-report=false \
@@ -139,18 +133,18 @@ meson build \
 -Dvaapi=disabled \
 -Dvaapi-drm=disabled \
 -Dvaapi-wayland=disabled \
--Dvaapi-x-egl=disabled \
 -Dvaapi-x11=disabled \
 -Dvapoursynth=disabled \
 -Dvdpau=disabled \
 -Dvdpau-gl-x11=disabled \
 -Dvector=disabled \
 -Dvideotoolbox-gl=disabled \
+-Dvideotoolbox-pl=disabled \
 -Dvulkan=disabled \
 -Dvulkan-interop=disabled \
 -Dwasapi=disabled \
 -Dwayland=disabled \
--Dwin32-internal-pthreads=disabled \
+-Dwin32-threads=disabled \
 -Dx11=enabled \
 -Dxv=disabled \
 -Dzimg=disabled \

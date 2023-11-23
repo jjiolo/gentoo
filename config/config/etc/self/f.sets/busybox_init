@@ -15,7 +15,7 @@ install -d -o 0 -g 0 -m 0755 "dev"
 install -d -o 0 -g 0 -m 0755 "dev/pts"
 install -d -o 0 -g 0 -m 1777 "dev/shm"
 mknod -m 0600 "dev/console" c 5 1
-mknod -m 0662 "dev/null" c 1 3
+mknod -m 0666 "dev/null" c 1 3
 mknod -m 0666 "dev/ptmx" c 5 2
 mknod -m 0664 "dev/random" c 1 8
 mknod -m 0600 "dev/tty" c 5 0
@@ -35,9 +35,9 @@ ln -s /proc/self/fd/0 "dev/stdin"
 ln -s /proc/self/fd/1 "dev/stdout"
 ln -s /proc/self/fd/2 "dev/stderr"
 install -d -o 0 -g 0 -m 0755 "etc"
-install -d -o 0 -g 0 -m 0755 "proc"
+install -d -o 0 -g 0 -m 0555 "proc"
 install -d -o 0 -g 0 -m 0755 "sbin"
-install -d -o 0 -g 0 -m 0755 "sys"
+install -d -o 0 -g 0 -m 0555 "sys"
 install -d -o 0 -g 0 -m 1777 "tmp"
 #############
 
@@ -85,18 +85,15 @@ cat > "etc/init" << EOF
 
 # dev
 
+ find /dev -mindepth 1 -exec chmod o-rwx {} \;
+
  for i in \$(seq 10 63) ; do [ -c "/dev/tty\${i}" ] && rm "/dev/tty\${i}" ; done
-
- rm /dev/vcs*
-
- chown desktop:desktop /dev/tty7
 
  chown -R root:toor /dev/snd
  find /dev/snd -type d -exec chmod 0750 {} \;
  find /dev/snd -type c -exec chmod 0660 {} \;
 
- chown -R root:toor /dev/video*
- chmod -R 0660 /dev/video*
+ chmod -R 0660 /dev/video* ; chown -R root:toor /dev/video*
 
  chown -R root:desktop /dev/input
  find /dev/input -type d -exec chmod 0750 {} \;
@@ -106,10 +103,37 @@ cat > "etc/init" << EOF
  find /dev/dri -type d -exec chmod 0750 {} \;
  find /dev/dri -type c -exec chmod 0660 {} \;
 
+ chmod 0660 /dev/tty7 ; chown desktop:desktop /dev/tty7
+
+ chmod 0662 /dev/log
+ chmod 0666 /dev/null
+ chmod 0666 /dev/ptmx
+ chmod 0664 /dev/random
+ chmod 0664 /dev/urandom
+ chmod 0664 /dev/zero
+ chmod 1777 /dev/shm
+
  ln -s /proc/self/fd   "/dev/fd"
  ln -s /proc/self/fd/0 "/dev/stdin"
  ln -s /proc/self/fd/1 "/dev/stdout"
  ln -s /proc/self/fd/2 "/dev/stderr"
+
+# proc
+
+ find /proc -type d -mindepth 1 -exec chmod 0550 {} \;
+ find /proc -type f -mindepth 1 -exec chmod 0440 {} \;
+
+ find /proc/self/net -type d -mindepth 1 -exec chmod 0550 {} \;
+ find /proc/self/net -type f -mindepth 1 -exec chmod 0440 {} \;
+
+ chown -R root:desktop /proc/meminfo /proc/stat
+
+# sys
+
+ find /sys -type d -mindepth 1 -exec chmod 0550 {} \;
+ find /sys -type f -mindepth 1 -exec chmod 0440 {} \;
+
+ chown -R root:desktop /sys/dev /sys/devices
 
 # log
 

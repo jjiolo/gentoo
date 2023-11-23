@@ -33,7 +33,6 @@ printf "%s\n" "${1} ${peer}" >> "${home}/ssh/.ssh/known_hosts"
 printf "%s\n" "${1} ${peer}" >> "${home}/smtp/.ssh/known_hosts"
 printf "%s\n" "${1} ${peer}" >> "${home}/http/.ssh/known_hosts"
 printf "%s\n" "${1} ${peer}" >> "${home}/irc/.ssh/known_hosts"
-printf "%s\n" "${1} ${peer}" >> "${home}/xmr/.ssh/known_hosts"
 
 #############
 

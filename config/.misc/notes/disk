@@ -1,90 +1,29 @@
 
 #############
 
- e2fsprogs - 
-
-  metadata_csum_seed - store metadata checksum seed in superblock (change uuid on a mounted filesystem)
-
-  orphan_file - tune2fs -O orphan_file /dev/block (speed up parallel file deletion?)
-
-  ^ both on by default now...
-
-* tune2fs -O quota /dev/block # enable filesystem quota 
-
-  ^ can turn on to use with setquota and repquota
+ [dosfstools] - bootfs
+      [tmpfs] - ephemeral
+      [mdadm] - multiple drives
+  [e2fsprogs] - storage
+      [quota] - number/size of files
 
 #############
-
-* tune2fs -m 0 /dev/block # 5% of 2.7tb equates to an extra 135gb of space
-
-#############
-
- man md.4 mdadm.8.in
-
- write hole | last written
-
--------------
-
- power failure
- marks array dirty
- dirty array forces resync
- assumes data is correct and recalculates parity
-
- ext4 with fsync and barrier protected journal metadata
- cant manipulate data until metadata has confirmed writes
- fsck.ext4 checks metadata and restores the last known value for any parital writes
-
-* below only applies to ssd/nvme (disable write cache in hdd with hdparm -W0)
-  write cache, pools none persistent writes lying to the kernel about fsync+barrier protection
-  tldr; dual psu and uninterruptible power supply + backup sync
-        removing write cache on ssd/nvme massively reduces life expectency
-        data not being written to cant be lost...
-
- ^ mdadm journal wont stop write cache pooling data and lying about journal integrity
-   raid cards wont stop hdd/sdd/nvme write cache pooling data and lying about the journal integrity
-   battery protected raid cards only persist write cache across power failure until the battery dies
-
-* --consistency-policy
-  resync (repairs all parity blocks in the stripe)
-  bitmap (speeds up resync)
-  journal (external single point of failure)
-  ppl (raid5 only internal journal?)
-
-* --write-journal - clean mdadm up, before cleaning ext4 up ?
-
-* old information implied badblocks was relevent...
-   storage firmware removed the need
-* old information implied aligning filesystems at block boundries was relevent...
-   prevent reading two blocks instead of one
-   aligns itself at block boundries < - raid , partition and filesystem levels ?
-
--------------
-
- ^ integritysetup - now works
-   mdadm would ???
-   raid1 metadata across all disk
-   raid6 dual parity
-   integritysetup /dev/md/storage /dev/mapper/storage
-   mkfs.ext4 /dev/mapper/storage
-   fsck.ext4 /dev/mapper/storage
-
--------------
-
+* tune2fs -m 0 /dev/block # 5% of 2.7tb is 135gb of extra space
+* tune2fs -O quota /dev/block # enable filesystem quota (tmpfs)
 #############
 
 [maintain]
 
- mdadm --misc --action=repair /dev/md127
- fsck.ext4 /dev/device
+ mkfs.ext4 -L label -m 0 /path/to/block ; tune2fs -O quota
+
+ fsck.ext4 -pfv /dev/device
  fstrim -v /mount/point
  e4defrag -v file /path /dev/device
+ mdadm --misc --action=repair /dev/md127
 
 #############
 
  [mdadm]
-
- * defaults to left-symmetric parity layout
- - https://www.accs.com/p_and_p/RAID/LinuxRAID.html
 
 # discover
 
@@ -92,26 +31,26 @@
  mdadm --examine /dev/sda
  mdadm --detail /dev/md127
  mdadm --detail --scan > /etc/mdadm.conf
+ mdadm --detail --test /dev/md127 && echo true || echo fsck
+ watch -tn3 cat /proc/mdstat
+
+#mdadm --monitor --scan --syslog --daemonise
+#mdadm --monitor --scan --syslog --oneshot
+# ^ --detail --test /dev/md127 0 ok 1 degrade 2 dead 4 missing
 
 # create
 
  mdadm
-  --create
-  --level={0,1,4,5,6,10} --chunk=512
-  --bitmap={none,internal,/path/to/bitmap}
-  --write-journal=/dev/block
-  --consistency-policy={resync,bitmap,journal,ppl}
-  --homehost= --name=storage
-  --raid-devices=4 --size=930GB
-  /dev/md127 /dev/sda /dev/sdb /dev/sdc /dev/sdd
+ --create
+ --level={0,1,4,5,6,10} --chunk=512
+ --bitmap={none,internal,/path/to/bitmap}
+ --write-journal=/dev/block
+ --consistency-policy={resync,bitmap,journal,ppl}
+ --homehost= --name=storage
+ --raid-devices=4 --size=930GB
+ /dev/md127 /dev/sda /dev/sdb /dev/sdc /dev/sdd
 
- mkfs.ext4 -L shared -m0 /dev/md127
-
-# monitor
-
- watch -tn3 cat /proc/mdstat
- mdadm --monitor --scan --syslog --daemonise
- mdadm --monitor --scan --syslog --oneshot
+ mkfs.ext4 -L shared -m0 /dev/md127 ; tune2fs -O quota
 
 # repair
 
@@ -119,15 +58,23 @@
 
 # stop / fail / remove / add
 
- mdadm --stop /dev/md127
+ mdadm --manage /dev/md127 --stop
  mdadm --manage /dev/md127 --fail /dev/sda1
  mdadm --manage /dev/md127 --remove /dev/sda1
  mdadm --manage /dev/md127 --add /dev/sdb1
+ mdadm --assble --no-degraded --scan
  watch -tn3 cat /proc/mdstat
 
 # delete
 
- mdadm --zero-superblock /dev/sd{a-f}
+ mdadm --misc --zero-superblock /dev/sd{a-f}
+
+# misc
+
+ mdadm --assemble --update=?
+
+ mdadm --misc --test /dev/md126 && echo true || echo fsckd
+ mdadm --misc --test /dev/md127 && echo true || echo fsckd
 
 #############
 
@@ -251,55 +198,6 @@ main chunk of functionality is
 
 #############
 
-# read/write test - tl;dr raid5 without bitmap won
-
--------------
-
-[ -f /tmp/random ] || dd if=/dev/urandom of=/tmp/random bs=4096 count=100000
-
-sync && busybox dd if=/tmp/random of=/storage/a.shared/test0 bs=4096 conv=fsync
-sync && busybox dd if=/tmp/random of=/storage/a.shared/test1 bs=4096 conv=fsync
-sync && busybox dd if=/tmp/random of=/storage/a.shared/test2 bs=4096 conv=fsync
-
-sync && echo 3 >> /proc/sys/vm/drop_caches && busybox dd if=/storage/a.shared/test0 of=/dev/null bs=4096
-sync && echo 3 >> /proc/sys/vm/drop_caches && busybox dd if=/storage/a.shared/test1 of=/dev/null bs=4096
-sync && echo 3 >> /proc/sys/vm/drop_caches && busybox dd if=/storage/a.shared/test2 of=/dev/null bs=4096
-
-
-raid5  chunk=512  bitmap=none     | write0=344MB/s write1=332MB/s write2=353MB/s | read0=675MB/s read0=679MB/s read1=664MB/s
-raid5  chunk=512  bitmap=internal | write0=198MB/s write1=254MB/s write2=279MB/s | read0=494MB/s read0=607MB/s read1=669MB/s
-
-raid5  chunk=4096 bitmap=none     | write0=274MB/s write1=265MB/s write2=285MB/s | read0=670MB/s read0=631MB/s read1=621MB/s
-raid5  chunk=4096 bitmap=internal | write0=225MB/s write1=202MB/s write2=228MB/s | read0=605MB/s read0=617MB/s read1=630MB/s
-
-raid10 chunk=512  bitmap=none     | write0=239MB/s write1=258MB/s write2=247MB/s | read0=416MB/s read1=465MB/s read2=439MB/s
-raid10 chunk=4096 bitmap=none     | write0=319MB/s write1=324MB/s write2=332MB/s | read0=442MB/s read1=440MB/s read2=441MB/s
-
-raid0  chunk=512                  | write0=579MB/s write1=533MB/s write2=578MB/s | read0=955MB/s read1=745MB/s read2=884MB/s
-raid0  chunk=4096                 | write0=527MB/s write1=515MB/s write2=503MB/s | read0=733MB/s read1=709MB/s read2=682MB/s
-
--------------
-
-raid5 without bitmap, destroyed everything
-      need to test partial parity log && external journal
-
-raid10 might get speed increase at 8 disks ?
-       12 disks should in theory be hitting 500/1000 MB read writes
-       whilst halfing storage capacity...
-
-* internal bitmaps make recovery quicker
-  at the expense of reduced speed
-
-* chunk size relative to median file size
-  alot of small files == smaller chunks increase probability of reads across multiple disks
-  alot of large files == larger chunks probably reduce fragmentation
-
-^ chunks are number of 4k linux blocks not the block size itself
-
--------------
-
-#############
-
 badblocks
 
   hdd - error detection and correction
@@ -326,7 +224,88 @@ badblocks
 
 #############
 
+ missing
+ mdadm --create --consistency-policy=ppl
+ mdadm --create --write-journal=/dev/block
+
+# old read/write test - tl;dr raid5 without bitmap won
+-------------
+[ -f /tmp/random ] || dd if=/dev/urandom of=/tmp/random bs=4096 count=100000
+sync && busybox dd if=/tmp/random of=/storage/a.shared/test0 bs=4096 conv=fsync
+sync && busybox dd if=/tmp/random of=/storage/a.shared/test1 bs=4096 conv=fsync
+sync && busybox dd if=/tmp/random of=/storage/a.shared/test2 bs=4096 conv=fsync
+sync && echo 3 >> /proc/sys/vm/drop_caches && busybox dd if=/storage/a.shared/test0 of=/dev/null bs=4096
+sync && echo 3 >> /proc/sys/vm/drop_caches && busybox dd if=/storage/a.shared/test1 of=/dev/null bs=4096
+sync && echo 3 >> /proc/sys/vm/drop_caches && busybox dd if=/storage/a.shared/test2 of=/dev/null bs=4096
+
+raid5  chunk=512  bitmap=none     | write0=344MB/s write1=332MB/s write2=353MB/s | read0=675MB/s read0=679MB/s read1=664MB/s
+raid5  chunk=512  bitmap=internal | write0=198MB/s write1=254MB/s write2=279MB/s | read0=494MB/s read0=607MB/s read1=669MB/s 
+
+raid5  chunk=4096 bitmap=none     | write0=274MB/s write1=265MB/s write2=285MB/s | read0=670MB/s read0=631MB/s read1=621MB/s
+raid5  chunk=4096 bitmap=internal | write0=225MB/s write1=202MB/s write2=228MB/s | read0=605MB/s read0=617MB/s read1=630MB/s
+
+raid10 chunk=512  bitmap=none     | write0=239MB/s write1=258MB/s write2=247MB/s | read0=416MB/s read1=465MB/s read2=439MB/s
+raid10 chunk=4096 bitmap=none     | write0=319MB/s write1=324MB/s write2=332MB/s | read0=442MB/s read1=440MB/s read2=441MB/s
+
+raid0  chunk=512                  | write0=579MB/s write1=533MB/s write2=578MB/s | read0=955MB/s read1=745MB/s read2=884MB/s
+raid0  chunk=4096                 | write0=527MB/s write1=515MB/s write2=503MB/s | read0=733MB/s read1=709MB/s read2=682MB/s
+-------------
+* internal bitmaps make recovery quicker, at the expense of reduced speed
+-------------
+* chunk size relative to median file size
+  alot of small files == smaller chunks increase probability of reads across multiple disks
+  alot of large files == larger chunks probably reduce fragmentation
+-------------
+# old ??? needs raid5 + journal and raid6
+
+#############
+
 [fscrypt]
 
 #############
+
+ man md.4 mdadm.8.in
+
+ write hole | last written
+
+-------------
+
+ power failure
+ marks array dirty
+ dirty array forces resync
+ assumes data is correct and recalculates parity ?
+
+ ^ hands errors off to filesystems journal (fsync+barrier)?
+
+ ext4 with fsync and barrier protected journal metadata
+ cant manipulate data until metadata has confirmed writes
+
+* below only applies to ssd/nvme (disable write cache in hdd with hdparm -W0)
+  write cache, pools none persistent writes lying to the kernel about fsync+barrier protection
+  tldr; dual psu and uninterruptible power supply + backup sync
+        removing write cache on ssd/nvme massively reduces life expectency
+        data not being written to cant be lost...
+
+ ^ mdadm journal wont stop write cache pooling data and lying about journal integrity
+   raid cards wont stop hdd/sdd/nvme write cache pooling data and lying about the journal integrity
+   battery protected raid cards only persist write cache across power failure until the battery dies
+
+* --consistency-policy
+  resync (repairs all parity blocks in the stripe)
+  bitmap (speeds up resync)
+  journal (external single point of failure)
+  ppl (raid5 only internal journal?)
+
+* --write-journal - clean mdadm up, before cleaning ext4 up ?
+
+* old information implied badblocks was relevent...
+   storage firmware removed the need
+* old information implied aligning filesystems at block boundries was relevent...
+   prevent reading two blocks instead of one
+   aligns itself at block boundries < - raid , partition and filesystem levels ?
+
+-------------
+
+#############
+
 

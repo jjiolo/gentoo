@@ -10,12 +10,12 @@ install -d -o 2525 -g 0    -m 0700 "${service_storage}/purge"
 install -d -o 2525 -g 0    -m 0700 "${service_storage}/queue"
 install -d -o 2525 -g 0    -m 0700 "${service_storage}/temporary"
 #############
-[ -f "${service_storage}/smtpd.conf" ] || install -o 25 -g 25 -m 0600 "${service_system}/files/smtpd.conf" "${service_storage}"
+[ -f "${service_storage}/smtpd.conf" ] || install -o 25 -g 25 -m 0600 "${service_system}/smtpd.conf" "${service_storage}"
 #############
 
 [ -f "${service_storage}/vdomains" ] || cat /proc/sys/kernel/hostname > "${service_storage}/vdomains"
 
-[ -f "${service_storage}/vuserbase" ] || install -o 25 -g 25 -m 0600 "${service_system}/files/vuserbase" "${service_storage}"
+[ -f "${service_storage}/vuserbase" ] || install -o 25 -g 25 -m 0600 "${service_system}/vuserbase" "${service_storage}"
 
 [ -f "${service_storage}/vusers" ] || {
 

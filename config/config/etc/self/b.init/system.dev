@@ -8,7 +8,7 @@ chown -R root:audio /dev/snd
 find /dev/snd -type d -exec chmod 0750 {} \;
 find /dev/snd -type c -exec chmod 0660 {} \;
 #############
-chmod -R 0770 /dev/video* ; chown -R root:video /dev/video*
+chmod -R 0660 /dev/video* ; chown -R root:video /dev/video*
 #############
 chown -R root:desktop /dev/input
 find /dev/input -type d -exec chmod 0750 {} \;
@@ -26,13 +26,13 @@ chown -R root:qemu /dev/net
 find /dev/net -type d -exec chmod 0750 {} \;
 find /dev/net -type c -exec chmod 0660 {} \;
 #############
-chmod 1777 /dev/shm
 chmod 0662 /dev/log
 chmod 0666 /dev/null
 chmod 0666 /dev/ptmx
 chmod 0664 /dev/random
 chmod 0664 /dev/urandom
 chmod 0664 /dev/zero
+chmod 1777 /dev/shm
 #############
 ln -sf /proc/self/fd   /dev/fd
 ln -sf /proc/self/fd/0 /dev/stdin
@@ -44,18 +44,22 @@ ln -sf /proc/self/fd/2 /dev/stderr
 
 # proc
 
-find /proc -type d -mindepth 1 -maxdepth 1 -exec chmod 0700 {} \;
-find /proc -type f -mindepth 1 -maxdepth 1 -exec chmod 0600 {} \;
-chown root:desktop /proc/meminfo /proc/stat # xorg
-chmod 0640 /proc/meminfo /proc/stat # xorg
+find /proc -type d -mindepth 1 -exec chmod 0550 {} \; 2>/dev/null
+find /proc -type f -mindepth 1 -exec chmod 0440 {} \; 2>/dev/null
+
+find /proc/self/net -type d -mindepth 1 -exec chmod 0550 {} \; 2>/dev/null
+find /proc/self/net -type f -mindepth 1 -exec chmod 0440 {} \; 2>/dev/null
+
+chown -R root:desktop /proc/meminfo /proc/stat # xorg
 
 #############
 
 # sys
 
-find /sys -type d -mindepth 1 -maxdepth 1 -exec chmod 0700 {} \;
-chown root:desktop /sys/dev/ /sys/devices # xorg
-chmod 0750 /sys/dev /sys/devices # xorg
+find /sys -type d -mindepth 1 -exec chmod 0550 {} \;
+find /sys -type f -mindepth 1 -exec chmod 0440 {} \;
+
+chown -R root:desktop /sys/dev/ /sys/devices # xorg
 
 #############
 

@@ -101,6 +101,9 @@ renice -10 -u dhcpc   2>/dev/null
 renice -10 -u tftpd   2>/dev/null
 renice -10 -u ntpd    2>/dev/null
 
+renice +10 -u ircd    2>/dev/null
+renice +10 -u smtpd   2>/dev/null
+renice +10 -u smtpq   2>/dev/null
 renice +10 -u httpd   2>/dev/null
 renice +10 -u p2pd    2>/dev/null
 
@@ -108,7 +111,6 @@ renice +20 -u ssh     2>/dev/null
 renice +20 -u smtp    2>/dev/null
 renice +20 -u http    2>/dev/null
 renice +20 -u irc     2>/dev/null
-renice +20 -u xmr     2>/dev/null
 #############
 
 #############
@@ -162,7 +164,10 @@ renice +20 -u xmr     2>/dev/null
  alias vim="vim -Z"
 
 #############
-
+pivot(){ # '${HOME}' expands as "${1}"
+[ -z "${1}" ] && printf "%s\n" "pivot: takes username"
+[ -z "${1}" ] || sudo -l -s /bin/sh -c 'dtach -A ${HOME}/socket /bin/sh' "${1}"
+}
 #############
 alsa(){ sed -i -e "s/defaults.ctl.card ./defaults.ctl.card ${1}/" -e "s/defaults.pcm.card ./defaults.pcm.card ${1}/" /run/alsa.conf ; }
 #############

@@ -1,16 +1,22 @@
 #!/bin/sh
 #############
-
- [ "$(stat -c %i /)" == "1" ] && exit 1
-
+[ "$(stat -c %i /)" == "1" ] && exit 1
+#############
+cd /root/repos || exit 1
 #############
 
-find /root/repos/overflow /root/repos/overlay /root/repos/xorg -name '*.ebuild' -exec basename {} \; | while read
-do
+for i in overlay overflow xorg testing ; do
 
-grep "${REPLY::-7}" /binhost/logs/build.onlydeps /binhost/logs/build.nodeps /binhost/logs/chroot.world | grep -q -e ::overlay -e ::overflow -e ::xorg &&
- printf "%s\e[32m%s\e[0m\n" "${REPLY::-7}: " "pass" ||
- printf "%s\e[31m%s\e[0m\n" "${REPLY::-7}: " "fail" 
+printf "\n%s\n" "[${i}]"
+
+find "${i}" -name '*.ebuild' -exec basename {} \; | while read ; do
+
+grep "${REPLY::-7}" /binhost/logs/build.onlydeps /binhost/logs/build.nodeps /binhost/logs/chroot.world |
+ grep -q -e ::overlay -e ::overflow -e ::xorg -e ::testing &&
+  printf "%s\e[32m%s\e[0m\n\n" "${REPLY::-7}: " "pass" ||
+   printf "%s\e[31m%s\e[0m\n\n" "${REPLY::-7}: " "fail" 
+
+done | sort -u
 
 done | /usr/bin/less -R
 

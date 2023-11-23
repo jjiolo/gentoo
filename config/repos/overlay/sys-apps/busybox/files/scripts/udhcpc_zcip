@@ -14,5 +14,5 @@ ip: ${ip}
 #############
 read -rp 'continue ?'
 #############
-ip addr add "${ip}/16" broadcast "169.254.255.255" dev "${interface}"
+ip addr add scope link "${ip}/16" broadcast "169.254.255.255" dev "${interface}"
 #############

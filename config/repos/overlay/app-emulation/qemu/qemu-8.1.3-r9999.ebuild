@@ -41,6 +41,7 @@ src_configure(){
 --disable-plugins \
 --disable-containers \
 \
+--disable-qom-cast-debug \
 --disable-coroutine-pool \
 --disable-hexagon-idef-parser \
 --disable-tcg-interpreter \

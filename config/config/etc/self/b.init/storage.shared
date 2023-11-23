@@ -59,7 +59,7 @@ dropbearkey -y -f "${storage}/.ssh/sshd" 2>/dev/null | grep "^ssh-ed25519" | cut
 install -o 0 -g 0 -m 0664 "${storage}/.ssh/authorized_keys" "sshd.authorized"
 install -o 0 -g 0 -m 0664 "${storage}/.ssh/known_hosts" "sshd.known"
 
-for i in user nobody proxy jail ssh smtp http irc xmr
+for i in user nobody proxy jail ssh smtp http irc
 do
  dropbearkey -y -f "${storage}/home/${i}/.ssh/ssh" 2>/dev/null | grep "^ssh-ed25519" | cut -d' ' -f1,2 > "${i}"
  install -o 0 -g 0 -m 0664 "${storage}/home/${i}/.ssh/authorized_keys" "${i}.authorized"

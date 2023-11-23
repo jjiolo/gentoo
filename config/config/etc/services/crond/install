@@ -2,7 +2,6 @@
 #############
 . /etc/services/variables crond
 #############
-[ -d "${service_storage}/fifteen" ] || install -d -o root -g root -m 0700 "${service_storage}/fifteen"
 [ -d "${service_storage}/hour"    ] || install -d -o root -g root -m 0700 "${service_storage}/hour"
 [ -d "${service_storage}/day"     ] || install -d -o root -g root -m 0700 "${service_storage}/day"
 [ -d "${service_storage}/week"    ] || install -d -o root -g root -m 0700 "${service_storage}/week"

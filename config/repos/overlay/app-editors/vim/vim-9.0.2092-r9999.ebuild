@@ -26,6 +26,7 @@ printf '%s\n' '#define SYS_VIMRC_FILE "/etc/vim/vimrc"' >> "${S}/src/feature.h"
 --disable-darwin \
 --disable-smack \
 --disable-selinux \
+--disable-xattr \
 --disable-xsmp \
 --disable-xsmp-interact \
 --disable-luainterp \
@@ -75,6 +76,7 @@ printf '%s\n' '#define SYS_VIMRC_FILE "/etc/vim/vimrc"' >> "${S}/src/feature.h"
 --without-lua-prefix \
 --without-luajit \
 --without-plthome \
+--without-xsubpp \
 --without-python-command \
 --without-python-config-dir \
 --without-python3-command \
@@ -91,5 +93,5 @@ printf '%s\n' '#define SYS_VIMRC_FILE "/etc/vim/vimrc"' >> "${S}/src/feature.h"
 
 }
 #############
-src_install(){ default ; }
+src_install(){ default ; rm -r "${D}/usr/share/icons" "${D}/usr/share/applications" ; }
 #############

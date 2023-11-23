@@ -54,6 +54,7 @@ media-libs/freetype -adobe-cff -bzip2 -cleartype-hinting png
 media-libs/harfbuzz -cairo -graphite -introspection glib truetype
 media-libs/libepoxy -egl
 media-libs/libglvnd X
+media-libs/libplacebo -lcms -opengl -shaderc -vulkan -xxhash
 media-libs/mesa -gles2 -llvm -proprietary-codecs -zstd
 media-sound/alsa-utils -libsamplerate
 media-video/ffmpeg -bzip2 -dav1d -encode -gnutls -gpl -iconv -postproc -zlib X alsa network pic threads

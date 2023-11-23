@@ -39,5 +39,10 @@ src_configure(){
 --with-pid-dir=/run
 }
 #############
-src_install() { default ; }
+src_install() {
+install -d -o root -g root -m 0755 "${D}/bin" "${D}/sbin"
+install -o root -g root -m 0755 "quotaon" "${D}/sbin"
+install -o root -g root -m 0755 "setquota" "${D}/sbin"
+install -o root -g root -m 0755 "repquota" "${D}/sbin"
+}
 #############

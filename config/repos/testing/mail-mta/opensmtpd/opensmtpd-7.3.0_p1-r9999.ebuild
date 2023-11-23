@@ -53,7 +53,7 @@ src_configure(){
 --with-path-empty=/var/empty \
 --with-path-mbox=/tmp/storage/services/smtpd/inbox \
 --with-path-socket=/tmp/storage/services/smtpd \
---with-path-pidfile=/tmp/z.local/services/smtpd \
+--with-path-pidfile=/tmp/storage/services/smtpd \
 --with-path-CAfile=/etc/ssl/certs/ca-certificates.crt \
 --with-libfts \
 --with-libevent=/usr/lib64 \

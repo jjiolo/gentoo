@@ -1,4 +1,6 @@
 
+net-irc/ngircd
+mail-mta/opensmtpd
 sys-fs/quota
 
 app-crypt/argon2
@@ -27,7 +29,6 @@ net-libs/libmnl
 net-libs/libnftnl
 net-misc/curl
 net-misc/dropbear
-net-p2p/monero
 net-p2p/transmission
 net-vpn/tor
 net-vpn/torsocks

@@ -32,9 +32,6 @@
    install -o 6697 -g 6697 -m 0600 /dev/null "${home}/irc/.ssh/known_hosts"
    install -o 6697 -g 6697 -m 0600 /dev/null "${home}/irc/.ssh/authorized_keys"
 
-   install -o 18081 -g 18081 -m 0600 /dev/null "${home}/xmr/.ssh/known_hosts"
-   install -o 18081 -g 18081 -m 0600 /dev/null "${home}/xmr/.ssh/authorized_keys"
-
 }
 
 #############
@@ -50,7 +47,6 @@
    chown -R smtp: "${home}/smtp/.ssh"
    chown -R http: "${home}/http/.ssh"
    chown -R irc: "${home}/irc/.ssh"
-   chown -R xmr: "${home}/xmr/.ssh"
 
 #############
 
@@ -77,7 +73,6 @@ done
    printf "%s\n%s\n" "[smtp]"  "$(cat ${home}/smtp/.ssh/authorized_keys)"
    printf "%s\n%s\n" "[http]"  "$(cat ${home}/http/.ssh/authorized_keys)"
    printf "%s\n%s\n" "[irc]"   "$(cat ${home}/irc/.ssh/authorized_keys)"
-   printf "%s\n%s\n" "[xmr]"   "$(cat ${home}/xmr/.ssh/authorized_keys)" 
 
  printf "%s\n%s\n" "[hosts]" "$(cat ${storage}/.ssh/known_hosts ${home}/*/.ssh/known_hosts|sort|uniq -c)"
 

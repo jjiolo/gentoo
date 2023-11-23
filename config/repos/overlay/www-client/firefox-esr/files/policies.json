@@ -58,6 +58,7 @@
   "PictureInPicture": { "Enabled": true, "Locked": true },
   "PopupBlocking": { "Default": true, "Locked": true },
   "PrimaryPassword": false,
+  "PrintingEnabled": false,
   "PromptForDownloadLocation": false,
   "RequestedLocales": "en-US",
   "SanitizeOnShutdown": true,

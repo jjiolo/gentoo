@@ -18,6 +18,9 @@ dhcpc:x:68:
 tftpd:x:69:
 ntpd:x:123:
 
+ircd:x:6667:
+smtpd:x:25:
+smtpq:x:2525:
 httpd:x:80:
 p2pd:x:9091:nobody
 
@@ -25,5 +28,4 @@ ssh:x:22:
 smtp:x:465:
 http:x:443:
 irc:x:6697:
-xmr:x:18081:
 
