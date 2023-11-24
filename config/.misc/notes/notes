@@ -30,9 +30,10 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:11:10 12:00:00
+ lastest - 2023:11:24 12:57:00
 -------------
- build notes -
+ build notes - mostly version bumps + smtpd/ircd testing
+             ^ probably be buggy playing with the configuration
 -------------
  broken -
  * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
@@ -152,14 +153,21 @@ setpriv_udhcpd < - ignores first sleep ?
   tor-0.4.8.7 -> tor-0.4.8.9 # no changes ?
   vim-9.0.1777 -> vim-9.0.2092 # no changes ?
 
- ^ do updates then make release for friday ?
-   play with tor + smtp/irc
+  [ddns]
 
+  ircd - 
+  dropbear -
+  opensmtpd -
+  httpd - 
+  p2pd -
+  
  busybox needs to be dynamic ?
+ dropbear needs to be dynamic ?
  LD_PRELOAD=/usr/lib64/libtorsocks.so
- cant test irc...
 
- readme.md - ...
+ readme.md - write a decent overview
+
+ tmpfs quota didnt actually work
 
 #############
 xrandr --output VGA-1 --mode 1440x900

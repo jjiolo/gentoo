@@ -26,45 +26,27 @@
 
 #############
 
- #HiddenServiceDir /tmp/storage/services/dnsd/private
+#HiddenServiceDir /tmp/storage/services/dnsd/public
 
- #HiddenServiceNumIntroductionPoints 3
+#HiddenServiceNumIntroductionPoints 3
 
- #HiddenServiceEnableIntroDoSDefense 1
- #HiddenServiceEnableIntroDoSBurstPerSec 13
- #HiddenServiceEnableIntroDoSRatePerSec 7
+#HiddenServiceEnableIntroDoSDefense 1
+#HiddenServiceEnableIntroDoSBurstPerSec 13
+#HiddenServiceEnableIntroDoSRatePerSec 7
 
- #HiddenServicePoWDefensesEnabled 1
- #HiddenServicePoWQueueBurst 13
- #HiddenServicePoWQueueRate 7
+#HiddenServicePoWDefensesEnabled 1
+#HiddenServicePoWQueueBurst 13
+#HiddenServicePoWQueueRate 7
 
- #CompiledProofOfWorkHash auto ???
+#CompiledProofOfWorkHash auto ???
 
- #HiddenServiceMaxStreams 3
- #HiddenServiceMaxStreamsCloseCircuit 1
+#HiddenServiceMaxStreams 3
+#HiddenServiceMaxStreamsCloseCircuit 1
 
- #HiddenServicePort 22 127.0.0.1:22
-
-#############
-
- #HiddenServiceDir /tmp/storage/services/dnsd/public
-
- #HiddenServiceNumIntroductionPoints 3
-
- #HiddenServiceEnableIntroDoSDefense 1
- #HiddenServiceEnableIntroDoSBurstPerSec 13
- #HiddenServiceEnableIntroDoSRatePerSec 7
-
- #HiddenServicePoWDefensesEnabled 1
- #HiddenServicePoWQueueBurst 13
- #HiddenServicePoWQueueRate 7
-
- #CompiledProofOfWorkHash auto ???
-
- #HiddenServiceMaxStreams 3
- #HiddenServiceMaxStreamsCloseCircuit 1
-
- #HiddenServicePort 80 127.0.0.1:80
+#HiddenServicePort 22 127.0.0.1:22
+#HiddenServicePort 25 127.0.0.1:25
+#HiddenServicePort 80 127.0.0.1:80
+#HiddenServicePort 6667 127.0.0.1:6667
 
 #############
 
