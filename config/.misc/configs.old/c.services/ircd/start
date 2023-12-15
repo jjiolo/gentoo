@@ -1,0 +1,12 @@
+#!/bin/sh
+#############
+. /etc/services/ircd/install
+#############
+pgrep -x ircd &>/dev/null && exit
+#############
+sysctl -w net.ipv4.ip_unprivileged_port_start=0
+su -l -s /bin/sh -c "setsid ircd --config ${service_storage}/ngircd.conf </dev/null &>/dev/null & exit" ircd ; sleep 1
+sysctl -w net.ipv4.ip_unprivileged_port_start=32768
+#############
+renice +5 -u "ircd"
+#############

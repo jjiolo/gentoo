@@ -11,83 +11,33 @@ busybox only log server...
  -------------
 #############
 
-[shlel]
--------------
-tl;dr - end goal: template sane defaults regardless of whats executed
 -------------
 
- (setsid command </dev/null &>/dev/null & exit)
+ [shlel - daemon wrapper]
 
- su -l -s /bin/sh -c 'setsid command </dev/null &>/dev/null & exit' user
-
- setsid setpriv --reuid --regid --init-groups --reset-env --nnp --securebits command </dev/null &>/dev/null & exit
-
--------------
-
- end goal : 
-
-  force normal daemonization on any execute
+  chuid/chgid
   reset env
-  force terminal detach
-  force stdin/stdout/stderr redirection
-  force background
-  force initializing shell to close
+  terminal detach
+  stdin/stdout/stderr redirection
+  background
+  close initial shell
 
-  force normal priv drop on any client execute...
+ * (setsid command </dev/null &>/dev/null & exit)
 
-      setsid - prevent signals to controlling terminal
-  </dev/null - prevent reading terminal input ? (partial keylogging)
-  &>dev/null - prevent updating terminal ? (sort of useless for a client)
+ * su -l -s /bin/sh -c 'setsid command </dev/null &>/dev/null & exit' user
 
-  ^ prevent executed pid from hanging and reading terminal input ?
-
--------------
-
-* for su...
-  su -l -s /bin/sh -c 'setpriv command </dev/null &>/dev/null & exit' user
-  ^ -l cleans environment for priv drop
-    forces terminal detach
-    forces stdin/stdout/stderr redirect
-    forces background
-    forces the initializing shell to close
-
--------------
-
-* for setpriv...
-  setsid setpriv --reuid --regid --init-groups --reset-env --nnp --securebits command </dev/null &>/dev/null & exit
-  ^ --reset-env cleans environment for priv drop
-    forces terminal detach (signals allow execution)
-    forces stdin/stdout/stderr redirect ? (optional client not server)
-    forces background ? (not relevent)
-    forces the initalizing shell to close ? (optional client not server)
-
--------------
-
-* differences...
-
-  su and setpriv both support setuid setgid
-
-  su and setpriv both support cleaning environment
-  ^ (--reset-env less efficient than -l login shell)
-
- cons - BUSYBOX SETPRIV DOESNT ACTUALLY WORK YET...
- cons - --reset-env is weaker than su -l
-
- pros - setuid setgid setcap nnp securebits, noroot nosetuid ?
+ (setsid \
+ setpriv \
+ --reuid <user> --regid <group> --init-groups
+ --nnp --reset-env \
+ --inh-caps <caps> \
+ --ambient-caps <caps> \
+ --bounding-set <caps> \
+ command </dev/null &>/dev/null & exit)
 
 -------------
 
 #############
-
-
- exec sleep 13 &
-(exec sleep 13 </dev/null &>/dev/null &)
-
-^ exec inside a subshell kills the subshell not the parent...
-
-su creates a subshell ? su -c 'sleep 30 &' double forks...
-su without exec leaves the -s /bin/sh shell open... ?
-
 -------------
          exec - replace current shell with command
  background & - execute in parallel
@@ -96,18 +46,12 @@ su without exec leaves the -s /bin/sh shell open... ?
    </dev/null - replace stdin
   &>/dev/null - replace stdout & stderr
 -------------
- * su -l -s /bin/ash -c 'command </dev/null &>/dev/null' user
- * su -l -s /bin/ash -c 'command' user </dev/null &>/dev/null
- ^ <redirects &>redirects inherited by child process
--------------
 ash -l            [-c 'command'] <user> [< file] [<< EOF]
  su -l -s /bin/sh [-c 'command'] <user> [< file] [<< EOF]
  setsid <command>
- setpriv --nnp --reuid --regid --init-groups --ambient-caps --inh-caps --bounding-set --reset-env <command>
+ setpriv --reuid --regid --init-groups --reset-env --nnp --ambient-caps --inh-caps --bounding-set <command>
  env -i <command>
  chroot /path <command>
--------------
-su -l -s /bin/ash -c 'exec command </dev/null &>/dev/null & exit ' <user>
 -------------
 su -l -s /bin/ash <user> << EOF # horrible \$(escape) \${characters}
 su -l -s /bin/ash <user> < /path/to/file # works without \${escapes}
@@ -115,88 +59,8 @@ su -l -s /bin/ash <user> < /path/to/file # works without \${escapes}
 su -l -s /bin/ash <user> < /path/to/file > /path/to/output
 dbclient -T <user>@172.16.0.1 < /path/to/file > /path/to/output
 -------------
-
- [controlling terminal fuck up]
-
- etc/self/f.setpriv - setpriv doesnt remove controlling terminal
-  setpriv_udhcpc - libcap exposes net_bind_service,net_raw,net_admin, controlling terminal allows root exec
-  setpriv_tftpd - libcap exposes net_bind_service,sys_chroot, controlling terminal allows root exec (missed because execution from /etc/inittab sysinit) (reexecution hooks controlling terminal)
-  setpriv_ntpc - libcap exposes sys_time, controlling terminal allows root exec
-
- examples
-
- * setsid su -ls /bin/sh -c 'while sleep 3 ; do echo test ; done' nobody
- ^ read and write access ? (read would imply keylogging the controlling pts?)
-
- * setsid su -ls /bin/sh -c 'cat /dev/pts/1' nobody
- ^ permission denied cant open /dev/pts/1... (opens fd before setuid setgid)
-
- * setsid su -ls /bin/sh -c 'while sleep 3 ; do echo test ; done </dev/null' nobody
-
--------------
-
- * etc/services/*/start -
-   setsid su - disables interactive shell ?
-   su setsid - allows interactive shell ?
-
- * etc/services
- * etc/self/e.setpriv
- ^ uniform command wrapper to provide the safest execution ?
-
-  setsid setpriv command </dev/null
-  ^ removes controlling terminal ?
-    removes keylog controlling terminal ?
-    allows display controlling terminal ?
-
-  su < file - not eval...
-  su << EOF - technically eval ?
-  su -c 'still eval'
-
-  dbclient user@remote < file - not eval...
-  dbclient user@remote << EOF - eval
-  dbclient user@remote $command - eval
-
-  test='ls -lah' ; $test - still eval...
-
- ^ assumed grep -r eval path/* was useful
- ^ assumption change implies proof reading all code...
-
- setsid setpriv --options binary </dev/null &>/dev/null &
- ^ redirectors on which command ?
-   testing implied setpriv </dev/null && binary </dev/null ?
-
-
-
-#############
-
-[chroot hardening]
-
- delete busybox binary after stand alone shell loads
- exec prefers applets < - refer to /proc/self/exe before trying PATH
- standalone shell < - refer to /proc/self/exe before trying PATH
- rm -rf /bin/busybox ; exec <service> </dev/null &>/dev/null
- leaves the program running in a chroot with no other commands available
-
 #############
 busybox with unix_sockets - nc -lks local:/dev/shm/socket -e dbclient user@172.16.0.1 nc local:/dev/shm/socket
-#############
-
-[login/password management utilities]
-
- support shadow passwords
-
- use internal password and group functions rather than system functions 
-  use internal shadow password functions
-
- use internal crypt functions
-  enable sha256/512 crypt functions
-
- ^ links to glibc even if its not used ?
-   ie use built in over external || remove built in and external
-
- ! couldnt figure it out so enabled anything
-   prefering internal libs over linking externally...
-
 #############
 0 0 1 1 * year
 0 0 1 * * month
@@ -317,32 +181,7 @@ desktop: input:/dev/input video:/dev/dri
 
 #############
 
-[busybox]
-
- runparts
- uevent - listen for device creation
- acpid - listen for hardware interupts from devices
-
- mkswap swapon swapoff
- hdparm
- rfkill
-
- findfs LABEL=testing || mount LABEL=testing
-^ implies handling || false
-
-#############
-
-* drop chrt and not using realtime or priority over 39 ?
-* drop ionice ?
-  allows single user to prioritise its own pids ?
-  allows single user to steal diskio from other users ?
-^ or only competing inside its own nice level restrcitions
-
-#############
-
  [busybox]
-
- * -werror - doesnt build
 
  * default - enable all long options
  ^ some binaries do nothing
@@ -352,7 +191,8 @@ desktop: input:/dev/input video:/dev/dri
  ^ set -o vi (doesnt turn on when disabled)
  ^ (exists in set -o output regardless)
 
- * track window size changes FEATURE_EDITING_WINCH - turned on the PS1 reprint disabled
+ * track window size changes
+ * FEATURE_EDITING_WINCH - turned on the PS1 reprint disabled
  ? query cursor position from terminal
  ^ settings claims 'more robust'
  ^ vi claims last ditch effort

@@ -22,13 +22,13 @@ export PATH="${PATH}:/etc/self/e.setpriv:/etc/self/f.sets"
 export PATH="${PATH}:/etc/self/z.testing"
 export EDITOR="vim" PAGER="less" LESSHISTFILE="/dev/null"
 #############
+export TMPDIR="/dev/shm"
+#############
 export GNUPGHOME="${HOME}/.gnupg"
 #############
 export GIT_SSH="dbclient" GIT_EDITOR="vim" GIT_PAGER="less"
 export GIT_AUTHOR_NAME="anon" GIT_AUTHOR_EMAIL="anon@domain.tld"
 export GIT_COMMITTER_NAME="anon" GIT_COMMITTER_EMAIL="anon@domain.tld"
-#############
-export TMPDIR="/dev/shm"
 #############
 export MENUCONFIG_COLOR="mono"
 #############
@@ -83,34 +83,30 @@ set -o pipefail  # returns false if any command fails rather than the last comma
 
 #############
 renice -10 -u root    2>/dev/null
-renice +0  -u user    2>/dev/null
-renice +20 -u nobody  2>/dev/null
-renice +20 -u proxy   2>/dev/null
-renice +20 -u jail    2>/dev/null
+renice +10 -u user    2>/dev/null
+renice +10 -u nobody  2>/dev/null
+renice +10 -u proxy   2>/dev/null
+renice +10 -u jail    2>/dev/null
 
 renice +0  -u audio   2>/dev/null
 renice +0  -u video   2>/dev/null
 renice +0  -u desktop 2>/dev/null
-renice -10 -u wifi    2>/dev/null
-renice +10 -u qemu    2>/dev/null
+renice +0  -u wifi    2>/dev/null
+renice +0  -u qemu    2>/dev/null
 
-renice -10 -u ddns    2>/dev/null
-renice -10 -u dnsd    2>/dev/null
-renice -10 -u dhcpd   2>/dev/null
-renice -10 -u dhcpc   2>/dev/null
-renice -10 -u tftpd   2>/dev/null
-renice -10 -u ntpd    2>/dev/null
+renice -5 -u dnsd    2>/dev/null
+renice -5 -u dhcpd   2>/dev/null
+renice -5 -u tftpd   2>/dev/null
+renice -5 -u ntpd    2>/dev/null
 
-renice +10 -u ircd    2>/dev/null
-renice +10 -u smtpd   2>/dev/null
-renice +10 -u smtpq   2>/dev/null
-renice +10 -u httpd   2>/dev/null
-renice +10 -u p2pd    2>/dev/null
+renice +5  -u ddns    2>/dev/null
+renice +5  -u httpd   2>/dev/null
+renice +5  -u p2pd    2>/dev/null
 
-renice +20 -u ssh     2>/dev/null
-renice +20 -u smtp    2>/dev/null
-renice +20 -u http    2>/dev/null
-renice +20 -u irc     2>/dev/null
+renice +10 -u ssh     2>/dev/null
+renice +10 -u http    2>/dev/null
+renice +10 -u mail    2>/dev/null
+renice +10 -u irc     2>/dev/null
 #############
 
 #############
@@ -166,7 +162,9 @@ renice +20 -u irc     2>/dev/null
 #############
 pivot(){ # '${HOME}' expands as "${1}"
 [ -z "${1}" ] && printf "%s\n" "pivot: takes username"
-[ -z "${1}" ] || sudo -l -s /bin/sh -c 'dtach -A ${HOME}/socket /bin/sh' "${1}"
+[ -z "${1}" ] || sudo -l -s /bin/sh -c 'setsid dtach -n /dev/shm/${USER} /bin/sh' "${1}"
+[ -z "${1}" ] || chmod 0660 /dev/shm/ ; chown "${1}:${USER}" /dev/shm/socket
+[ -z "${1}" ] || printf "dtach -a /run/socket"
 }
 #############
 alsa(){ sed -i -e "s/defaults.ctl.card ./defaults.ctl.card ${1}/" -e "s/defaults.pcm.card ./defaults.pcm.card ${1}/" /run/alsa.conf ; }

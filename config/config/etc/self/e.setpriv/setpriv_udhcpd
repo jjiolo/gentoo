@@ -15,5 +15,5 @@ cd / ; caps="-all,+net_raw" ; /bin/setsid /usr/bin/setpriv \
 #############
 sysctl -w net.ipv4.ip_unprivileged_port_start=32768
 #############
-renice -10 -u dhcpd
+renice -5 -u "dhcpd"
 #############

@@ -1,5 +1,7 @@
 
-CROSSDEV_notes
+#############
+
+ [CROSSDEV]
 
 crossdev -C armv6j-hardfloat-linux-gnueabi
 crossdev -C armv7a-hardfloat-linux-gnueabi
@@ -36,4 +38,6 @@ auto-sync = no' > /etc/portage/repos.conf/crossdev.conf
 emerge -av sys-devel/crossdev
 crossdev -v --stable --target armv7a-hardfloat-linux-gnueabi
 crossdev -v --stable --target armv6j-hardfloat-linux-gnueabi
+
+#############
 

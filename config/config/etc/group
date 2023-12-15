@@ -11,21 +11,17 @@ desktop:x:11:
 wifi:x:13:
 qemu:x:15:
 
-ddns:x:5353:
 dnsd:x:53:
 dhcpd:x:67:
-dhcpc:x:68:
 tftpd:x:69:
 ntpd:x:123:
 
-ircd:x:6667:
-smtpd:x:25:
-smtpq:x:2525:
+ddns:x:5353:
 httpd:x:80:
 p2pd:x:9091:nobody
 
 ssh:x:22:
-smtp:x:465:
 http:x:443:
+mail:x:465:
 irc:x:6697:
 

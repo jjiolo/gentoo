@@ -9,10 +9,6 @@ media-libs/libjpeg-turbo
 media-libs/libpng
 x11-libs/libXi
 
-www-client/links
-media-libs/libjpeg-turbo
-media-libs/libpng
-
 www-client/firefox-esr
 app-accessibility/at-spi2-core
 dev-libs/dbus-glib
@@ -42,6 +38,7 @@ media-libs/harfbuzz
 media-libs/libass
 media-libs/libplacebo
 media-libs/libpng
+x11-libs/libXScrnSaver
 x11-libs/libXpresent
 
 media-video/ffmpeg

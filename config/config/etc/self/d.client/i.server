@@ -12,9 +12,7 @@
     [ -f "SENT" ] || install -o "${USER}" -m 0600 "/dev/null" "SENT"
   [ -f "filter" ] || install -o "${USER}" -m 0600 "/dev/null" "filter"
 
- [ -f "${shared}/contacts/self/public" ] && read onion < "${shared}/contacts/self/public"
- [ -f "${shared}/contacts/self/public" ] || onion="$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)"
-
+onion="$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)"
 #############
 account="spare"
 #############
@@ -45,10 +43,6 @@ reset="\e[0m"
 
 #############
 
-printf "%s\n%s\n%s\n%s\n%s\n%s\n" "cap REQ sasl" "${nick}" "${user}" "AUTHENTICATE EXTERNAL" "AUTHENTICATE +" "CAP END" >&3 &
-
-#############
-
 while sleep 60 ; do
 
  touch .ping ; printf "${cyan}%s${reset}\n" '#'
@@ -58,6 +52,10 @@ while sleep 60 ; do
  sleep 13 && [ -f .ping ] && pkill -P$$
 
 done &
+
+#############
+
+printf "%s\n%s\n%s\n%s\n%s\n%s\n" "cap REQ sasl" "${nick}" "${user}" "AUTHENTICATE EXTERNAL" "AUTHENTICATE +" "CAP END" >&3 &
 
 #############
 

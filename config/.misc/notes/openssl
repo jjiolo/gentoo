@@ -1,5 +1,23 @@
 
 #############
+
+openssl-3.2.0
+
+ zstd
+ brotli
+
+ thread-pool ?
+ default-thread-pool ?
+
+ no-docs
+ no-http
+ no-quic
+
+ tfo - tcp fast open
+
+ sm2-precomp (aarch64)
+
+#############
 aes-gcm-siv < - shiny new new (added nonce reuse protection)
 #############
 
@@ -27,29 +45,22 @@ aes-gcm-siv < - shiny new new (added nonce reuse protection)
  openssl s_client -dtls1_2
  ^ doesnt work with ed25519
 
-  end game ?
-  root - > server - > certificate
-           client - > certificate
-
--------------
+#############
  openssl pkeyutl -kdf TLS1-PRF -kdflen 64 -digest sha512
--------------
-
-^ added kdf to key derive ?
-
 #############
 
+#############
 no-engines -
 no-static-engines -
-no-dynamic-engines - 
-no-module
+no-dynamic-engines -
+no-module -
 ^ disabled engines completly ?
-
-! kernel-build < - breaks without engines ?
-
+#############
 no-pinshared -
- enable - try to stay in memory ?
  no - dont try to stay in memory ?
+ enable - try to stay in memory ?
+! kernel-build < - breaks without engines ?
+#############
 
 ############# generic descriptions (got sick of searching)
 cmp  - cryptographic management protocol ? 
@@ -65,11 +76,13 @@ srp  - secure remote password cipher suites
 srtp - secure real-time transport protocol (dtls extension)
 sctp - stream control transmission protocol dtls over sctp and or dtls over udp
 sse2 - cpu flags enabled in ffmpeg already
+tfo  - tcp fast open
 #############
 
 locked configure options...
 
  enable-deprecated - python wpa_supplicant wget tor
+ enable-engine     - 
  enable-sock       - curl mutt links wget python transmission tor
  enable-threads    - tor/python
  enable-tls        - (no-tls does not disable tls if tls1_1 tls1_2 are in use)

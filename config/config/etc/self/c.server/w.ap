@@ -45,6 +45,8 @@ cd / ; caps="-all,+net_admin,+net_raw" ; /bin/setsid /usr/bin/setpriv \
  --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
  /sbin/wpa_supplicant -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant" -e "${storage}/.wifi/entropy" </dev/null &>/dev/null &
 #############
+renice +0 -u "wifi"
+#############
 
 sleep 3
 #############

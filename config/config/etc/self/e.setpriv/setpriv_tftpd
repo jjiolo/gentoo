@@ -11,5 +11,5 @@ cd / ; caps="-all,+sys_chroot,+net_bind_service" ; /bin/setsid /usr/bin/setpriv 
 #############
 sysctl -w net.ipv4.ip_unprivileged_port_start=32768
 #############
-renice -10 -u tftpd
+renice -5 -u "tftpd"
 #############

@@ -1,0 +1,15 @@
+#!/bin/sh
+#############
+. /etc/services/maild/install
+#############
+pgrep -x maild &>/dev/null && exit
+#############
+
+setsid maild -f "${service_storage}/smtpd.conf" </dev/null &>/dev/null
+
+#############
+until [ -S "${service_storage}/smtpd.sock" ] ; do sleep .3 ; done
+#############
+renice +5 -u "maild"
+renice +5 -u "mailq"
+#############

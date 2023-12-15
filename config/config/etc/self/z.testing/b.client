@@ -1,9 +1,9 @@
 
 #############
 pkill -x /sbin/wpa_supplicant
-pkill -x dnsd
+pkill -x ddns
+pkill -x /sbin/httpd
 pkill -x p2pd
-pkill -x sshd
 #############
 
 [ -z "${1}" ] || {
@@ -11,9 +11,9 @@ pkill -x sshd
 sleep 3
 #############
 w.connect wlan0 ; sleep 3 ; setpriv_network_default wlan0
-ash /etc/services/dnsd/start
+ash /etc/services/ddns/start
+ash /etc/services/httpd/start
 ash /etc/services/p2pd/start
-sshd
 #############
 
 }

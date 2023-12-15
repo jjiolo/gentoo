@@ -1,55 +1,35 @@
 
 #############
-
- [gitd]
-
- z.testing/project - default read only
-
- httpd,{gitd,p2pd}
- ^ version tracking
- ^ release distribution
-
- [basic authentication]
-
- /cgi-bin:root:password
- /cgi-bin/project.git:toor:drowsapp
- ^ doesnt work
-
- /cgi-bin/project.git:toor:drowsapp
- /cgi-bin:root:password
- ^ does work
-
- /cgi-bin/new.cgi:root:password # restart to secure individual files
- /cgi-bin:root:password # applies to all new files
-
- /tmp/storage/services/gitd/webroot
- /tmp/storage/services/gitd/repo
- /tmp/storage/services/gitd/config
- /tmp/storage/services/gitd/error
-
+[git-http-backend]
+-------------
+/cgi-bin:root:password
+/cgi-bin/project.git:toor:drowsapp
+^ doesnt work
+-------------
+/cgi-bin/project.git:toor:drowsapp
+/cgi-bin:root:password
+^ does work
+-------------
+/cgi-bin:root:password # applies to all new files
+/cgi-bin/new.cgi:root:password # restart to secure individual files
+#############
+/tmp/storage/services/gitd/webroot
+/tmp/storage/services/gitd/repo
+/tmp/storage/services/gitd/config
+/tmp/storage/services/gitd/error
 #############
 
  [./configure --help] (ignores most options)
 
+  vim Makefile - comments contain list of variables
+
   cd git-A.B.C ; ./configure.sh > configure.sh
   cd git-X.Y.Z ; ./configure.sh > configure.sh
-
   diff git-A.B.C/configure.sh git-X.Y.Z/configure.sh
 
   cd git-A.B.C ; find . -type f -exec grep -H YesPlease {} \; > ffs
   cd git-X.Y.Z ; find . -type f -exec grep -H YesPlease {} \; > ffs
-
   diff git-A.B.C/ffs git-X.Y.Z/ffs
-
-  grep '#' Makefile
-  grep '#' configure
-  find . -type f -exec grep -Hi -e '/*' -e '#' {} \; # code comments
-
-  -------------
-
-  INSTALL_SYMLINKS=YesPlease
-  SKIP_DASHED_BUILT_INS=YesPlease
-  ^ jsmin cssmin --disable setting no as path and enabling it ?
 
 #############
 
@@ -57,12 +37,23 @@
 
 -------------
 
- [variables]
-
-  GIT_DIR --git-dir=/tmp/git
   GIT_PROJECT_ROOT
-  GIT_HTTP_EXPORT_ALL - export all directories
+  GIT_HTTP_EXPORT_ALL
   .git/git-daemon-export-ok - export directories with magic file
+
+-------------
+
+ [UPDATED]
+
+ git init --bare --initial-branch master /tmp/git ; chown -R httpd:httpd /tmp/git
+
+ /tmp/storage/services/httpd/webroot/cgi-bin/project.git
+
+  GIT_PROJECT_ROOT=/tmp/git GIT_HTTP_EXPORT_ALL= exec /usr/libexec/git-core/git-http-backend
+
+ git clone http://127.0.0.1/cgi-bin/project.git
+
+ * allows multiple read or read write repositories
 
 -------------
 
@@ -108,25 +99,6 @@
    blocks the ability to push updates
    regardless of httpd config # authenticated
    regardless of git config # unauthenticated
-
--------------
-
- [UPDATED]
-
- git init --bare --initial-branch master /tmp/git ; chown -R httpd:httpd /tmp/git
-
- /tmp/storage/services/httpd/webroot/cgi-bin/project.git
- GIT_PROJECT_ROOT=/tmp/git GIT_HTTP_EXPORT_ALL= exec /usr/libexec/git-core/git-http-backend
-
- git clone http://127.0.0.1/cgi-bin/project.git
-
- ^ cgi scripts allow pointing to any git repository
-   read only access
-   read write authenticated access
-   /cgi-bin/one:root:password
-   /cgi-bin/two:user:password
-
- * allows multiple read or read write repositories
 
 -------------
 

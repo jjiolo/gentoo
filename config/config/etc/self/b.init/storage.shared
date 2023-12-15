@@ -50,16 +50,11 @@ cd "${shared}/contacts/self" || exit
 
 gpg --homedir "${storage}/.gnupg" --export "$(hostname)" > "gnupg" 2>/dev/null
 
-install -o 0 -g 0 -m 0664 "${services}/ddns/public/hostname" "public"
-install -o 0 -g 0 -m 0664 "${services}/ddns/private/hostname" "private"
-#printf "%s%s\n" "$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)" ".onion" > "public"
-#printf "%s%s\n" "$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)" ".onion" > "private"
-
 dropbearkey -y -f "${storage}/.ssh/sshd" 2>/dev/null | grep "^ssh-ed25519" | cut -d' ' -f1,2 > "sshd"
 install -o 0 -g 0 -m 0664 "${storage}/.ssh/authorized_keys" "sshd.authorized"
 install -o 0 -g 0 -m 0664 "${storage}/.ssh/known_hosts" "sshd.known"
 
-for i in user nobody proxy jail ssh smtp http irc
+for i in user nobody proxy jail ssh http mail irc
 do
  dropbearkey -y -f "${storage}/home/${i}/.ssh/ssh" 2>/dev/null | grep "^ssh-ed25519" | cut -d' ' -f1,2 > "${i}"
  install -o 0 -g 0 -m 0664 "${storage}/home/${i}/.ssh/authorized_keys" "${i}.authorized"
@@ -69,6 +64,9 @@ done
 wg pubkey < "${storage}/.vpn/wireguard" > "wireguard"
 
 cd -
+
+#install -o 0 -g 0 -m 0664 "${services}/ddns/public/hostname" "public"
+#printf "%s%s\n" "$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)" ".onion" > "public"
 
 chown -R root:root "${shared}/contacts" &
 
@@ -104,8 +102,8 @@ find "${shared}/torrents" -type f -exec chmod 0644 {} \; &
 printf "%s\n" "#############"
 cat "${shared}/contacts/self/gnupg"
 printf "%s\n" "#############"
-cat "${shared}/contacts/self/public" "${shared}/contacts/self/private"
-printf "%s\n" "#############"
+#cat "${shared}/contacts/self/public"
+#printf "%s\n" "#############"
 cat "${shared}/contacts/self/wireguard"
 printf "%s\n" "#############"
 cat "${shared}/contacts/self/sshd" "${shared}/contacts/self/user" "${shared}/contacts/self/nobody" "${shared}/contacts/self/proxy" "${shared}/contacts/self/jail"

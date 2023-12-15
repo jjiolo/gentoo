@@ -19,28 +19,73 @@
 
 <div class='outer'><div class='middle'><div class='inner'>
 
-<fieldset class='header'></fieldset>
+<fieldset class='header'>
+<a href='#'>wifi</a>
+<a href='#'>qemu</a>
+<a href='#'>sets</a>
+</fieldset>
 
-<fieldset class='content'><legend align="center">outer</legend><table>
-<tr><td><a href='shared/contacts/self/gnupg'>gnupg</a></td></tr>
-<tr><td><a href='shared/contacts/self/public'>public</a></td></tr>
-<tr><td><a href='shared/contacts/self/private'>private</a></td></tr>
-<tr><td><a href='shared/contacts/self/wireguard'>wireguard</a></td></tr>
-</table></fieldset>
+<fieldset class='content'>
+<legend align="center">root</legend>
+<table>
+<tr><td><a href='#'>gpg </a></td></tr>
+<tr><td><a href='#'>sshd</a></td></tr>
+<tr><td><a href='#'>vpnd</a></td></tr>
+<tr><td><a href='#'>ddns</a></td></tr>
+</table>
+</fieldset>
 
-<fieldset class='content'><legend align="center">inner</legend><table>
-<tr><td><a href='shared/contacts/self/sshd'>sshd</a></td><td><a href='shared/contacts/self/sshd.authorized'>authorized</a></td><td><a href='shared/contacts/self/sshd.known'>known</a></td></tr>
-<tr><td><a href='shared/contacts/self/user'>user</a></td><td><a href='shared/contacts/self/user.authorized'>authorized</a></td><td><a href='shared/contacts/self/user.known'>known</a></td></tr>
-<tr><td><a href='shared/contacts/self/nobody'>nobody</a></td><td><a href='shared/contacts/self/nobody.authorized'>authorized</a></td><td><a href='shared/contacts/self/nobody.known'>known</a></td>
-<tr><td><a href='shared/contacts/self/proxy'>proxy</a></td><td><a href='shared/contacts/self/proxy.authorized'>authorized</a></td><td><a href='shared/contacts/self/proxy.known'>known</a></td></tr>
-</table></fieldset>
+<fieldset class='content'>
+<fieldset class='content'>
+<legend align="center">network</legend>
+<table>
+<tr><td><a href='#'>dnsd </a></td></tr>
+<tr><td><a href='#'>dhcpd</a></td></tr>
+<tr><td><a href='#'>tftpd</a></td></tr>
+<tr><td><a href='#'>ntpd </a></td></tr>
+</table>
+</fieldset>
+<fieldset class='content'>
+<legend align="center">services</legend>
+<table>
+<tr><td><a href='#'>crond</a></td></tr>
+<tr><td><a href='#'>ddns </a></td></tr>
+<tr><td><a href='#'>httpd</a></td></tr>
+<tr><td><a href='#'>p2pd </a></td></tr>
+</table>
+</fieldset>
+</fieldset>
 
-<fieldset class='content'><legend align="center">shared</legend><table>
-<tr><td><a href='shared/.directory/contacts'>[contacts]</a></td></tr>
-<tr><td><a href='shared/.directory/downloads'>[downloads]</a></td></tr>
-<tr><td><a href='shared/.directory/torrents'>[torrents]</a></td></tr>
-<tr><td><a href='shared/magnets'>magnets</a></td></tr>
-</table></fieldset>
+<fieldset class='content'>
+<fieldset class='content'>
+<legend align="center">users</legend>
+<table>
+<tr><td><a href='#'>user  </a></td></tr>
+<tr><td><a href='#'>nobody</a></td></tr>
+<tr><td><a href='#'>proxy </a></td></tr>
+<tr><td><a href='#'>jail  </a></td></tr>
+</table>
+</fieldset>
+<fieldset class='content'>
+<legend align="center">apps</legend>
+<table>
+<tr><td><a href='#'>ssh </a></td></tr>
+<tr><td><a href='#'>http</a></td></tr>
+<tr><td><a href='#'>mail</a></td></tr>
+<tr><td><a href='#'>irc </a></td></tr>
+</table>
+</fieldset>
+</fieldset>
+
+<fieldset class='content'>
+<legend align="center">shared</legend>
+<table>
+<tr><td><a href='#'>archive  </a></td></tr>
+<tr><td><a href='#'>contacts </a></td></tr>
+<tr><td><a href='#'>downloads</a></td></tr>
+<tr><td><a href='#'>torrents </a></td></tr>
+</table>
+</fieldset>
 
 <fieldset class='footer'></fieldset>
 

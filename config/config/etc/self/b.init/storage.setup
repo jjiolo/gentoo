@@ -31,7 +31,7 @@ find "${storage}/.gnupg" "${storage}/.ssh" "${storage}/.vpn" "${storage}/.wifi" 
 
 install -d -o 0 -g 0 -m 0775 "${home}"
 
-for i in user nobody proxy jail ssh smtp http irc
+for i in user nobody proxy jail ssh http mail irc
 
 do
 
@@ -59,20 +59,11 @@ install -d -o 0 -g 0 -m 0700 "${mount}"
 # [services]
 
 install -d -o 0 -g 0 -m 0775 "${services}"
-
-until [ -f "${services}/ddns/public/hostname" ]
-
-do
-
- [ "${count:-0}" == "2" ] && break || count="$((${count:-0}+1))"
-
- ash /etc/services/ddns/start
-
- ash /etc/services/ddns/stop ; pkill -9 ddns
-
- sleep 1
-
-done
+install -d -o 5353 -g 5353 -m 0700 "${services}/ddns"
+install -d -o 5353 -g 5353 -m 0700 "${services}/ddns/public"
+#install -o 5353 -g 5353 -m 0600 "${services}/ddns/public/hostname"
+#install -o 5353 -g 5353 -m 0600 "${services}/ddns/public/hs_ed25519_public_key"
+#install -o 5353 -g 5353 -m 0600 "${services}/ddns/public/hs_ed25519_secret_key"
 
 #############
 

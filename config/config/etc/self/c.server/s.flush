@@ -23,14 +23,15 @@
    install -o 22 -g 22 -m 0600 /dev/null "${home}/ssh/.ssh/authorized_keys"
    install -o 22 -g 22 -m 0600 /dev/null "${home}/ssh/.ssh/known_hosts"
 
-   install -o 465 -g 465 -m 0600 /dev/null "${home}/smtp/.ssh/authorized_keys"
-   install -o 465 -g 465 -m 0600 /dev/null "${home}/smtp/.ssh/known_hosts"
-
    install -o 443 -g 443 -m 0600 /dev/null "${home}/http/.ssh/known_hosts"
    install -o 443 -g 443 -m 0600 /dev/null "${home}/http/.ssh/authorized_keys"
 
+   install -o 465 -g 465 -m 0600 /dev/null "${home}/mail/.ssh/authorized_keys"
+   install -o 465 -g 465 -m 0600 /dev/null "${home}/mail/.ssh/known_hosts"
+   
    install -o 6697 -g 6697 -m 0600 /dev/null "${home}/irc/.ssh/known_hosts"
    install -o 6697 -g 6697 -m 0600 /dev/null "${home}/irc/.ssh/authorized_keys"
+
 
 }
 
@@ -44,8 +45,8 @@
   chown -R jail: "${home}/jail/.ssh"
 
    chown -R ssh: "${home}/ssh/.ssh"
-   chown -R smtp: "${home}/smtp/.ssh"
    chown -R http: "${home}/http/.ssh"
+   chown -R mail: "${home}/mail/.ssh"
    chown -R irc: "${home}/irc/.ssh"
 
 #############
@@ -70,8 +71,8 @@ done
   printf "%s\n%s\n" "[jail]"   "$(cat ${home}/jail/.ssh/authorized_keys)"
 
    printf "%s\n%s\n" "[ssh]"   "$(cat ${home}/ssh/.ssh/authorized_keys)"
-   printf "%s\n%s\n" "[smtp]"  "$(cat ${home}/smtp/.ssh/authorized_keys)"
    printf "%s\n%s\n" "[http]"  "$(cat ${home}/http/.ssh/authorized_keys)"
+   printf "%s\n%s\n" "[mail]"  "$(cat ${home}/mail/.ssh/authorized_keys)"
    printf "%s\n%s\n" "[irc]"   "$(cat ${home}/irc/.ssh/authorized_keys)"
 
  printf "%s\n%s\n" "[hosts]" "$(cat ${storage}/.ssh/known_hosts ${home}/*/.ssh/known_hosts|sort|uniq -c)"

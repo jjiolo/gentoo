@@ -1,27 +1,19 @@
 
 #############
-
-users require audio group to use sound /dev/snd
-
 aplay -l
 arecord -l
-
-defaults to card0 device0
-
+#############
 /usr/share/alsa/alsa.conf
  defaults.ctl.card 0
  defaults.pcm.card 0
  defaults.pcm.device 0
-
--------------
- install -o root -g audio -m 0664 /usr/share/alsa.conf /run/alsa.conf
- ln -sf /run/alsa.conf /usr/share/alsa.conf
- sed -i \
- -e "s/defaults.ctl.card ./defaults.ctl.card ${1}/" \
- -e "s/defaults.pcm.card ./defaults.pcm.card ${1}/" \
- -e "s/defaults.pcm.device ./defaults.pcm.device ${1}/" \
- /run/alsa.conf
--------------
-
+#############
+install -o root -g audio -m 0664 /usr/share/alsa.conf /run/alsa.conf
+ln -sf /run/alsa.conf /usr/share/alsa.conf
+sed -i \
+-e "s/defaults.ctl.card ./defaults.ctl.card ${1}/" \
+-e "s/defaults.pcm.card ./defaults.pcm.card ${1}/" \
+-e "s/defaults.pcm.device ./defaults.pcm.device ${1}/" \
+/run/alsa.conf
 #############
 

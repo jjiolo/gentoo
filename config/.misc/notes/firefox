@@ -1,51 +1,24 @@
 
 #############
-
-overall goal,
-
- as many external locks as possible
- not trusting the browser if the host can do it
-
- policies.json > about:config
-
+as many external locks as possible
+not the browser if the host can do it
 #############
-
- [doh+ech]
-
- firefox doh ech...
- ^ disabled policies.json DNSOverHTTPS...
-   true forces =2
-   false forces =5
-   firefox.cfg lockPref =3
- * doh and ech on by default
- ^ ech adoption prevents censorship through SNI (free vpn)
- ^^ tld root authority and dane...
-
- about:preferences#general < - check spelling as you type
- privacy.donottrackheader.enabled
-
-#############
-
-[firefox]
-
+/usr/lib64/firefox/
  distributions/policies.json < - hardcoded path root:root 0775
-
  defaults/pref/autoconfig.js < - hardcoded path root:root 0775
  -> points to
   firefox.cfg < - hardcoded path root:root 0775
  -> points to
   proxy.pac < - hardcoded path root:root 0775
-
 #############
-
-[about:policies]
-
- easier to manage list of settings...
- fast approaching
- to many values
- to many uninteresting values
- to many vague values
-
+* enable doh/ech - ech actually removes SNI
+* disable doh/ech - tor provides anonymous dns queries
+^ enough ech uptake to justify not using tor ?
+#############
+disabled policies.json DNSOverHTTPS...
+true forces =2
+false forces =5
+firefox.cfg lockPref =3
 #############
 
 firefox - 

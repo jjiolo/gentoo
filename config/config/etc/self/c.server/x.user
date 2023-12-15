@@ -46,7 +46,7 @@ su -l -s /bin/ash -c "DISPLAY=:${display} XAUTHORITY=/tmp/.X${display}-auth sets
 
 #############
 
-renice +20 -u "${user}"
+renice +0 -u "${user}"
 
 #############
 

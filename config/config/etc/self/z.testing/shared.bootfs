@@ -6,7 +6,6 @@
 #############
 install -d -o 0 -g 0 -m 0700 "${bootfs}/contacts"
 cp -a "${shared}/contacts/self" "${bootfs}/contacts/${HOSTNAME}"
-cp "${services}/ddns/private/hostname" "${bootfs}/contacts/${HOSTNAME}/private"
 #############
 cp -a "${bootfs}/contacts" "${shared}"
 #############

@@ -4,7 +4,7 @@ fc00::feed:beef/64
 #############
 [0|129|153|165|189|195|219|231|255]
 #############
-[5|7|11|13|17|19|23|29|31|37|41|43|47]
+[2|3|5|7|11|13|17|19|23|29|31|37|41|43|47]
 #############
 no idea what stupid has gathered itself in here
 stuff at the bottom tends to get rewritten and kept
@@ -30,10 +30,9 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:11:24 12:57:00
+ lastest - 2023:12:13 21:07:00
 -------------
- build notes - mostly version bumps + smtpd/ircd testing
-             ^ probably be buggy playing with the configuration
+ build notes - version bumps no changes unless buggy
 -------------
  broken -
  * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
@@ -143,313 +142,118 @@ v attempt to create lists of things to actually do
 #############
 setpriv_udhcpd < - ignores first sleep ?
 #############
+none static busybox is doa (torsocks+netcat)
+^ stage3 doesnt sync glibc versions (cant build properly)
+#############
+sys-kernel/linux-firmware
+xorg-base/xorg-server
+net-misc/curl
+net-p2p/transmission
+-------------
+hosts + certs
+-------------
+x11-libs/fltk
+app-editors/vim
+active-devs-20231211
+-------------
+app-crypt/cryptsetup rc
+app-emulation/qemu rc
+#############
+libxcb + xcb-proto - SRC_URI - > www.x.org (makes it easier to check versions)
+^ test www.x.org against gitlab for release
+* libbsd libmd can share libbsds SRC_URI page ? 
+* move xorg logs to /run ? (makes /tmp less dirty)
+#############
 
- [updates]
+[todo]
 
-  qemu-8.1.2 - > qemu-8.1.3 # no changes ?
-  mpv-0.37 -> mpv-0.38 # libplacebo ?
-  firefox-esr-115.4.0 -> firefox-esr-115.5.0 # disable printing in policies.json
-  git-2.42.1 - > git-2.43 # no changes ?
-  tor-0.4.8.7 -> tor-0.4.8.9 # no changes ?
-  vim-9.0.1777 -> vim-9.0.2092 # no changes ?
+started looking at xorg+mesa not even close...
 
-  [ddns]
+fltk has shiny X extensions ?
 
-  ircd - 
-  dropbear -
-  opensmtpd -
-  httpd - 
-  p2pd -
-  
- busybox needs to be dynamic ?
- dropbear needs to be dynamic ?
- LD_PRELOAD=/usr/lib64/libtorsocks.so
+Xephyr forced mit-shm in xorg but starts without it ?
 
- readme.md - write a decent overview
+* xorg binary strips most of the --configure
+* xephyr apparently just goes fuck it and links everything
 
- tmpfs quota didnt actually work
+* :wifi nice :dhcpd can out %cpu itself into an infinite loop ?
+^ but it looks really dumb in the file ?
+  leaving it because meh
 
 #############
-xrandr --output VGA-1 --mode 1440x900
-xrandr --output DP-1 HDMI-1 HDMI-2 --mode 1920x1080
-#############
-* added ngircd
-* added opensmtpd
-? remove ddns # comment v3 in dnsd ?
-? add .misc/configs.old/c.services/avahi.conf
-? add dnscrypt-proxy (move tor to ddns)
-* tor ebuild - accept_keywords (doesnt support alpha and rc)
-#############
-su -l -s /bin/sh nobody
-^ leaves /dev/pts with caller uid:gid
-  leaves /proc/self/fd as shell uid:gid
-  TIOCSTI esk remote code execution
-user - > root worked
-user - > pivot allows user execution
+-20 - interactive use
+-10 - root
+-5  - network
+-0  - user/hardware
++5  - services
++10 - users
++20 - interactive use
 -------------
-pivot(){
-[ -z ${1} ] && printf "%s\n" "words"
-[ -z ${1} ] || sudo -l -s /bin/sh -c "dtach -A $HOME/socket /bin/sh" "${1}"
-}
-#############
--------------
- [service updates]
--------------
- tmpfs quota - quotaon/setquota/repquota
--------------
- [smtp client]
-  curl ddns provider
-  set mx record
-  set txt record with spf
-  set txt record with dkim
-  set txt record with dmarc
-  sign headers with dkim private key
--------------
- [smtpd]
-  
--------------
- [ircd]
-  
+PORTAGE_NICENESS="+{0,39}" (priority goes from 0-39)
+renice -/+ 20 u <user>
 -------------
 #############
+* dropped opensmtpd/ngircd
+^ openssl-3.2.0 doesnt work with bsd stuff ? --enable-ssl=no
+* firefox doh is off...
+* removed ddns key creation on init + irc client scraping it
+* need key + hidden_service v3 hash generator ?
+#############
+[xorg/xephyr]
+-------------
+cant 1777 scan for lock files ?
+cant change auth/lock file directory ?
+while sleep 3 ; do DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth xrandr --auto ; done
+lsw && xev -
+ id="$(lsw|awk '/Xephyr.*:13/{print$1}')"
+ xev -display :0 -id "${id}" -1 -event structure |
+ while read ; do DISPLAY=:13 XAUTHORITY=/tmp/.X13-auth xrandr ; done
+#############
+-------------
+! opensmtpd doesnt compile with openssl 3.2.0
+! find /binhost/logs/portage -type f -exec grep -H ' QA ' {} \;
+-------------
+* readme.md - write a decent overview
+* added ngircd / added opensmtpd
+* tor is ddns only (uncomment to enable hidden service)
+^ no ability to /tmp/storage/.ddns v3 keys
+* nftables, ip protocol with no ip6 ???
+* openssl-3.2.0 - opensmtpd wont compile with it
+* busybox/dropbear LD_PRELOAD=libtorsocks.so
+* ext4/tmpfs quota (didnt work)
+* muttrc hotkey to reread maildir ?
+ ^ doesnt create =trash
+* pivot - ended up with a 1777 race condition ?
+* dropped links2
+* init needs a debug...
+* chunk repos/{overlay,overflow,xorg,testing} more efficicently
+^ proof reading clusters of related ebuilds > entire repo
+* deleted dhcpc (mimics zcip/tftpd/ntpd)
+^ dhcpd and dhcpc - both run a dhcp deamon
+* smtp - > mail (crond/ddns/httpd/ircd/maild/p2pd)
+^ user - > admin / irc - > chat ?
+* e2fsprogs notes clean up ?
+* /etc/profile - set kernels and -j${n} -l${n} ?
+* t.{put,get} - hardcodes 172.16.0.1 webseed...
 * chmod 1777 /path ; chown user:group /path
 ^ update all old references to uniform style ?
-#############
-* e2fsprogs notes clean up ?
-#############
-etc/profile
--------------
-build=16
-kernels='laptop desktop server virtual'
-CFLAGS=
-CXXFLAGS=
--------------
-getting sick of repeating things that change ?
-#############
-! find /binhost/logs/portage -type f -exec grep -H ' QA ' {} \;
-#############
-wpa_supplicant - CONFIG_AP
-^ wifi disconnects now remove default route ?
-  should probably test it, really fucking annoying
-#############
--------------
-default=rw,nodev,nosuid,noexec,noatime
-tmpfs=size=50%,mode=1777
-quota=quota,usrquota,grpquota
-quota=usrquota_block_hardlimit=1G
-quota=usrquota_inode_hardlimit=1000
-quota=grpquota_block_hardlimit=1G
-quota=grpquota_inode_hardlimit=1000
-mount -t tmpfs -o ${default},${tmpfs},${quota} tmpfs /tmp
--------------
-quotaon - on/off
-setquota - set limits
-repquot - view limits
-^ tl;dr short and sweer version
--------------
-#############
-
- KVM_PROVE_MMU=y
- X86_USER_SHADOW_STACK=y
- RANDOM_KMALLOC_CACHES=y
- LIST_HARDENED=y
- TMPFS_QUOTA=y
-
- ^ extra kernel hardening
-   +tmpfs quota (not implemented yet)
-
- [gcc hardening]
-
- -ftrapv -fwrapv - trap/wrap signed overflow
- -fvtable-verify - validate vtable pointers before using them (CXXFLAGS?)
-
- -fcf-protection=full - control flow protection
- -mfunction-return and -fcf-protection are not compatible
-
- tl;dr cant enable cf-protection because retpoline ?
-
-#############
-t.{put,get} - defaults to 172.16.0.1
-./t.put <ip> <file> # set webseed ?
-./t.get <ip> <file>
-#############
+* wpa_supplicant - kept making disconnects delete default route ?
+^ in relation to adding CONFIG_AP ?
 * ddns/dnsd - hangs on boot, pkill no longer works ?
-* ddns public/private addresses in $shared/$contacts
-^ remove public/private leave a single hidden_service
-! forward to 172.16.0.1 ssh/smtp/http/irc
-  ssh remote access for wireguard
-  http download torrents
-  smtp slow comms
-  irc real time comms
-#############
--------------
- wpa_supplicant ap...
- wpa_supplicant station...
--------------
- w.ap <interface> <ssid> <password>
- w.public <interface> <ssid>
- w.private <interface> <ssid> <password>
- w.connect - load existing config file
- w.scan <interface>
--------------
-* key_mgmt=WPA-PSK everything else fails ?
-* SAE WPA-PSK-SHA256 - both fail to start
-* pmf / ieee80211w - both fail to start
--------------
- ieee80211w=2
- key_mgmt=SAE
- sae_password=
- sae_password_id
- sae_groups=19 20 21
- sae_pwe= 0 1 2
- sae_pk=
-^ sae wouldnt turn on
--------------
- passive_scan - station doesnt ask for ssid
- network={ scan_ssid=1 } # scan for hidden ssid using empty ssid ?
- network={ ignore_broadcast_ssid=1 } # access point hidden ssid ?
--------------
- only the weakest form of authentication works ?
--------------
-end game - public or private local area network
-           only allow routing through a vpn interface
--------------
-#############
 * ability to update usr/share/tor/geoip...
 * busybox install - chown no longer resets suid/guid - should remove suid/guid on owner change
 * sysctl.conf is horrible to maintain / verify
-#############
-
-#############
-[gnupg]
- removed encryption uid
- removed signature uid
- removed embedded filename
-#############
-ulimits -a for individual pids/users ?
-printf "Max processes=3:3" >> /proc/1234/limits
-printf "Max nice priority=20:40" >> /proc/1234/limits
-^ correct format, doesnt edit the values ?
-prlimit - util-linux (busybox missing alot of functionality)
-#############
-bootfs discard ? storage doesnt discard ? cant remember why
-storage.fde ?
-#############
-
-* cant identify remote chroot
-  PS1= (removes SSH_CONNECTION)
-  [user][host][path][depth][-] host
-  [user][host][path][depth][c] chroot
-  [user][host][path][depth][r] remote
-  [user][host][path][depth][rc] remote chroot
-
-#############
-
- openssl-3.2.0 alpha
-  test dtls ed25519
-  kdf support for argon2d argon2i argon2id (drop argon2)
-
- openssl s_client -ktls support
- openssl s_client -adv - type {help} ?
- openssl s_client -quic (-adv -alpn)
- no-http option (disable -www -http ?)
-
- x509 ca req produce x.509 v3 certificates ?
- ^ keyUsage - codeSigning
-
- aes-gcm-siv - gcm with nonce reuse protection
-
-#############
-
- grub hardcodes 172.16.0.1 (siaddr)
- grub hardcodes downloads/bootfs/<kernel>
- grub hardcodes downloads/bootfs/<image>
- ^ should be pulling dhcp variables ?
-
- go-bootstrap FEATURES="mirror"
- ^ takes to fucking long
-
-#############
-
- * chunk up repos...
-   overflow
-   overlay
-   xorg
-   testing
-  ^ makes it feel less horrific when proof reading
-
- & still want to but, nothing splits evenly ?
-
-#############
- firefox-esr < - libstdc++ libgcc_s + glibc:libmount
-#############
-
- /etc/sysctl.conf < - adding arp/ndp settings
-
-sysctl - ipv4 options tidy ?
-         ipv6 options tidy ?
-       ^ arp and ndp
-
- sysctl -a | grep arp
- accept
- announce
- evict_nocarrier
- filter
- ignore
- notify
-
-#############
-
-qemu usb pass through test (pipewire broke it?)
-dropbear cheat sheet
- dbclient -J proxy_command
-  server - nc -e dbclient
-  server - dbclient -J nc
-  client - nc -e dbclient
-  client - dbclient -J nc
-  ^ forward or reverse connections...
-  * dbclient nc might stop closing listening socket ?
-
-#############
-
- * 0.binhost - uses stage3 variables ?
- * backup - uses stage3 variables ?
- ^ should install / setup on any liveusb ?
-
- * meson - -Db_lundef
-           -Db_ndebug
-     ^ refuse to build libraries with undeclared dependencies ?
-     ^ refuse to use assert ?
-
- * transmission-daemon --dump-settings
- ^ missing "peer-id-ttl-hours": 6,
-
- * ip addr scope {host,link,global}
- ^ private address as global wrong scope ?
- * ip route scope {host,link,global}
- ^ private address as link correct scope ?
- ^^ suppose to set it manually ?
-
- * added ip_route_multipath
-   setpriv_network_{default,oneshot,ping,zcip}
-           network_{default,oneshot,ping,zcip}
- ^ rather than screw up primary dns with multiple dhcp servers
-   forcing it to delete a route
- ? leave support to oneshot and add multiple defaults ?
- ^ no functionality hint (cant test it shouldnt support it)
- ^^^ using network_oneshot protect network_default
-
-#############
-
- 2.shell - setsid chroot . /bin/busybox
- ^ ability to remove pts injection ?
-
- * su -l -s /bin/sh -c 'setsid' <user>
- * login shell executes rc/profile with insecure pts...
- * setsid su -l -s /bin/sh -c 'setsid' <user>
-
-#############
-
+-------------
+smtpd over tor (gurrilla mail)
+fingerprint - > secret@ / @secret ?
+fingerprint - > user@ / @group
+torsocks smtp \
+-H group -F me@group \
+-s smtp://<hidden_service>:25 \
+you@group < message
+-------------
+* free slot for real dnsd
+-------------
 * read -r --raw < - interpret backslashes literally, rather than as escape characters
 ^ need a test script to demonstrate the difference
 
@@ -498,6 +302,85 @@ dropbear cheat sheet
 ! basically -virtual/man should depclean everything...
   couldnt figure out why ?
 
+ * ip addr scope link - 169.254  (private ranges use global?)
+ * meson -Db_lundef -Db_ndebug
+     ^ refuse to build libraries with undeclared dependencies ?
+     ^ refuse to use assert ?
+
+ * transmission-daemon --dump-settings
+ ^ missing "peer-id-ttl-hours": 6,
+
+ * ip_route_multipath
+   setpriv_network_{daemon,default,oneshot,ping,zcip}
+           network_{daemon,default,oneshot,ping,zcip}
+ ^ could update to support routes from dhcp ?
+
+#############
+
+#############
+su -l -s /bin/sh nobody
+^ leaves /dev/pts with caller uid:gid
+  leaves /proc/self/fd as shell uid:gid
+  TIOCSTI esk remote code execution
+user - > root worked
+user - > pivot allows user execution
+-------------
+pivot(){
+[ -z ${1} ] && printf "%s\n" "words"
+[ -z ${1} ] || sudo -l -s /bin/sh -c "dtach -A $HOME/socket /bin/sh" "${1}"
+}
+#############
+ [gcc hardening]
+ -ftrapv -fwrapv - trap/wrap signed overflow
+ -fvtable-verify - validate vtable pointers before using them (CXXFLAGS?)
+ -fcf-protection=full - control flow protection
+ -mfunction-return and -fcf-protection are not compatible
+ tl;dr cant enable cf-protection because retpoline ?
+#############
+ulimits -a for individual pids/users ?
+printf "Max processes=3:3" >> /proc/1234/limits
+printf "Max nice priority=20:40" >> /proc/1234/limits
+^ correct format, doesnt edit the values ?
+prlimit - util-linux (busybox missing alot of functionality)
+#############
+* {bootfs,storage}.mount system.fde discard ?
+#############
+* cant identify remote chroot
+  PS1= (removes SSH_CONNECTION)
+  [user][host][path][depth][-] host
+  [user][host][path][depth][c] chroot
+  [user][host][path][depth][r] remote
+  [user][host][path][depth][rc] remote chroot
+#############
+aes-gcm-siv - gcm with nonce reuse protection
+kdf support for argon2d argon2i argon2id (drop argon2)
+#############
+ grub hardcodes 172.16.0.1 (siaddr)
+ grub hardcodes downloads/bootfs/<kernel>
+ grub hardcodes downloads/bootfs/<image>
+ ^ should be pulling dhcp variables ?
+#############
+* go-bootstrap FEATURES="mirror" < takes to fucking long
+#############
+
+ /etc/sysctl.conf < - adding arp/ndp settings
+
+sysctl - ipv4 options tidy ?
+         ipv6 options tidy ?
+       ^ arp and ndp
+
+ sysctl -a | grep arp
+ accept
+ announce
+ evict_nocarrier
+ filter
+ ignore
+ notify
+
+#############
+* 0.binhost - uses stage3 variables ?
+* backup - uses stage3 variables ?
+^ should install / setup on any liveusb ?
 #############
 
 #############
@@ -512,10 +395,9 @@ dropbear cheat sheet
  eg x11-misc/compose-tables - no binaries or libraries
 
 -------------
-
- emerge --root /run/console --nodeps @console
- emerge --root /run/desktop --nodeps @desktop
-
+ emerge --root /run/console  --nodeps @console
+ emerge --root /run/desktop  --nodeps @desktop
+ emerge --root /run/programs --nodeps @programs
  ldd + db/pkg/category/package
 
  find $PATH $LIB -type f -exec sh /usr/bin/ldd {} 2>/dev/null \; # installed
@@ -541,19 +423,12 @@ dropbear cheat sheet
  ^ package with only config files in it...
 
 -------------
-
 * automate creating sets/<binary>
 * automate reducing packages in sets/<binary>
-
 * emerge --root /run/<binary> -avbk <binary>
-
  needs to split DEPEND and REQUIRES ?
-
  DEPEND can overshoot needed packages
  REQUIRES packages needed to link at run time ?
-
--------------
-
 #############
 
  localhost interface...
@@ -2256,4 +2131,6 @@ gcc
 cp -a /path/.* pulls everything (including hidden files)
 chmod 644 /path/.* sets the directory to 644 and locks the lot of it
 #############
-
+xrandr --output VGA-1 --mode 1440x900
+xrandr --output DP-1 HDMI-1 HDMI-2 --mode 1920x1080
+#############

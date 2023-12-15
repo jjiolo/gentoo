@@ -65,6 +65,39 @@ network={ network block ?
 
 
 #############
+-------------
+ wpa_supplicant ap...
+ wpa_supplicant station...
+-------------
+ w.ap <interface> <ssid> <password>
+ w.public <interface> <ssid>
+ w.private <interface> <ssid> <password>
+ w.connect - load existing config file
+ w.scan <interface>
+-------------
+* key_mgmt=WPA-PSK everything else fails ?
+* SAE WPA-PSK-SHA256 - both fail to start
+* pmf / ieee80211w - both fail to start
+-------------
+ ieee80211w=2
+ key_mgmt=SAE
+ sae_password=
+ sae_password_id
+ sae_groups=19 20 21
+ sae_pwe= 0 1 2
+ sae_pk=
+^ sae wouldnt turn on
+-------------
+ passive_scan - station doesnt ask for ssid
+ network={ scan_ssid=1 } # scan for hidden ssid using empty ssid ?
+ network={ ignore_broadcast_ssid=1 } # access point hidden ssid ?
+-------------
+ only the weakest form of authentication works ?
+-------------
+end game - public or private local area network
+           only allow routing through a vpn interface
+-------------
+#############
 
 network={
  mode=2

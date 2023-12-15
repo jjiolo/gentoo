@@ -2,8 +2,8 @@
 EAPI=8
 #############
 DESCRIPTION="X C-language Bindings library"
-HOMEPAGE="https://xcb.freedesktop.org"
-SRC_URI="https://xcb.freedesktop.org/dist/${P}.tar.xz"
+HOMEPAGE="https://www.x.org"
+SRC_URI="https://www.x.org/releases/individual/lib/${P}.tar.xz"
 #############
 LICENSE="X11 License Distribution Modification Variant"
 SLOT="0"

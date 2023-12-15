@@ -19,10 +19,12 @@ install    -o 68 -g 68 -m 0664 /dev/null /run/resolv.conf
 cd / ; caps="-all,+net_admin,+net_raw,+net_bind_service"
 
 /bin/setsid /usr/bin/setpriv \
- --reuid dhcpc --regid dhcpc --init-groups --nnp --reset-env \
+ --reuid dhcpd --regid dhcpd --init-groups --nnp --reset-env \
  --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
  /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /bin/udhcpc_default "${hostname}" < /dev/null
 
+#############
+renice -5 -u "dhcpd"
 #############
 if [ "${1}" == "nat" ]
 then

@@ -1,6 +1,4 @@
 
-net-irc/ngircd
-mail-mta/opensmtpd
 sys-fs/quota
 
 app-crypt/argon2

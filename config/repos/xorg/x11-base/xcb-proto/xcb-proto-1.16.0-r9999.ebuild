@@ -2,8 +2,8 @@
 EAPI=8
 #############
 DESCRIPTION="X C-language Bindings protocol headers"
-HOMEPAGE="https://xcb.freedesktop.org"
-SRC_URI="https://xcb.freedesktop.org/dist/${P}.tar.xz"
+HOMEPAGE="https://www.x.org"
+SRC_URI="https://www.x.org/releases/individual/proto/${P}.tar.xz"
 #############
 LICENSE="X11 License Distribution Modification Variant"
 SLOT="0"
@@ -16,7 +16,7 @@ src_configure(){
 ./configure \
 --prefix=/usr \
 --enable-option-checking \
---enable-silent-rules \
+--enable-silent-rules
 
 #--without-python-sys-prefix \
 #--without-python_prefix \
