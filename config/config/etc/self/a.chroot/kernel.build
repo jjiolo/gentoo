@@ -8,7 +8,7 @@ export CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe -fomit-frame-pointer -flto
 export CFLAGS="${CFLAGS} -mindirect-branch=thunk -mfunction-return=thunk"
 export CFLAGS="${CFLAGS} -mindirect-branch-register -mindirect-branch-cs-prefix"
 export CFLAGS="${CFLAGS} -mharden-sls=all"
-export CFLAGS="${CFLAGS} -D_FORTIFY_SOURCE=3"
+export CFLAGS="${CFLAGS} -D_FORTIFY_SOURCE=3 -D_GLIBCXX_ASSERTIONS -fexceptions"
 export CFLAGS="${CFLAGS} -pie -fPIE -fPIC"
 export CFLAGS="${CFLAGS} -fstack-protector-all -fstack-clash-protection"
 export CXXFLAGS="${CFLAGS}"
@@ -29,7 +29,7 @@ kernel="$(basename ${1})"
 
 #############
 
-install -d -o nobody -g nobody -m 0700 "/var/empty/${kernel}"
+install -d -o 65534 -g 65534 -m 0700 "/var/empty/${kernel}"
 
 for i in /root/kernels/* ; do
 

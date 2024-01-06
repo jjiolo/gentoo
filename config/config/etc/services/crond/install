@@ -2,13 +2,13 @@
 #############
 . /etc/services/variables crond
 #############
-[ -d "${service_storage}/hour"    ] || install -d -o root -g root -m 0700 "${service_storage}/hour"
-[ -d "${service_storage}/day"     ] || install -d -o root -g root -m 0700 "${service_storage}/day"
-[ -d "${service_storage}/week"    ] || install -d -o root -g root -m 0700 "${service_storage}/week"
-[ -d "${service_storage}/month"   ] || install -d -o root -g root -m 0700 "${service_storage}/month"
-[ -d "${service_storage}/year"    ] || install -d -o root -g root -m 0700 "${service_storage}/year"
+[ -d "${service_storage}/hour"  ] || install -d -o 0 -g 0 -m 0700 "${service_storage}/hour"
+[ -d "${service_storage}/day"   ] || install -d -o 0 -g 0 -m 0700 "${service_storage}/day"
+[ -d "${service_storage}/week"  ] || install -d -o 0 -g 0 -m 0700 "${service_storage}/week"
+[ -d "${service_storage}/month" ] || install -d -o 0 -g 0 -m 0700 "${service_storage}/month"
+[ -d "${service_storage}/year"  ] || install -d -o 0 -g 0 -m 0700 "${service_storage}/year"
 #############
-[ -f "${service_storage}/root"    ] || install    -o root -g root -m 0600 "${service_system}/root" "${service_storage}/root"
+[ -f "${service_storage}/root"  ] || install    -o 0 -g 0 -m 0600 "${service_system}/root" "${service_storage}/root"
 #############
-. /etc/services/permissions root root 0700 0600
+. /etc/services/permissions 0 0 0700 0600
 #############

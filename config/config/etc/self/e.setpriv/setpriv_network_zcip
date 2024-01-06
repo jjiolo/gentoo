@@ -19,7 +19,7 @@ ip link set up "${1}"
 cd / ; caps="-all,+net_admin,+net_raw,+net_bind_service"
 
 /bin/setsid /usr/bin/setpriv \
- --reuid dhcpd --regid dhcpd --init-groups --nnp --reset-env \
+ --reuid dhcpc --regid dhcpc --init-groups --nnp --reset-env \
  --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
  /sbin/zcip -vfq "${1}" /bin/udhcpc_zcip < /dev/null
 

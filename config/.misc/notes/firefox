@@ -1,5 +1,11 @@
 
 #############
+gtk+
+libsrvg - forces rust takes ages only provides thumbnail icons in ctrl+o filemanager
+libepoxy - requires egl ? nope
+#############
+
+#############
 as many external locks as possible
 not the browser if the host can do it
 #############

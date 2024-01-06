@@ -1,29 +1,17 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
-<style>
-    body{height:100%;width:100%;margin:0;padding:0;color:#BDBDBD;background-color:#000000;font-size:1.0em;}
-  a:link,a:visited,a:hover,a:active{text-decoration:none;color:#ff9900}
-  .outer{display:table;position:absolute;width:100%;height:100%;}
- .middle{display:table-cell;margin:0 auto;vertical-align:middle;}
-  .inner{display:table;margin:0 auto;}
- .header{display:block;float:none;text-align:center;border:none;}
-.content{display:inline-block;text-align:center;}
- .footer{display:block;float:none;text-align:center;border:none;}
-       p{margin:0.1em;padding:0em;}
-</style>
+<link rel="stylesheet" href="/css">
 </head>
 
 <body>
+<div class='outer'>
+<div class='middle'>
+<div class='inner'>
 
-<div class='outer'><div class='middle'><div class='inner'>
-
-<fieldset class='header'>
-<a href='#'>wifi</a>
-<a href='#'>qemu</a>
-<a href='#'>sets</a>
-</fieldset>
+<fieldset class='header'></fieldset>
 
 <fieldset class='content'>
 <legend align="center">root</legend>
@@ -31,7 +19,7 @@
 <tr><td><a href='#'>gpg </a></td></tr>
 <tr><td><a href='#'>sshd</a></td></tr>
 <tr><td><a href='#'>vpnd</a></td></tr>
-<tr><td><a href='#'>ddns</a></td></tr>
+<tr><td><a href='#'>wifi</a></td></tr>
 </table>
 </fieldset>
 
@@ -39,8 +27,10 @@
 <fieldset class='content'>
 <legend align="center">network</legend>
 <table>
+<tr><td><a href='#'>ddns </a></td></tr>
 <tr><td><a href='#'>dnsd </a></td></tr>
 <tr><td><a href='#'>dhcpd</a></td></tr>
+<tr><td><a href='#'>dhcpc</a></td></tr>
 <tr><td><a href='#'>tftpd</a></td></tr>
 <tr><td><a href='#'>ntpd </a></td></tr>
 </table>
@@ -49,7 +39,9 @@
 <legend align="center">services</legend>
 <table>
 <tr><td><a href='#'>crond</a></td></tr>
-<tr><td><a href='#'>ddns </a></td></tr>
+<tr><td><a href='#'>ircd</a></td></tr>
+<tr><td><a href='#'>sshd</a></td></tr>
+<tr><td><a href='#'>maild</a></td></tr>
 <tr><td><a href='#'>httpd</a></td></tr>
 <tr><td><a href='#'>p2pd </a></td></tr>
 </table>
@@ -60,6 +52,7 @@
 <fieldset class='content'>
 <legend align="center">users</legend>
 <table>
+<tr><td><a href='#'>root  </a></td></tr>
 <tr><td><a href='#'>user  </a></td></tr>
 <tr><td><a href='#'>nobody</a></td></tr>
 <tr><td><a href='#'>proxy </a></td></tr>
@@ -69,10 +62,11 @@
 <fieldset class='content'>
 <legend align="center">apps</legend>
 <table>
-<tr><td><a href='#'>ssh </a></td></tr>
-<tr><td><a href='#'>http</a></td></tr>
-<tr><td><a href='#'>mail</a></td></tr>
 <tr><td><a href='#'>irc </a></td></tr>
+<tr><td><a href='#'>ssh </a></td></tr>
+<tr><td><a href='#'>mail</a></td></tr>
+<tr><td><a href='#'>http</a></td></tr>
+<tr><td><a href='#'>p2p </a></td></tr>
 </table>
 </fieldset>
 </fieldset>
@@ -87,11 +81,13 @@
 </table>
 </fieldset>
 
-<fieldset class='footer'></fieldset>
+<fieldset class='footer'>
+<p>[git clone http://root:password@127.0.0.1/cgi-bin/project.git]</p>
+</fieldset>
 
-</div></div></div>
-
+</div>
+</div>
+</div>
 </body>
-
 </html>
 

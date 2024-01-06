@@ -14,19 +14,18 @@
 
 onion="$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)"
 #############
-account="spare"
+account="spare" mode="MODE ${account} +iuwQR"
 #############
 nick="NICK $(tr -cd 'a-zA-Z'</dev/urandom|head -c13)"
 user="USER ${onion:0:9} 0 0 :${onion:9:47}~"
 #############
-mode="MODE ${account} +iuwQR"
-#############
 regain="PRIVMSG NickServ :regain ${account}"
 #############
-channels="JOIN #libera,#gentoo-chat"
-channels="${channels},#linux,#networking,#security"
+channels="JOIN #libera,#networking,#security"
 channels="${channels},#gentoo,#archlinux"
-channels="${channels},#gentoo-security,#gentoo-bugs,#gentoo-dev"
+channels="${channels},#gentoo-security"
+channels="${channels},#gentoo-bugs"
+channels="${channels},#gentoo-dev"
 #############
 red="\e[31m" green="\e[32m" yellow="\e[33m" blue="\e[34m"
 purple="\e[35m" cyan="\e[36m" white="\e[37m" grey="\e[38m"

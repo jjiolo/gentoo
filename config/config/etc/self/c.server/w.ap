@@ -6,9 +6,9 @@ usage(){ printf "\n${0} - ${1}\n\n takes interface, ssid and passphrase\n\n" ; e
 [ "${#}" == "3" ] || usage "no input"
 [ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
 #############
-pkill -x /sbin/wpa_supplicant
+pkill -x /sbin/wifi
 #############
-install -o 13 -g 13 -m 0600 "/dev/null" "${storage}/.wifi/wpa_supplicant"
+install -o 5 -g 5 -m 0600 "/dev/null" "${storage}/.wifi/wpa_supplicant"
 #############
 cat >> "${storage}/.wifi/wpa_supplicant" << EOF
 
@@ -43,7 +43,7 @@ ip link set up "${1}"
 cd / ; caps="-all,+net_admin,+net_raw" ; /bin/setsid /usr/bin/setpriv \
  --reuid wifi --regid wifi --init-groups --nnp --reset-env \
  --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
- /sbin/wpa_supplicant -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant" -e "${storage}/.wifi/entropy" </dev/null &>/dev/null &
+ /sbin/wifi -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant" -e "${storage}/.wifi/entropy" </dev/null &>/dev/null &
 #############
 renice +0 -u "wifi"
 #############

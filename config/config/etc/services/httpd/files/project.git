@@ -1,0 +1,7 @@
+
+#############
+GIT_HTTP_EXPORT_ALL="" \
+GIT_PROJECT_ROOT="/tmp/storage/services/httpd/repo/project" \
+exec /usr/libexec/git-core/git-http-backend
+#############
+

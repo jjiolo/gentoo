@@ -29,10 +29,11 @@ printf "%s\n" "${peer} ${1}" >> "${storage}/.ssh/authorized_keys"
  printf "%s\n" "${peer} ${1}" >> "${home}/proxy/.ssh/authorized_keys"
  printf "%s\n" "${peer} ${1}" >> "${home}/jail/.ssh/authorized_keys"
 
-  printf "%s\n" "${peer} ${1}" >> "${home}/ssh/.ssh/authorized_keys"
-  printf "%s\n" "${peer} ${1}" >> "${home}/http/.ssh/authorized_keys"
-  printf "%s\n" "${peer} ${1}" >> "${home}/mail/.ssh/authorized_keys"
   printf "%s\n" "${peer} ${1}" >> "${home}/irc/.ssh/authorized_keys"
+  printf "%s\n" "${peer} ${1}" >> "${home}/ssh/.ssh/authorized_keys"
+  printf "%s\n" "${peer} ${1}" >> "${home}/mail/.ssh/authorized_keys"
+  printf "%s\n" "${peer} ${1}" >> "${home}/http/.ssh/authorized_keys"
+  printf "%s\n" "${peer} ${1}" >> "${home}/p2p/.ssh/authorized_keys"
 
 #############
 

@@ -43,14 +43,14 @@ stuff at the top is unordered raw sewage
 
 [INFORMATIONAL]:
 #############
-* pkg_postinst isnt recorded in CONTENTS
 * gcc - removed /etc/portage symlink ?
+* pkg_postinst isnt recorded in CONTENTS
 * qemu reboot - corrects vnc output size
 * mandoc: sys-boot/efibootmgr - > sys-libs/efi-var - > mandoc ./file.1 | less -S
 * busybox/ip - no nexthop, no multicast, no netns
 * /bin/login sets USER HOME ; /bin/ash /init /sbin/init have no USER HOME
-* dropbear socks || wg/microsocks nc -lks local:/path -e dbclient user@host nc local:/path
-* keepalive points - monitor,crond,udhcpc_script,udhcpd_script  ntpd ?
+* dropbear socks || wg/microsocks (nc -lks local:/path -e dbclient user@host nc local:/path)
+* keepalive points - monitor,crond,udhcpd_script,udhcpc_script ntpd ?
 * for i in $(seq 0 64) ; do trap false $i ; done ; exec command </dev/null &>/dev/null
 * gcc -lto -pgo 00:18:31 +00:00:00 || gcc +lto -pgo 00:24:44 +00:06:00 || gcc +lto +pgo 00:36:48 +00:12:00
 * sysctl -w kernel.yama.ptrace_scope=3 CONFIG_SECURITY CONFIG_SECURITY_YAMA
@@ -142,45 +142,108 @@ v attempt to create lists of things to actually do
 #############
 setpriv_udhcpd < - ignores first sleep ?
 #############
-none static busybox is doa (torsocks+netcat)
-^ stage3 doesnt sync glibc versions (cant build properly)
+
+* current fuck ups...
+  wpa_supplicant CONFIG_AP - disconnect now tears down interface and default route ?
+  tor - ignores sigterm ? (wifi goes down tor breaks forces sigkill)
+  transmission - umask breaks after long periods of use ? 022 goes 027 ? which isnt the host umask either ?
+
+-------------
+
+* passwd/group/shadow
+  p.{irc,ssh,mail,http,p2p}
+  x.{user,nobody,proxy,jail}
+  added window: (privdrop xephyr remove raw input fd's?)
+  rce in xorg api gets raw keyboard and mouse
+  rce in xephyr api gets every instance ?
+  rce in xephyr api doesnt get the host ?
+  better than nothing ? (should be user per xephyr instance)
+
+* /run/display /run/window
+
+ ^ startx - x.{user,nobody,proxy,jail} p.{irc,ssh,mail,http,p2p}
+ ^ create a directory in /run for xorg and xephyr to use ?
+ ^ use window:window to run xephyr (removes raw input fd) (lose xephyr not host?)
+
+-------------
+* ircd botnet + irc_client (ircd+irc)
+* sshd botnet + ssh_client (sshd+ssh)
+-------------
+* httpd - using old files/ gitd/files more modular
+-------------
+* maild useless without diskquota
+* ephemeral useless without tmpfs quota ?
+^ none of that stuff actually worked 
+-------------
+user -> tor -> ssh && setup wireguard...
+^ doesnt work
+* no tor v3 key generation on boot ?
+* no nftables access to tor or ssh ?
+* need to actually fix things but cant test regardless
+-------------
+
+-------------
+nftables
+lo/nat/tun - identical input (full setup)
+lo/nat/tun - indentical output (full setup)
+nobody+applications - lan removes cleartext lo/nat/tun allow cleartext ?
+-------------
+
+-------------
+!!! find config/config -type f -exec grep -Hi 'install ' {} \;
+^^^ check install uses all numeric or alphabetic input ?
+^^^ (changed ssh from 22 to 2222 numeric implies changing every file)
+-------------
+
 #############
-sys-kernel/linux-firmware
-xorg-base/xorg-server
-net-misc/curl
-net-p2p/transmission
+[updates]
 -------------
-hosts + certs
+app-editors/vim - no changes ?
+app-emulation/qemu - virtio_sound (havent implemented yet)
+app-misc/ca-certificates - no changes
+sys-kernel/linux-headers - no changes
+sys-kernel/linux-firmware - no changes
+x11-libs/gtk+ - -libsrvg -libepoxy(egl)
+x11-libs/libdrm - no changes
 -------------
-x11-libs/fltk
-app-editors/vim
-active-devs-20231211
+net-vpn/tor - removed dnsd symlink
+net-wireless/wpa_supplicant - created wifi symlink
+sys-apps/busybox - +static +locale +ntp_auth -millisecond_timestamps
+www-client/firefox - public google / private duckduckgo (failed)
 -------------
 app-crypt/cryptsetup rc
-app-emulation/qemu rc
 #############
+* gtk+ ebuild...
+#############
+firefox - public google / private duckduckgo ?
+^ about:config option to enable gui...
+  no about:config option to set private default...
+#############
+qemu - 
+kernel - CONFIG_SND_VIRTIO
+virtio-sound
+ -device virtio-sound-pci,audiodev=my_audiodev
+ -audiodev alsa,id=my_audiodev
+ -audio driver=coreaudio,model=virtio
+#############
+/run/display desktop:desktop hold all xorg logs and auth files
+desktop == xorg-server
+window == xephyr
+^ split user permissions ?
+-------------
 libxcb + xcb-proto - SRC_URI - > www.x.org (makes it easier to check versions)
 ^ test www.x.org against gitlab for release
 * libbsd libmd can share libbsds SRC_URI page ? 
-* move xorg logs to /run ? (makes /tmp less dirty)
 #############
-
 [todo]
-
 started looking at xorg+mesa not even close...
-
 fltk has shiny X extensions ?
-
 Xephyr forced mit-shm in xorg but starts without it ?
-
 * xorg binary strips most of the --configure
 * xephyr apparently just goes fuck it and links everything
-
-* :wifi nice :dhcpd can out %cpu itself into an infinite loop ?
-^ but it looks really dumb in the file ?
-  leaving it because meh
-
 #############
+:wifi nice - networking users can out %cpu the wifi daemon ?
+-------------
 -20 - interactive use
 -10 - root
 -5  - network
@@ -193,11 +256,7 @@ PORTAGE_NICENESS="+{0,39}" (priority goes from 0-39)
 renice -/+ 20 u <user>
 -------------
 #############
-* dropped opensmtpd/ngircd
-^ openssl-3.2.0 doesnt work with bsd stuff ? --enable-ssl=no
-* firefox doh is off...
-* removed ddns key creation on init + irc client scraping it
-* need key + hidden_service v3 hash generator ?
+* tor v3 key and address generator ? (during init)
 #############
 [xorg/xephyr]
 -------------
@@ -214,12 +273,10 @@ lsw && xev -
 ! find /binhost/logs/portage -type f -exec grep -H ' QA ' {} \;
 -------------
 * readme.md - write a decent overview
-* added ngircd / added opensmtpd
 * tor is ddns only (uncomment to enable hidden service)
 ^ no ability to /tmp/storage/.ddns v3 keys
 * nftables, ip protocol with no ip6 ???
 * openssl-3.2.0 - opensmtpd wont compile with it
-* busybox/dropbear LD_PRELOAD=libtorsocks.so
 * ext4/tmpfs quota (didnt work)
 * muttrc hotkey to reread maildir ?
  ^ doesnt create =trash
@@ -267,7 +324,7 @@ you@group < message
   ^^ cant do dev from tmux(dtach+mtm)
   (exec showkey > /run/logs/keylogger &)&
   dumpkmap - get keyboard map
-  loadkmap - set keyboard map
+l
 
 * busybox - gzip content encoding, if file / file.gz exists
             gzip -c -9 index > index.gz ; curl -I --compressed 127.0.0.1

@@ -11,35 +11,41 @@
 
 [hardware] - (renice +0) (/dev)
 -------------
+    wifi - /tmp/storage/.wifi
    audio - /dev/snd
    video - /dev/video*
  desktop - /dev/input /dev/dri
-    wifi - /tmp/storage/.wifi
+  window - nothing ?
     qemu - /dev/kvm
 
 [network] - (renice -5) (/etc/network)
 -------------
+  ddns - 53,9050
   dnsd - 53
- dhcpd - 67/68
+ dhcpd - 67
+ dhcpc - 68
  tftpd - 69
   ntpd - 123
 
 [services] - (renice +5) (/etc/services)
 -------------
  crond -
-  ddns - 53,9050
- httpd - 80
   ircd - 6667
+  sshd - 22
  maild - 25
+ httpd - 80
   p2pd - 9091
+  gitd - 9418
   sets -
 
 [programs] - (renice +10) (/tmp/storage/home) (dtach/xephyr+firewall)
 -------------
-  ssh - 22
- http - 443
   irc - 6697
+  ssh - 22
  mail - 465,995
+ http - 443
+  p2p - 6771
+  git - 8149
 
 #############
 
@@ -60,10 +66,13 @@
 -------------
  crond - hour/day/week/month/year
   ddns - e2e hole punch
- httpd -
+  dnsd -
   ircd -
+  sshd -
  maild -
+ httpd -
   p2pd -
+  gitd -
   sets -
 
 [misc]

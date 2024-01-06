@@ -13,25 +13,32 @@
 #-a always,exit -F arch=b64 -F uid=3    -S execve -k proxy_exec
 #-a always,exit -F arch=b64 -F uid=4    -S execve -k jail_exec
 
+#-a always,exit -F arch=b64 -F uid=5    -S execve -k wifi_exec
 #-a always,exit -F arch=b64 -F uid=7    -S execve -k audio_exec
 #-a always,exit -F arch=b64 -F uid=9    -S execve -k video_exec
 #-a always,exit -F arch=b64 -F uid=11   -S execve -k desktop_exec
-#-a always,exit -F arch=b64 -F uid=13   -S execve -k wifi_exec
+#-a always,exit -F arch=b64 -F uid=13   -S execve -k window_exec
 #-a always,exit -F arch=b64 -F uid=15   -S execve -k qemu_exec
 
+#-a always,exit -F arch=b64 -F uid=5353 -S execve -k ddns_exec
 #-a always,exit -F arch=b64 -F uid=53   -S execve -k dnsd_exec
 #-a always,exit -F arch=b64 -F uid=67   -S execve -k dhcpd_exec
+#-a always,exit -F arch=b64 -F uid=68   -S execve -k dhcpc_exec
 #-a always,exit -F arch=b64 -F uid=69   -S execve -k tftpd_exec
 #-a always,exit -F arch=b64 -F uid=123  -S execve -k ntpd_exec
 
-#-a always,exit -F arch=b64 -F uid=5353 -S execve -k ddns_exec
+#-a always,exit -F arch=b64 -F uid=6667 -S execve -k ircd_exec
+#-a always,exit -F arch=b64 -F uid=22   -S execve -k sshd_exec
+#-a always,exit -F arch=b64 -F uid=25   -S execve -k maild_exec
+#-a always,exit -F arch=b64 -F uid=2525 -S execve -k mailq_exec
 #-a always,exit -F arch=b64 -F uid=80   -S execve -k httpd_exec
 #-a always,exit -F arch=b64 -F uid=9091 -S execve -k p2pd_exec
 
-#-a always,exit -F arch=b64 -F uid=22   -S execve -k ssh_exec
-#-a always,exit -F arch=b64 -F uid=443  -S execve -k http_exec
-#-a always,exit -F arch=b64 -F uid=465  -S execve -k mail_exec
 #-a always,exit -F arch=b64 -F uid=6697 -S execve -k irc_exec
+#-a always,exit -F arch=b64 -F uid=2222 -S execve -k ssh_exec
+#-a always,exit -F arch=b64 -F uid=465  -S execve -k mail_exec
+#-a always,exit -F arch=b64 -F uid=443  -S execve -k http_exec
+#-a always,exit -F arch=b64 -F uid=6771 -S execve -k p2p_exec
 
 #############
 
@@ -47,25 +54,32 @@
 #-a always,exit -F arch=b64 -F uid=3    -F perm=wxa -k proxy_disk
 #-a always,exit -F arch=b64 -F uid=4    -F perm=wxa -k jail_disk
 
+#-a always,exit -F arch=b64 -F uid=5    -F perm=wxa -k wifi_disk
 #-a always,exit -F arch=b64 -F uid=7    -F perm=wxa -k audio_disk
 #-a always,exit -F arch=b64 -F uid=9    -F perm=wxa -k video_disk
 #-a always,exit -F arch=b64 -F uid=11   -F perm=wxa -k desktop_disk
-#-a always,exit -F arch=b64 -F uid=13   -F perm=wxa -k wifi_disk
+#-a always,exit -F arch=b64 -F uid=13   -F perm=wxa -k window_disk
 #-a always,exit -F arch=b64 -F uid=15   -F perm=wxa -k qemu_disk
 
+#-a always,exit -F arch=b64 -F uid=5353 -F perm=wxa -k ddns_disk
 #-a always,exit -F arch=b64 -F uid=53   -F perm=wxa -k dnsd_disk
 #-a always,exit -F arch=b64 -F uid=67   -F perm=wxa -k dhcpd_disk
+#-a always,exit -F arch=b64 -F uid=68   -F perm=wxa -k dhcpc_disk
 #-a always,exit -F arch=b64 -F uid=69   -F perm=wxa -k tftpd_disk
 #-a always,exit -F arch=b64 -F uid=123  -F perm=wxa -k ntpd_disk
 
-#-a always,exit -F arch=b64 -F uid=5353 -F perm=wxa -k ddns_disk
+#-a always,exit -F arch=b64 -F uid=6667 -F perm=wxa -k ircd_disk
+#-a always,exit -F arch=b64 -F uid=22   -F perm=wxa -k sshd_disk
+#-a always,exit -F arch=b64 -F uid=25   -F perm=wxa -k maild_disk
+#-a always,exit -F arch=b64 -F uid=2525 -F perm=wxa -k mailq_disk
 #-a always,exit -F arch=b64 -F uid=80   -F perm=wxa -k httpd_disk
 #-a always,exit -F arch=b64 -F uid=9091 -F perm=wxa -k p2pd_disk
 
-#-a always,exit -F arch=b64 -F uid=22   -F perm=wxa -k ssh_disk
-#-a always,exit -F arch=b64 -F uid=443  -F perm=wxa -k http_disk
-#-a always,exit -F arch=b64 -F uid=465  -F perm=wxa -k mail_disk
 #-a always,exit -F arch=b64 -F uid=6697 -F perm=wxa -k irc_disk
+#-a always,exit -F arch=b64 -F uid=2222 -F perm=wxa -k ssh_disk
+#-a always,exit -F arch=b64 -F uid=465  -F perm=wxa -k mail_disk
+#-a always,exit -F arch=b64 -F uid=443  -F perm=wxa -k http_disk
+#-a always,exit -F arch=b64 -F uid=6771 -F perm=wxa -k p2p_disk
 
 #############
 -a always,exit -F arch=b64 -S mount,umount2 -k mount

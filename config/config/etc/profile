@@ -44,6 +44,8 @@ user="\[\e[01;32m\]" box="\[\e[01;30m\]" path="\[\e[01;34m\]" reset="\[\e[0m\]"
 #############
 export PS1="${user}[\u]${reset}${box}[\h]${reset}${path}[\w][${SHLVL}]${reset} "
 #############
+[ "${USER}" == "irc" ] && export PS1=' > '
+#############
 unset user box path reset
 
 ############# - on
@@ -82,31 +84,39 @@ set -o pipefail  # returns false if any command fails rather than the last comma
 #############
 
 #############
-renice -10 -u root    2>/dev/null
-renice +10 -u user    2>/dev/null
-renice +10 -u nobody  2>/dev/null
-renice +10 -u proxy   2>/dev/null
-renice +10 -u jail    2>/dev/null
+renice -10 -u root   2>/dev/null
+renice +10 -u user   2>/dev/null
+renice +10 -u nobody 2>/dev/null
+renice +10 -u proxy  2>/dev/null
+renice +10 -u jail   2>/dev/null
 
-renice +0  -u audio   2>/dev/null
-renice +0  -u video   2>/dev/null
-renice +0  -u desktop 2>/dev/null
-renice +0  -u wifi    2>/dev/null
-renice +0  -u qemu    2>/dev/null
+renice +0 -u wifi    2>/dev/null
+renice +0 -u audio   2>/dev/null
+renice +0 -u video   2>/dev/null
+renice +0 -u desktop 2>/dev/null
+renice +0 -u window  2>/dev/null
+renice +0 -u qemu    2>/dev/null
 
-renice -5 -u dnsd    2>/dev/null
-renice -5 -u dhcpd   2>/dev/null
-renice -5 -u tftpd   2>/dev/null
-renice -5 -u ntpd    2>/dev/null
+renice +5 -u ddns  2>/dev/null
+renice -5 -u dnsd  2>/dev/null
+renice -5 -u dhcpd 2>/dev/null
+renice -5 -u tftpd 2>/dev/null
+renice -5 -u ntpd  2>/dev/null
 
-renice +5  -u ddns    2>/dev/null
-renice +5  -u httpd   2>/dev/null
-renice +5  -u p2pd    2>/dev/null
+renice +5 -u ircd  2>/dev/null
+renice +5 -u sshd  2>/dev/null
+renice +5 -u maild 2>/dev/null
+renice +5 -u mailq 2>/dev/null
+renice +5 -u httpd 2>/dev/null
+renice +5 -u p2pd  2>/dev/null
+renice +5 -u gitd  2>/dev/null
 
-renice +10 -u ssh     2>/dev/null
-renice +10 -u http    2>/dev/null
-renice +10 -u mail    2>/dev/null
-renice +10 -u irc     2>/dev/null
+renice +10 -u irc  2>/dev/null
+renice +10 -u ssh  2>/dev/null
+renice +10 -u mail 2>/dev/null
+renice +10 -u http 2>/dev/null
+renice +10 -u p2p  2>/dev/null
+renice +10 -u git  2>/dev/null
 #############
 
 #############
@@ -160,10 +170,10 @@ renice +10 -u irc     2>/dev/null
  alias vim="vim -Z"
 
 #############
-pivot(){ # '${HOME}' expands as "${1}"
+pivot(){ # '${HOME}' expands as "${1}" # wtf?
 [ -z "${1}" ] && printf "%s\n" "pivot: takes username"
 [ -z "${1}" ] || sudo -l -s /bin/sh -c 'setsid dtach -n /dev/shm/${USER} /bin/sh' "${1}"
-[ -z "${1}" ] || chmod 0660 /dev/shm/ ; chown "${1}:${USER}" /dev/shm/socket
+[ -z "${1}" ] || chmod 0660 /dev/shm/ ; chown "${1}:${2}" /dev/shm/socket
 [ -z "${1}" ] || printf "dtach -a /run/socket"
 }
 #############

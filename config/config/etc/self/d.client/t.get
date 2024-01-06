@@ -1,6 +1,6 @@
 #!/bin/sh
 #############
-debug(){ printf "%s\n" "takes ip and torrent - ${1}";exit 1; }
+debug(){ printf "%s\n" "takes ip and torrent - ${1}" ; exit 1 ; }
 #############
 [ "${#}" == "2" ] || debug "no input"
 #############
@@ -11,8 +11,7 @@ debug(){ printf "%s\n" "takes ip and torrent - ${1}";exit 1; }
 #############
 curl --connect-timeout 3 -o "${shared}/torrents/${2}" "http://${1}/shared/torrents/${2}"
 #############
-chown "${USER}:p2pd" "${shared}/torrents/${2}"
-chmod 0644 "${shared}/torrents/${2}"
+chmod 0644 "${shared}/torrents/${2}" ; chown "${USER}:p2pd" "${shared}/torrents/${2}"
 #############
 transmission-remote --unix-socket "${services}/p2pd/.config/socket" -a "${shared}/torrents/${2}"
 #############

@@ -29,10 +29,11 @@ printf "%s\n" "${1} ${peer}" >> "${storage}/.ssh/known_hosts"
  printf "%s\n" "${1} ${peer}" >> "${home}/proxy/.ssh/known_hosts"
  printf "%s\n" "${1} ${peer}" >> "${home}/jail/.ssh/known_hosts"
 
-  printf "%s\n" "${1} ${peer}" >> "${home}/ssh/.ssh/known_hosts"
-  printf "%s\n" "${1} ${peer}" >> "${home}/http/.ssh/known_hosts"
-  printf "%s\n" "${1} ${peer}" >> "${home}/mail/.ssh/known_hosts"
   printf "%s\n" "${1} ${peer}" >> "${home}/irc/.ssh/known_hosts"
+  printf "%s\n" "${1} ${peer}" >> "${home}/ssh/.ssh/known_hosts"
+  printf "%s\n" "${1} ${peer}" >> "${home}/mail/.ssh/known_hosts"
+  printf "%s\n" "${1} ${peer}" >> "${home}/http/.ssh/known_hosts"
+  printf "%s\n" "${1} ${peer}" >> "${home}/p2p/.ssh/known_hosts"
 
 #############
 

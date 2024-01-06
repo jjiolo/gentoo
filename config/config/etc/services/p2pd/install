@@ -2,8 +2,8 @@
 #############
 . /etc/services/variables p2pd
 #############
-[ -d "${service_storage}/.config"               ] || install -d -o p2pd -g p2pd -m 0700 "${service_storage}/.config"
-[ -f "${service_storage}/.config/settings.json" ] || install    -o p2pd -g p2pd -m 0600 "${service_system}/settings.json" "${service_storage}/.config/settings.json"
+[ -d "${service_storage}/.config"               ] || install -d -o 9091 -g 9091 -m 0700 "${service_storage}/.config"
+[ -f "${service_storage}/.config/settings.json" ] || install    -o 9091 -g 9091 -m 0600 "${service_system}/settings.json" "${service_storage}/.config/settings.json"
 #############
-. /etc/services/permissions p2pd p2pd 0750 0640
+. /etc/services/permissions 9091 9091 0750 0640
 #############

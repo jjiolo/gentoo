@@ -5,10 +5,10 @@
 
 # .gnupg .ssh .vpn .wifi
 
-install -d -o 0  -g 0  -m 0700 "${storage}/.gnupg"
-install -d -o 0  -g 0  -m 0700 "${storage}/.ssh"
-install -d -o 0  -g 0  -m 0700 "${storage}/.vpn"
-install -d -o 13 -g 13 -m 0700 "${storage}/.wifi"
+install -d -o 0 -g 0 -m 0700 "${storage}/.gnupg"
+install -d -o 0 -g 0 -m 0700 "${storage}/.ssh"
+install -d -o 0 -g 0 -m 0700 "${storage}/.vpn"
+install -d -o 5 -g 5 -m 0700 "${storage}/.wifi"
 
 [ -f "${storage}/.gnupg/gpg.conf"       ] || install -o 0 -g 0 -m 0600 "/etc/self/c.server/g.conf"  "${storage}/.gnupg/gpg.conf"
 [ -f "${storage}/.gnupg/gpg-agent.conf" ] || install -o 0 -g 0 -m 0600 "/etc/self/c.server/g.agent" "${storage}/.gnupg/gpg-agent.conf"
@@ -31,7 +31,7 @@ find "${storage}/.gnupg" "${storage}/.ssh" "${storage}/.vpn" "${storage}/.wifi" 
 
 install -d -o 0 -g 0 -m 0775 "${home}"
 
-for i in user nobody proxy jail ssh http mail irc
+for i in user nobody proxy jail irc ssh mail http p2p
 
 do
 
@@ -42,7 +42,6 @@ do
  [ -f "${home}/${i}/.ssh/known_hosts"     ] || install -o "${i}" -g "${i}" -m 0600 "/dev/null" "${home}/${i}/.ssh/known_hosts"
  
  chown -R "${i}:${i}" "${home}/${i}" &
-
  find "${home}/${i}" -type d -exec chmod 0700 {} \; &
  find "${home}/${i}" -type f -exec chmod 0600 {} \; &
 
@@ -61,9 +60,9 @@ install -d -o 0 -g 0 -m 0700 "${mount}"
 install -d -o 0 -g 0 -m 0775 "${services}"
 install -d -o 5353 -g 5353 -m 0700 "${services}/ddns"
 install -d -o 5353 -g 5353 -m 0700 "${services}/ddns/public"
-#install -o 5353 -g 5353 -m 0600 "${services}/ddns/public/hostname"
-#install -o 5353 -g 5353 -m 0600 "${services}/ddns/public/hs_ed25519_public_key"
-#install -o 5353 -g 5353 -m 0600 "${services}/ddns/public/hs_ed25519_secret_key"
+#install -o 5353 -g 5353 -m 0600 /dev/null "${services}/ddns/public/hostname"
+#install -o 5353 -g 5353 -m 0600 /dev/null "${services}/ddns/public/hs_ed25519_public_key"
+#install -o 5353 -g 5353 -m 0600 /dev/null "${services}/ddns/public/hs_ed25519_secret_key"
 
 #############
 

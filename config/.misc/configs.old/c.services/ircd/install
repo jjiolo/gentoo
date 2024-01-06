@@ -1,8 +1,0 @@
-#!/bin/sh
-#############
-. /etc/services/variables ircd
-#############
-[ -f "${service_storage}/ngircd.conf" ] || install -o 6667 -g 6667 -m 0600 "${service_system}/ngircd.conf" "${service_storage}/ngircd.conf"
-#############
-. /etc/services/permissions ircd ircd 0700 0600
-#############

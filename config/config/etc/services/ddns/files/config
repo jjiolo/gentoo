@@ -41,10 +41,10 @@ NATDPort       0
 #HiddenServiceMaxStreams 3
 #HiddenServiceMaxStreamsCloseCircuit 1
 #############
-#HiddenServicePort 22 127.0.0.1:22
-#HiddenServicePort 25 127.0.0.1:25
-#HiddenServicePort 80 127.0.0.1:80
-#HiddenServicePort 6667 127.0.0.1:6667
+#HiddenServicePort 6667 172.16.0.1:6667
+#HiddenServicePort 22 172.16.0.1:22
+#HiddenServicePort 25 172.16.0.1:25
+#HiddenServicePort 80 172.16.0.1:80
 #############
 
 #############

@@ -16,7 +16,7 @@
 
 #############
 
- install -d -o root -g root -m 0755 "${services}/sets" "${services}/sets/firefox" && cd "${services}/sets/firefox" || exit 1
+ install -d -o 0 -g 0 -m 0755 "${services}/sets" "${services}/sets/firefox" && cd "${services}/sets/firefox" || exit 1
 
 #############
 
@@ -38,11 +38,11 @@
 
  tar xf firefox.tar.bz2
 
- install -d -o root -g root -m 0755 firefox/distribution
- install    -o root -g root -m 0644 /usr/lib64/firefox/distribution/policies.json firefox/distribution/policies.json
- install    -o root -g root -m 0644 /usr/lib64/firefox/defaults/pref/autoconfig.js firefox/defaults/pref/autoconfig.js
- install    -o root -g root -m 0644 /usr/lib64/firefox/firefox.cfg firefox/firefox.cfg
- install    -o root -g root -m 0644 /usr/lib64/firefox/proxy.pac firefox/proxy.pac
+ install -d -o 0 -g 0 -m 0755 firefox/distribution
+ install    -o 0 -g 0 -m 0644 /usr/lib64/firefox/distribution/policies.json firefox/distribution/policies.json
+ install    -o 0 -g 0 -m 0644 /usr/lib64/firefox/defaults/pref/autoconfig.js firefox/defaults/pref/autoconfig.js
+ install    -o 0 -g 0 -m 0644 /usr/lib64/firefox/firefox.cfg firefox/firefox.cfg
+ install    -o 0 -g 0 -m 0644 /usr/lib64/firefox/proxy.pac firefox/proxy.pac
 
  chown -R root:root firefox
  chmod -R 0775 firefox

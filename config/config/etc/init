@@ -5,8 +5,9 @@ umask 0007
 . /etc/self/b.init/system.mount
 . /etc/self/b.init/system.dev
 . /etc/self/b.init/system.log
+. /etc/self/b.init/system.lock
 #############
-. /etc/self/b.init/system.lock ; sysctl -p /etc/sysctl.conf
+sysctl -p /etc/sysctl.conf
 #############
 . /etc/self/b.init/storage.mount
 . /etc/self/b.init/storage.setup

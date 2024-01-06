@@ -8,7 +8,7 @@ usage(){ printf "\n${0} - ${1}\n\n takes interface\n\n" ; exit ; }
 #############
 pgrep -x iw &>/dev/null && usage "iw already running"
 #############
-pgrep -x /sbin/wpa_supplicant &>/dev/null && usage "wpa_supplicant already running"
+pgrep -x /sbin/wifi &>/dev/null && usage "wifi already running"
 #############
 ip link set up "${1}"
 #############

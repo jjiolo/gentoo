@@ -36,24 +36,23 @@ table inet filter {
 
   udp dport {51820} udp sport {51820} ct state new log flags skuid prefix "output.lan.new " accept
 
-  udp dport {53}  skuid {ntpd} ct state new log flags skuid prefix "output.lan.new " accept
-  udp dport {123} skuid {ntpd} ct state new log flags skuid prefix "output.lan.new " accept
+  udp dport {53,123} skuid {ntpd} ct state new log flags skuid prefix "output.lan.new " accept
 
-  ip protocol {tcp} skuid {dnsd} ct state new log flags skuid prefix "output.lan.new " accept
   ip protocol {tcp} skuid {ddns} ct state new log flags skuid prefix "output.lan.new " accept
+  ip protocol {tcp} skuid {dnsd} ct state new log flags skuid prefix "output.lan.new " accept
 
   ip protocol {udp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept
   ip protocol {tcp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept
 
-  tcp dport {22}      skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {443}     skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {465,995} skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {6697}    skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {22}      skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {465,995} skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {443}     skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
 
-  tcp dport {22}      skuid {ssh}  ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {443}     skuid {http} ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {465,995} skuid {mail} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {6697}    skuid {irc}  ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {22}      skuid {ssh}  ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {465,995} skuid {mail} ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {443}     skuid {http} ct state new log flags skuid prefix "output.lan.new " accept
 
   tcp dport {443} skuid {root,250} ct state new log flags skuid prefix "output.lan.new " accept # stage3
 
