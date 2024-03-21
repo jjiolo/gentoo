@@ -3,21 +3,12 @@
 [ -d "/root" ] && rmdir "/root"
 #############
 
-     mountpoint -q "/dev" || { install -d -o 0 -g 0 -m 0700 "/dev"     ; mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime,size=0%                 host "/dev"     ; }
+     mountpoint -q "/dev" || { install -d -o 0 -g 0 -m 0700 "/dev"     ; mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime,size=0% host "/dev" ; }
  mountpoint -q "/dev/pts" || { install -d -o 0 -g 0 -m 0700 "/dev/pts" ; mount -t devpts   -o rw,dev,nosuid,noexec,noatime,mode=0600,ptmxmode=0000 host "/dev/pts" ; }
- mountpoint -q "/dev/shm" || { install -d -o 0 -g 0 -m 0700 "/dev/shm" ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,mode=1777,size=3%     host "/dev/shm" ; }
-    mountpoint -q "/proc" || { install -d -o 0 -g 0 -m 0700 "/proc"    ; mount -t proc     -o rw,nodev,nosuid,noexec,noatime,hidepid=1             host "/proc"    ; mount -o remount,hidepid=1 "/proc" ; }
-     mountpoint -q "/sys" || { install -d -o 0 -g 0 -m 0700 "/sys"     ; mount -t sysfs    -o rw,nodev,nosuid,noexec,noatime                       host "/sys"     ; }
-     mountpoint -q "/tmp" || { install -d -o 0 -g 0 -m 0700 "/tmp"     ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,mode=1777,size=50%    host "/tmp"     ; }
+ mountpoint -q "/dev/shm" || { install -d -o 0 -g 0 -m 0700 "/dev/shm" ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,noswap,quota,uid=0,gid=0,mode=1777,size=3% host "/dev/shm" ; }
+    mountpoint -q "/proc" || { install -d -o 0 -g 0 -m 0700 "/proc"    ; mount -t proc     -o rw,nodev,nosuid,noexec,noatime,hidepid=1 host "/proc" ; mount -o remount,hidepid=1 "/proc" ; }
+     mountpoint -q "/sys" || { install -d -o 0 -g 0 -m 0700 "/sys"     ; mount -t sysfs    -o rw,nodev,nosuid,noexec,noatime host "/sys" ; }
+     mountpoint -q "/tmp" || { install -d -o 0 -g 0 -m 0700 "/tmp"     ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,noswap,quota,uid=0,gid=0,mode=1777,size=50% host "/tmp" ; }
 
-#############
-install -d -o 0 -g 0 -m 0775 "/tmp/.run"
-#############
-install -d -o 0 -g 0 -m 0700 "${bootfs}"
-install -d -o 0 -g 0 -m 0755 "${ephemeral}"
-install -d -o 0 -g 0 -m 0755 "${local}"
-install -d -o 0 -g 0 -m 0755 "${remote}"
-#############
-install -o 0 -g 0 -m 0664 "/usr/share/alsa/alsa.conf" "/run/alsa.conf" ; ln -sf "/run/alsa.conf" "/usr/share/alsa/alsa.conf"
 #############
 

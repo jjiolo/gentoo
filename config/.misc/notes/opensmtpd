@@ -102,7 +102,7 @@ printf "%s\n" "lock messages to /usr/sbin/smtpctl access... and uid:gid lock por
 
 openssl s_client -connect smtp.gmail.com:465 -crlf -ign_eof|
 ehlo localhost
-auth $(printf "\00user@domain.tld\00passphrase"|base64)
+auth plain $(printf "user@domain.tld\0passphrase\0"|base64)
 mail from:<me@localhost>
 rcpt to:<you@localhost>
 data

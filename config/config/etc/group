@@ -12,10 +12,8 @@ desktop:x:11:
 window:x:13:
 qemu:x:15:
 
-ddns:x:5353:
 dnsd:x:53:
 dhcpd:x:67:
-dhcpc:x:68:
 tftpd:x:69:
 ntpd:x:123:
 
@@ -31,4 +29,7 @@ ssh:x:2222:
 mail:x:465:
 http:x:443:
 p2p:x:6771:
+
+dhcpc:x:68:
+ddns:x:5353:
 

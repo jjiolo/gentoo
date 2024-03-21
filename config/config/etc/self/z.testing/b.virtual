@@ -1,0 +1,22 @@
+
+#############
+pkill -x ircd
+pkill -x sshd
+pkill -x maild
+pkill -x /sbin/httpd
+pkill -x p2pd
+#############
+
+[ -z "${1}" ] || {
+
+sleep 3
+#############
+ash /etc/services/ircd/start
+sshd -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null
+ash /etc/services/maild/start
+ash /etc/services/httpd/start
+ash /etc/services/p2pd/start
+#############
+
+}
+

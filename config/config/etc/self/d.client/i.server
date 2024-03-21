@@ -1,7 +1,9 @@
 #!/bin/sh
 #############
-
- install -d -o "${USER}" -m 0700 "${HOME}/irc" && cd "${HOME}/irc" || exit 1 ; clear
+install -d -o "${USER}" -m 0700 "${HOME}/iserver" && cd "${HOME}/iserver" || exit 1 ; clear
+#############
+sigint(){ pkill -P$$ ; } ; trap sigint SIGINT
+#############
 
    [ -f "DEBUG" ] || install -o "${USER}" -m 0600 "/dev/null" "DEBUG"
    [ -f "ERROR" ] || install -o "${USER}" -m 0600 "/dev/null" "ERROR"
@@ -12,18 +14,32 @@
     [ -f "SENT" ] || install -o "${USER}" -m 0600 "/dev/null" "SENT"
   [ -f "filter" ] || install -o "${USER}" -m 0600 "/dev/null" "filter"
 
-onion="$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)"
 #############
-account="spare" mode="MODE ${account} +iuwQR"
+onion="$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)"
 #############
 nick="NICK $(tr -cd 'a-zA-Z'</dev/urandom|head -c13)"
 user="USER ${onion:0:9} 0 0 :${onion:9:47}~"
 #############
+random="$((${RANDOM}%5))"
+#############
+[ "${random}" == "0" ] && account="spare"
+[ "${random}" == "1" ] && account="spareproject"
+[ "${random}" == "2" ] && account="theyneversleep"
+[ "${random}" == "3" ] && account="npc"
+[ "${random}" == "4" ] && account="op"
+#############
+mode="MODE ${nick:5} +iuwQR"
+#############
 regain="PRIVMSG NickServ :regain ${account}"
 #############
-channels="JOIN #libera,#networking,#security"
-channels="${channels},#gentoo,#archlinux"
+channels="JOIN #libera,#networking,#security,#osdev,#crypto"
+channels="${channels},#archlinux"
+channels="${channels},##slackware"
+channels="${channels},#gentoo"
+channels="${channels},#gentoo-base"
+channels="${channels},#gentoo-toolchain"
 channels="${channels},#gentoo-security"
+channels="${channels},#gentoo-council"
 channels="${channels},#gentoo-bugs"
 channels="${channels},#gentoo-dev"
 #############
@@ -31,20 +47,20 @@ red="\e[31m" green="\e[32m" yellow="\e[33m" blue="\e[34m"
 purple="\e[35m" cyan="\e[36m" white="\e[37m" grey="\e[38m"
 #############
 reset="\e[0m"
-
 #############
-
-  [ -f "sasl"  ] || exit 1
- [ -f ".ping"  ] && rm ".ping"
-  [ -e "input" ] && rm "input"
-  [ -e "input" ] || mkfifo -m 0600 "input"
-  [ -e "input" ] && exec 3<>input
+[ -f "sasl"  ] || exit 1
+[ -e "input" ] && rm "input"
+[ -e "input" ] || mkfifo -m 0600 "input"
+[ -e "input" ] && exec 3<>input
+#############
+printf "%s\n%s\n%s\n%s\n%s\n%s\n" "cap REQ sasl" "${nick}" "${user}" "AUTHENTICATE EXTERNAL" "AUTHENTICATE +" "CAP END" >&3 &
+#############
 
 #############
 
 while sleep 60 ; do
 
- touch .ping ; printf "${cyan}%s${reset}\n" '#'
+ printf "${cyan}%s${reset}\n" '#' | tee .ping
 
  printf "%s\n" "PING :irc.libera.chat" >&3
 
@@ -54,60 +70,53 @@ done &
 
 #############
 
-printf "%s\n%s\n%s\n%s\n%s\n%s\n" "cap REQ sasl" "${nick}" "${user}" "AUTHENTICATE EXTERNAL" "AUTHENTICATE +" "CAP END" >&3 &
-
-#############
-
-openssl s_client -noservername -connect irc.libera.chat:6697 -cert "sasl" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet <&3 |
+openssl s_client -noservername -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet -cert "sasl" -connect "irc.libera.chat:6697" <&3 |
 tr -cd '[:alnum:]:.!@/#\n ' |
 while read -r sender type target message ; do
 
- color="${green}" output="DEBUG"
+ symbol="d" color="${green}" output="DEBUG"
 
    if [ "${type}" == "PRIVMSG" ] ; then
 
-    [ "${target}" == "${account}" ] && color="\e[01;31m" output="SELF" || color="${red}" output="PRIVMSG"
+    [ "${target}" == "${account}" ] && symbol="P" color="\e[01;31m" output="SELF" || symbol="p" color="${red}" output="PRIVMSG"
 
-    [[ "${message}" == "*:${account}"   ]] && highlight="${white}" || highlight="${reset}"
-    [[ "${message}" == "*:${account} *" ]] && highlight="${white}" || highlight="${reset}"
-    [[ "${message}" == "* ${account} *" ]] && highlight="${white}" || highlight="${reset}"
-    [[ "${message}" == "* ${account}"   ]] && highlight="${white}" || highlight="${reset}"
+    printf "%s\n" "${message}" | grep -q -e "^:${account}$" -e "^:${account} " -e " ${account} " -e " ${account}$" && highlight="${white}" || highlight="${reset}"
 
  elif [ "${type}" == "NOTICE" ] ; then
 
-    [ "${target}" == "${account}" ] && color="\e[01;33m" output="SELF" || color="${yellow}" output="NOTICE"
+    [ "${target}" == "${account}" ] && symbol="N" color="\e[01;33m" output="SELF" || symbol="n" color="${yellow}" output="NOTICE"
 
-    [[ "${message}" == "*:${account}"   ]] && highlight="${white}" || highlight="${reset}"
-    [[ "${message}" == "*:${account} *" ]] && highlight="${white}" || highlight="${reset}"
-    [[ "${message}" == "* ${account} *" ]] && highlight="${white}" || highlight="${reset}"
-    [[ "${message}" == "* ${account}"   ]] && highlight="${white}" || highlight="${reset}"
+    printf "%s\n" "${message}" | grep -q -e "^:${account}$" -e "^:${account} " -e " ${account} " -e " ${account}$" && highlight="${white}" || highlight="${reset}"
 
- elif [ "${sender}" == "PING" ] ; then color="${cyan}" output="META" ; printf "%s\n" "PONG ${type}" >&3
+    [ "${init}" == "true" ] && \
+    [ "${sender:0:10}" == ":NickServ!" ] && \
+    [ "${target}" == "${account}" ] && \
+    [ "${message}" == ":${account} has been regained." ] && \
+    { printf "\n" ; printf "%s\n" "${channels}" >&3 ; unset init ; }
 
- elif [ "${type}" == "PONG" ] ; then color="${cyan}" output="META" ; [ -f .ping ] && rm .ping
+ elif [ "${sender}" == "PING" ] ; then symbol="#" color="${cyan}" output="META" ; printf "%s\n" "PONG ${type}" >&3
 
- elif [ "${type}" == "NICK" ] ; then color="${grey}" output="META"
- elif [ "${type}" == "MODE" ] ; then color="${grey}" output="META"
- elif [ "${type}" == "JOIN" ] ; then color="${grey}" output="META"
- elif [ "${type}" == "PART" ] ; then color="${grey}" output="META"
- elif [ "${type}" == "QUIT" ] ; then color="${grey}" output="META"
- elif [ "${type}" == "KICK" ] ; then color="${grey}" output="META"
- elif [ "${type}" == "TOPIC" ] ; then color="${grey}" output="META"
- elif [ "${type}" == "INVITE" ] ; then color="${grey}" output="META"
- elif [ "${type}" == "WALLOPS" ] ; then color="${yellow}" output="NOTICE"
+ elif [ "${type}" == "PONG" ] ; then symbol="#" color="${cyan}" output="META" ; [ -f .ping ] && rm .ping
+
+ elif [ "${type}" == "NICK" ] ; then symbol="m" color="${grey}" output="META"
+ elif [ "${type}" == "MODE" ] ; then symbol="m" color="${grey}" output="META"
+ elif [ "${type}" == "JOIN" ] ; then symbol="m" color="${grey}" output="META"
+ elif [ "${type}" == "PART" ] ; then symbol="m" color="${grey}" output="META"
+ elif [ "${type}" == "QUIT" ] ; then symbol="m" color="${grey}" output="META"
+ elif [ "${type}" == "KICK" ] ; then symbol="m" color="${grey}" output="META"
+ elif [ "${type}" == "TOPIC" ] ; then symbol="m" color="${grey}" output="META"
+ elif [ "${type}" == "INVITE" ] ; then symbol="m" color="${grey}" output="META"
+ elif [ "${type}" == "WALLOPS" ] ; then symbol="n" color="${yellow}" output="NOTICE"
 
  elif [ "${sender}" == "ERROR" ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
  elif [   "${type}" == "432"   ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
  elif [   "${type}" == "433"   ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
  elif [   "${type}" == "461"   ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
  elif [   "${type}" == "904"   ] ; then printf "%s\n" "[${account}] [${nick}] [${user}] [${sender} ${type} ${target} ${message}]" >> ERROR ; pkill -P$$
- elif [   "${type}" == "001"   ] ; then printf "%s\n" "${regain}"   >&3 ; sleep 13
-                                        printf "%s\n" "${mode}"     >&3 ; sleep 3
-                                        printf "%s\n" "${channels}" >&3 ; printf "\n"
-
+ elif [   "${type}" == "001"   ] ; then printf "\n" ; printf "%s\n%s\n" "${mode}" "${regain}" >&3 ; init=true
    fi
 
- printf "${color}%s${reset}" "#"
+ printf "${color}%s${reset}" "${symbol}"
 
  rainbow_sender="\e[38;5;$((16#$(printf "%s\n" "${sender}"|md5sum|head -c2)))m"
  rainbow_target="\e[38;5;$((16#$(printf "%s\n" "${target}"|md5sum|head -c2)))m"

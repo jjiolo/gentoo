@@ -27,10 +27,10 @@ dev-libs/expat -unicode
 dev-libs/glib -elf -mime
 dev-libs/gmp -asm -cpudetection -cxx
 dev-libs/libevent -clock-gettime -threads -ssl
+dev-libs/libffi exec-static-trampoline
 dev-libs/libgcrypt -asm -getentropy
 dev-libs/libnl -debug
-dev-libs/libpcre -bzip2 -cxx -readline -zlib
-dev-libs/libpcre2 -bzip2 -pcre16 -readline -zlib unicode
+dev-libs/libpcre2 -bzip2 -pcre16 -pcre32 -readline -zlib unicode
 dev-libs/libxml2 -ftp -python -readline
 dev-libs/libxslt -crypt
 dev-libs/nettle -asm gmp

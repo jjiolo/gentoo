@@ -3,7 +3,7 @@
 # portage
 # binutils gcc libtool
 # linux-headers linux-firmware
-# glibc
+# glibc libxcrypt
 # gnupg gpgme
 # openssl ca-certificates
 #############
@@ -17,11 +17,11 @@ emerge --color y --tree --verbose --buildpkg --usepkg --oneshot sys-apps/portage
 #############
 emerge --color y --tree --verbose --buildpkg --usepkg --oneshot sys-devel/binutils 2>&1 | tee "/binhost/logs/rebuild.binutils" ; binutils-config 2
 emerge --color y --tree --verbose --buildpkg --usepkg --oneshot sys-devel/gcc      2>&1 | tee "/binhost/logs/rebuild.gcc" ; gcc-config 2
-emerge --color y --tree --verbose --buildpkg --usepkg --oneshot sys-devel/libtool  2>&1 | tee "/binhost/logs/rebuild.libtool"
+emerge --color y --tree --verbose --buildpkg --usepkg --oneshot dev-build/libtool  2>&1 | tee "/binhost/logs/rebuild.libtool"
 #############
-emerge --color y --tree --verbose --buildpkg --usepkg --oneshot linux-headers linux-firmware 2>&1 | tee "/binhost/logs/rebuild.linux"
+emerge --color y --tree --verbose --buildpkg --usepkg --oneshot sys-kernel/linux-headers sys-kernel/linux-firmware 2>&1 | tee "/binhost/logs/rebuild.linux"
 #############
-emerge --color y --tree --verbose --buildpkg --usepkg --oneshot glibc 2>&1 | tee "/binhost/logs/rebuild.glibc"
+emerge --color y --tree --verbose --buildpkg --usepkg --oneshot sys-libs/glibc sys-libs/libxcrypt 2>&1 | tee "/binhost/logs/rebuild.glibc"
 #############
 emerge -C gnupg gpgme
 emerge --color y --tree --verbose --buildpkg --usepkg --oneshot app-crypt/gnupg app-crypt/gpgme 2>&1 | tee "/binhost/logs/rebuild.gpg"

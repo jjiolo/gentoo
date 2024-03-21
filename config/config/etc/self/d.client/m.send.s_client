@@ -1,0 +1,63 @@
+#!/bin/sh
+#############
+install -d -o "${USER}" -m 0700 "${HOME}/remote" "${HOME}/remote/.bin" "${HOME}/remote/new" "${HOME}/remote/read" "${HOME}/remote/save" "${HOME}/remote/sent" "${HOME}/remote/tmp" && cd "${HOME}/remote" || exit 1
+#############
+sigint(){ pkill -P$$ ; } ; trap sigint SIGINT
+#############
+usage(){ printf "\n ${0} - ${1}\n\n  -h smtp.gmail.com\n  -f from\n  -t to\n  -s subject\n  -e email\n\n" ; exit ; }
+#############
+while getopts "f:t:s:e:" arg ; do
+ case "${arg}" in
+  f) from="${OPTARG}" ;;
+  t) to="${OPTARG}" ;;
+  s) subject="${OPTARG}" ;;
+  e) email="${OPTARG}" ;;
+  h) usage help ;;
+  *) usage getopts ;;
+ esac
+done
+#############
+[ -f "${email}" ] || [ -f "auth" ] || usage "email/auth file do not exist"
+#############
+[ -z "${from}" ] || [ -z "${to}" ] || [ -z "${subject}" ] || [ -z "${email}" ] && usage "no input"
+#############
+[ -e "input" ] && rm "input"
+[ -e "input" ] || mkfifo -m 0600 "input"
+[ -e "input" ] && exec 3<>input
+#############
+username="$(sed -n '1p' auth)"
+password="$(sed -n '2p' auth)"
+auth="$(printf "${from}\0${username}\0${password}"|base64 -w0)"
+#############
+
+openssl s_client -noservername -verify_hostname "smtp.gmail.com" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet -ign_eof -connect "smtp.gmail.com:465" <&3 | 
+while read ; do
+
+ printf "%s\n" "${REPLY}"
+
+ [ "${REPLY:0:3}" == "220" ] && printf "%s\r\n" "EHLO localhost" >&3
+
+ [ "${REPLY:0:8}" == "250-AUTH" ] && printf "%s\r\n" "AUTH PLAIN ${auth}" >&3
+
+ [ "${REPLY:0:9}" == "235 2.7.0" ] && printf "%s\r\n" "mail from: <${from}>" >&3
+ [ "${REPLY:0:9}" == "250 2.1.0" ] && printf "%s\r\n" "rcpt to: <${to}>" >&3
+ [ "${REPLY:0:9}" == "250 2.1.5" ] && printf "%s\r\n" "data" >&3
+ [ "${REPLY:0:3}" == "354" ] && {
+  printf "%s\r\n" "Subject: ${subject}" >&3
+  cat "${email}" >&3
+  [ -f "sig" ] && printf "\r\n%s\r\n" "-- " >&3
+  [ -f "sig" ] && cat sig >&3
+  printf "\r\n%s\r\n" "." >&3
+ }
+
+ [ "${REPLY:0:9}" == "250 2.0.0" ] && printf "%s\r\n" "quit" >&3
+ [ "${REPLY:0:9}" == "250 2.0.0" ] && pkill -P$$
+
+done &
+
+#############
+
+while read ; do printf "%s\n" "${REPLY}" >&3 ; done
+
+#############
+

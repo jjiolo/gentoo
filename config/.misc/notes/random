@@ -31,6 +31,7 @@ youtube channel 2600
 44 con
 wisec
 troopers.de
+nym
 #############
 [SOFTWARE]:
 bird internet routing deamon - https://bird.network.cz
@@ -53,6 +54,8 @@ nRF52840 Dongle
 defcon 27 zombie ant farm
 backdoor factory
 ctemplar...
+lavabit...
+silentcircle...
 LD_AUDIT
 app-portage/cpuid2cpuflags
 infection monkey
@@ -68,4 +71,9 @@ https://deceptive.design < - formely dark patterns
 #############
 https://ioccc.org
 #############
-
+https://kernelnewbies.org
+#############
+panopticlick
+coveryourtracks.eff.org
+^ browser fingerprinting
+#############

@@ -4,17 +4,7 @@
 #############
 
 #############
-install -d -o 0 -g 0 -m 0700 "${bootfs}/contacts"
-cp -a "${shared}/contacts/self" "${bootfs}/contacts/${HOSTNAME}"
-#############
-cp -a "${bootfs}/contacts" "${shared}"
-#############
-
-#############
-install -o 9091 -g 9091 -m 0644 "${bootfs}/config.tar.gz" "${shared}/downloads/config.tar.gz"
-install -o 9091 -g 9091 -m 0644 "${bootfs}/binhost.tar.gz" "${shared}/downloads/binhost.tar.gz"
-#############
-
+[ -d "${shared}/downloads/bootfs" ] && rm -rf "${shared}/downloads/bootfs"
 #############
 install -d -o 9091 -g 9091 -m 0755 "${shared}/downloads/bootfs"
 #############
@@ -26,6 +16,22 @@ install -o 9091 -g 9091 -m 0644 "${bootfs}/kernels/server" "${shared}/downloads/
 install -o 9091 -g 9091 -m 0644 "${bootfs}/kernels/virtual" "${shared}/downloads/bootfs/virtual"
 #############
 install -o 9091 -g 9091 -m 0644 "${bootfs}/images/client" "${shared}/downloads/bootfs/client"
+#############
+
+#############
+install -o 9091 -g 9091 -m 0644 "${bootfs}/config.tar.gz" "${shared}/downloads/config.tar.gz"
+#############
+install -o 9091 -g 9091 -m 0644 "${bootfs}/config.torrent" "${shared}/torrents/config.tar.gz"
+#############
+
+#############
+install -d -o 0 -g 0 -m 0700 "${bootfs}/contacts"
+#############
+[ -d "${bootfs}/contacts/self" ] && rm -r "${bootfs}/contacts/self"
+#############
+cp -a "${shared}/contacts/self" "${bootfs}/contacts/${HOSTNAME}"
+#############
+cp -a "${bootfs}/contacts" "${shared}"
 #############
 
 #############

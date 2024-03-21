@@ -10,209 +10,79 @@ install -o 0 -g 0 -m 0664 "/binhost/config.tar.gz"  "etc/config.tar.gz"
 install -o 0 -g 0 -m 0664 "/binhost/config.torrent" "etc/config.torrent"
 #############
 
-# delete unused files
+# clean rootfs
 #############
-#
-rm -r dev
-#
-rm -r etc/bindresvport.blacklist
-rm -r etc/ca-certificates
-rm -r etc/ca-certificates.conf
-rm -r etc/conf.d
-rm -r etc/cron.weekly
-rm -r etc/csh.env
-rm -r etc/dbus-1
-rm -r etc/default
-rm -r etc/e2scrub.conf
-rm -r etc/env.d
-rm -r etc/environment.d
-rm -r etc/gai.conf
-rm -r etc/gtk-3.0
-rm -r etc/init.d
-rm -r etc/ld.so.cache
-rm -r etc/ld.so.conf
-rm -r etc/ld.so.conf.d
-rm -r etc/libinput
-rm -r etc/libnl
-rm -r etc/locale.gen
-rm -r etc/login.access
-rm -r etc/login.defs
-rm -r etc/machine-id
-rm -r etc/mdadm.conf
-rm -r etc/modprobe.d
-rm -r etc/mpv
-rm -r etc/netconfig
-rm -r etc/profile.env
-rm -r etc/rpc
-rm -r etc/sandbox.d
-rm -r etc/sasl2
-rm -r etc/ssl/misc
-rm -r etc/ssl/private
-rm -r etc/ssl/ct_log_list.cnf
-rm -r etc/ssl/ct_log_list.cnf.dist
-rm -r etc/ssl/openssl.cnf.dist
-rm -r etc/subgid
-rm -r etc/subuid
-rm -r etc/udev
-rm -r etc/wireless-regdb
-rm -r etc/X11
-rm -r etc/xdg
-#
-rm -r lib
-#
-rm -r proc
-#
-rm -r root
-#
-rm -r run
-#
-rm -r sys
-#
-rm -r tmp
-#
-rm -r usr/include
-#
-rm -r usr/lib/systemd
-#
-rm -r usr/lib64/alsa-topology
-rm -r usr/lib64/audit
-rm -r usr/lib64/cairo
-rm -r usr/lib64/cmake
-rm -r usr/lib64/dbus-*
-rm -r usr/lib64/dri
-rm -r usr/lib64/e2fsprogs
-rm -r usr/lib64/engines-*
-rm -r usr/lib64/gdk-pixbuf-*
-rm -r usr/lib64/gconv
-rm -r usr/lib64/gio
-rm -r usr/lib64/glib-*
-rm -r usr/lib64/glibc-*
-rm -r usr/lib64/gnome-settings-daemon-*
-rm -r usr/lib64/gtk-*
-rm -r usr/lib64/libffi
-rm -r usr/lib64/misc
-rm -r usr/lib64/ossl-modules
-rm -r usr/lib64/pkgconfig
-rm -r usr/lib64/terminfo
-#
-rm -r usr/libexec/libinput
-rm -r usr/libexec/at-spi-bus-launcher
-rm -r usr/libexec/at-spi2-registryd
-rm -r usr/libexec/dbus-bash-completion-helper
-rm -r usr/libexec/dbus-daemon-launch-helper
-rm -r usr/libexec/gio-launch-desktop
-#
-rm -r usr/share/aclocal
-rm -r usr/share/applications
-rm -r usr/share/bash-completion
-rm -r usr/share/cmake
-rm -r usr/share/defaults
-rm -r usr/share/dbus-1
-rm -r usr/share/drirc.d
-rm -r usr/share/et
-rm -r usr/share/fc-lang
-rm -r usr/share/ffmpeg
-rm -r usr/share/gdb
-rm -r usr/share/gettext
-rm -r usr/share/glib-*/gdb
-rm -r usr/share/glib-*/gettext
-rm -r usr/share/glib-*/valgrind
-rm -r usr/share/gtk-3.0
-rm -r usr/share/gtk-doc
-rm -r usr/share/i18n
-rm -r usr/share/icons
-rm -r usr/share/libgpg-error
-rm -r usr/share/libinput
-rm -r usr/share/locale
-rm -r usr/shared/metainfo
-rm -r usr/share/mimelnk
-rm -r usr/share/pixmaps
-rm -r usr/share/pkgconfig
-rm -r usr/share/portage
-rm -r usr/share/ss
-rm -r usr/share/tabset
-rm -r usr/share/terminfo
-rm -r usr/share/themes
-rm -r usr/share/thumbnailers
-rm -r usr/share/xml
-rm -r usr/share/xsessions
-rm -r usr/share/zsh
-#
-rm -r var/cache
-rm -r var/db/Makefile
-rm -r var/lib/alsa
-rm -r var/lib/dbus
-rm -r var/lib/xkb
-rm -r var/log
-rm -r var/run
-rm -r var/tmp
-#
+. /etc/self/a.chroot/build.delete
 #############
-
-# create directories and symlinks
+find . -type f -name '._cfg*' -exec rm {} \;
+find . -type f -name '.keep*' -exec rm {} \;
 #############
-install -d -o 0 -g 0 -m 0775 "var/empty"
-#
-ln -sf /tmp/.run run
-ln -sf /run/logs var/log
-ln -sf /run var/run
-ln -sf /tmp var/tmp
+find "lib64" "usr/lib64" -type f -name '*.la' -exec rm {} \;
+find "lib64" "usr/lib64" -type f -name '*.a' -exec rm {} \;
+#############
+find . -perm -4000 -exec chmod u-s {} \;
+find . -perm -2000 -exec chmod g-s {} \;
+find . -perm -1000 -exec chmod -t {} \;
 #############
 
 # install missing libraries and locale
 #############
 for i in /usr/lib/gcc/x86_64-pc-linux-gnu/*
 do
-cp -a ${i}/libstdc++.* usr/lib64
-cp -a ${i}/libgcc_s.*  usr/lib64
+cp -af ${i}/libstdc++.* "usr/lib64"
+cp -af ${i}/libgcc_s.*  "usr/lib64"
 done
-#
-cp -a /bin/lsblk bin
-cp -a /lib64/libblkid.so* lib64
-cp -a /lib64/libmount*    lib64
-cp -a /lib64/libsmartcols* lib64
-#
-cp -a /usr/bin/setpriv usr/bin
-cp -a /usr/lib64/libcap-ng.so* usr/lib64
-#
 #############
-install -d -o 0 -g 0 -m 0755 usr/lib/locale
-install    -o 0 -g 0 -m 0644 /usr/lib/locale/locale-archive usr/lib/locale/locale-archive
+cp -af "/bin/lsblk" "bin"
+cp -af /usr/lib64/libblkid.so*  "lib64"
+cp -af /usr/lib64/libmount*     "lib64"
+cp -af /usr/lib64/libsmartcols* "lib64"
+#############
+cp -af "/usr/bin/setpriv" "usr/bin"
+cp -af /usr/lib64/libcap-ng.so* "usr/lib64"
+#############
+install -d -o 0 -g 0 -m 0755 "usr/lib/locale"
+install    -o 0 -g 0 -m 0644 "/usr/lib/locale/locale-archive" "usr/lib/locale/locale-archive"
 #############
 
-# enforce rootfs permissions
-##############
-find . -type f -name '._cfg*' -exec rm {} \;
-find . -type f -name '.keep*' -exec rm {} \;
-find lib64 usr/lib usr/lib64 -type f -name '*.la' -exec rm {} \;
-find lib64 usr/lib usr/lib64 -type f -name '*.a' -exec rm {} \;
-#
-find . -perm -4000 -exec chmod u-s {} \;
-find . -perm -2000 -exec chmod g-s {} \;
-find . -perm -1000 -exec chmod -t {} \;
-#
+# create directories and symlinks
+#############
+install -d -o 0 -g 0 -m 0775 "var/empty"
+#############
+ln -sf "/tmp/.run" "run"
+ln -sf "/run/logs" "var/log"
+ln -sf "/run" "var/run"
+ln -sf "/tmp" "var/tmp"
+#############
+
+# set rootfs permissions
+#############
 chown -R 0:0 .
 find . -type d -exec chmod 0775 {} \;
 find . -type f -exec chmod 0664 {} \;
-#
-find init etc/init etc/self -type f -exec chmod 0775 {} \;
-find etc/qemu-lan etc/qemu-nat etc/qemu-template -type f -exec chmod 0775 {} \;
-find bin sbin usr/bin usr/sbin -type f -exec chmod 0775 {} \;
-find lib64 usr/lib usr/lib64 -type f -exec chmod 0775 {} \;
-find usr/libexec -type f -exec chmod 0775 {} \;
-#
-chown 0:1 bin/sudo
-chmod 4750 bin/sudo
+#############
+   find "init" "etc/init" -type f -exec chmod 0775 {} \;
+          find "etc/self" -type f -exec chmod 0775 {} \;
+      find "etc/qemu-lan" -type f -exec chmod 0775 {} \;
+      find "etc/qemu-nat" -type f -exec chmod 0775 {} \;
+ find "etc/qemu-template" -type f -exec chmod 0775 {} \;
+     find "bin" "usr/bin" -type f -exec chmod 0775 {} \;
+   find "sbin" "usr/sbin" -type f -exec chmod 0775 {} \;
+ find "lib64" "usr/lib64" -type f -exec chmod 0775 {} \;
+       find "usr/libexec" -type f -exec chmod 0775 {} \;
+#############
+chown 0:1 "bin/sudo"
+chmod 4750 "bin/sudo"
 #############
 
 # create initramfs image
 #############
-[ -f /binhost/images/client ] && mv -f /binhost/images/client /binhost/images/.client
-#
-cd /binhost/rootfs && find . -print0|busybox cpio -ovH newc|gzip > /binhost/images/client
-#
-chown -R 0:0 /binhost/images /binhost/kernels
-find /binhost/images /binhost/kernels -type d -exec chmod 0775 {} \;
-find /binhost/images /binhost/kernels -type f -exec chmod 0664 {} \;
+[ -f "/binhost/images/client" ] && mv -f "/binhost/images/client" "/binhost/images/.client"
+#############
+cd "/binhost/rootfs" && find . -print0 | busybox cpio -ovH newc | gzip > "/binhost/images/client"
+#############
+chown -R 0:0 "/binhost/images" "/binhost/kernels"
+find "/binhost/images" "/binhost/kernels" -type d -exec chmod 0775 {} \;
+find "/binhost/images" "/binhost/kernels" -type f -exec chmod 0664 {} \;
 #############
 

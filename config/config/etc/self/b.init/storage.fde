@@ -1,4 +1,4 @@
-
+#!/bin/sh
 #############
 usage(){
 
@@ -39,15 +39,12 @@ threads="$(grep -c MHz /proc/cpuinfo)"
 #############
 printf "%s" "${passphrase}" | argon2 "${uuid}" -id -t 3 -m 12 -p "${threads}" -r |
 cryptsetup --key-file - --hash sha256 --cipher aes-cbc-essiv:sha256 --key-size 256 --offset 1 open --type plain "${1}" "storage.crypt" || usage "cryptsetup failed"
-#############
+############# # create
 [ "${#}" == "2" ] && { integritysetup format --integrity sha256 "/dev/mapper/storage.crypt" || usage "integritysetup failed" ; }
 [ "${#}" == "2" ] && { integritysetup open --integrity sha256 "/dev/mapper/storage.crypt" "storage.integrity" || usage "integritysetup failed" ; }
-[ "${#}" == "1" ] && { integritysetup open --integrity sha256 "/dev/mapper/storage.crypt" "storage.integrity" || usage "integritysetup failed" ; }
-#############
-
 [ "${#}" == "2" ] && { mkfs.ext4 -m 0 -L storage "/dev/mapper/storage.integrity" || usage "mkfs failed" ; }
-
+############# # restore
+[ "${#}" == "1" ] && { integritysetup open --integrity sha256 "/dev/mapper/storage.crypt" "storage.integrity" || usage "integritysetup failed" ; }
 [ "${#}" == "1" ] && { fsck.ext4 -pvf "/dev/mapper/storage.integrity" ; fsck.ext4 -pv "/dev/mapper/storage.integrity" ; }
-
 #############
 

@@ -1,9 +1,3 @@
 
 sys-apps/systemd-utils -kmod -tmpfiles -udev
 
-dev-libs/libpcre2 -pcre32
-
-x11-libs/libxkbcommon X
-
-dev-libs/libffi exec-static-trampoline
-

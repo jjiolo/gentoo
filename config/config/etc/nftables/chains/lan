@@ -12,12 +12,16 @@ table inet filter {
 
   # server
 
-  udp dport {51820} udp sport {51820} ct state new log flags skuid prefix "input.lan.new " accept
+  udp dport {51820} ct state new log flags skuid prefix "input.lan.new " accept # vpnd
 
   # icmp
 
-  ip protocol {icmp}   log flags skuid prefix "input.lan.icmp " accept
-  ip6 nexthdr {icmpv6} log flags skuid prefix "input.lan.icmp " accept
+  ip protocol {icmp}   log flags skuid prefix "input.lan.icmp " accept # icmp
+  ip6 nexthdr {icmpv6} log flags skuid prefix "input.lan.icmp " accept # icmp
+
+  # igmp
+
+  ip protocol {igmp} log flags skuid prefix "input.lan.igmp " accept # igmp
 
   # drop
 
@@ -34,15 +38,31 @@ table inet filter {
 
   # client
 
-  udp dport {51820} udp sport {51820} ct state new log flags skuid prefix "output.lan.new " accept
+  udp dport {51820} udp sport {51820} ct state new log flags skuid prefix "output.lan.new " accept # vpnd
 
-  udp dport {53,123} skuid {ntpd} ct state new log flags skuid prefix "output.lan.new " accept
+  udp dport {53,123} skuid {ntpd} ct state new log flags skuid prefix "output.lan.new " accept # ntpc
 
-  ip protocol {tcp} skuid {ddns} ct state new log flags skuid prefix "output.lan.new " accept
-  ip protocol {tcp} skuid {dnsd} ct state new log flags skuid prefix "output.lan.new " accept
+  ip protocol {tcp} skuid {ddns} ct state new log flags skuid prefix "output.lan.new " accept # tord
+  ip protocol {tcp} skuid {dnsd} ct state new log flags skuid prefix "output.lan.new " accept # tord
 
-  ip protocol {udp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept
-  ip protocol {tcp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept
+  ip protocol {udp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept # p2pd
+  ip protocol {tcp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept # p2pd
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  tcp dport {443} skuid {root,250} ct state new log flags skuid prefix "output.lan.new " accept # stage3
 
   tcp dport {6697}    skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {22}      skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
@@ -54,12 +74,14 @@ table inet filter {
   tcp dport {465,995} skuid {mail} ct state new log flags skuid prefix "output.lan.new " accept
   tcp dport {443}     skuid {http} ct state new log flags skuid prefix "output.lan.new " accept
 
-  tcp dport {443} skuid {root,250} ct state new log flags skuid prefix "output.lan.new " accept # stage3
-
   # icmp
 
   ip protocol {icmp}   log flags skuid prefix "output.lan.icmp " accept
   ip6 nexthdr {icmpv6} log flags skuid prefix "output.lan.icmp " accept
+
+  # igmp
+
+  ip protocol {igmp} log flags skuid prefix "output.lan.igmp " accept
 
   # drop
 

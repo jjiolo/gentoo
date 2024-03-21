@@ -5,6 +5,8 @@
 
 [ "${#}" == "1" ] && {
 
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/endpoint"
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/address"
 install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/config"
 
 ip link del tun

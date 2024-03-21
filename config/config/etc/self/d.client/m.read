@@ -1,0 +1,34 @@
+#!/bin/sh
+#############
+install -d -o "${USER}" -m 0700 "${HOME}/remote" "${HOME}/remote/.bin" "${HOME}/remote/new" "${HOME}/remote/read" "${HOME}/remote/save" "${HOME}/remote/sent" "${HOME}/remote/tmp" && cd "${HOME}/remote" || exit 1
+#############
+
+for i in new/* ; do
+
+ clear ; unset REPLY
+
+ printf "%s\n" "#############"
+ strings "${i}" | grep -h -e '^From:' -e '^To:' -e '^Cc:' -e '^Subject:'
+ printf "%s\n" "#############"
+
+ until [ "${REPLY}" == "r" ] || [ "${REPLY}" == "d" ] || [ "${REPLY}" == "c" ] || [ "${REPLY}" == "s" ] ; do read -rp '(r)ead (d)elete (c)ontinue (s)kip: ' ; done
+
+ [ "${REPLY}" == "c" ] && mv "${i}" "read"
+
+ [ "${REPLY}" == "d" ] && mv "${i}" ".bin"
+
+ [ "${REPLY}" == "r" ] && {
+
+  unset REPLY ; strings "${i}" | less
+
+  until [ "${REPLY}" == "s" ] || [ "${REPLY}" == "d" ] || [ "${REPLY}" == "c" ] ; do read -rp '(s)ave (d)elete (c)ontinue: ' ; done
+
+  [ "${REPLY}" == "d" ] && mv "${i}" ".bin"
+
+  [ "${REPLY}" == "s" ] && mv "${i}" "save"
+
+ }
+
+done
+
+#############

@@ -2,7 +2,7 @@
 #############
 usage(){ printf "\n ${0} - ${1}\n\n  -k kernel\n  -i initrd\n  -b boot\n  -f file\n  -e extra\n  -l lan\n  -n nat\n  -u user\n\n" ; exit ; }
 #############
-while getopts "k:i:b:f:e:lnu:h" arg;do
+while getopts "k:i:b:f:e:lnu:h" arg ; do
  case "${arg}" in
   k) name="${name}.$(basename ${OPTARG})" ; kernel="-kernel ${OPTARG} -append root=/dev/vda" ;;
   i) name="${name}.$(basename ${OPTARG})" ; initrd="-initrd ${OPTARG}" ;;

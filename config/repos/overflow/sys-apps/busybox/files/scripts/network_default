@@ -14,12 +14,3 @@ ip link set up "${1}"
 #############
 env -i /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /bin/udhcpc_default "${hostname}"
 #############
-if [ "${1}" == "nat" ]
-then
-
- ip route add 224.0.0.0/4 dev nat scope link metric 0
- ip route add 169.254.0.0/16 dev nat scope link metric 0
-
-fi
-#############
-

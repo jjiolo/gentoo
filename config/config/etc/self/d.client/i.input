@@ -1,8 +1,6 @@
 #!/bin/sh
 #############
-install -d -o "${USER}" -m 0700 "${HOME}/irc" && cd "${HOME}/irc" || exit 1
-#############
-clear
+install -d -o "${USER}" -m 0700 "${HOME}/irc" && cd "${HOME}/irc" || exit 1 ; clear
 #############
 [ "${#}" == "0" ] && while read -rp "[input] " ; do printf "%s\n" "${REPLY}" | tee -a SENT >> input ; done
 #############

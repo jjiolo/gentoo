@@ -89,3 +89,15 @@ GCC_PLUGIN_STRUCTLEAK_ - keep changing gcc plugin names ?
 
 #############
 
+ /proc/self/io
+
+ General setup - 
+ CPU/Task time and stats accounting - 
+ Export task/process statistics through netlink - 
+ Enable extended accounting over taskstats - 
+ Enable per-task storage I/O accounting - 
+
+^ enables per process read/write
+
+#############
+

@@ -24,7 +24,7 @@ cd / ; caps="-all,+net_admin,+net_raw,+net_bind_service"
  /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /bin/udhcpc_oneshot "${hostname}" < /dev/null
 
 #############
-renice -5 -u "dhcpd"
+renice -5 -u "dhcpc"
 #############
 if [ "${1}" == "nat" ]
 then

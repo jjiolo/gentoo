@@ -72,16 +72,12 @@ cat > "etc/init" << EOF
 
 # mount
 
-     mountpoint -q "/dev" || { install -d -o 0 -g 0 -m 0700 "/dev"     ; mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime,size=0%                 host "/dev"     ; }
+     mountpoint -q "/dev" || { install -d -o 0 -g 0 -m 0700 "/dev"     ; mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime,size=0% host "/dev" ; }
  mountpoint -q "/dev/pts" || { install -d -o 0 -g 0 -m 0700 "/dev/pts" ; mount -t devpts   -o rw,dev,nosuid,noexec,noatime,mode=0600,ptmxmode=0000 host "/dev/pts" ; }
- mountpoint -q "/dev/shm" || { install -d -o 0 -g 0 -m 0700 "/dev/shm" ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,mode=1777,size=3%     host "/dev/shm" ; }
-    mountpoint -q "/proc" || { install -d -o 0 -g 0 -m 0700 "/proc"    ; mount -t proc     -o rw,nodev,nosuid,noexec,noatime,hidepid=1             host "/proc"    ; mount -o remount,hidepid=1 "/proc" ; }
-     mountpoint -q "/sys" || { install -d -o 0 -g 0 -m 0700 "/sys"     ; mount -t sysfs    -o rw,nodev,nosuid,noexec,noatime                       host "/sys"     ; }
-     mountpoint -q "/tmp" || { install -d -o 0 -g 0 -m 0700 "/tmp"     ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,mode=1777,size=50%    host "/tmp"     ; }
-
- install -d -o 0 -g 0 -m 0755 "/tmp/.run" ; ln -sf "/tmp/.run" "run"
-
- install -d -o 65534 -g 65534 -m 0700 "/tmp/.home"
+ mountpoint -q "/dev/shm" || { install -d -o 0 -g 0 -m 0700 "/dev/shm" ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,noswap,quota,uid=0,gid=0,mode=1777,size=3% host "/dev/shm" ; }
+    mountpoint -q "/proc" || { install -d -o 0 -g 0 -m 0700 "/proc"    ; mount -t proc     -o rw,nodev,nosuid,noexec,noatime,hidepid=1 host "/proc" ; mount -o remount,hidepid=1 "/proc" ; }
+     mountpoint -q "/sys" || { install -d -o 0 -g 0 -m 0700 "/sys"     ; mount -t sysfs    -o rw,nodev,nosuid,noexec,noatime host "/sys" ; }
+     mountpoint -q "/tmp" || { install -d -o 0 -g 0 -m 0700 "/tmp"     ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,noswap,quota,uid=0,gid=0,mode=1777,size=50% host "/tmp" ; }
 
 # dev
 
@@ -120,11 +116,11 @@ cat > "etc/init" << EOF
 
 # proc
 
- find /proc -type d -mindepth 1 -exec chmod 0550 {} \;
- find /proc -type f -mindepth 1 -exec chmod 0440 {} \;
+ find /proc -type d -mindepth 1 -exec chmod 0550 {} \; 2>/dev/null
+ find /proc -type f -mindepth 1 -exec chmod 0440 {} \; 2>/dev/null
 
- find /proc/self/net -type d -mindepth 1 -exec chmod 0550 {} \;
- find /proc/self/net -type f -mindepth 1 -exec chmod 0440 {} \;
+ find /proc/self/net -type d -mindepth 1 -exec chmod 0550 {} \; 2>/dev/null
+ find /proc/self/net -type f -mindepth 1 -exec chmod 0440 {} \; 2>/dev/null
 
  chown -R root:desktop /proc/meminfo /proc/stat
 
@@ -135,6 +131,12 @@ cat > "etc/init" << EOF
 
  chown -R root:desktop /sys/dev /sys/devices
 
+# tmp
+
+ install -d -o 0 -g 0 -m 0755 "/tmp/.run" ; ln -sf "/tmp/.run" "run"
+
+ install -d -o 65534 -g 65534 -m 0700 "/tmp/.home"
+
 # log
 
  install -d -o 0 -g 65534 -m 0750 "/run/logs"
@@ -142,8 +144,9 @@ cat > "etc/init" << EOF
  install    -o 0 -g 0 -m 0664 "/dev/null" "/run/logs/syslog.0"
  install    -o 0 -g 0 -m 0664 "/dev/null" "/run/logs/syslog.1"
  install    -o 0 -g 0 -m 0664 "/dev/null" "/run/logs/syslog.2"
+
  umask 0002
- syslogd -O "/run/logs/syslog" -s999 -b3 -StD # syslogd -LR 172.16.0.1:514 -O "/run/logs/syslog" -s999 -b3 -StD
+ syslogd -O "/run/logs/syslog" -s999 -b3 -StD
  klogd
  umask 0077
 
@@ -154,6 +157,7 @@ cat > "etc/init" << EOF
  ip link set up lo
 
  [ -d "/sys/class/net/eth0" ] && echo yes | network_default eth0 "$(basename ${1})"
+ [ -d "/sys/class/net/eth0" ] && echo yes | network_zcip eth0
 
 EOF
 

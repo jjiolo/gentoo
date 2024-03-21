@@ -32,7 +32,15 @@ done | less -S
 cd /tmp/.diff/stage3/config || exit
 #############
 
-for i in config kernels portage repos/browser repos/communication repos/overlay repos/overflow repos/xorg .misc
+for i in config kernels portage \
+repos/browser \
+repos/communication \
+repos/emulation \
+repos/overlay \
+repos/overflow \
+repos/testing \
+repos/xorg \
+.misc
 do
 
  diff -r ./$i /tmp/storage/stage3/config/$i | less -S

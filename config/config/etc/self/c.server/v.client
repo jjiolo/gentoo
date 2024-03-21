@@ -28,6 +28,10 @@ printf "\n%s\n\n" "${1} ${2} ${peer}" ; read
 #############
 wg set tun peer "${peer}" persistent-keepalive 60 endpoint "${1}:51820" allowed-ips "${2},fd00::${2//./:}"
 #############
+printf "%s\n" "${1}" > "${storage}/.vpn/endpoint"
+#############
+printf "%s\n" "${2}" > "${storage}/.vpn/address"
+#############
 wg showconf tun > "${storage}/.vpn/config"
 #############
 v.flush

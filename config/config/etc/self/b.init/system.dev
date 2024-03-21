@@ -1,5 +1,9 @@
 
 #############
+mdadm --assemble --no-degraded --scan
+#############
+
+#############
 find /dev -mindepth 1 -exec chmod o-rwx {} \;
 #############
 for i in $(seq 10 63) ; do [ -c "/dev/tty${i}" ] && rm "/dev/tty${i}" ; done
@@ -40,31 +44,6 @@ ln -sf /proc/self/fd/1 /dev/stdout
 ln -sf /proc/self/fd/2 /dev/stderr
 #############
 
-#############
-
-# proc
-
-find /proc -type d -mindepth 1 -exec chmod 0550 {} \; 2>/dev/null
-find /proc -type f -mindepth 1 -exec chmod 0440 {} \; 2>/dev/null
-
-find /proc/self/net -type d -mindepth 1 -exec chmod 0550 {} \; 2>/dev/null
-find /proc/self/net -type f -mindepth 1 -exec chmod 0440 {} \; 2>/dev/null
-
-chown -R root:desktop /proc/meminfo /proc/stat # xorg
-
-#############
-
-# sys
-
-find /sys -type d -mindepth 1 -exec chmod 0550 {} \;
-find /sys -type f -mindepth 1 -exec chmod 0440 {} \;
-
-chown -R root:desktop /sys/dev/ /sys/devices # xorg
-
-#############
-
-#############
-mdadm --assemble --no-degraded --scan
 #############
 ln -sf "$(findfs LABEL=bootfs 2>/dev/null || echo /dev/null)" /dev/bootfs
 ln -sf "$(findfs LABEL=storage 2>/dev/null || echo /dev/null)" /dev/storage

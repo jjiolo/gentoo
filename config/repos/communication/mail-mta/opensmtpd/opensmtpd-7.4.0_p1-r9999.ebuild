@@ -7,7 +7,7 @@ SRC_URI="https://www.opensmtpd.org/archives/${P/_}.tar.gz"
 #############
 LICENSE="ISC BSD BSD-1 BSD-2 BSD-4"
 SLOT="0"
-KEYWORDS="" #amd64"
+KEYWORDS="amd64"
 IUSE=""
 RDEPEND="
 dev-libs/libevent
@@ -42,7 +42,7 @@ src_configure(){
 --with-ldflags \
 --without-Werror \
 --with-pie \
---with-mantype=man \
+\
 --without-auth-bsdauth \
 --without-auth-pam \
 --with-user-smtpd=maild \
@@ -50,7 +50,7 @@ src_configure(){
 --with-group-queue=mailq \
 --with-path-queue=/tmp/storage/services/maild \
 --with-path-empty=/var/empty \
---with-path-mbox=/tmp/storage/home/mail/inbox \
+--with-path-mbox=/tmp/storage/home/mail/local \
 --with-path-socket=/tmp/storage/services/maild \
 --with-path-pidfile=/tmp/storage/services/maild \
 --with-path-CAfile=/etc/ssl/certs/ca-certificates.crt \
@@ -59,22 +59,20 @@ src_configure(){
 --with-libssl=/usr/lib64 \
 --with-libz=/usr/lib64 \
 --without-table-db
+# --without-mantype --with-mantype={man,cat,doc}
 }
 #############
 src_install(){
 
 install -d -o root -g root -m 0755 "${D}/bin" "${D}/sbin"
 
-install    -o root -g root -m 0755 "mk/smtp/smtp" "${D}/bin"
-install    -o root -g root -m 0755 "mk/smtpd/smtpd" "${D}/sbin"
-install    -o root -g root -m 0755 "mk/smtpctl/smtpctl" "${D}/sbin"
+install    -o root -g root -m 0755 "mk/smtpd/smtpd" "${D}/sbin" || die "install failed"
 
 install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/libexec" "${D}/usr/libexec/opensmtpd"
-install    -o root -g root -m 0755 "mk/mail/mail.maildir/mail.maildir" "${D}/usr/libexec/opensmtpd"
 
-ln -s "/sbin/smtp" "${D}/bin/mail"
+install    -o root -g root -m 0755 "mk/mail/mail.maildir/mail.maildir" "${D}/usr/libexec/opensmtpd" || die "install failed"
+
 ln -s "/sbin/smtpd" "${D}/sbin/maild"
-ln -s "/sbin/smtpctl" "${D}/sbin/mailctl"
 
 }
 #############

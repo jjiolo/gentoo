@@ -28,6 +28,6 @@ sys-kernel/linux-headers
 sys-kernel/linux-firmware
 dev-libs/libudev-zero
 #
-dev-util/strace
+dev-debug/strace
 #
 

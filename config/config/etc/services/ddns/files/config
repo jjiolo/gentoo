@@ -9,8 +9,10 @@ CacheDirectory /tmp/storage/services/ddns/cache
 #############
 DNSPort   127.0.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr CacheDNS UseDNSCache
 DNSPort   172.16.0.1:53 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr CacheDNS UseDNSCache
+DNSPORT   10.0.0.1:53 ISolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr CacheDNS UseDNSCache
 SOCKSPort 127.0.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr CacheDNS UseDNSCache
 SOCKSPort 172.16.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr CacheDNS UseDNSCache
+SOCKSPort 10.0.0.1:9050 IsolateClientAddr IsolateSOCKSAuth IsolateClientProtocol IsolateDestPort IsolateDestAddr CacheDNS UseDNSCache
 #############
 ControlPort    0
 #DNSPort       0
@@ -45,6 +47,11 @@ NATDPort       0
 #HiddenServicePort 22 172.16.0.1:22
 #HiddenServicePort 25 172.16.0.1:25
 #HiddenServicePort 80 172.16.0.1:80
+#############
+#HiddenServicePort 6667 10.0.0.1:6667
+#HiddenServicePort 22 10.0.0.1:22
+#HiddenServicePort 25 10.0.0.1:25
+#HiddenServicePort 80 10.0.0.1:80
 #############
 
 #############

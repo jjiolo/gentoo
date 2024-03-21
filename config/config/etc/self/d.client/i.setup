@@ -20,6 +20,9 @@ cat << EOF
  privmsg nickserv :set emailmemos on
  privmsg nickserv :set private on
 
+ privmsg nickserv :set badpasswdmsg off
+ privmsg nickserv :set hidelastlogin off
+
  privmsg nickserv :cert add
 
  privmsg nickserv :logout
@@ -28,7 +31,7 @@ cat << EOF
 
 EOF
 #############
-[ -f "sasl" ] || openssl req -x509 -new -newkey ed25519 -sha512 -days 365 -nodes -keyout sasl -out sasl -subj "/CN=irc.libera.chat"
+[ -f "sasl" ] || openssl req -x509 -new -newkey ed25519 -sha512 -days 365 -noenc -keyout sasl -out sasl -subj "/CN=irc.libera.chat"
 #############
-openssl s_client -noservername -connect "irc.libera.chat:6697" -cert "sasl" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet
+openssl s_client -noservername -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet -cert "sasl" -connect "irc.libera.chat:6697"
 #############

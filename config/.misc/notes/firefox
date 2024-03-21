@@ -1,5 +1,11 @@
 
 #############
+* x11-libs/gtk+
+^ ebuild broke ctrl+o and gtk filemanager ?
+^ removing /usr/share/mime + /usr/share/glib-2.0
+^ were required to make it work ? now its just broken
+! view source + right click + copy url + curl -O <middle_click>
+#############
 gtk+
 libsrvg - forces rust takes ages only provides thumbnail icons in ctrl+o filemanager
 libepoxy - requires egl ? nope

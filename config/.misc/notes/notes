@@ -6,6 +6,25 @@ fc00::feed:beef/64
 #############
 [2|3|5|7|11|13|17|19|23|29|31|37|41|43|47]
 #############
+-------------
+spoken word
+written word
+read word
+printing press
+telegram
+telephone
+television
+radio
+internet
+social media
+-------------
+same game different medium
+-------------
+augmented_reality
+-------------
+geo_caching
+-------------
+#############
 no idea what stupid has gathered itself in here
 stuff at the bottom tends to get rewritten and kept
 stuff at the top is unordered raw sewage
@@ -30,9 +49,9 @@ stuff at the top is unordered raw sewage
 [REBUILD]
 #############
 -------------
- lastest - 2023:12:13 21:07:00
+ lastest - 2024:03:09 17:00:00
 -------------
- build notes - version bumps no changes unless buggy
+ trying to reduce complexity...
 -------------
  broken -
  * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
@@ -65,6 +84,7 @@ stuff at the top is unordered raw sewage
 * privdrop stage3 initial pull, stage3 portage update, stage3 fetch
 * dnssec verified cache (optionally over tor) (dnscrypt-proxy wins)
 * alsa environment variable as default soundcard ?
+* mpv --image-display-duration=4 --loop-playlist /path/to/directory
 #############
 
 [PROBLEMS]:
@@ -133,15 +153,238 @@ stuff at the top is unordered raw sewage
 
  * mv binhost/distfiles ../shared/distfiles
  * config/portage/make.conf - GENTOO_MIRRORS=http://127.0.0.1/shared"
+ * config/portage/make.conf - 
 
+#############
+#############
 #############
 
 ^ attempt to record a list of things actually done
 v attempt to create lists of things to actually do
 
 #############
+#############
+#############
+
+#############
 setpriv_udhcpd < - ignores first sleep ?
 #############
+linux-6.8.0 - > 6.8.1 - broke busybox tc (traffic control)
+
+CONFIG_KVM_SW_PROTECTED_VM - software protected virtual machines ? development and testing
+
+BLK_DEV_WRITE_MOUNTED - allow writing to mounted block devices ? (disabled)
+
+AMD_WBRF - something about amd and wifi announcing frequencies to avoid harmonics ?
+
+
+#############
+ncurses - thefted mki
+
+ no idea ?
+ trying to greenfield whatever upstream release is ?
+ worst case storing every individual patch date
+ then applying them one by one ?
+ /usr/include/<target>/file.h ?
+ ^ rebuilds itself 4 times ?
+
+ sort of important - repos/editors/{ncurses,vim} ?
+
+#############
+
+hosting on lo/lan/tun/nat
+
+nat - address changes
+tun - address changes
+
+udhcpd references 172.16.0.1 #  b.server(dhcpd,tftpd,ntpd)
+
+ddns references 172.16.0.1 # dns/socks/service
+
+t.get/t.put references 172.16.0.1 # httpd/p2pd
+
+dhcpc - vpnd
+ddns - ircd/sshd/maild/httpd
+vpnd - dnsd/socks/ircd/sshd/maild/httpd tftpd/ntpd
+
+^ connect to local network
+^ irc forward services to username:password:fingerprint
+^ tor forward services to sha256-ed25519 fingerprint
+^ hole punch udp based private network...
+
+z.testing
+b.server - host - qemu nat guests
+b.virtual - host/guest -
+
+v.server
+wg addconf tun ${HOME}/.vpn/config
+ip addr add ${HOME}/.vpn/address
+^ v.client - can recover from wg addconf tun ${HOME}/.vpn/config
+
+z.testing - 
+ 
+
+#############
+dropped tls1_2
+^ www.kernel.org download.mozilla.org
+^ both dont support tls1_3 ?
+#############
+ set -e
+
+ /usr/lib/portage/pythonX.YY/phase-function.sh
+ ^ added 'set -e' to top of file
+   emerge --depclean - failed instantly ? (rm <missing_file> returned >0)
+   emerage -av x11-wm/st - failed instantly ? (unpack command returned >0)
+
+! add set -e to specific functions ? remove it at the end ?
+^ mostly interested in catching broken src_configure ?
+
+* app-alternatives/
+^ added multiple substitutes to gnu's toolchain
+  increases probability of silent error due to incompatability
+
+^ no idea where to set default functions ? /shrug
+
+-------------
+
+[ -e thing ] exists ? checks char block symlink file directory
+
+find -type
+f ile?
+d irectory?
+l ink?
+b lock ?
+c har ?
+s pecial
+p ?
+
+^ check scripts for [ -f and symlink hijacking ] ?
+
+-------------
+never noticed mount as a directory ?
+stage3.<command>
+^ could start automating at a higher level ?
+  had trouble nesting scripts calling other scripts ?
+  could double with cleaning init system output
+  and drawing stupid libcaca loading screens...
+
+chroot wrapper ? external call to executing a specific command
+ and try to abstract a real api for a higher level 'release'
+
+meh sort of stagnated
+
+-------------
+
+#############
+-------------
+(more educational than functional)
+-------------
+.bin/
+new/
+read/
+save/
+sent/
+tmp/
+-------------
+m.send - no idea ? (makemime) (curl --enable-smtp?)
+-------------
+m.brief - show new/ from/to/subject ?
+to self@gmail.com -[from:] [subject:]
+to mailing list - [to:] [subject:]
+-------------
+m.read
+(r)ead into read/
+(s)ave into save/
+(d)elete into .bin/
+(c)ontinue into read/ ? (annoying to skip without read?)
+-------------
+m.sync - finished ?
+-------------
+^ .bin/ new/ read/ save/ sent/ tmp/ (sort by year/ month/ week/) ?
+^ probably get horrific over time
+^ no ability to go back once you read it
+* sole purpose is to read mailing lists / educational with opensmtpd...
+-------------
+
+-------------
+openssl s_client + s_server (need a massive math rehaul)
+-------------
+
+#############
+* gtk+ firefox cant open file manager (curl -O <url>) (/usr/bin/firefox-bin /path/to/file)
+* stage3 dtach shell - ignores ls -lah --group-directories-first
+#############
+[openssl]
+got rid of thread-pool
+got rid of comp+zlib
+got rid of tls1_2
+enabled dgram+dtls
+enabled http ? (opensmtpd failed ocsp)
+enabled pinshared ? (its the default)
+^ found openssl.conf man page ? (sort of)
+  any full list of available variables ?
+
+! https://www.kernel.org fails :'( (doesnt support tls1_3)
+
+#############
+aes-gcm-siv ? (everything in tls1_2 is vulnerable?)
+^ no idea if aes-gcm-siv went to 1_2 or 1_3 ?
+#############
+* /run/display/ - startx and xephyr
+#############
+ curl - disable-http-auth (still allows basic auth)
+ curl - disable-basic-auth (still allows basic auth)
+ curl - disable-bearer-auth (still allows basic auth)
+ curl - disable all of them ? (still allows basic auth)
+ curl - pfft no idea (need enable-bearer-auth for github)
+ curl - Protocols IPFS IPNS ? (no configure options)
+#############
+
+#############
+/usr/bin/{startx,xephyr}
+^ general tidy up
+  +bs backing store
+  -tst disable testing extensions
+  -maxclients (wont open more than 64 windows)
+* man page has a better write up of options
+-------------
++xinerama -screen 1920x1080 -screen 1920x1080
+^ multi monitor xephyr (no idea how to wrap it...)
+-------------
+-grayscale < - useful for network connections (wouldnt play video)
+-------------
+-dpi < - useful for bad screen size and resolution values
+-------------
+[both/xephyr]
+-seat - (specific device access in /dev?)
+-/+ accessx [timeout timeout_mask feeback options_mask] wtf ?
+-deferglyphs [none|all|16] - couldnt find information ?
++iglx - allow creating indirect glx contexts ? (no idea)
+-r / r - off/on auto-repeat
+-noxv - do not use XV ? no idea what it means
+-fakescreenfps - ???
+[x only]
+-depth - color depth ?
+-gamma -rgamma -ggamma -bgamma -weight (color related)
+-disableVidMode
+-------------
+-fbbpp - framebuffer ? default 8 ?
+-maxbigreqsize 1 - did nothing ?
+-maxclients ? (64 128 256...) thought it might lock ?
+-render mono grey - did nothing ? (reduce network bandwidth ?)
+-------------
+#############
+
+flip configure standard kernel features - test removing stuff and see what breaks ?
+grep the compile options for x86 userspace shadow stack ? (last time wouldnt work with retpoline enabled)
+efi variables ? (last time was a bit bloat and wtf)
+
+test turning frame buffer devices off ? device drivers - > graphics support - > frame buffer devices
+
+KVM_MAX_NR_VCPUS - doesnt allow setting below 1024 ?
+CONFIG_PCP_BATCH_SCALE_MAX - 5? could need more / less based on cpu count ? no hints in help output
+TCP_AO - tcp authenticate options (changes md5sum to more secure hashes) (md5sum states useful bgp)
+USB_PCI_AMD - usb implementation quirks common on x86 amd cpus ?
 
 * current fuck ups...
   wpa_supplicant CONFIG_AP - disconnect now tears down interface and default route ?
@@ -193,6 +436,11 @@ nobody+applications - lan removes cleartext lo/nat/tun allow cleartext ?
 !!! find config/config -type f -exec grep -Hi 'install ' {} \;
 ^^^ check install uses all numeric or alphabetic input ?
 ^^^ (changed ssh from 22 to 2222 numeric implies changing every file)
+-------------
+
+-------------
+Xephyr +xinerama -screen 1920x1080 -screen 1920x1080 -screen 1920x1080 -ac :1234
+^ multiple monitor emulation
 -------------
 
 #############
@@ -1646,6 +1894,8 @@ cryptsetup --hash sha512 --cipher aes-xts-plain64 open --type plain /dev/md127 s
 #############
 mpv --no-video "$(ls|shuf -n1)" # albums|films|series
 while :;do mpv --no-video "$(find . -type f|shuf -n1)";done # songs in media/music
+mpv --image-duration=4 --loop-playlist
+mpv --keep-open=yes
 #############
 [[ -f "${log}" ]] && { jobs %% || { tail -F /tmp/logs/syslog|while read -r;do sleep .2 && printf "%s\n" "NOTICE &SERVER :${REPLY}" >> "${input}";done & }; }
 #############
@@ -2190,4 +2440,5 @@ chmod 644 /path/.* sets the directory to 644 and locks the lot of it
 #############
 xrandr --output VGA-1 --mode 1440x900
 xrandr --output DP-1 HDMI-1 HDMI-2 --mode 1920x1080
+Xephyr +xinerama -screen 1920x1080 -screen 1920x1080 -screen 1920x1080 -ac :1234
 #############

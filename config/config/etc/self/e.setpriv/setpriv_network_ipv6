@@ -1,0 +1,25 @@
+#!/bin/sh
+#############
+usage(){ printf "%s\n" "takes interface and or hostname - ${1}" ; exit 1 ; }
+#############
+[ "${#}" == "1" ] || [ "${#}" == "2" ] || usage "no input"
+#############
+[ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
+#############
+[ -z "${2}" ] || hostname="-xhostname:${2}"
+#############
+pkill -x /sbin/udhcpc
+#############
+ip link set up "${1}"
+#############
+
+cd / ; caps="-all,+net_admin,+net_raw,+net_bind_service"
+
+/bin/setsid /usr/bin/setpriv \
+ --reuid dhcpc --regid dhcpc --init-groups --nnp --reset-env \
+ --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
+ /bin/udhcpc6 -vSnqf -i "${1}" -s /bin/udhcpc_ipv6 "${hostname}" < /dev/null
+
+#############
+renice -5 -u "dhcpc"
+#############

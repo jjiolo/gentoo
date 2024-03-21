@@ -4,7 +4,8 @@
 grep -q "laptop" /proc/cmdline && /bin/sh -l
 grep -q "desktop" /proc/cmdline && /bin/sh -l
 
-grep -q -e "desktop" -e "laptop" /proc/cmdline || timeout -s SIGTERM 3 sh -c 'read -p interupt && /bin/sh -l'
+grep -q -e "desktop" -e "laptop" /proc/cmdline ||
+ timeout -s SIGTERM 3 sh -c 'read -p interupt && /bin/sh -l'
 
 #############
 

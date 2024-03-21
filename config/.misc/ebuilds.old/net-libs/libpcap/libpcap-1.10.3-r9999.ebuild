@@ -19,7 +19,7 @@ src_configure(){
 --libdir=/usr/lib64 \
 --enable-option-checking \
 --enable-largefile \
---enable-protochain \
+--disable-protochain \
 --enable-ipv6 \
 --disable-remote \
 --disable-optimizer-dbg \

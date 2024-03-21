@@ -1,6 +1,5 @@
 
 #############
-[ "${#}" == "0" ] && {
 
                 tar zcf "${stage3}/binhost/config.tar.gz" -C "${storage}" --exclude "stage3/binhost" --exclude "stage3/rootfs" --exclude "stage3/.socket" "stage3"
               chown 0:0 "${stage3}/binhost/config.tar.gz"
@@ -13,18 +12,5 @@
  install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/config.tar.gz" "${shared}/downloads/config.tar.gz"
  install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/config.torrent" "${shared}/torrents/config"
 
-}
-#############
-[ "${#}" == "1" ] && {
-
-         tar zcf "${shared}/downloads/binhost.tar.gz" -C "${stage3}" "binhost"
- chown 9091:9091 "${shared}/downloads/binhost.tar.gz"
-      chmod 0644 "${shared}/downloads/binhost.tar.gz"
-
- transmission-create -o "${shared}/torrents/binhost" -w "http://172.16.0.1/shared/downloads/binhost.tar.gz" "${shared}/downloads/binhost.tar.gz"
-        chown 9091:9091 "${shared}/torrents/binhost"
-             chmod 0644 "${shared}/torrents/binhost"
-
-}
 #############
 

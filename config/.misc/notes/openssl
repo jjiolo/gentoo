@@ -1,23 +1,5 @@
 
 #############
-
-openssl-3.2.0
-
- zstd
- brotli
-
- thread-pool ?
- default-thread-pool ?
-
- no-docs
- no-http
- no-quic
-
- tfo - tcp fast open
-
- sm2-precomp (aarch64)
-
-#############
 aes-gcm-siv < - shiny new new (added nonce reuse protection)
 #############
 
@@ -45,10 +27,14 @@ aes-gcm-siv < - shiny new new (added nonce reuse protection)
  openssl s_client -dtls1_2
  ^ doesnt work with ed25519
 
-#############
  openssl pkeyutl -kdf TLS1-PRF -kdflen 64 -digest sha512
+ openssl pkeyutl -kdf XXX
+ {TLS1-PRF,HKDF,SSKDF,PBKDF2,SSHKDF,X942KDF-ASN1,X942KDF-CONCAT,X963KDF,SCRYPT}
+
 #############
 
+#############
+no-http - might break ocsp ? (opensmtpd)
 #############
 no-engines -
 no-static-engines -
@@ -56,10 +42,12 @@ no-dynamic-engines -
 no-module -
 ^ disabled engines completly ?
 #############
-no-pinshared -
+{no,enable}-pinshared
  no - dont try to stay in memory ?
  enable - try to stay in memory ?
-! kernel-build < - breaks without engines ?
+^ says default is enable-pinshare ?
+#############
+no-tfo (tcp fast open, fingerprintable ?)
 #############
 
 ############# generic descriptions (got sick of searching)
@@ -69,20 +57,26 @@ cms  - cryptographic message syntax ? smime... (openssl cms -help)
 comp - compression support with static/dynamic zlib
 ct   - certificate transparency
 npn  - next protocol negotiation (port 443 spdy hand off ? irrelivent imo http2)
-crl  - certificate revocation list
-ocsp - online certificate status protocol (crl replacement)
+crl  - certificate revocation list (requests all certs doesnt scale)
+ocsp - online certificate status protocol (crl replacement request individual certs)
+oscp - stapling < - request signed timestamp, prove time since last revoke, reduce ocsp load
 psk  - pre shared key cipher suites
 srp  - secure remote password cipher suites
 srtp - secure real-time transport protocol (dtls extension)
 sctp - stream control transmission protocol dtls over sctp and or dtls over udp
 sse2 - cpu flags enabled in ffmpeg already
 tfo  - tcp fast open
+ech  - encrypted client hello
+hpkp - http public key pinning
+hsts - http strict transport security (always use https)
+#############
+acvp - automated cryptographic validation protocol
 #############
 
 locked configure options...
 
- enable-deprecated - python wpa_supplicant wget tor
- enable-engine     - 
+ enable-deprecated - python wpa_supplicant opensmtpd wget tor
+ enable-engine     - kernel.build (breaks without engines?)
  enable-sock       - curl mutt links wget python transmission tor
  enable-threads    - tor/python
  enable-tls        - (no-tls does not disable tls if tls1_1 tls1_2 are in use)
@@ -90,14 +84,8 @@ locked configure options...
  enable-ecdh       - tor
  enable-ecsda      - tor
  enable-scrypt     - python
+ enable-http       - opensmtpd
 
-#############
-ech - encrypted client hello
-crl           < - old shit pulls the entire list in a single file doesnt scale
-oscp          < - interface to request individual certificates
-oscp stapling < - interface for clients to request a signed timestamp, proving time since last revoke check to reduce load on the ocsp server
-hpkp < - http public key pinning
-hsts < - http strict transport security (always use https)
 #############
 
 [openssl client]
@@ -171,6 +159,8 @@ crl = crl.pem # current crl
 crlnumber = crlnumber # current crl number
 
 #############
+
+dtls 
 
 +enable-psk
 +enable-dtls

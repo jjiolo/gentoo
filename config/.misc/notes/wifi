@@ -20,6 +20,14 @@ okc - oppertunistic key caching
 80211w pmf - protected management frames
 beacon_prot=1 - beacon protection ?
 80211u interworking - 
+80211r - fast bss transition
+FST - fast session transfer
+ACS - automatic channel switching
+MBO - multi band operation
+FILS - fast initial link setup
+#############
+tdls - tunneled direct link setup (wifi p2p)
+wifi direct - wifi p2p connect directly to other devices
 #############
  ssid - 
  bssid - 

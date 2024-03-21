@@ -12,6 +12,21 @@
 
  }
 
+ [ -d "${mount}/gentoo" ] || {
+
+  git init --bare --initial-branch project "${mount}/gentoo.bare"
+
+  git clone "${mount}/gentoo.bare" "${mount}/gentoo.work"
+
+  cd "${mount}/gentoo.bare"
+  printf "\n%s\n%s\n%s\n\n" "#############" "README.md" "#############" > "README.md"
+  git add -A .
+  git commit -m "README.md"
+  git push
+  cd -
+
+ }
+
 #############
 
  fsck.ext4 -pvf "${mount}/stage3"

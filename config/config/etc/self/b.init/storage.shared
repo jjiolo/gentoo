@@ -63,10 +63,9 @@ done
 
 wg pubkey < "${storage}/.vpn/wireguard" > "wireguard"
 
-cd -
+printf "%s%s\n" "$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)" ".onion" > "public" # install -o 0 -g 0 -m 0664 "${services}/ddns/public/hostname" "public"
 
-printf "%s%s\n" "$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)" ".onion" > "public"
-#install -o 0 -g 0 -m 0664 "${services}/ddns/public/hostname" "public"
+cd -
 
 chown -R root:root "${shared}/contacts" &
 

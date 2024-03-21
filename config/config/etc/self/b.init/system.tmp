@@ -1,0 +1,14 @@
+
+#############
+install -d -o 0 -g 0 -m 0775 "/tmp/.run"
+#############
+install -d -o 0 -g 0 -m 0700 "${bootfs}"
+install -d -o 0 -g 0 -m 0755 "${ephemeral}"
+install -d -o 0 -g 0 -m 0755 "${local}"
+install -d -o 0 -g 0 -m 0755 "${remote}"
+#############
+install -o 0 -g 0 -m 0664 "/usr/share/alsa/alsa.conf" "/run/alsa.conf"
+#############
+ln -sf "/run/alsa.conf" "/usr/share/alsa/alsa.conf"
+#############
+
