@@ -45,8 +45,8 @@ dev-perl/YAML-Tiny minimal
 dev-perl/libintl-perl minimal
 dev-perl/libwww-perl -ssl
 dev-python/pydantic -native-extensions
-dev-util/cmake -ncurses
-dev-util/strace static
+dev-build/cmake -ncurses
+dev-debug/strace static
 dev-vcs/git -blksha1 -gpg -iconv -pcre -perl -webdav
 gnome-base/gsettings-desktop-schemas -introspection
 gnome-base/librsvg -introspection -vala

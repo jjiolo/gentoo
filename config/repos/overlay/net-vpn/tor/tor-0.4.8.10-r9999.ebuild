@@ -84,11 +84,11 @@ src_configure() {
 }
 #############
 src_install() {
-install -d -o root -g root -m 0755 "${D}/sbin"
-install    -o root -g root -m 0755 "src/app/tor" "${D}/sbin" || die "install failed"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/sbin"
+install    -o root -g root -m 0755 "src/app/tor" "${D}/usr/sbin" || die "install failed"
 install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/share" "${D}/usr/share/tor"
 install    -o root -g root -m 0644 "src/config/geoip" "${D}/usr/share/tor" || die "install failed"
 install    -o root -g root -m 0644 "src/config/geoip6" "${D}/usr/share/tor" || die "install failed"
-ln -s "/sbin/tor" "${D}/sbin/ddns"
+ln -s "tor" "${D}/usr/sbin/ddns"
 }
 #############

@@ -1,11 +1,11 @@
 
 #############
 
- setxkbmap gb
+setxkbmap gb
 
- xsetroot -name " [$(date +%Y:%m:%d:%H:%M:%S)] "
+xsetroot -name " [$(date +%Y:%m:%d:%H:%M:%S)] "
 
- exec sleep infinity
+exec sleep infinity
 
 #############
 

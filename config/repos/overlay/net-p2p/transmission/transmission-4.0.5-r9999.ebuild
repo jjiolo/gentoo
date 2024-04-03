@@ -79,12 +79,13 @@ cmake \
 src_compile(){ cd build ; default ; }
 #############
 src_install(){
-install -d -o root -g root -m 0755 "${D}/bin" "${D}/sbin"
-install    -o root -g root -m 0755 "build/utils/transmission-create"  "${D}/bin" || die "install failed"
-install    -o root -g root -m 0755 "build/utils/transmission-edit"    "${D}/bin" || die "install failed"
-install    -o root -g root -m 0755 "build/utils/transmission-remote"  "${D}/bin" || die "install failed"
-install    -o root -g root -m 0755 "build/utils/transmission-show"    "${D}/bin" || die "install failed"
-install    -o root -g root -m 0755 "build/daemon/transmission-daemon" "${D}/sbin" || die "install failed"
-ln -s "/sbin/transmission-daemon" "${D}/sbin/p2pd"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/sbin"
+install    -o root -g root -m 0755 "build/utils/transmission-create"  "${D}/usr/bin" || die "install failed"
+install    -o root -g root -m 0755 "build/utils/transmission-edit"    "${D}/usr/bin" || die "install failed"
+install    -o root -g root -m 0755 "build/utils/transmission-remote"  "${D}/usr/bin" || die "install failed"
+install    -o root -g root -m 0755 "build/utils/transmission-show"    "${D}/usr/bin" || die "install failed"
+install    -o root -g root -m 0755 "build/daemon/transmission-daemon" "${D}/usr/sbin" || die "install failed"
+ln -s "transmission-daemon" "${D}/usr/sbin/p2pd"
 }
 #############

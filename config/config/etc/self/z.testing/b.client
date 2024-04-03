@@ -3,7 +3,7 @@
 pkill -x ircd
 pkill -x sshd
 pkill -x maild
-pkill -x /sbin/httpd
+pkill -x /usr/sbin/httpd
 pkill -x p2pd
 #############
 

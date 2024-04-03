@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 usage(){ printf "%s\n" "takes commonname - ${1}" ; exit 1 ; }
 #############

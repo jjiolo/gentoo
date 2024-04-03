@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
-debug(){ printf "%s\n" "takes endpoint, address and or public key file - ${1}";exit 1; }
+debug(){ printf "%s\n" "add server to vpnd, takes endpoint and address and/or public key file - ${1}";exit 1; }
 #############
 
 [ "${USER}" == "root" ] || debug "requires root"
@@ -28,9 +28,11 @@ ip link set up tun
 #############
 wg set tun peer "${peer}" persistent-keepalive 60 endpoint "${1}:51820" allowed-ips "10.0.0.0/8,fd00::/64"
 #############
-printf "%s\n" "${1}" > "${storage}/.vpn/endpoint"
+printf "%s\n%s\n%s\n" "${1}" "${2}" "${peer}" >> "${storage}/.vpn/servers"
 #############
+printf "%s\n" "${1}" > "${storage}/.vpn/endpoint"
 printf "%s\n" "${2}" > "${storage}/.vpn/address"
+printf "%s\n" "${peer}" > "${storage}/.vpn/key"
 #############
 wg showconf tun > "${storage}/.vpn/config"
 #############

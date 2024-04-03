@@ -49,7 +49,7 @@ src_configure() {
 }
 #############
 src_install() {
-install -d -o root -g root -m 0755 "${D}/bin"
-install    -o root -g root -m 0755 "tty/pinentry-tty" "${D}/bin/pinentry" || die "install failed"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
+install    -o root -g root -m 0755 "tty/pinentry-tty" "${D}/usr/bin/pinentry" || die "install failed"
 }
 #############

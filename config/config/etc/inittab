@@ -1,9 +1,9 @@
 ::sysinit:/etc/init
-::restart:/sbin/poweroff
-::shutdown:/sbin/poweroff
-::ctrlaltdel:/sbin/poweroff
-tty1::respawn:/bin/login -f root
-tty2::respawn:/bin/login -f user
-tty3::respawn:/bin/login -f nobody
-tty4::respawn:/bin/login -f proxy
-tty5::respawn:/bin/login -f jail
+::restart:/usr/sbin/poweroff
+::shutdown:/usr/sbin/poweroff
+::ctrlaltdel:/usr/sbin/poweroff
+tty1::respawn:/usr/bin/login -f root
+tty2::respawn:/usr/bin/login -f user
+tty3::respawn:/usr/bin/login -f nobody
+tty4::respawn:/usr/bin/login -f proxy
+tty5::respawn:/usr/bin/login -f jail

@@ -21,9 +21,7 @@ usage(){ printf "%s\n" "${1}" ; exit 1 ; }
 
  until [ -e /dev/shm/qemu ] ; do sleep .1 ; done
 
-  chown 1:1 /dev/shm/qemu
-
- chmod 0600 /dev/shm/qemu
+ chown 1:1 /dev/shm/qemu ; chmod 0600 /dev/shm/qemu
 
  printf "%s\n" "nc -lks local:/dev/shm/qemu -e dbclient user@172.16.0.1 nc local:/dev/shm/qemu"
 

@@ -117,8 +117,8 @@ src_configure() {
 }
 #############
 src_install(){
-install -d -o root -g root -m 0755 "${D}/bin"
-install    -o root -g root -m 0755 "${S}/g10/gpg" "${D}/bin" || die "install fail"
-install    -o root -g root -m 0755 "${S}/agent/gpg-agent" "${D}/bin" || die "install fail"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
+install    -o root -g root -m 0755 "${S}/g10/gpg" "${D}/usr/bin" || die "install fail"
+install    -o root -g root -m 0755 "${S}/agent/gpg-agent" "${D}/usr/bin" || die "install fail"
 }
 #############

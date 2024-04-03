@@ -53,6 +53,7 @@ S="${WORKDIR}/firefox"
 src_install(){
 
  install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/lib64"
+
  cp -a "${WORKDIR}/firefox" "${D}/usr/lib64" || die "install failed"
 
  install -d -o root -g root -m 0755 "${D}/usr/lib64/firefox/distribution"

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 usage(){ printf "\n${0} - ${1}\n\n -h gnupghome (${GNUPGHOME})\n -n name (${USER})\n -e email (${USER}@$(cat /proc/sys/kernel/hostname))\n -c comment ()\n\n" ; exit 1 ; }
 #############

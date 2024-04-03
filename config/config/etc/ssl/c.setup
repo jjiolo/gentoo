@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 usage(){ printf "%s\n" "creates default client/server root authority - ${1}" ; exit 1 ; }
 #############

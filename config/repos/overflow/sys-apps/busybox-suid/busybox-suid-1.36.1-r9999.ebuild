@@ -22,7 +22,7 @@ src_configure() {
 }
 #############
 src_install() {
-install -d -o root -g root  -m 0755 "${D}/bin"
-install    -o root -g wheel -m 4750 "busybox" "${D}/bin/sudo" || die "install failed"
+install -d -o root -g root  -m 0755 "${D}/usr/bin"
+install    -o root -g wheel -m 4750 "busybox" "${D}/usr/bin/sudo" || die "install failed"
 }
 #############

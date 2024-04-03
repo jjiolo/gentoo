@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 install -d -o "${USER}" -m 0700 "${HOME}/ishell" && cd "${HOME}/ishell" || exit 1 ; clear
 #############

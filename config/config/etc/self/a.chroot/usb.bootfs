@@ -4,12 +4,10 @@ install -d -o 0 -g 0 -m 0700 "${bootfs}" "${bootfs}/EFI" "${bootfs}/EFI/boot" "$
 #############
 [ -d "/binhost" ] && cd "${bootfs}" || exit
 #############
-printf "%s\n" "#############" ; mountpoint /tmp/a.bootfs
+printf "%s\n" "#############"
 #############
 
-printf "%s\n" "#############"
-
-printf "%s\n" "creating standalone grub binary"
+printf "%s\n" "installing grub"
 
 cat > "grub.cfg" << EOF
 
@@ -23,11 +21,9 @@ search --no-floppy --set=root --label bootfs
 
 menuentry "server"   { linux /kernels/server  quiet; initrd /images/client; }
 menuentry "desktop"  { linux /kernels/desktop quiet; initrd /images/client; }
-menuentry "laptop"   { linux /kernels/laptop  quiet; initrd /images/client; }
 
 menuentry "net_server"  { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/server ; initrd downloads/bootfs/client ; }
 menuentry "net_desktop" { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/desktop ; initrd downloads/bootfs/client ; }
-menuentry "net_laptop"  { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/laptop ; initrd downloads/bootfs/client ; }
 
 menuentry "diskless" { insmod efinet ; net_dhcp efinet0 ; set root=(tftp,172.16.0.1) ; linux downloads/bootfs/desktop root=/dev/nfs nfsroot=172.16.0.1:/,vers=4 ip=dhcp; }
 
@@ -42,7 +38,7 @@ rm -rf grub.cfg
 
 printf "%s\n" "installing kernels"
 
-for i in server desktop laptop virtual;do
+for i in server desktop virtual;do
  [ -f "kernels/${i}" ] && mv -f "kernels/${i}" "kernels/.${i}"
  [ -f "/binhost/kernels/${i}" ] && install -o 0 -g 0 -m 0700 "/binhost/kernels/${i}" "kernels/${i}"
 done
@@ -59,28 +55,26 @@ done
 #############
 
 printf "%s\n" "installing config"
+
+install -o 0 -g 0 -m 0600 "/binhost/config.tar.gz" "config.tar.gz"
+install -o 0 -g 0 -m 0600 "/binhost/config.torrent" "config.torrent"
+
+#############
+
 printf "%s\n" "#############"
-
-install -o 0 -g 0 -m 0600 "/binhost/config.tar.gz" "."
-install -o 0 -g 0 -m 0600 "/binhost/config.torrent" "."
-
-#############
-sync ; ls -lah --group-directories-first /tmp/a.bootfs ; printf "%s\n" "#############"
-#############
 
 {
 
  [ -f "EFI/boot/bootx64.efi" ] && openssl sha256 "EFI/boot/bootx64.efi" || printf "%s\n" "SHA2-256(EFI/boot/bootx64.efi)= missing"
 
- for i in images/client kernels/desktop kernels/laptop kernels/server kernels/virtual
+ for i in images/client kernels/desktop kernels/server kernels/virtual
   do [ -f "${i}" ] && openssl sha256 "${i}" || printf "%s\n" "SHA2-256(${i})= missing" ; done
 
- for i in images/.client kernels/.desktop kernels/.laptop kernels/.server kernels/.virtual
+ for i in images/.client kernels/.desktop kernels/.server kernels/.virtual
   do [ -f "${i}" ] && openssl sha256 "${i}" || printf "%s\n" "SHA2-256(${i})= missing" ; done
 
  [ -f "config.tar.gz" ] && openssl sha256 "config.tar.gz" || printf "%s\n" "SHA-256(config.tar.gz)= missing"
  [ -f "config.torrent" ] && openssl sha256 "config.torrent" || printf "%s\n" "SHA-256(config.torrent)= missing"
- [ -f "binhost.tar.gz" ] && openssl sha256 "binhost.tar.gz" || printf "%s\n" "SHA-256(binhost.tar.gz)= missing"
 
 } | tee hashes
 

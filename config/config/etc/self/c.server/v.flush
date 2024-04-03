@@ -1,13 +1,18 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 [ "${USER}" == "root" ] || exit 1
 #############
 
 [ "${#}" == "1" ] && {
 
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/clients"
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/servers"
+
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/config"
+
 install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/endpoint"
 install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/address"
-install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/config"
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/key"
 
 ip link del tun
 ip link add tun type wireguard

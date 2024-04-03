@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 usage(){ printf "%s\n" "takes interface and or hostname - ${1}" ; exit 1 ; }
 #############
@@ -8,7 +8,7 @@ usage(){ printf "%s\n" "takes interface and or hostname - ${1}" ; exit 1 ; }
 #############
 [ -z "${2}" ] || hostname="-xhostname:${2}"
 #############
-pkill -x /sbin/udhcpc
+pkill -x /usr/sbin/udhcpc
 #############
 ip link set up "${1}"
 #############
@@ -18,10 +18,10 @@ install    -o 68 -g 68 -m 0664 /dev/null /run/resolv.conf
 
 cd / ; caps="-all,+net_admin,+net_raw,+net_bind_service"
 
-/bin/setsid /usr/bin/setpriv \
+/usr/bin/setsid /usr/bin/setpriv \
  --reuid dhcpc --regid dhcpc --init-groups --nnp --reset-env \
  --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
- /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /bin/udhcpc_ping "${hostname}" < /dev/null
+ /usr/sbin/udhcpc -vSnqfa2000 -i "${1}" -s /usr/bin/udhcpc_ping "${hostname}" < /dev/null
 
 #############
 renice -5 -u "dhcpc"

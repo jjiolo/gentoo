@@ -13,7 +13,7 @@ RDEPEND="sys-libs/glibc"
 DEPEND="${RDEPEND}"
 #############
 src_install(){
- install -d -o root -g root -m 0755 "${D}/bin"
- install    -o root -g root -m 0755 "dtach" "${D}/bin/dtach" || die "install failed"
+ install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
+ install    -o root -g root -m 0755 "dtach" "${D}/usr/bin/dtach" || die "install failed"
 }
 #############

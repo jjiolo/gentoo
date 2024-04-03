@@ -1,16 +1,25 @@
 
 #############
- linux-6.5
-  cachestat system call
-  amdgpu werror
-  midi2 over usb ? sound related 
+CONFIG_WARN_ALL_UNSEEDED_RANDOM
+^ test it in virtual
 #############
-* kvm werror
-* FORCE_NR_CPUS
-* device drivers - > x86-platform-specific-device-drivers ? huge
+CONFIG_BLK_DEV_LOOP_MIN_COUNT=0
+^ [ -b /dev/loop0 ] testing devices exist ?
 #############
- CONFIG_SCHED_CORE - core scheduling for smt (any cpu with threads ?)
+power management and acpi options
+acpi - processor + thermal zones
+drivers - thermal drivers + stepwise govenor ?
+^ fan - suggests handing off to userland not drivers ?
+^ needs acpi to pass temp to thermal govenor driver ?
+! cant test without melting something ?
 #############
+CONFIG_HIGH_RES_TIMERS || qemu doesnt work
+#############
+CONFIG_SCHED_CORE - smpt hardening (currently dont have threads)
+#############
+alot of hardening options in kernel hacking ?
+#############
+
 
 #############
 make defconfig

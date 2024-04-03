@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 export services_system="/etc/services"
 export services_storage="/tmp/storage/services"

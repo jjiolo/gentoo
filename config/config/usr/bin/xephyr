@@ -16,18 +16,16 @@ grep -q "^${user}:" /etc/passwd && display="$(id -u ${user})" || debug "user doe
 #############
 install -o window -g "${user}" -m 0640 "/dev/null" "/run/display/${display}.auth"
 printf "%s\n" "add :${display} . $(hexdump -n16 -ve '1/1 "%02x"' /dev/urandom)" | xauth -nqf "/run/display/${display}.auth"
-chown "window:${user}" "/run/display/${display}.auth"
-chmod 0640 "/run/display/${display}.auth"
+chown "window:${user}" "/run/display/${display}.auth" ; chmod 0640 "/run/display/${display}.auth"
 #############
 
 original="$(stat -c %G /run/display/0.auth)"
 
-chmod 0640 /run/display/0.auth
-chown desktop:window /run/display/0.auth
+chown desktop:window /run/display/0.auth ; chmod 0640 /run/display/0.auth
 
 #############
 
-su -l -s /bin/ash window << EOF
+su -l -s /usr/bin/sh window << EOF
 DISPLAY=:0 XAUTHORITY=/run/display/0.auth \
 setsid Xephyr \
 -extension 'Generic Event Extension' \
@@ -54,16 +52,15 @@ rm "/tmp/.X${display}-lock"
 
 #############
 
-chmod 0640 /run/display/0.auth
-chown desktop:"${original}" /run/display/0.auth
+chown desktop:"${original}" /run/display/0.auth ; chmod 0640 /run/display/0.auth
 
 printf "%s\n" "add :0 . $(hexdump -n16 -ve '1/1 "%02x"' /dev/urandom)" | xauth -nqf /run/display/0.auth
-chmod 0640 /run/display/0.auth
-chown desktop:"${original}" /run/display/0.auth
+
+chown desktop:"${original}" /run/display/0.auth ; chmod 0640 /run/display/0.auth
 
 #############
 
-su -l -s /bin/ash -c "DISPLAY=:${display} XAUTHORITY=/run/display/${display}.auth setsid dwm-guest </dev/null &>/dev/null & exit" "${user}"
+su -l -s /usr/bin/sh -c "DISPLAY=:${display} XAUTHORITY=/run/display/${display}.auth setsid dwm-guest </dev/null &>/dev/null & exit" "${user}"
 
 #############
 

@@ -15,11 +15,10 @@ export stage3="${storage}/stage3"
 #############
 export ENV="/etc/profile"
 export LANG="en_GB.UTF-8"
-export PATH="/bin:/sbin:/usr/bin:/usr/sbin"
+export PATH="/usr/bin:/usr/sbin:/etc/self/z.testing"
 export PATH="${PATH}:/etc/self/a.chroot:/etc/self/b.init"
 export PATH="${PATH}:/etc/self/c.server:/etc/self/d.client"
 export PATH="${PATH}:/etc/self/e.setpriv:/etc/self/f.sets"
-export PATH="${PATH}:/etc/self/z.testing"
 export EDITOR="vim" PAGER="less" LESSHISTFILE="/dev/null"
 #############
 export TMPDIR="/dev/shm"
@@ -35,14 +34,14 @@ export MENUCONFIG_COLOR="mono"
 
 user="\[\e[01;32m\]" box="\[\e[01;30m\]" path="\[\e[01;34m\]" reset="\[\e[0m\]"
 #############
-[ "${USER}" == "root" ] && user="\[\e[01;31m\]"
 [ "${USER}" == "user" ] && user="\[\e[01;33m\]"
+[ "${USER}" == "root" ] && user="\[\e[01;31m\]"
 #############
 [ -z "${SSH_CONNECTION}" ] || box="\[\e[01;37m\]"
 #############
 [ "$(stat -c %i /)" == "1" ] || box="\[\e[01;37m\]"
 #############
-export PS1="${user}[\u]${reset}${box}[\h]${reset}${path}[\w][${SHLVL}]${reset} "
+export PS1="${user}[\u]${reset}${box}[\h]${reset}${path}[\w]${reset} "
 #############
 [ "${USER}" == "irc" ] && export PS1=' > '
 #############
@@ -108,14 +107,12 @@ renice +5 -u maild 2>/dev/null
 renice +5 -u mailq 2>/dev/null
 renice +5 -u httpd 2>/dev/null
 renice +5 -u p2pd  2>/dev/null
-renice +5 -u gitd  2>/dev/null
 
 renice +10 -u irc  2>/dev/null
 renice +10 -u ssh  2>/dev/null
 renice +10 -u mail 2>/dev/null
 renice +10 -u http 2>/dev/null
 renice +10 -u p2p  2>/dev/null
-renice +10 -u git  2>/dev/null
 
 renice +5 -u dhcpc 2>/dev/null
 renice +5 -u ddns  2>/dev/null
@@ -123,24 +120,18 @@ renice +5 -u ddns  2>/dev/null
 
 #############
 
-[ -f "/usr/bin/less" ] && alias less="/usr/bin/less -R"
+[ -s "/usr/bin/less" ] || alias less="/usr/bin/less -R"
 
  alias l='ls -lh --group-directories-first'
  alias ll='ls -lah --group-directories-first'
  alias c='clear'
  alias ..='cd ..'
 
-[ -L /bin/ps ] && alias ps="ps -o sid,pid,ppid,user,group,nice,etime,comm|awk '\$2 != 2 && \$3 != 2'"
-[ -L /bin/ps ] && alias psw="watch -t ps -o sid,pid,ppid,user,group,nice,etime,comm|awk '\$2 != 2 && \$3 != 2'"
-
-[ -L /bin/ps ] || alias ps='/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pri,ni,tty,comm --pid 2 --ppid 2 -N'
-[ -L /bin/ps ] || alias psw='watch -t /bin/ps fo sid,pid,ppid,uid,gid,pcpu,pri,ni,tty,comm --pid 2 --ppid 2 -N'
-
-# [ -L /bin/ps ] || alias ps='/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pmem,pri,ni,tty,etime,comm --pid 2 --ppid 2 -N'
-# [ -L /bin/ps ] || alias psw='watch -t /bin/ps fo sid,pid,ppid,uid,gid,pcpu,pmem,pri,ni,tty,etime,comm --pid 2 --ppid 2 -N'
+ alias ps='/usr/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pri,ni,tty,comm --pid 2 --ppid 2 -N' # pmem,etime
+ alias psw='watch -t /usr/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pri,ni,tty,comm --pid 2 --ppid 2 -N' # pmem,etime
 
  alias log='tail -F /run/logs/syslog'
- alias ffs='tail -F /run/logs/syslog|grep -v "^....................kernel:"'
+ alias ffs='tail -F /run/logs/syslog|grep -v "^................kernel:"'
 
  alias hex="hexdump -ve '1/1 \"%02x\"';echo"
  alias random="tr -cd 'a-zA-Z0-9'</dev/urandom|head -c16;echo"
@@ -152,7 +143,7 @@ renice +5 -u ddns  2>/dev/null
 
  alias t='transmission-remote --unix-socket ${services}/p2pd/.config/socket'
  alias tt='watch -tn3 transmission-remote --unix-socket ${services}/p2pd/.config/socket -l'
- alias ttt='for i in ${HOME}/downloads/*.torrent ; do transmission-remote --unix-socket ${services}/p2pd/.config/socket -a ${i} ; done'
+ alias ttt='for i in ${HOME}/downloads/*.torrent ; do transmission-remote --unix-socket ${services}/p2pd/.config/socket -a "${i}" ; done'
 
  alias torsocks="export LD_PRELOAD='/usr/lib64/libtorsocks.so'"
 
@@ -173,10 +164,10 @@ renice +5 -u ddns  2>/dev/null
 
 #############
 pivot(){
-[ -z "${1}" ] && [ -z "${2}" ] && { printf "%s\n" "pivot: <run_as> <run_by>" ; }
-[ -z "${1}" ] || [ -z "${2}" ] || { sudo -l -s /bin/sh -c "setsid dtach -n /dev/shm/${2}.${1} /bin/sh -l" "${1}" ; }
-[ -z "${1}" ] || [ -z "${2}" ] || { sleep 1 ; chmod 0660 "/dev/shm/${2}.${1}" ; chown "${1}:${2}" "/dev/shm/${2}.${1}" ; }
-[ -z "${1}" ] || [ -z "${2}" ] || { printf "<run_by>: dtach -a /run/socket" ; }
+[ -z "${1}" ] || [ -z "${2}" ] && { printf "%s\n" "pivot: <run_as> <run_by>" ; }
+[ -z "${1}" ] || [ -z "${2}" ] || { su -l -s /usr/bin/sh -c "setsid dtach -n /dev/shm/${2}.${1} /usr/bin/sh -l" "${1}" ; }
+[ -z "${1}" ] || [ -z "${2}" ] || { sleep 1 ; chown "${1}:${2}" "/dev/shm/${2}.${1}" ; chmod 0660 "/dev/shm/${2}.${1}" ; }
+[ -z "${1}" ] || [ -z "${2}" ] || { printf "%s\n" "dtach -a /dev/shm/${2}.${1}" ; }
 }
 #############
 alsa(){ sed -i -e "s/defaults.ctl.card ./defaults.ctl.card ${1}/" -e "s/defaults.pcm.card ./defaults.pcm.card ${1}/" /run/alsa.conf ; }

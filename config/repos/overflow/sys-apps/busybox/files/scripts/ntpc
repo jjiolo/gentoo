@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 usage(){ printf "%s\n" "ntp client - ${1}" ; exit 1 ; }
 #############

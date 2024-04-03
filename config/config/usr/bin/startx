@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 debug(){ printf "%s\n" "debug - ${1}" ; exit 1 ; }
 #############
@@ -15,10 +15,10 @@ install    -o desktop -g desktop -m 0640 /dev/null /run/display/0.log
 install    -o desktop -g desktop -m 0640 /dev/null /run/display/0.log.old
 install    -o desktop -g desktop -m 0640 /dev/null /run/display/0.auth
 printf "%s\n" "add :0 . $(hexdump -n16 -ve '1/1 "%02x"' /dev/urandom)" | xauth -nqf /run/display/0.auth
-chmod 0640 /run/display/0.auth ; chown desktop:"${user}" /run/display/0.auth
+chown desktop:"${user}" /run/display/0.auth ; chmod 0640 /run/display/0.auth
 #############
 
-su -l -s /bin/ash desktop << EOF
+su -l -s /usr/bin/sh desktop << EOF
 DISPLAY=:0 XAUTHORITY=/run/display/0.auth \
 setsid xinit /etc/xinitrc -- /usr/bin/X \
 -extension 'Generic Event Extension' \
@@ -46,7 +46,7 @@ rm /tmp/.X0-lock ; chmod 0640 /run/display/0.log
 
 #############
 
-su -l -s /bin/ash -c 'DISPLAY=:0 XAUTHORITY=/run/display/0.auth setsid dwm-host </dev/null &>/dev/null & exit' "${user}"
+su -l -s /usr/bin/sh -c 'DISPLAY=:0 XAUTHORITY=/run/display/0.auth setsid dwm-host </dev/null &>/dev/null & exit' "${user}"
 
 #############
 

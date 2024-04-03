@@ -15,7 +15,7 @@ DEPEND="${RDEPEND}"
 src_compile(){ COROSYNC="-DNO_COROSYNC" DLM="-DNO_DLM" CXFLAGS="-DNO_LIBUDEV" make ${MAKEOPTS} ; }
 #############
 src_install(){
-install -d -o root -g root -m 0755 "${D}/sbin"
-install    -o root -g root -m 0755 "mdadm" "${D}/sbin" || die "install failed"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/sbin"
+install    -o root -g root -m 0755 "mdadm" "${D}/usr/sbin" || die "install failed"
 }
 #############

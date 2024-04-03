@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 usage(){ printf "%s\n" "takes interface and or hostname - ${1}" ; exit 1 ; }
 #############
@@ -8,9 +8,9 @@ usage(){ printf "%s\n" "takes interface and or hostname - ${1}" ; exit 1 ; }
 #############
 [ -z "${2}" ] || hostname="-xhostname:${2}"
 #############
-pkill -x /sbin/udhcpc
+pkill -x /usr/sbin/udhcpc
 #############
 ip link set up "${1}"
 #############
-env -i /sbin/udhcpc -vSnqfa2000 -i "${1}" -s /bin/udhcpc_ping "${hostname}"
+env -i /usr/sbin/udhcpc -vSnqfa2000 -i "${1}" -s /usr/bin/udhcpc_ping "${hostname}"
 #############

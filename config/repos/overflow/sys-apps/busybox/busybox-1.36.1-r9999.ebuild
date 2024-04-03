@@ -22,7 +22,8 @@ src_configure() {
 }
 #############
 src_install() {
-install -d -o root -g root -m 0755 "${D}/bin"
-install    -o root -g root -m 0755 "busybox" "${D}/bin/busybox" || die "install failed"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin" "${D}/usr/sbin"
+install    -o root -g root -m 0755 "busybox" "${D}/usr/bin" || die "install failed"
+busybox --list-full | while read ; do ln -s "/usr/bin/busybox" "${D}/usr/${REPLY}" ; done
 }
 #############

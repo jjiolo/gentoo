@@ -21,8 +21,8 @@ src_compile(){ make ${MAKEOPTS} ; }
 #############
 src_install(){
 
-install -d -o root -g root -m 0755 "${D}/bin"
-install    -o root -g root -m 0755 "mtm" "${D}/bin/mtm" || die "install failed"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
+install    -o root -g root -m 0755 "mtm" "${D}/usr/bin/mtm" || die "install failed"
 
 install -d -o root -g root -m 0755 "${D}/etc" "${D}/etc/terminfo"
 [ -f /usr/bin/tic ] && tic -o "${D}/etc/terminfo" -sx mtm.ti

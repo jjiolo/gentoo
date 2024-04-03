@@ -3,7 +3,7 @@
 [ -d "/binhost/rootfs" ] && cd "/binhost/rootfs" || exit
 #############
 # [ dev ]
-rm -r dev
+#rm -r dev
 # [ etc ]
 rm -r etc/bindresvport.blacklist
 rm -r etc/ca-certificates

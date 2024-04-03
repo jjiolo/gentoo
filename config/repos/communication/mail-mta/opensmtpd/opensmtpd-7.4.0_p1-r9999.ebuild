@@ -64,15 +64,13 @@ src_configure(){
 #############
 src_install(){
 
-install -d -o root -g root -m 0755 "${D}/bin" "${D}/sbin"
-
-install    -o root -g root -m 0755 "mk/smtpd/smtpd" "${D}/sbin" || die "install failed"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin" "${D}/usr/sbin"
+install    -o root -g root -m 0755 "mk/smtpd/smtpd" "${D}/usr/sbin" || die "install failed"
 
 install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/libexec" "${D}/usr/libexec/opensmtpd"
-
 install    -o root -g root -m 0755 "mk/mail/mail.maildir/mail.maildir" "${D}/usr/libexec/opensmtpd" || die "install failed"
 
-ln -s "/sbin/smtpd" "${D}/sbin/maild"
+ln -s "smtpd" "${D}/usr/sbin/maild"
 
 }
 #############

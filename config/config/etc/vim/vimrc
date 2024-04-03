@@ -6,7 +6,7 @@ set noex
 set noexrc
 set secure
 set nomodeline
-set shell=/bin/sh
+set shell=/usr/bin/sh
 set fsync
 
 set encoding=utf-8

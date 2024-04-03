@@ -10,11 +10,11 @@
 /cgi-bin:root:password
 ^ does work
 -------------
+/cgi-bin/new.cgi:root:password # restart to secure new files
 /cgi-bin:root:password # applies to all new files
-/cgi-bin/new.cgi:root:password # restart to secure individual files
 #############
-/tmp/storage/services/gitd/webroot
 /tmp/storage/services/gitd/repo
+/tmp/storage/services/gitd/webroot
 /tmp/storage/services/gitd/config
 /tmp/storage/services/gitd/error
 #############
@@ -37,33 +37,36 @@
 
 -------------
 
-  GIT_PROJECT_ROOT
-  GIT_HTTP_EXPORT_ALL
+  GIT_PROJECT_ROOT=/path/to/bare # working doesnt support 'git push'
+  [ -z GIT_HTTP_EXPORT_ALL ] || echo export all directories
   .git/git-daemon-export-ok - export directories with magic file
+
+  GIT_DIR=/path/to/bare git ls-tree HEAD - print working directory
+  GIT_DIR=/path/to/bare git show - show last commit
+  GIT_DIR=/path/to/bare git log - show last commits
 
 -------------
 
  [UPDATED]
 
- git init --bare --initial-branch master /tmp/git ; chown -R httpd:httpd /tmp/git
+ /tmp/storage/services/httpd
 
- /tmp/storage/services/httpd/webroot/cgi-bin/project.git
+ httpd.conf - *.git:/bin/ash
+ httpd.conf - *.cgi:/bin/ash
 
-  GIT_PROJECT_ROOT=/tmp/git GIT_HTTP_EXPORT_ALL= exec /usr/libexec/git-core/git-http-backend
+ webroot/cgi-bin/project.git
+  GIT_PROJECT_ROOT=repo/project GIT_HTTP_EXPORT_ALL= \
+  exec /usr/libexec/git-core/git-http-backend
 
- git clone http://127.0.0.1/cgi-bin/project.git
+ git init --bare --initial-branch project repo/project"
 
- * allows multiple read or read write repositories
+ git clone http://127.0.0.1/cgi-bin/project.git project
+ git pull
+ git add . -A
+ git commit -m message
+ git push
 
 -------------
-
-  # setup bare repository and working directory
-   git init --bare --initial-branch master /run/git/bare
-   git clone --depth=1 file:///run/git/bare /run/git/working
-   echo readme >> /run/git/working/README.md
-   GIT_DIR=/run/git/working/.git git add -A
-   GIT_DIR=/run/git/working/.git git commit -m readme
-   GIT_DIR=/run/git/working/.git git push
 
   # add git-http-backend to httpd config file
    httpd.conf - *.git:/usr/libexec/git-core/git-http-backend
@@ -206,13 +209,7 @@ git push -all --prune # push all local branches to the remote repository
 
  TODO
 
- merge staging into development
- push development into staging
-
- merge prod into staging
- push staging into prod
-
- ^ ???
+ dev -> staging -> prod
 
  create tags for version releases...
  create releases for tarball pulls...

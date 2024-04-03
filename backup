@@ -1,16 +1,44 @@
 
 #############
+tar zcf "${stage3}/binhost/config.tar.gz" \
+-C "${storage}" \
+--exclude "stage3/binhost" \
+--exclude "stage3/rootfs" \
+--exclude "stage3/.socket" \
+"stage3"
+#############
+chown 0:0 "${stage3}/binhost/config.tar.gz"
+chmod 0664 "${stage3}/binhost/config.tar.gz"
+#############
 
-                tar zcf "${stage3}/binhost/config.tar.gz" -C "${storage}" --exclude "stage3/binhost" --exclude "stage3/rootfs" --exclude "stage3/.socket" "stage3"
-              chown 0:0 "${stage3}/binhost/config.tar.gz"
-             chmod 0664 "${stage3}/binhost/config.tar.gz"
+#############
+transmission-create \
+-o "${stage3}/binhost/config.torrent" \
+-w "http://172.16.0.1/shared/downloads/config.tar.gz" \
+"${stage3}/binhost/config.tar.gz"
+#############
+chown 0:0 "${stage3}/binhost/config.torrent"
+chmod 0664 "${stage3}/binhost/config.torrent"
+#############
 
- transmission-create -o "${stage3}/binhost/config.torrent" -w "http://172.16.0.1/shared/downloads/config.tar.gz" "${stage3}/binhost/config.tar.gz"
-              chown 0:0 "${stage3}/binhost/config.torrent"
-             chmod 0664 "${stage3}/binhost/config.torrent"
+#############
+[ -d "${shared}/downloads/bootfs" ] && rm -rf "${shared}/downloads/bootfs"
+#############
+install -d -o 9091 -g 9091 -m 0755 "${shared}/downloads/bootfs"
+#############
+install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/.bootx64.efi" "${shared}/downloads/bootfs/bootx64.efi"
+#############
+install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/kernels/desktop" "${shared}/downloads/bootfs/desktop"
+install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/kernels/server" "${shared}/downloads/bootfs/server"
+install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/kernels/virtual" "${shared}/downloads/bootfs/virtual"
+#############
+install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/images/client" "${shared}/downloads/bootfs/client"
+#############
+install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/config.tar.gz" "${shared}/downloads/config.tar.gz"
+install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/config.torrent" "${shared}/torrents/config.tar.gz"
+#############
 
- install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/config.tar.gz" "${shared}/downloads/config.tar.gz"
- install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/config.torrent" "${shared}/torrents/config"
-
+#############
+sync
 #############
 

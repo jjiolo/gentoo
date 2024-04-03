@@ -2,8 +2,6 @@
 #############
 [ -d "/binhost/rootfs" ] && cd "/binhost/rootfs" || exit
 #############
-chroot . /bin/busybox --install -s
-#############
 cp -af /root/config/* .
 #############
 install -o 0 -g 0 -m 0664 "/binhost/config.tar.gz"  "etc/config.tar.gz"
@@ -33,10 +31,10 @@ cp -af ${i}/libstdc++.* "usr/lib64"
 cp -af ${i}/libgcc_s.*  "usr/lib64"
 done
 #############
-cp -af "/bin/lsblk" "bin"
-cp -af /usr/lib64/libblkid.so*  "lib64"
-cp -af /usr/lib64/libmount*     "lib64"
-cp -af /usr/lib64/libsmartcols* "lib64"
+cp -af "/bin/lsblk" "usr/bin"
+cp -af /usr/lib64/libblkid.so*  "usr/lib64"
+cp -af /usr/lib64/libmount*     "usr/lib64"
+cp -af /usr/lib64/libsmartcols* "usr/lib64"
 #############
 cp -af "/usr/bin/setpriv" "usr/bin"
 cp -af /usr/lib64/libcap-ng.so* "usr/lib64"
@@ -71,9 +69,27 @@ find . -type f -exec chmod 0664 {} \;
  find "lib64" "usr/lib64" -type f -exec chmod 0775 {} \;
        find "usr/libexec" -type f -exec chmod 0775 {} \;
 #############
-chown 0:1 "bin/sudo"
-chmod 4750 "bin/sudo"
+chown 0:1 "usr/bin/sudo" ; chmod 4750 "usr/bin/sudo"
 #############
+
+
+# glibc/libcap
+# refuse to install to /usr
+# multiple programs hardcode /lib64/<glibc> ?
+
+#[ -d lib64 ] && mv lib64/* usr/lib64
+#[ -d lib64 ] && rmdir lib64
+
+#[ -d sbin ] && mv sbin/* usr/sbin
+#[ -d sbin ] && rmdir sbin
+
+# xorg - xkbcomp runs /bin/sh -c '<command>'
+install -d -o 0 -g 0 -m 0775 bin ; ln -sf /usr/bin/sh bin/sh
+
+# /etc/terminfo/l/linux disapeared ?
+install -d -o 0 -g 0 -m 0775 etc/terminfo/l
+install    -o 0 -g 0 -m 0664 /usr/share/terminfo/l/linux etc/terminfo/l
+
 
 # create initramfs image
 #############

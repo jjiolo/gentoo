@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 for i in "${service_storage}" "${service_tmp}"
 do

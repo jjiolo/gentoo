@@ -56,7 +56,7 @@ LDFLAGS=-static ./configure \
 }
 #############
 src_install(){
-install -d -o root -g root -m 0755 "${D}/bin"
-install    -o root -g root -m 0755 "src/ps/pscommand" "${D}/bin/ps" || die "install failed"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
+install    -o root -g root -m 0755 "src/ps/pscommand" "${D}/usr/bin/ps" || die "install failed"
 }
 #############

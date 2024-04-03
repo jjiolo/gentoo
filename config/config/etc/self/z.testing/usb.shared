@@ -1,6 +1,6 @@
 
 #############
-. usb.mount
+mountpoint -q "/tmp/a.bootfs" || exit 1
 #############
 
 #############
@@ -10,14 +10,11 @@ install -d -o 9091 -g 9091 -m 0755 "${shared}/downloads/bootfs"
 #############
 install -o 9091 -g 9091 -m 0644 "${bootfs}/EFI/boot/bootx64.efi" "${shared}/downloads/bootfs/bootx64.efi"
 #############
-install -o 9091 -g 9091 -m 0644 "${bootfs}/kernels/laptop" "${shared}/downloads/bootfs/laptop"
 install -o 9091 -g 9091 -m 0644 "${bootfs}/kernels/desktop" "${shared}/downloads/bootfs/desktop"
-install -o 9091 -g 9091 -m 0644 "${bootfs}/kernels/server" "${shared}/downloads/bootfs/server"
+install -o 9091 -g 9091 -m 0644 "${bootfs}/kernels/server"  "${shared}/downloads/bootfs/server"
 install -o 9091 -g 9091 -m 0644 "${bootfs}/kernels/virtual" "${shared}/downloads/bootfs/virtual"
 #############
-install -o 9091 -g 9091 -m 0644 "${bootfs}/images/client" "${shared}/downloads/bootfs/client"
-#############
-
+install -o 9091 -g 9091 -m 0644 "${bootfs}/images/client"   "${shared}/downloads/bootfs/client"
 #############
 install -o 9091 -g 9091 -m 0644 "${bootfs}/config.tar.gz" "${shared}/downloads/config.tar.gz"
 #############
@@ -29,12 +26,10 @@ install -d -o 0 -g 0 -m 0700 "${bootfs}/contacts"
 #############
 [ -d "${bootfs}/contacts/self" ] && rm -r "${bootfs}/contacts/self"
 #############
-cp -a "${shared}/contacts/self" "${bootfs}/contacts/${HOSTNAME}"
+[ -d "${bootfs}/contacts/${HOSTNAME:-default}" ] && rm -r "${bootfs}/contacts/${HOSTNAME:-default}"
+#############
+cp -a "${shared}/contacts/self" "${bootfs}/contacts/${HOSTNAME:-default}"
 #############
 cp -a "${bootfs}/contacts" "${shared}"
-#############
-
-#############
-. usb.umount
 #############
 

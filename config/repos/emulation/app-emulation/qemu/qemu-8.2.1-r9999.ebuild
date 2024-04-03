@@ -190,8 +190,8 @@ src_configure(){
 #############
 src_install(){
 default ; rm -r "${D}/usr/bin" "${D}/usr/include" "${D}/usr/lib64" "${D}/usr/libexec" "${D}/usr/share/applications" "${D}/usr/share/icons"
-install -d -o root -g root -m 0755 "${D}/bin"
-install    -o root -g root -m 0755 "build/qemu-img" "${D}/bin" || die "install failed"
-install    -o root -g root -m 0755 "build/qemu-system-x86_64" "${D}/bin" || die "install failed"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
+install    -o root -g root -m 0755 "build/qemu-img" "${D}/usr/bin" || die "install failed"
+install    -o root -g root -m 0755 "build/qemu-system-x86_64" "${D}/usr/bin" || die "install failed"
 }
 #############

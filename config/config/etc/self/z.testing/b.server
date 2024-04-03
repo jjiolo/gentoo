@@ -1,8 +1,8 @@
 
 #############
-pkill -x /sbin/udhcpd
-pkill -x /bin/udpsvd
-pkill -x /sbin/ntpd
+pkill -x /usr/sbin/udhcpd
+pkill -x /usr/bin/udpsvd
+pkill -x /usr/sbin/ntpd
 #############
 
 [ -z "${1}" ] || {

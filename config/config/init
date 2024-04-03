@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 printf "%s\n" "#############"
-printf "%s\n" "# [executing /sbin/init]"
+printf "%s\n" "# [executing /usr/sbin/init]"
 printf "%s\n" "#############"
 #############
-sleep 3
+rm /init ; sleep 3
 #############
-exec /sbin/init # </dev/null &>/dev/null
+exec /usr/sbin/init
 #############

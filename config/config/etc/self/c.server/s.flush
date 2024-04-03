@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 [ "${USER}" == "root" ] || exit 1
 #############
@@ -39,18 +39,16 @@
 
 #############
 
- chown -R root: "${storage}/.ssh"
-
-  chown -R user: "${home}/user/.ssh"
-  chown -R nobody: "${home}/nobody/.ssh"
-  chown -R proxy: "${home}/proxy/.ssh"
-  chown -R jail: "${home}/jail/.ssh"
-
-   chown -R ssh: "${home}/ssh/.ssh"
-   chown -R http: "${home}/http/.ssh"
-   chown -R mail: "${home}/mail/.ssh"
-   chown -R irc: "${home}/irc/.ssh"
-   chown -R p2p: "${home}/p2p/.ssh"
+chown -R root: "${storage}/.ssh"
+ chown -R user: "${home}/user/.ssh"
+ chown -R nobody: "${home}/nobody/.ssh"
+ chown -R proxy: "${home}/proxy/.ssh"
+ chown -R jail: "${home}/jail/.ssh"
+  chown -R ssh: "${home}/ssh/.ssh"
+  chown -R http: "${home}/http/.ssh"
+  chown -R mail: "${home}/mail/.ssh"
+  chown -R irc: "${home}/irc/.ssh"
+  chown -R p2p: "${home}/p2p/.ssh"
 
 #############
 
@@ -59,27 +57,42 @@ find "${i}" -type d -exec chmod 0700 {} \;
 find "${i}" -type f -exec chmod 0600 {} \;
 done
 
-for i in ${home}/*/.ssh ; do
-find "${i}" -type d -exec chmod 0700 {} \;
-find "${i}" -type f -exec chmod 0600 {} \;
+for i in user nobody proxy jail ssh http mail irc p2p ; do
+find "${home}/${i}/.ssh" -type d -exec chmod 0700 {} \;
+find "${home}/${i}/.ssh" -type f -exec chmod 0600 {} \;
 done
 
 #############
 
- printf "%s\n%s\n" "[root]"    "$(cat ${storage}/.ssh/authorized_keys)"
+printf "%s\n" "[clients]"
 
-  printf "%s\n%s\n" "[user]"   "$(cat ${home}/user/.ssh/authorized_keys)"
-  printf "%s\n%s\n" "[nobody]" "$(cat ${home}/nobody/.ssh/authorized_keys)"
-  printf "%s\n%s\n" "[proxy]"  "$(cat ${home}/proxy/.ssh/authorized_keys)"
-  printf "%s\n%s\n" "[jail]"   "$(cat ${home}/jail/.ssh/authorized_keys)"
+printf "%s\n%s\n" "[root]"    "$(strings ${storage}/.ssh/authorized_keys)"
+ printf "%s\n%s\n" "[user]"   "$(strings ${home}/user/.ssh/authorized_keys)"
+ printf "%s\n%s\n" "[nobody]" "$(strings ${home}/nobody/.ssh/authorized_keys)"
+ printf "%s\n%s\n" "[proxy]"  "$(strings ${home}/proxy/.ssh/authorized_keys)"
+ printf "%s\n%s\n" "[jail]"   "$(strings ${home}/jail/.ssh/authorized_keys)"
+  printf "%s\n%s\n" "[irc]"   "$(strings ${home}/irc/.ssh/authorized_keys)"
+  printf "%s\n%s\n" "[ssh]"   "$(strings ${home}/ssh/.ssh/authorized_keys)"
+  printf "%s\n%s\n" "[mail]"  "$(strings ${home}/mail/.ssh/authorized_keys)"
+  printf "%s\n%s\n" "[http]"  "$(strings ${home}/http/.ssh/authorized_keys)"
+  printf "%s\n%s\n" "[p2p]"   "$(strings ${home}/p2p/.ssh/authorized_keys)"
 
-   printf "%s\n%s\n" "[irc]"   "$(cat ${home}/irc/.ssh/authorized_keys)"
-   printf "%s\n%s\n" "[ssh]"   "$(cat ${home}/ssh/.ssh/authorized_keys)"
-   printf "%s\n%s\n" "[mail]"  "$(cat ${home}/mail/.ssh/authorized_keys)"
-   printf "%s\n%s\n" "[http]"  "$(cat ${home}/http/.ssh/authorized_keys)"
-   printf "%s\n%s\n" "[p2p]"   "$(cat ${home}/p2p/.ssh/authorized_keys)"
+#############
 
- printf "%s\n%s\n" "[hosts]" "$(cat ${storage}/.ssh/known_hosts ${home}/*/.ssh/known_hosts|sort|uniq -c)"
+printf "%s\n" "[servers]"
+
+{
+strings "${storage}/.ssh/known_hosts"
+ strings "${home}/user/.ssh/known_hosts"
+ strings "${home}/nobody/.ssh/known_hosts"
+ strings "${home}/proxy/.ssh/known_hosts"
+ strings "${home}/jail/.ssh/known_hosts"
+  strings "${home}/irc/.ssh/known_hosts"
+  strings "${home}/ssh/.ssh/known_hosts"
+  strings "${home}/mail/.ssh/known_hosts"
+  strings "${home}/http/.ssh/known_hosts"
+  strings "${home}/p2p/.ssh/known_hosts"
+} | sort | uniq -c
 
 #############
 

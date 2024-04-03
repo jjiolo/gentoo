@@ -4,9 +4,16 @@ pkill -x auditd
 pkill -x syslogd
 pkill -x klogd
 #############
+sleep 1
+#############
+
+#############
 install -d -o 0 -g 1 -m 0750 /run/logs
 #############
 install -o 0 -g 1 -m 0640 /dev/null /run/logs/auditlog
+install -o 0 -g 1 -m 0640 /dev/null /run/logs/auditlog.1
+install -o 0 -g 1 -m 0640 /dev/null /run/logs/auditlog.2
+install -o 0 -g 1 -m 0640 /dev/null /run/logs/auditlog.3
 #############
 install -o 0 -g 0 -m 0664 /dev/null /run/logs/syslog
 install -o 0 -g 0 -m 0664 /dev/null /run/logs/syslog.0

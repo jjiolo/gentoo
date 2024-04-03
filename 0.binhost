@@ -19,8 +19,8 @@
 
  printf "%s\n" "#############"
  printf "%s\n" "${stage3}"
- printf "%s\n" "${match}"
- printf "%s\n" "${file}"
+ printf "%s\n" "${match//\\/}"
+ printf "%s\n" "<a href=\"${file}\">"
  printf "%s\n" "#############"
 
  [ -f "stage3.sig"    ] || curl --connect-timeout 3 -Lo "stage3.sig"    "${stage3}${file}.asc"
@@ -35,22 +35,24 @@
 
 #############
 
- [ -f ".gentoo-release.asc" ] || curl --connect-timeout 3 -L https://dev.gentoo.org/~mgorny/dist/openpgp-keys/gentoo-release.asc.20230329.gz | gunzip > .gentoo-release.asc
+ key="gentoo-release.asc.20230329.gz"
+ url="https://dev.gentoo.org/~mgorny/dist/openpgp-keys"
+ [ -f ".gentoo-release.asc" ] || curl --connect-timeout 3 -L "${url}/${key}" | gunzip > .gentoo-release.asc
 
-  date
+ date
 
-  GNUPGHOME="/run/$(tr -cd 'a-zA-Z0-9'</dev/urandom|head -c64)"
-  [ -e "${GNUPGHOME}" ] && rm -rf "${GNUPGHOME}"
-  install -d -o 0 -g 0 -m 0700 "${GNUPGHOME}"
-  gpg --import ".gentoo-release.asc" 2>/dev/null
+ GNUPGHOME="/run/$(tr -cd 'a-zA-Z0-9'</dev/urandom|head -c64)"
+ [ -e "${GNUPGHOME}" ] && rm -rf "${GNUPGHOME}"
+ install -d -o 0 -g 0 -m 0700 "${GNUPGHOME}"
+ gpg --import ".gentoo-release.asc" 2>/dev/null
 
-  printf "%s\n" "#############"
-  gpg --verify "stage3.sig" "stage3.tar.xz" && printf "%s\n%s\n" "#############" "stage3.sig :yay" || printf "%s\n%s\n" "#############" "stage3.sig :nay"
-  printf "%s\n" "#############"
+ printf "%s\n" "#############"
+ gpg --verify "stage3.sig" "stage3.tar.xz" && printf "%s\n%s\n" "#############" "stage3.sig :yay" || printf "%s\n%s\n" "#############" "stage3.sig :nay"
+ printf "%s\n" "#############"
 
-  busybox pkill gpg-agent
+ busybox pkill gpg-agent
 
-  rm -rf "${GNUPGHOME}"
+ rm -rf "${GNUPGHOME}"
 
 #############
 

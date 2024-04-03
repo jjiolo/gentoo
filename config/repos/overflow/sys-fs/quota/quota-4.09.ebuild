@@ -40,9 +40,9 @@ src_configure(){
 }
 #############
 src_install() {
-install -d -o root -g root -m 0755 "${D}/bin" "${D}/sbin"
-install -o root -g root -m 0755 "quotaon" "${D}/sbin"
-install -o root -g root -m 0755 "setquota" "${D}/sbin"
-install -o root -g root -m 0755 "repquota" "${D}/sbin"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/sbin"
+install -o root -g root -m 0755 "quotaon" "${D}/usr/sbin"
+install -o root -g root -m 0755 "setquota" "${D}/usr/sbin"
+install -o root -g root -m 0755 "repquota" "${D}/usr/sbin"
 }
 #############

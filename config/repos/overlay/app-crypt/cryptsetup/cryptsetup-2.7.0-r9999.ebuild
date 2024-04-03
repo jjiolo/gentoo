@@ -100,8 +100,8 @@ src_configure(){
 }
 #############
 src_install(){
-install -d -o root -g root -m 0755 "${D}/sbin"
-install    -o root -g root -m 0755 "cryptsetup.static" "${D}/sbin/cryptsetup" || die "install failed"
-install    -o root -g root -m 0755 "integritysetup.static" "${D}/sbin/integritysetup" || die "install failed"
+install -d -o root -g root -m 0755 "${D}/usr/sbin" "${D}/sbin"
+install    -o root -g root -m 0755 "cryptsetup.static" "${D}/usr/sbin/cryptsetup" || die "install failed"
+install    -o root -g root -m 0755 "integritysetup.static" "${D}/usr/sbin/integritysetup" || die "install failed"
 }
 #############

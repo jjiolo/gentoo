@@ -3,7 +3,7 @@
 
 [ -d "rootfs" ] && exit 1
 
-[ -f "/bin/busybox" ] || exit 1
+[ -f "/usr/bin/busybox" ] || exit 1
 
 [ -f "binhost/stage3.tar.xz" ] || exit 1
 
@@ -11,9 +11,11 @@
 
 install -d -o 0 -g 0 -m 0755 "rootfs"
 
-/bin/busybox tar xf "binhost/stage3.tar.xz" -C "rootfs"
+/usr/bin/busybox tar xf "binhost/stage3.tar.xz" -C "rootfs"
 
-install -o 0 -g 0 -m 0755 "/bin/busybox" "rootfs/bin/busybox"
+install -o 0 -g 0 -m 0755 "/usr/bin/busybox" "rootfs/usr/bin/busybox"
+
+ln -sf "/usr/bin/busybox" "rootfs/usr/bin/ash"
 
 cd "rootfs" || exit 1
 
@@ -21,7 +23,7 @@ cd "rootfs" || exit 1
 
 ### users
 
-sed -i '/^root/c root:x:0:0::/root:/bin/ash' "etc/passwd"
+sed -i '/^root/c root:x:0:0::/root:/usr/bin/ash' "etc/passwd"
 sed -i '/^root/c root:x:0:' "etc/group"
 sed -i '/^root/c root:!:::::::' "etc/shadow"
 install -d -o 0 -g 0 -m 0700 "root"
@@ -29,7 +31,7 @@ chown -R 0:0 "root"
 find "root" -type d -exec chmod 0700 {} \;
 find "root" -type f -exec chmod 0600 {} \;
 
-sed -i '/^nobody/c nobody:x:65534:65534::/var/empty:/bin/ash' "etc/passwd"
+sed -i '/^nobody/c nobody:x:65534:65534::/var/empty:/usr/bin/ash' "etc/passwd"
 sed -i '/^nobody/c nobody:x:65534:' "etc/group"
 sed -i '/^nobody/c nobody:!:::::::' "etc/shadow"
 install -d -o 65534 -g 65534 -m 0700 "var/empty"
@@ -46,8 +48,6 @@ printf "%s\n" "en_GB.UTF-8 UTF-8" > "etc/locale.gen"
 chroot . locale-gen
 
 ### config
-
-ln -sf "busybox" "bin/ash"
 
 ln -sf "/root/config/etc/profile" "etc/profile"
 

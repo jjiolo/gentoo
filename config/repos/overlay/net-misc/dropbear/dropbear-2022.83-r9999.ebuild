@@ -49,11 +49,12 @@ cp -a "${FILESDIR}/localoptions.h" "${S}/localoptions.h"
 }
 #############
 src_install(){
-install -d -o root -g root -m 0755 "${D}/bin" "${D}/sbin"
-install    -o root -g root -m 0755 "dropbearkey" "${D}/sbin" || die "install failed"
-install    -o root -g root -m 0755 "dropbear" "${D}/sbin" || die "install failed"
-install    -o root -g root -m 0755 "dbclient" "${D}/bin" || die "install failed"
-ln -s "/sbin/dropbear" "${D}/sbin/sshd"
-ln -s "/bin/dbclient" "${D}/bin/ssh"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/sbin"
+install    -o root -g root -m 0755 "dropbearkey" "${D}/usr/sbin" || die "install failed"
+install    -o root -g root -m 0755 "dropbear" "${D}/usr/sbin" || die "install failed"
+install    -o root -g root -m 0755 "dbclient" "${D}/usr/bin" || die "install failed"
+ln -s "dropbear" "${D}/usr/sbin/sshd"
+ln -s "dbclient" "${D}/usr/bin/ssh"
 }
 #############

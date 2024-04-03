@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 usage(){ printf "\n${0} - ${1}\n\n takes interface and ssid\n\n" ; exit ; }
 #############
@@ -6,7 +6,7 @@ usage(){ printf "\n${0} - ${1}\n\n takes interface and ssid\n\n" ; exit ; }
 [ "${#}" == "2" ] || usage "no input"
 [ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
 #############
-pkill -x /sbin/wifi
+pkill -x /usr/sbin/wifi
 #############
 install -o 5 -g 5 -m 0600 "/dev/null" "${storage}/.wifi/wpa_supplicant"
 #############
@@ -37,10 +37,10 @@ ip addr flush "${1}"
 until ip link set dev "${1}" address "$(hexdump -n6 -ve '1/1 "%02X:"' /dev/urandom|head -c17)";do sleep .1;done
 ip link set up "${1}"
 #############
-cd / ; caps="-all,+net_admin,+net_raw" ; /bin/setsid /usr/bin/setpriv \
+cd / ; caps="-all,+net_admin,+net_raw" ; /usr/bin/setsid /usr/bin/setpriv \
  --reuid wifi --regid wifi --init-groups --nnp --reset-env \
  --inh-caps "${caps}" --ambient-caps "${caps}" --bounding-set "${caps}" \
- /sbin/wifi -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant" -e "${storage}/.wifi/entropy" </dev/null &>/dev/null &
+ /usr/sbin/wifi -sBi "${1}" -c "${storage}/.wifi/wpa_supplicant" -e "${storage}/.wifi/entropy" </dev/null &>/dev/null &
 #############
 renice +0 -u "wifi"
 #############

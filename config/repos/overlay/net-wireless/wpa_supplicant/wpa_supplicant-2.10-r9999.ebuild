@@ -198,8 +198,8 @@ EOF
 }
 #############
 src_install(){
-install -d -o root -g root -m 0755 "${D}/sbin"
-install    -o root -g root -m 0755 "wpa_supplicant" "${D}/sbin" || die "install failed"
-ln -s "/sbin/wpa_supplicant" "${D}/sbin/wifi"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/sbin"
+install    -o root -g root -m 0755 "wpa_supplicant" "${D}/usr/sbin" || die "install failed"
+ln -s "wpa_supplicant" "${D}/usr/sbin/wifi"
 }
 #############

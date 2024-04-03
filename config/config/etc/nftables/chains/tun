@@ -101,8 +101,8 @@ table inet filter {
 
   # drop
 
-  ct state invalid log flags skuid prefix "output.tun.invalid " reject
-                   log flags skuid prefix "output.tun.drop " reject
+  ct state invalid log flags skuid prefix "output.tun.invalid " drop
+                   log flags skuid prefix "output.tun.drop " drop
 
  }
 

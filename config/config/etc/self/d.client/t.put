@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 debug(){ printf "%s\n" "takes file or directory - ${1}" ; exit 1 ; }
 #############

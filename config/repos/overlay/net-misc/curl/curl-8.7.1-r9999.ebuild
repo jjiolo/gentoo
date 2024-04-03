@@ -55,6 +55,7 @@ src_configure(){
 --disable-smtp \
 --disable-gopher \
 --disable-mqtt \
+--disable-docs \
 --disable-manual \
 --disable-libcurl-option \
 --disable-libgcc \

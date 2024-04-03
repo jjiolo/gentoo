@@ -12,7 +12,7 @@ chown -R root:audio /dev/snd
 find /dev/snd -type d -exec chmod 0750 {} \;
 find /dev/snd -type c -exec chmod 0660 {} \;
 #############
-chmod -R 0660 /dev/video* ; chown -R root:video /dev/video*
+chown -R root:video /dev/video* ; chmod -R 0660 /dev/video*
 #############
 chown -R root:desktop /dev/input
 find /dev/input -type d -exec chmod 0750 {} \;
@@ -22,9 +22,9 @@ chown -R root:desktop /dev/dri
 find /dev/dri -type d -exec chmod 0750 {} \;
 find /dev/dri -type c -exec chmod 0660 {} \;
 #############
-chmod -R 0660 /dev/tty7 ; chown desktop:desktop /dev/tty7
+chown desktop:desktop /dev/tty7 ; chmod -R 0660 /dev/tty7
 #############
-chmod -R 0660 /dev/kvm ; chown -R qemu:qemu /dev/kvm
+chown -R qemu:qemu /dev/kvm ; chmod -R 0660 /dev/kvm
 #############
 chown -R root:qemu /dev/net
 find /dev/net -type d -exec chmod 0750 {} \;

@@ -1,59 +1,42 @@
-#!/bin/sh -l
+#!/usr/bin/sh -l
 #############
 umask 0007
 #############
-print(){ printf "%s\n%s\n%s\n" "#############" "# ${1}" "#############" ; sleep .3 ; }
+print(){
+
+ printf "%s\n" "#############"
+ printf "%s\n" "# ${1}"
+ printf "%s\n" "#############"
+
+}
 #############
 print system.mount ; . /etc/self/b.init/system.mount
-print system.dev   ; . /etc/self/b.init/system.dev # &>/dev/shm/system.dev
-print system.proc  ; . /etc/self/b.init/system.proc # &>/dev/shm/system.proc
-print system.sys   ; . /etc/self/b.init/system.sys # &>/dev/shm/system.sys
-print system.tmp   ; . /etc/self/b.init/system.tmp # &>/dev/shm/system.tmp
+print system.dev   ; . /etc/self/b.init/system.dev
+print system.proc  ; . /etc/self/b.init/system.proc
+print system.sys   ; . /etc/self/b.init/system.sys
+print system.tmp   ; . /etc/self/b.init/system.tmp
 #############
-print system.log   ; . /etc/self/b.init/system.log # &>/dev/shm/system.log
-print system.lock  ; . /etc/self/b.init/system.lock # &>/dev/shm/system.lock
-print sysctl       ; sysctl -p /etc/sysctl.conf &>/dev/null
+print system.log  ; . /etc/self/b.init/system.log
+print system.lock ; . /etc/self/b.init/system.lock
 #############
-print storage.mount  ; . /etc/self/b.init/storage.mount # >&/dev/shm/storage.mount
-print storage.setup  ; . /etc/self/b.init/storage.setup # >&/dev/shm/storage.setup
-print storage.shared ; . /etc/self/b.init/storage.shared # >&/dev/shm/storage.shared
+print sysctl ; sysctl -p /etc/sysctl.conf &>/dev/null
 #############
-print system.network ; . /etc/self/b.init/system.network # >&/dev/shm/system.network
+print storage.mount  ; . /etc/self/b.init/storage.mount
+print storage.setup  ; . /etc/self/b.init/storage.setup
+print storage.shared ; . /etc/self/b.init/storage.shared
+#############
+print system.network ; . /etc/self/b.init/system.network
 #############
 
-[ "$(hostname)" == "server"  ] && {
-
- printf "server .init"
-
- ash /etc/self/e.setpriv/setpriv_udhcpd
- ash /etc/self/e.setpriv/setpriv_tftpd
- ash /etc/self/e.setpriv/setpriv_ntpd
- ash /etc/services/maild/start
- ash /etc/services/httpd/start
- ash /etc/services/p2pd/start
- ash /etc/services/ircd/start
- sshd -r /tmp/storage/.ssh/sshd -P /tmp/storage/.ssh/pid </dev/null &>/dev/null
-
-}
+[ "$(hostname)" == "server" ] && . /etc/self/z.test/b.server start
+[ "$(hostname)" == "server" ] && . /etc/self/z.test/b.client start
 
 #############
 
-[ "$(hostname)" == "virtual" ] && {
-
- printf "virtual .init"
-
- brctl delif lan eth0 ; brctl addif nat eth0
- echo yes | ash /etc/self/e.setpriv/setpriv_network_default nat virtual
- echo yes | ash /etc/self/e.setpriv/setpriv_network_zcip nat
- ash /etc/services/maild/start
- ash /etc/services/httpd/start
- ash /etc/services/p2pd/start
- ash /etc/services/ircd/start
- sshd -r /tmp/storage/.ssh/sshd </dev/null &>/dev/null
- echo yes | ash /etc/self/c.server/s.client 172.16.0.1
- echo yes | ash /etc/self/c.server/v.server 172.16.0.1 10.0.0.3
-
-}
+[ "$(hostname)" == "virtual" ] && { brctl delif lan eth0 ; brctl addif nat eth0 ; }
+[ "$(hostname)" == "virtual" ] && { echo yes | ash /etc/self/e.setpriv/setpriv_network_default nat virtual ; }
+[ "$(hostname)" == "virtual" ] && { echo yes | ash /etc/self/e.setpriv/setpriv_network_zcip nat ; }
+[ "$(hostname)" == "virtual" ] && { . /etc/self/z.test/b.client start ; }
 
 #############
 [ -f "${storage}/.init" ] && . "${storage}/.init" ; clear

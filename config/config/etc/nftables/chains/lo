@@ -92,17 +92,17 @@ table inet filter {
 
   # icmp
 
-  ip protocol {icmp}   log flags skuid prefix "output.lo.icmp " accept 
-  ip6 nexthdr {icmpv6} log flags skuid prefix "output.lo.icmp " accept
+  ip protocol {icmp}   log flags skuid prefix "output.lo.icmp " accept # icmp
+  ip6 nexthdr {icmpv6} log flags skuid prefix "output.lo.icmp " accept # icmp
 
   # igmp
 
-  ip protocol {igmp} log flags skuid prefix "output.lo.igmp " accept
+  ip protocol {igmp} log flags skuid prefix "output.lo.igmp " accept # igmp
 
   # drop
 
-  ct state invalid log flags skuid prefix "output.lo.invalid " reject
-                   log flags skuid prefix "output.lo.drop " reject
+  ct state invalid log flags skuid prefix "output.lo.invalid " drop
+                   log flags skuid prefix "output.lo.drop " drop
 
  }
 

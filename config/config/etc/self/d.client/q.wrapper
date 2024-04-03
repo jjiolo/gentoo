@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 usage(){ printf "\n ${0} - ${1}\n\n  -k kernel\n  -i initrd\n  -b boot\n  -f file\n  -e extra\n  -l lan\n  -n nat\n  -u user\n\n" ; exit ; }
 #############

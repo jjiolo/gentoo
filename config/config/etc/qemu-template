@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 defaults="-nodefaults -daemonize -runas qemu -run-with chroot=/var/empty -sandbox on -k en-gb -L /usr/share/qemu"
 #############

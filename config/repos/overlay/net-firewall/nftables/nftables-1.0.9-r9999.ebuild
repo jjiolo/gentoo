@@ -41,7 +41,7 @@ src_configure(){
 }
 #############
 src_install(){
-install -d -o root -g root -m 0755 "${D}/sbin"
-install    -o root -g root -m 0755 "src/nft" "${D}/sbin" || die "install failed"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/sbin"
+install    -o root -g root -m 0755 "src/nft" "${D}/usr/sbin" || die "install failed"
 }
 #############

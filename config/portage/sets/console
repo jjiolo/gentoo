@@ -31,9 +31,6 @@ net-vpn/torsocks
 net-vpn/wireguard-tools
 net-wireless/iw
 net-wireless/wpa_supplicant
-sec-keys/openpgp-keys-gentoo-auth
-sec-keys/openpgp-keys-gentoo-developers
-sec-keys/openpgp-keys-gentoo-release
 sys-apps/busybox
 sys-apps/busybox-suid
 sys-fs/dosfstools

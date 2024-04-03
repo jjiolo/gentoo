@@ -14,9 +14,9 @@ DEPEND="${RDEPEND}"
 #############
 src_install(){
 
- install -d -o root -g root -m 0755 "${D}/lib" "${D}/lib/firmware"
+ install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/lib" "${D}/usr/lib/firmware"
 
- cp -vr "${S}/." "${D}/lib/firmware"
+ cp -vr "${S}/." "${D}/usr/lib/firmware"
 
 }
 #############

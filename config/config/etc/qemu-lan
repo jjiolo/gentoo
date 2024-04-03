@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 ip link set "${1}" up
 brctl addif lan "${1}"

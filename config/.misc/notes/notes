@@ -6,6 +6,10 @@ fc00::feed:beef/64
 #############
 [2|3|5|7|11|13|17|19|23|29|31|37|41|43|47]
 #############
+no idea what stupid has gathered itself in here
+stuff at the bottom tends to get rewritten and kept
+stuff at the top is unordered raw sewage
+#############
 -------------
 spoken word
 written word
@@ -20,14 +24,6 @@ social media
 -------------
 same game different medium
 -------------
-augmented_reality
--------------
-geo_caching
--------------
-#############
-no idea what stupid has gathered itself in here
-stuff at the bottom tends to get rewritten and kept
-stuff at the top is unordered raw sewage
 #############
 
 #############
@@ -62,6 +58,7 @@ stuff at the top is unordered raw sewage
 
 [INFORMATIONAL]:
 #############
+* portage doesnt collision detect symlinks
 * gcc - removed /etc/portage symlink ?
 * pkg_postinst isnt recorded in CONTENTS
 * qemu reboot - corrects vnc output size
@@ -169,65 +166,180 @@ v attempt to create lists of things to actually do
 #############
 setpriv_udhcpd < - ignores first sleep ?
 #############
-linux-6.8.0 - > 6.8.1 - broke busybox tc (traffic control)
 
-CONFIG_KVM_SW_PROTECTED_VM - software protected virtual machines ? development and testing
+[UPTO]
 
-BLK_DEV_WRITE_MOUNTED - allow writing to mounted block devices ? (disabled)
+* manually built...
+  doesnt work fully yet
+  gradually updating everything
+  (glibc /lib64 - last path to remove)
 
-AMD_WBRF - something about amd and wifi announcing frequencies to avoid harmonics ?
+      read config/portage
+      read config/kernels
+      read config/config (most of it)
+proof read config/etc/services
+proof read config/etc/self
+proof read config/repos/
 
+! busybox_init?!?!!?1
 
 #############
+* syctl ipv6 max_addresses=1 (broke slaac) (still allows manually assigning addresses tho?)
+* turned off gratuitous arp and gratuitous neigbour discovery
+* ipv6.forwarding=1 (enables IsRouter flag in neighbour advertisements)
+#############
+* /etc/profile - alias hex + alias oct ? (reverse hex to oct)
+* (patch/diff) (git diff/merge?) guide... ffs still havent done it
+#############
+* added stuff to make.conf to test...
+! test -ebuild-locks # parallel none sandboxed functions ?
+! test stricter ? # react strongly to QA checks ?
+! EXTRA_ECONF="--enable-option-checking"
+#############
+* removed auth/developer/release keys - (dont use them got annoying to bump ebuilds)
+#############
+! CONFIG_BLK_DEV_WRITE_MOUNTED
+! bricked mdadm --misc --action=repair /dev/md127 ?
+! e4defrag dies with 'failed to fadvise'
+! fsck.ext4 dies 'superblock could not be read'
+* fstrim -v worked ?
+? ephemeral boot + z.test/disk
+#############
+* possibly add CONFIG_EFI and nvram again ? efivars
+* possibly add netfilter queue ? funneling to ulogd2 (huge)
+* possibly add conntrack-tools ? and remove /proc/net/nf_conntrack ?
+#############
+-------------
+merged-usr
+-------------
+* all programs hard coding /lib64 glibc paths ? (--disable-rpath ?)
+-------------
+* xinit calls xkbcomp via sh -s /bin/sh -c 'command' because why wouldnt it...
+-------------
+* e2fsprogs --enable-libblkid
+  doesnt enable libblkid
+  installs static blkid
+* util-linux libblkid needed for lsblk
+^ busybox collision ? remove it
+-------------
+* busybox ps vs procps ps
+^ or breaks ebuild symlinks
+^ or breaks ps ebuild path
+-------------
+* glibc/libcap
+  install to /lib64 /sbin
+-------------
+ #!/bin/sh
+ busybox embed scripts - most work without #!shebang
+ ^ ??? bollox forgot to check
+-------------
+build.initramfs - /bin/sh + move /sbin/* /usr/sbin/ rmdir /sbin ?
+-------------
+
+[end game]
+
+/dev
+/etc
+/proc
+/sys
+/tmp
+/usr
+/var
+/run -> /tmp/run
+
+usr - all executables and static data required by them ?
+var - variables data that changes
+run - glorified tmpfs clone (pid files run time files)
+
+^ tidy as fuck...
+  run not being symlink is bit fugly
+  sort of like it tho
+
+-------------
+
+#############
+gcc -openmp breaks lto threading ?
+#############
+upto first.run
+turned openmp back off 
+turned cet back off 
+? still breaks most of the time
+libcap glibc
+#############
+mail
+\- mail
+ - mail
+^ is really annoying
+#############
+
+#############
+z.testing
+-------------
+something to print .ssh public key + known / authorized ?
+-------------
+g.setup - if gnupg exists print information ?
+^ /usr/share/openpgp-keys/{active-devs.gpg,gentoo-auth,asc,gentoo-relese.asc}
+-------------
+vpn commands - added last endpoint address public and cumulative clients/servers
+^ still no command to restore ?
+#############
+/etc/nftables log --prefix to nft ?
+network - grep 'kernel: nftables' ?
+^ searches for every log string
+  eventually change chains to zones ? 
+  input_zone output_zone attached to interfaces ?
+#############
+linux-6.8.0 - > 6.8.1 - broke busybox tc (traffic control)
+CONFIG_KVM_SW_PROTECTED_VM - software protected virtual machines ? (disabled)
+BLK_DEV_WRITE_MOUNTED - allow writing to mounted block devices ? (disabled)
+AMD_WBRF - amd and wifi announcing frequencies to avoid harmonics ? (disabled)
+#############
+busybox mount -t ext4 -o rw,dev,suid,exec,atime /path/to/file /path/to/mount
+^ cant create loopback devices anymore ?
+^ BLK_DEV_WRITE_MOUNTED ?
+-------------
+stage3 - losetup /dev/loop0 ${mount}/stage3
+mount -t ext4 -o rw,nodev,nosuid,exec,noatime,noswap
+#############
+
 ncurses - thefted mki
 
- no idea ?
- trying to greenfield whatever upstream release is ?
- worst case storing every individual patch date
- then applying them one by one ?
+ no idea - tried to greenfield upstream no changes...
+
+ forces pulling 6.4.0 + patch.YYYYMMDD
+ for i in YYYYMMDD YYYYMMDD ; do curl -o patch/$i http://domain.tld/path/to/file ; done
+ for i in YYYYMMDD YYYYMMDD ; do patch patch/$i ; done
+
  /usr/include/<target>/file.h ?
  ^ rebuilds itself 4 times ?
+ make -C build/<target> -j16 -l16
 
- sort of important - repos/editors/{ncurses,vim} ?
+ important - vim + mtm + alsa-utils
 
 #############
-
 hosting on lo/lan/tun/nat
-
+-------------
 nat - address changes
 tun - address changes
-
+-------------
 udhcpd references 172.16.0.1 #  b.server(dhcpd,tftpd,ntpd)
-
+-------------
 ddns references 172.16.0.1 # dns/socks/service
-
+-------------
 t.get/t.put references 172.16.0.1 # httpd/p2pd
-
-dhcpc - vpnd
-ddns - ircd/sshd/maild/httpd
-vpnd - dnsd/socks/ircd/sshd/maild/httpd tftpd/ntpd
-
-^ connect to local network
-^ irc forward services to username:password:fingerprint
-^ tor forward services to sha256-ed25519 fingerprint
-^ hole punch udp based private network...
-
-z.testing
-b.server - host - qemu nat guests
-b.virtual - host/guest -
-
-v.server
-wg addconf tun ${HOME}/.vpn/config
-ip addr add ${HOME}/.vpn/address
-^ v.client - can recover from wg addconf tun ${HOME}/.vpn/config
-
-z.testing - 
- 
-
 #############
 dropped tls1_2
 ^ www.kernel.org download.mozilla.org
 ^ both dont support tls1_3 ?
+#############
+x11-apps
+ setxkbmap
+ xauth
+ xinit
+ xkbcomp
+ xrandr
+ xset
+ xsetroot
 #############
  set -e
 
@@ -2334,6 +2446,36 @@ remote: DISPLAY=172.16.0.1:13 dwm-guest
 #############
 siaddr 172.16.0.1
 boot_file pxe
+#############
+
+[emerge]
+
+emerge -avbkuDN --keep-going y
+
+--ask --verbose --buildpkg --usepkg
+--update --deep 
+
+--with-bdeps n
+--with-bdeps y
+
+--onlydeps
+--nodeps
+
+--config-root=/ # where to look for etc/portage
+--root=/ # where to install packages
+--root-deps=/run/
+--sysroot= (build dependencies satisfied by depend?)
+
+^ cant use --nodeps @console @desktop @programs
+  @sets with nodeps ?
+
+-------------
+--quickpkg-direct y
+--quickpkg-direct-root /
+-------------
+* would be useful for devtools
+^ (FEATURES=buildpkg)
+-------------
 #############
 emerge
 -avbkgp1 < - (ask verbose build keep get pretend oneshot)

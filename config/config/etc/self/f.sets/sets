@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 
 mount|grep -q "^/dev/mapper/storage.integrity on /tmp/z.local/services/sets" ||

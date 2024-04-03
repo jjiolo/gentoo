@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 # dtls doesnt support ed25519 #
 #############

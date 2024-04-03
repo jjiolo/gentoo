@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
-debug(){ printf "%s\n" "takes endpoint and or public key file - ${1}";exit 1; }
+debug(){ printf "%s\n" "add client to authorized_keys, takes endpoint and/or public key file - ${1}";exit 1; }
 #############
 
 [ "${USER}" == "root" ] || debug "requires root"

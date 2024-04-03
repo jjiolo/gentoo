@@ -1,4 +1,4 @@
-
+#!/usr/bin/sh
 #############
 [ -f "blacklist" ] && exit 1
 #############
@@ -12,7 +12,6 @@ cat > "blacklist" << EOF
 172.16.0.1 nat
 10.0.0.1 tun
 
-127.0.0.1 laptop
 127.0.0.1 desktop
 127.0.0.1 server
 127.0.0.1 virtual

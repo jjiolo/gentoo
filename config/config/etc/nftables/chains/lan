@@ -14,6 +14,22 @@ table inet filter {
 
   udp dport {51820} ct state new log flags skuid prefix "input.lan.new " accept # vpnd
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   # icmp
 
   ip protocol {icmp}   log flags skuid prefix "input.lan.icmp " accept # icmp
@@ -61,32 +77,32 @@ table inet filter {
 
 
 
-
+  udp dport {53} skuid {root,250} ct state new log flags skuid prefix "output.lan.new " accept # stage3
   tcp dport {443} skuid {root,250} ct state new log flags skuid prefix "output.lan.new " accept # stage3
 
-  tcp dport {6697}    skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {22}      skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {465,995} skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {443}     skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {6697}    skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept # ircd
+  tcp dport {22}      skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept # sshd
+  tcp dport {465,995} skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept # maild
+  tcp dport {443}     skuid {nobody} ct state new log flags skuid prefix "output.lan.new " accept # httpd
 
-  tcp dport {6697}    skuid {irc}  ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {22}      skuid {ssh}  ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {465,995} skuid {mail} ct state new log flags skuid prefix "output.lan.new " accept
-  tcp dport {443}     skuid {http} ct state new log flags skuid prefix "output.lan.new " accept
+  tcp dport {6697}    skuid {irc}  ct state new log flags skuid prefix "output.lan.new " accept # ircd
+  tcp dport {22}      skuid {ssh}  ct state new log flags skuid prefix "output.lan.new " accept # sshd
+  tcp dport {465,995} skuid {mail} ct state new log flags skuid prefix "output.lan.new " accept # maild
+  tcp dport {443}     skuid {http} ct state new log flags skuid prefix "output.lan.new " accept # httpd
 
   # icmp
 
-  ip protocol {icmp}   log flags skuid prefix "output.lan.icmp " accept
-  ip6 nexthdr {icmpv6} log flags skuid prefix "output.lan.icmp " accept
+  ip protocol {icmp}   log flags skuid prefix "output.lan.icmp " accept # icmp
+  ip6 nexthdr {icmpv6} log flags skuid prefix "output.lan.icmp " accept # icmp
 
   # igmp
 
-  ip protocol {igmp} log flags skuid prefix "output.lan.igmp " accept
+  ip protocol {igmp} log flags skuid prefix "output.lan.igmp " accept # igmp
 
   # drop
 
-  ct state invalid log flags skuid prefix "output.lan.invalid " reject
-                   log flags skuid prefix "output.lan.drop " reject
+  ct state invalid log flags skuid prefix "output.lan.invalid " drop
+                   log flags skuid prefix "output.lan.drop " drop
 
  }
 

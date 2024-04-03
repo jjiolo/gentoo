@@ -1,6 +1,4 @@
-#!/bin/sh
-#############
-# broken busybox syslogd added .000 milliseconds to all date timestamps
+#!/usr/bin/sh
 #############
 ## [uptime]---[oldest_log]-----[newest_log]-[epoch]
 ## epoch-uptime  == total length of time the system has been up
@@ -13,15 +11,20 @@
 cd /run/logs || exit 1
 #############
 
- [ -s syslog   ] && oldest="$(date --date="$(awk 'NR==1{print$1" "$2" "$3" 2024"}' syslog  )" +%s)"
- [ -s syslog.0 ] && oldest="$(date --date="$(awk 'NR==1{print$1" "$2" "$3" 2024"}' syslog.0)" +%s)"
- [ -s syslog.1 ] && oldest="$(date --date="$(awk 'NR==1{print$1" "$2" "$3" 2024"}' syslog.1)" +%s)"
- [ -s syslog.2 ] && oldest="$(date --date="$(awk 'NR==1{print$1" "$2" "$3" 2024"}' syslog.2)" +%s)"
-                    newest="$(date --date="$(awk 'END  {print$1" "$2" "$3" 2024"}' syslog  )" +%s)"
+ [ -s syslog   ] && oldest="$(awk 'NR==1{print$1" "$2" "$3}' syslog  )"
+ [ -s syslog.0 ] && oldest="$(awk 'NR==1{print$1" "$2" "$3}' syslog.0)"
+ [ -s syslog.1 ] && oldest="$(awk 'NR==1{print$1" "$2" "$3}' syslog.1)"
+ [ -s syslog.2 ] && oldest="$(awk 'NR==1{print$1" "$2" "$3}' syslog.2)"
+                    newest="$(awk 'END  {print$1" "$2" "$3}' syslog  )"
 
 #############
-uptime="$(date --date="$(uptime -s)" +%s)"
-epoch="$(date +%s)"
+oldest="${oldest} $(date +%Y)"
+newest="${newest} $(date +%Y)"
+#############
+oldest="$(date --date="${oldest}" +%s)"
+newest="$(date --date="${newest}" +%s)"
+#############
+epoch="$(date +%s)" uptime="$(uptime -s)" uptime="$(date --date="${uptime}" +%s)"
 #############
 missing=$((((${oldest}-${uptime})*100)/(${epoch}-${uptime})))
 covered=$((((${newest}-${oldest})*100)/(${epoch}-${uptime})))

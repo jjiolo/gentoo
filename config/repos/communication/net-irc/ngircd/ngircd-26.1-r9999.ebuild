@@ -40,11 +40,12 @@ LDFLAGS=-static ./configure \
 }
 #############
 src_install(){
-install -d -o root -g root -m 0755 "${D}/sbin"
-install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/share" "${D}/usr/share/ngircd"
-install    -o root -g root -m 0755 src/ngircd/ngircd "${D}/sbin"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/sbin"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/share"
+install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/share/ngircd"
+install    -o root -g root -m 0755 src/ngircd/ngircd "${D}/usr/sbin"
 install    -o root -g root -m 0644 doc/Commands.txt "${D}/usr/share/ngircd"
 install    -o root -g root -m 0644 doc/Modes.txt "${D}/usr/share/ngircd"
-ln -s "/sbin/ngircd" "${D}/sbin/ircd"
+ln -s "ngircd" "${D}/usr/sbin/ircd"
 }
 #############
