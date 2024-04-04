@@ -1,0 +1,4 @@
+#!/usr/bin/sh
+#############
+busybox --list-full | while read ; do ln -s "/usr/bin/busybox" "/usr/${REPLY}" ; done
+#############

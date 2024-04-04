@@ -21,6 +21,7 @@ chown 0:0 "${stage3}/binhost/config.torrent"
 chmod 0664 "${stage3}/binhost/config.torrent"
 #############
 
+[ -z "${1}" ] || {
 #############
 [ -d "${shared}/downloads/bootfs" ] && rm -rf "${shared}/downloads/bootfs"
 #############
@@ -37,6 +38,7 @@ install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/images/client" "${shared}/dow
 install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/config.tar.gz" "${shared}/downloads/config.tar.gz"
 install -o 9091 -g 9091 -m 0644 "${stage3}/binhost/config.torrent" "${shared}/torrents/config.tar.gz"
 #############
+}
 
 #############
 sync

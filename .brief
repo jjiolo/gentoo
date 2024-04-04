@@ -1,0 +1,51 @@
+
+#############
+
+[ -f /etc/config.tar.gz ] || exit 1
+
+#############
+
+[ -d /tmp/.diff ] || {
+
+ install -d -o root -g root -m 0700 /tmp/.diff || exit
+
+ tar xf /etc/config.tar.gz -C /tmp/.diff || exit
+
+}
+
+#############
+
+#############
+cd /tmp/.diff/stage3 || exit
+#############
+
+for i in 0.binhost 1.rootfs 2.shell 3.umount backup qemu .diff
+do
+
+ diff ./$i /tmp/storage/stage3/$i | grep '+++'
+
+done | less -S
+
+#############
+
+#############
+cd /tmp/.diff/stage3/config || exit
+#############
+
+for i in config kernels portage \
+repos/browser \
+repos/communication \
+repos/emulation \
+repos/overlay \
+repos/overflow \
+repos/testing \
+repos/xorg \
+.misc
+do
+
+ diff -r ./$i /tmp/storage/stage3/config/$i | grep '+++' | less -S
+
+done
+
+#############
+

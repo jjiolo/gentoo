@@ -16,6 +16,7 @@
 #define DROPBEAR_REEXEC 1
 
 #define DEBUG_TRACE 0
+
 #define DROPBEAR_SMALL_CODE 0
 
 #define DROPBEAR_X11FWD 0
@@ -23,13 +24,14 @@
 #define DROPBEAR_CLI_REMOTETCPFWD 1
 #define DROPBEAR_SVR_LOCALTCPFWD 1
 #define DROPBEAR_SVR_REMOTETCPFWD 1
+#define DROPBEAR_SVR_LOCALSTREAMFWD 1
 #define DROPBEAR_SVR_AGENTFWD 0
 #define DROPBEAR_CLI_AGENTFWD 0
 
 #define DROPBEAR_CLI_PROXYCMD 0
 #define DROPBEAR_CLI_NETCAT 0
 
-#define DROPBEAR_USER_ALGO_LIST 0
+#define DROPBEAR_USER_ALGO_LIST 1
 
 #define DROPBEAR_AES128 0
 #define DROPBEAR_AES256 0
@@ -53,7 +55,7 @@
 #define DROPBEAR_SK_KEYS 0
 #define DROPBEAR_DEFAULT_RSA_SIZE 4096
 
-#define DROPBEAR_DELAY_HOSTKEY 0
+#define DROPBEAR_DELAY_HOSTKEY 1
 
 #define DROPBEAR_DH_GROUP14_SHA1 0
 #define DROPBEAR_DH_GROUP14_SHA256 0
@@ -69,6 +71,7 @@
 
 #define DO_MOTD 0
 #define MOTD_FILENAME "/etc/motd"
+#define MOTD_MAXSIZE 2000
 
 #define DROPBEAR_SVR_PASSWORD_AUTH 0
 #define DROPBEAR_SVR_PAM_AUTH 0
@@ -82,6 +85,7 @@
 
 #define DROPBEAR_DEFAULT_CLI_AUTHKEY "~/.ssh/ssh"
 
+#define DROPBEAR_USE_SSH_CONFIG 0
 #define DROPBEAR_USE_PASSWORD_ENV 0
 #define DROPBEAR_CLI_ASKPASS_HELPER 0
 
@@ -99,9 +103,9 @@
 
 #define XAUTH_COMMAND "/usr/bin/xauth -q"
 
-#define DROPBEAR_SFTPSERVER 1
-#define SFTPSERVER_PATH "/sbin/sftp-server"
-#define DROPBEAR_PATH_SSH_PROGRAM "/bin/dbclient"
+#define DROPBEAR_SFTPSERVER 0
+#define SFTPSERVER_PATH "/usr/sbin/sftp-server"
+#define DROPBEAR_PATH_SSH_PROGRAM "/usr/bin/dbclient"
 
 #define LOG_COMMANDS 0
 
@@ -113,8 +117,8 @@
 #define DEFAULT_KEEPALIVE_LIMIT 3
 #define DEFAULT_IDLE_TIMEOUT 0
 
-#define DEFAULT_PATH "/bin:/sbin:/usr/bin:/usr/sbin"
-#define DEFAULT_ROOT_PATH "/bin:/sbin:/usr/bin:/usr/sbin"
+#define DEFAULT_PATH "/usr/bin:/usr/sbin"
+#define DEFAULT_ROOT_PATH "/usr/bin:/usr/sbin"
 
 #endif
 

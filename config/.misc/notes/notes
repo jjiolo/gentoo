@@ -45,14 +45,15 @@ same game different medium
 [REBUILD]
 #############
 -------------
- lastest - 2024:03:09 17:00:00
+ lastest - 0000:00:00 00:00:00
 -------------
- trying to reduce complexity...
+ Broke all of it...
+ had to manually edit /binhost/rootfs
+ currently debugging and patching multiple parts
 -------------
- broken -
- * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
- ^ X0-log - ShadowFB: preferred NO, enabled NO (something about no/modesetting)
- * app-alternatives - FEATURES='-collision-protect' (remove after its in stage3)
+ broken - * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
+          ^ X0-log - ShadowFB: preferred NO, enabled NO (something about no/modesetting)
+ broken - * app-alternatives - FEATURES='-collision-protect' (remove after its in stage3)
 -------------
 #############
 
@@ -167,6 +168,11 @@ v attempt to create lists of things to actually do
 setpriv_udhcpd < - ignores first sleep ?
 #############
 
+meson
+-Db_asneeded - -Wl,--as-needed
+-Db_lundef   - -Wl,--no-undefined
+-Db_ndebug   - disable asserts ?
+
 [UPTO]
 
 * manually built...
@@ -183,6 +189,35 @@ proof read config/repos/
 
 ! busybox_init?!?!!?1
 
+* someone dropped apulse (need it for firefox)
+
+dropbear
+assuming LOCALSTREAMFWD is unix sockets ?
+last - forced DROPBEAR_DSS on, says disabled (vulnerable)
+^ left DROPBEAR_USER_ALGO_LIST 1 -c -m flags...
+^ turn on dropbear delay hostkey (kernel option to test and warn on unseeded urandom ?)
+^^ has rate limiting built in that doesnt match tors rate limiting from upstream
+   ie tor works it doesnt really work ? nftables or libhosts wrapper
+dbclient -c help < - doesnt work
+dbclient -m help < - doesnt work
+^ disabled USER_ALGO_LIST
+
+make repos/networking
+ ^ tord torsocks
+ ^ wireguard
+ ^ dropbear
+ ^ curl
+
+ repos/bittorrent ?
+ ^ transmission needs its own 
+
+#############
+* xorg bumped security vuln (still cant libxcvt .a to make a static build last library ?)
+* dropbear bumped partial security vuln
+* openssl about to bump
+* opensmtpd about to bump
+#############
+* net-misc/curl - doesnt work with github again
 #############
 * syctl ipv6 max_addresses=1 (broke slaac) (still allows manually assigning addresses tho?)
 * turned off gratuitous arp and gratuitous neigbour discovery
