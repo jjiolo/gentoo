@@ -1,15 +1,5 @@
 
 #############
-printf "%s\n" "#############"
-printf "%s\n" "storage.fde"
-printf "%s\n" "#############"
-#############
-grep -q -e "desktop" /proc/cmdline && /usr/bin/sh -l
-#############
-grep -q -e "desktop" /proc/cmdline || timeout -s SIGTERM 3 sh -c 'read -p interupt && /usr/bin/sh -l'
-#############
-
-#############
 
 [ -b "/dev/storage" ] && use="/dev/storage"
 [ -b "/dev/mapper/storage.crypt" ] && use="/dev/mapper/storage.crypt"

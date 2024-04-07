@@ -1,0 +1,17 @@
+#!/usr/bin/sh
+#############
+read -rp 'set up git in current directory (enter||ctrl-c)?'
+#############
+
+git init --bare --initial-branch project "bare"
+
+git clone "bare" "work" && cd "work" || exit 1
+
+printf "\n%s\n" "#############" > "README.md"
+printf "\n%s" "README.md" >> "README.md"
+printf "\n%s\n" "#############" >> "README.md"
+printf "\n%s\n" "#############" >> "README.md"
+
+git add -A . ; git commit -m "README.md" ; git push
+
+#############

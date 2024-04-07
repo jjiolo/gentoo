@@ -120,7 +120,7 @@ renice +5 -u ddns  2>/dev/null
 
 #############
 
-[ -s "/usr/bin/less" ] || alias less="/usr/bin/less -R"
+[ -L "/usr/bin/less" ] || alias less="/usr/bin/less -R"
 
  alias l='ls -lh --group-directories-first'
  alias ll='ls -lah --group-directories-first'
@@ -162,13 +162,9 @@ renice +5 -u ddns  2>/dev/null
 
  alias vim="vim -Z"
 
-#############
-pivot(){
-[ -z "${1}" ] || [ -z "${2}" ] && { printf "%s\n" "pivot: <run_as> <run_by>" ; }
-[ -z "${1}" ] || [ -z "${2}" ] || { su -l -s /usr/bin/sh -c "setsid dtach -n /dev/shm/${2}.${1} /usr/bin/sh -l" "${1}" ; }
-[ -z "${1}" ] || [ -z "${2}" ] || { sleep 1 ; chown "${1}:${2}" "/dev/shm/${2}.${1}" ; chmod 0660 "/dev/shm/${2}.${1}" ; }
-[ -z "${1}" ] || [ -z "${2}" ] || { printf "%s\n" "dtach -a /dev/shm/${2}.${1}" ; }
-}
+ alias dbclient="dbclient -o disabletrivialauth=yes -o exitonforwardfailure=yes"
+ alias ssh="ssh -o disabletrivialauth=yes -o exitonforwardfailure=yes"
+
 #############
 alsa(){ sed -i -e "s/defaults.ctl.card ./defaults.ctl.card ${1}/" -e "s/defaults.pcm.card ./defaults.pcm.card ${1}/" /run/alsa.conf ; }
 #############

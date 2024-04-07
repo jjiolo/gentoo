@@ -1,0 +1,21 @@
+#!/usr/bin/sh
+#############
+debug(){ printf "%s\n" "pivot: <run_as> <run_by> - ${1}" ; exit 1 ; }
+#############
+[ "${USER}" == "root" ] || debug "requires root"
+#############
+[ -z "${1}" ] || [ -z "${2}" ] && debug "no input"
+#############
+[ -e "/dev/shm/${2}.${1}" ] && debug "socket already exists"
+#############
+
+su -l -s /usr/bin/sh -c "setsid dtach -n /dev/shm/${2}.${1} /usr/bin/sh -l" "${1}"
+
+until [ -S "/dev/shm/${2}.${1}" ] ; do sleep 1 ; done
+
+chown "${1}:${2}" "/dev/shm/${2}.${1}"
+chmod 0660 "/dev/shm/${2}.${1}"
+
+#############
+printf "%s\n" "dtach -a /dev/shm/${2}.${1}"
+#############

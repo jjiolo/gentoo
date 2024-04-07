@@ -2,3 +2,12 @@
 =sys-apps/dbus-1.15.8
 =app-emulation/qemu-8.2.2 # broke --enable-libfdt=internal
 
+=media-video/mpv-0.37.0 # started pulling media-libs/libplacebo -> dev-util/vulkan-headers
+=media-video/mpv-0.37.0-r1 # started pulling media-libs/libplacebo -> dev-util/vulkan-headers
+=media-video/mpv-0.37.0-r9999 # started pulling media-libs/libplacebo -> dev-util/vulkan-headers
+
+=sys-fs/mdadm-4.2-r2
+=sys-fs/mdadm-4.2-r3
+=sys-fs/mdadm-4.3
+=sys-fs/mdadm-4.3-r9999
+

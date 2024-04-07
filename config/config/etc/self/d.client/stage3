@@ -1,52 +1,31 @@
 #!/usr/bin/sh
 #############
 
- mountpoint -q "${stage3}" && exec dtach -A "${stage3}/.socket" /bin/ash -l
+#mountpoint -q "${stage3}" && exec dtach -A "${stage3}/.socket" /usr/bin/sh -l
 
 #############
 
 #############
 
- [ -d "${mount}/bare" ] || {
-
-  git init --bare --initial-branch project "${mount}/bare"
-
-  git clone "${mount}/bare" "${mount}/work"
-
-  printf "\n%s\n" "#############" > "${mount}/work/README.md"
-  printf "\n%s" "README.md" >> "${mount}/work/README.md"
-  printf "\n%s\n" "#############" >> "${mount}/work/README.md"
-  printf "\n%s\n" "#############" >> "${mount}/work/README.md"
-
-  GIT_DIR="${mount}/work/.git" git add -A .
-  GIT_DIR="${mount}/work/.git" git commit -m "README.md"
-  GIT_DIR="${mount}/work/.git" git push
-
- }
+[ -f "${mount}/stage3" ] || { qemu-img create -f raw "${mount}/stage3" 47G
+                              mkfs.ext4 -m 0 -L "stage3" "${mount}/stage3" ; }
 
 #############
 
-[ -f "${mount}/stage3" ] || {
-
- qemu-img create -f raw "${mount}/stage3" 47G
- mkfs.ext4 -m 0 -L "stage3" "${mount}/stage3"
-
-}
-
-[ -f "${mount}/stage3" ] && losetup "/dev/loop0" "${mount}/stage3" 
-
-#############
-
+ losetup "/dev/loop0" "${mount}/stage3" 
  fsck.ext4 -pvf "/dev/loop0"
 
  fsck.ext4 -pv "/dev/loop0" &&
  install -d -o 0 -g 0 -m 0700 "${stage3}" &&
  mount -t ext4 -o rw,dev,nosuid,exec,noatime "/dev/loop0" "${stage3}" &&
- install -d -o 0 -g 0 -m 0700 "${stage3}" || { umount "${stage3}" ; exit 1 ; }
+ install -d -o 0 -g 0 -m 0700 "${stage3}" ||
+ { umount "${stage3}" ; exit 1 ; }
 
  rmdir "${stage3}/lost+found"
 
- exec dtach -A "${stage3}/.socket" /bin/ash -l
+#############
+
+#exec dtach -A "${stage3}/.socket" /usr/bin/sh -l
 
 #############
 

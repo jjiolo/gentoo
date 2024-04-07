@@ -22,8 +22,15 @@ src_configure() {
 }
 #############
 src_install() {
+
 install -d -o root -g root -m 0755 "${D}/usr" "${D}/usr/bin" "${D}/usr/sbin"
 install    -o root -g root -m 0755 "busybox" "${D}/usr/bin" || die "install failed"
+
 busybox --list-full | while read ; do ln -s "/usr/bin/busybox" "${D}/usr/${REPLY}" ; done
+
+rm "${D}/usr/bin/ps" # procps collision
+rm "${D}/usr/sbin/blkid" # e2fsprogs collision
+rm "${D}/usr/sbin/findfs" # e2fsprogs collision
+
 }
 #############

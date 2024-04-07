@@ -14,8 +14,6 @@ DEPEND="${RDEPEND}"
 #############
 src_configure(){
 
- sed -i 's/#define DROPBEAR_DSS 1/#define DROPBEAR_DSS 0/' sysoptions.h
-
 ./configure \
 --prefix=/usr \
 --enable-option-checking \

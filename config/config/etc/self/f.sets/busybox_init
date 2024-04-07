@@ -1,6 +1,6 @@
 
 #############
-# /bin /dev /etc /proc /sbin /sys /tmp ; /run - > /tmp/.run /tmp/.home
+# /dev /etc /proc /sys /tmp /usr /var ; /run - > /tmp/.run /tmp/.home
 # /init /etc/inittab /etc/init /etc/profile
 # /etc/{nsswitch.conf,ethers,hosts,passwd,group,shadow,resolv.conf}
 #############
@@ -10,7 +10,6 @@
 #############
 
 #############
-install -d -o 0 -g 0 -m 0755 "bin"
 install -d -o 0 -g 0 -m 0755 "dev"
 install -d -o 0 -g 0 -m 0755 "dev/pts"
 install -d -o 0 -g 0 -m 1777 "dev/shm"
@@ -34,19 +33,18 @@ ln -s /proc/self/fd   "dev/fd"
 ln -s /proc/self/fd/0 "dev/stdin"
 ln -s /proc/self/fd/1 "dev/stdout"
 ln -s /proc/self/fd/2 "dev/stderr"
-install -d -o 0 -g 0 -m 0755 "etc"
+install -d -o 0 -g 0 -m 0755 "etc" ; ln -s /tmp/resolv.conf etc/resolv.conf
 install -d -o 0 -g 0 -m 0555 "proc"
-install -d -o 0 -g 0 -m 0755 "sbin"
 install -d -o 0 -g 0 -m 0555 "sys"
-install -d -o 0 -g 0 -m 1777 "tmp"
+install -d -o 0 -g 0 -m 1777 "tmp" ; ln -s /tmp/run run
+install -d -o 0 -g 0 -m 0755 "usr"
+install -d -o 0 -g 0 -m 0755 "var"
 #############
 
 cat > "init" << EOF
-#!/bin/sh
+#!/usr/bin/sh
 
-sleep 3
-
-exec /sbin/init
+sleep 3 ; exec /usr/sbin/init
 
 EOF
 
@@ -55,18 +53,18 @@ EOF
 cat > "etc/inittab" << EOF
 
 ::sysinit:/etc/init
-::restart:/sbin/poweroff
-::shutdown:/sbin/poweroff
-::ctrlaltdel:/sbin/poweroff
-tty1::respawn:/bin/login -f root
-tty3::respawn:/bin/login -f toor
+::restart:/usr/sbin/poweroff
+::shutdown:/usr/sbin/poweroff
+::ctrlaltdel:/usr/sbin/poweroff
+tty1::respawn:/usr/bin/login -f root
+tty3::respawn:/usr/bin/login -f toor
 
 EOF
 
 #############
 
 cat > "etc/init" << EOF
-#!/bin/sh -l
+#!/usr/bin/sh -l
 
  [ -d "/root" ] && rmdir "/root"
 
@@ -109,10 +107,10 @@ cat > "etc/init" << EOF
  chmod 0664 /dev/zero
  chmod 1777 /dev/shm
 
- ln -s /proc/self/fd   "/dev/fd"
- ln -s /proc/self/fd/0 "/dev/stdin"
- ln -s /proc/self/fd/1 "/dev/stdout"
- ln -s /proc/self/fd/2 "/dev/stderr"
+ ln -sf /proc/self/fd   "/dev/fd"
+ ln -sf /proc/self/fd/0 "/dev/stdin"
+ ln -sf /proc/self/fd/1 "/dev/stdout"
+ ln -sf /proc/self/fd/2 "/dev/stderr"
 
 # proc
 
@@ -133,9 +131,9 @@ cat > "etc/init" << EOF
 
 # tmp
 
- install -d -o 0 -g 0 -m 0755 "/tmp/.run" ; ln -sf "/tmp/.run" "run"
+ install -d -o 0 -g 0 -m 0755 "/tmp/run" ; ln -sf "/tmp/run" "run"
 
- install -d -o 65534 -g 65534 -m 0700 "/tmp/.home"
+ install -d -o 65534 -g 65534 -m 0700 "/tmp/home"
 
 # log
 
@@ -169,7 +167,7 @@ cat > "etc/profile" << EOF
 
  export ENV="/etc/profile"
  export LANG="en_GB.UTF-8"
- export PATH="/bin:/sbin:/usr/bin:/usr/sbin"
+ export PATH="/usr/bin:/usr/sbin"
  export EDITOR="vi" PAGER="less" LESSHISTFILE="/dev/null"
  export TMPDIR="/dev/shm"
 
@@ -236,9 +234,9 @@ printf "%s\n" "" > "etc/ethers"
 
 printf "%s\n" "127.0.0.1 localhost local lo" > "etc/hosts"
 
-printf "%s\n" "root:x:0:0::/:/bin/ash" > "etc/passwd"
-printf "%s\n" "desktop:x:1:1::/:/bin/false" >> "etc/passwd"
-printf "%s\n" "toor:x:65534:65534::/tmp/.home:/bin/ash" >> "etc/passwd"
+printf "%s\n" "root:x:0:0::/:/usr/bin/sh" > "etc/passwd"
+printf "%s\n" "desktop:x:1:1::/:/usr/bin/false" >> "etc/passwd"
+printf "%s\n" "toor:x:65534:65534::/tmp/home:/usr/bin/sh" >> "etc/passwd"
 
 printf "%s\n" "root:x:0:" > "etc/group"
 printf "%s\n" "desktop:x:1:" >> "etc/group"
@@ -253,13 +251,13 @@ ln -sf /run/resolv.conf etc/resolv.conf # printf "%s\n" "nameserver 127.0.0.1" >
 #############
 
 #############
-install -o 0 -g 0 -m 0755 "/bin/busybox" "bin/busybox"
+install -o 0 -g 0 -m 0755 "/usr/bin/busybox" "usr/bin/busybox"
 #############
-chmod 0755 bin/busybox
+chmod 0755 usr/bin/busybox
 chmod 0755 init etc/inittab etc/init etc/profile
 chmod 0644 etc/nsswitch.conf etc/ethers etc/hosts etc/passwd etc/group etc/shadow # etc/resolv.conf
 #############
-env -i /bin/busybox chroot . /bin/busybox --install -s
+env -i /usr/bin/sh chroot . /usr/bin/busybox setup
 #############
 find . -print0 | cpio -ovH newc | gzip > "$(basename ${1}).cpio"
 #############

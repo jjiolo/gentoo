@@ -34,7 +34,7 @@ setsid xinit /etc/xinitrc -- /usr/bin/X \
 -extension 'RECORD' \
 -s 0 -auth /run/display/0.auth -logfile /run/display/0.log \
 -nolisten tcp -nolisten unix -listen local \
-+bs -tst -maxclients 64 \
++bs -tst -byteswappedclients -maxclients 64 \
 vt7 </dev/null &>/dev/null :0 & exit
 EOF
 

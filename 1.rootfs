@@ -60,7 +60,7 @@ ln -sf "/root/portage" "etc/portage"
 ### network
 
 printf "%s\n" "search localdomain" > "etc/resolv.conf"
-printf "%s\n" "options edns0 no-aaaa" >> "etc/resolv.conf"
+printf "%s\n" "options edns0" >> "etc/resolv.conf" # no-aaaa
 printf "%s\n" "nameserver 127.0.0.1" >> "etc/resolv.conf"
 
 chown 0:0 "etc/resolv.conf"

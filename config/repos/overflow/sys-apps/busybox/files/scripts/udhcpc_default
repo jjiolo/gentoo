@@ -43,7 +43,7 @@ ip route add default via "${router}" dev "${interface}" scope global metric 0
 #############
 [ -z "${dns}" ] || install -o 0 -g 0 -m 0664 /dev/null /run/resolv.conf
 [ -z "${dns}" ] || printf "%s\n" "search localdomain" >> /run/resolv.conf
-[ -z "${dns}" ] || printf "%s\n" "options edns0 no-aaaa" >> /run/resolv.conf
+[ -z "${dns}" ] || printf "%s\n" "options edns0" >> /run/resolv.conf # no-aaaa
 [ -z "${dns}" ] || for i in ${dns} ; do printf "%s\n" "nameserver ${i}" >> /run/resolv.conf ; done
 #############
 

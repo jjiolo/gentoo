@@ -45,11 +45,14 @@ same game different medium
 [REBUILD]
 #############
 -------------
- lastest - 0000:00:00 00:00:00
+ lastest - 0000:00:00 00:00:00 pfft?
 -------------
- Broke all of it...
- had to manually edit /binhost/rootfs
- currently debugging and patching multiple parts
+  Broke all of it... (currently debugging and patching)
+* manually - emerge -v1 gcc (before running first.run)
+^ waiting for the next stage3 release...
+^ either that or cet flag changes
+
+above works havent synced in a while
 -------------
  broken - * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
           ^ X0-log - ShadowFB: preferred NO, enabled NO (something about no/modesetting)
@@ -168,10 +171,24 @@ v attempt to create lists of things to actually do
 setpriv_udhcpd < - ignores first sleep ?
 #############
 
+busybox_init and embed scripts setup ?
+^ setup/mount/chroot wrapper ?
+
+#############
+
+portage broke ? maybe blargh to much shit check...
+
+emerge busybox installed /usr/bin/ps symlink
+emerge procps db/pkg/sys-process/procps/CONTENTS /usr/bin/ps ?
+ ^ but installed something should have file collisioned
+ * manually fixed it ? then it broke and overwrote procps
+
+#############
+
 meson
 -Db_asneeded - -Wl,--as-needed
 -Db_lundef   - -Wl,--no-undefined
--Db_ndebug   - disable asserts ?
+-Db_ndebug   - disable asserts
 
 [UPTO]
 
@@ -187,20 +204,35 @@ proof read config/etc/services
 proof read config/etc/self
 proof read config/repos/
 
-! busybox_init?!?!!?1
+! busybox_init ?
 
 * someone dropped apulse (need it for firefox)
 
 dropbear
-assuming LOCALSTREAMFWD is unix sockets ?
-last - forced DROPBEAR_DSS on, says disabled (vulnerable)
-^ left DROPBEAR_USER_ALGO_LIST 1 -c -m flags...
-^ turn on dropbear delay hostkey (kernel option to test and warn on unseeded urandom ?)
-^^ has rate limiting built in that doesnt match tors rate limiting from upstream
-   ie tor works it doesnt really work ? nftables or libhosts wrapper
-dbclient -c help < - doesnt work
-dbclient -m help < - doesnt work
-^ disabled USER_ALGO_LIST
+last - forced DROPBEAR_DSS on
+
+authorized_keys <options>
+DROPBEAR_SVR_PUBKEY_OPTIONS 0 - disabled
+* tried DROPBEAR_USER_ALGO_LIST 1 -c -m flags... (didnt -c help && -m help broke)
+* cant -R (delayed hostkey) (wont store keys in shared httpd at boot?) (requires p2p group write)
+? doesnt match tors upstream rate limiting ?
+
+man dbclient.1
+* tried -o GatewayPorts
+- dbclient -o gatewayports=no -L 0.0.0.0:80:0.0.0.0:80 127.0.0.1 (didnt fail?)
+- dbclient -o gatewayports=no -R 0.0.0.0:80:0.0.0.0:80 127.0.0.1 (didnt fail?)
+^ dont get why client needs to ? up to the server ? (just dont enter it wrong?)
+-o Port specify a listening port ? its the client...
+
+! doesnt build without DROPBEAR_SVR_PUBKEY_OPTIONS 1
+^ error 'struct AuthState' has no member named 'pubkey_info'
+
+test dbclient root@one,root@two,root@three ? (says it just works /shrug)
+
+-------------
+downgraded mpv so it doesnt need libplacebo
+removed libplacebo from sets/programs
+-------------
 
 make repos/networking
  ^ tord torsocks
@@ -210,6 +242,25 @@ make repos/networking
 
  repos/bittorrent ?
  ^ transmission needs its own 
+
+
+
+
+ someone broke mdadm --misc --action=repair
+ just spits out permissioned denied
+^ mdadm -S /dev/md127 
+  mdadm --assemble --scan
+  mdadm --misc --action=repair /dev/md127
+
+^ does normal system.dev
+^ if its server it stops md126 md127
+^ if its server it scans and assembles again
+^ if its server mdadm --misc --action=repair /dev/md126 works
+^ if its server mdadm --misc --action=repair /dev/md127 works
+
+* dont know ? dont care ?
+
+
 
 #############
 * xorg bumped security vuln (still cant libxcvt .a to make a static build last library ?)

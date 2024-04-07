@@ -87,8 +87,8 @@ src_configure() {
 --disable-run-gnupg-user-socket \
 --disable-build-timestamp \
 \
---with-agent-pgm=/bin/gpg-agent \
---with-pinentry-pgm=/bin/pinentry \
+--with-agent-pgm=/usr/bin/gpg-agent \
+--with-pinentry-pgm=/usr/bin/pinentry \
 --without-scdaemon-pgm \
 --without-tpm2daemon-pgm \
 --without-dirmngr-pgm \

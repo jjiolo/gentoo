@@ -41,7 +41,7 @@ setsid Xephyr \
 -extension 'RECORD' \
 -s 0 -auth /run/display/${display}.auth \
 -nolisten tcp -nolisten unix -listen local \
-+bs -tst -maxclients 64 \
++bs -tst -byteswappedclients -maxclients 64 \
 -resizeable -no-host-grab \
 :${display} </dev/null &>/dev/null & exit
 EOF

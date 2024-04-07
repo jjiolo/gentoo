@@ -31,7 +31,7 @@ src_configure() {
 --enable-libtool-lock \
 --disable-glibtest \
 --disable-w32-glib \
---enable-fixed-path=/bin \
+--enable-fixed-path=/usr/bin \
 --disable-reduce-relocations \
 --disable-no-direct-extern-access \
 --disable-languages \

@@ -73,15 +73,15 @@ chown 0:1 "usr/bin/sudo" ; chmod 4750 "usr/bin/sudo"
 #############
 
 
+
 # glibc/libcap
 # refuse to install to /usr
 # multiple programs hardcode /lib64/<glibc> ?
 
-#[ -d lib64 ] && mv lib64/* usr/lib64
-#[ -d lib64 ] && rmdir lib64
+# cant remove glibc hardcoded paths everywhere...
+#[ -d lib64 ] && mv lib64/* usr/lib64 ; [ -d lib64 ] && rmdir lib64
 
-#[ -d sbin ] && mv sbin/* usr/sbin
-#[ -d sbin ] && rmdir sbin
+[ -d sbin ] && mv sbin/* usr/sbin ; [ -d sbin ] && rmdir sbin
 
 # xorg - xkbcomp runs /bin/sh -c '<command>'
 install -d -o 0 -g 0 -m 0775 bin ; ln -sf /usr/bin/sh bin/sh
@@ -89,6 +89,7 @@ install -d -o 0 -g 0 -m 0775 bin ; ln -sf /usr/bin/sh bin/sh
 # /etc/terminfo/l/linux disapeared ?
 install -d -o 0 -g 0 -m 0775 etc/terminfo/l
 install    -o 0 -g 0 -m 0664 /usr/share/terminfo/l/linux etc/terminfo/l
+
 
 
 # create initramfs image

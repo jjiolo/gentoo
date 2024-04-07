@@ -59,7 +59,7 @@ DisableAllSwap            0
 #############
 RunAsDaemon               1
 ClientUseIPv4             1
-ClientUseIPv6             0
+ClientUseIPv6             1
 DisableDebuggerAttachment 1
 Sandbox                   1
 NoExec                    1
