@@ -1,0 +1,14 @@
+#!/usr/bin/sh
+#############
+usage(){ printf "%s\n" "takes interface - ${1}" ; exit 1 ; }
+#############
+[ "${USER}" == "root" ] || usage "requires root"
+[ "${#}" == "1" ] || usage "no input"
+[ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
+#############
+pkill -x /usr/sbin/zcip
+#############
+ip link set up "${1}"
+#############
+env -i /usr/sbin/zcip -vfq "${1}" /usr/bin/udhcpc_zcip
+#############

@@ -34,7 +34,7 @@ aes-gcm-siv < - shiny new new (added nonce reuse protection)
 #############
 
 #############
-no-http - might break ocsp ? (opensmtpd)
+no-http - breaks ocsp ? (opensmtpd)
 #############
 no-engines -
 no-static-engines -
@@ -85,6 +85,17 @@ locked configure options...
  enable-ecsda      - tor
  enable-scrypt     - python
  enable-http       - opensmtpd
+
+#############
+
+no-atexit - disable atexit because NonStop exists ?
+disable-atexit - for everything that existed before it ?
+
+no-unstable-qlog
+
+#############
+
+
 
 #############
 

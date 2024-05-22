@@ -5,7 +5,7 @@
 pgrep -x /usr/sbin/httpd &>/dev/null && exit
 #############
 sysctl -w net.ipv4.ip_unprivileged_port_start=0
-su -l -s /usr/bin/sh -c "setsid env -i /usr/sbin/httpd -p 80 -h '${service_storage}/webroot' -c '${service_storage}/config' </dev/null &>/dev/null & exit" httpd ; sleep 1
+setsid su -l -s /usr/bin/sh -c "env -i /usr/sbin/httpd -p 80 -h '${service_storage}/webroot' -c '${service_storage}/config' </dev/null &>/dev/null & exit" httpd ; sleep 1
 sysctl -w net.ipv4.ip_unprivileged_port_start=32768
 #############
 renice +5 -u "httpd"

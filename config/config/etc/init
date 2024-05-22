@@ -10,43 +10,39 @@ print(){
 
 }
 #############
-print system.mount ; . /etc/self/b.init/system.mount
-print system.tmp   ; . /etc/self/b.init/system.tmp  2>&1 | tee /dev/shm/log.tmp
-print system.dev   ; . /etc/self/b.init/system.dev  2>&1 | tee /dev/shm/log.dev
-print system.proc  ; . /etc/self/b.init/system.proc 2>&1 | tee /dev/shm/log.proc
-print system.sys   ; . /etc/self/b.init/system.sys  2>&1 | tee /dev/shm/log.sys
+print system.mount ; . /etc/scripts/b.init/system.mount
+print system.tmp   ; . /etc/scripts/b.init/system.tmp  2>&1 | tee /dev/shm/log.tmp
+print system.dev   ; . /etc/scripts/b.init/system.dev  2>&1 | tee /dev/shm/log.dev
+print system.proc  ; . /etc/scripts/b.init/system.proc 2>&1 | tee /dev/shm/log.proc
+print system.sys   ; . /etc/scripts/b.init/system.sys  2>&1 | tee /dev/shm/log.sys
 #############
-print system.log  ; . /etc/self/b.init/system.log  2>&1 | tee /dev/shm/log.log
-print system.lock ; . /etc/self/b.init/system.lock 2>&1 | tee /dev/shm/log.lock
+print system.log  ; . /etc/scripts/b.init/system.log  2>&1 | tee /dev/shm/log.log
+print system.lock ; . /etc/scripts/b.init/system.lock 2>&1 | tee /dev/shm/log.lock
 #############
 print sysctl ; sysctl -p /etc/sysctl.conf &>/dev/null
 #############
-[ "$(hostname)" == "server" ] && mdadm --manage --stop /dev/md126
-[ "$(hostname)" == "server" ] && mdadm --manage --stop /dev/md127
-[ "$(hostname)" == "server" ] && mdadm --assemble --no-degraded --scan
+print storage.fde ; grep -q -e desktop /proc/cmdline && /usr/bin/sh -l # timeout -s SIGTERM 3 sh -c 'read -p interupt && /usr/bin/sh -l'
+#############
+[ "$(hostname)" == "server" ] && mdadm -q --manage --stop /dev/md126
+[ "$(hostname)" == "server" ] && mdadm -q --manage --stop /dev/md127
+[ "$(hostname)" == "server" ] && mdadm -q --assemble --no-degraded --scan
 [ "$(hostname)" == "server" ] && ln -sf "$(findfs LABEL=bootfs 2>/dev/null || echo /dev/null)" /dev/bootfs
 [ "$(hostname)" == "server" ] && ln -sf "$(findfs LABEL=storage 2>/dev/null || echo /dev/null)" /dev/storage
 [ "$(hostname)" == "server" ] && ln -sf "$(findfs LABEL=shared 2>/dev/null || echo /dev/null)" /dev/shared
 #############
-print storage.fde ; grep -e desktop /proc/cmdline && /usr/bin/sh -l # timeout -s SIGTERM 3 sh -c 'read -p interupt && /usr/bin/sh -l'
+print storage.mount  ; . /etc/scripts/b.init/storage.mount  2>&1 | tee /dev/shm/log.mount
+print storage.setup  ; . /etc/scripts/b.init/storage.setup  2>&1 | tee /dev/shm/log.setup
+print storage.shared ; . /etc/scripts/b.init/storage.shared 2>&1 | tee /dev/shm/log.shared
 #############
-print storage.mount  ; . /etc/self/b.init/storage.mount  2>&1 | tee /dev/shm/log.mount
-print storage.setup  ; . /etc/self/b.init/storage.setup  2>&1 | tee /dev/shm/log.setup
-print storage.shared ; . /etc/self/b.init/storage.shared 2>&1 | tee /dev/shm/log.shared
+print system.network ; . /etc/scripts/b.init/system.network 2>&1 | tee /dev/shm/log.network
 #############
-print system.network ; . /etc/self/b.init/system.network 2>&1 | tee /dev/shm/log.network
+[ "$(hostname)" == "server" ] && . /etc/scripts/z.testing/b.server start
+[ "$(hostname)" == "server" ] && . /etc/scripts/z.testing/b.client start
 #############
-
-[ "$(hostname)" == "server" ] && . /etc/self/z.testing/b.server start
-[ "$(hostname)" == "server" ] && . /etc/self/z.testing/b.client start
-
-#############
-
 [ "$(hostname)" == "virtual" ] && { brctl delif lan eth0 ; brctl addif nat eth0 ; }
-[ "$(hostname)" == "virtual" ] && { echo yes | ash /etc/self/e.setpriv/setpriv_network_default nat virtual ; }
-[ "$(hostname)" == "virtual" ] && { echo yes | ash /etc/self/e.setpriv/setpriv_network_zcip nat ; }
-[ "$(hostname)" == "virtual" ] && { . /etc/self/z.testing/b.client start ; }
-
+[ "$(hostname)" == "virtual" ] && { echo yes | ash /etc/scripts/e.setpriv/setpriv_network_dhcpc nat virtual ; }
+[ "$(hostname)" == "virtual" ] && { echo yes | ash /etc/scrips/e.setpriv/setpriv_network_zcip nat ; }
+[ "$(hostname)" == "virtual" ] && { . /etc/scripts/z.testing/b.client start ; }
 #############
 [ -f "${storage}/.init" ] && . "${storage}/.init" ; clear
 #############

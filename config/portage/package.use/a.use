@@ -1,6 +1,6 @@
 
 app-accessibility/at-spi2-core -introspection
-app-arch/libarchive -bzip2 -e2fsprogs -iconv -lzma
+app-arch/libarchive -bzip2 -e2fsprogs -iconv -lzma -zstd
 app-arch/tar minimal
 app-arch/unzip -bzip2
 app-arch/xz-utils -extra-filters
@@ -22,7 +22,7 @@ dev-lang/perl -gdbm minimal
 dev-lang/python -ensurepip -gdbm -ncurses -readline -sqlite ssl
 dev-lang/tcl -threads
 dev-libs/atk -introspection
-dev-libs/elfutils -bzip2 -utils
+dev-libs/elfutils -bzip2 -lzma -utils -zstd
 dev-libs/expat -unicode
 dev-libs/glib -elf -mime
 dev-libs/gmp -asm -cpudetection -cxx
@@ -31,7 +31,7 @@ dev-libs/libffi exec-static-trampoline
 dev-libs/libgcrypt -asm -getentropy
 dev-libs/libnl -debug
 dev-libs/libpcre2 -bzip2 -pcre16 -pcre32 -readline -zlib unicode
-dev-libs/libxml2 -ftp -python -readline
+dev-libs/libxml2 -ftp -lzma -python -readline
 dev-libs/libxslt -crypt
 dev-libs/nettle -asm gmp
 dev-libs/nss -utils
@@ -45,6 +45,7 @@ dev-perl/YAML-Tiny minimal
 dev-perl/libintl-perl minimal
 dev-perl/libwww-perl -ssl
 dev-python/pydantic -native-extensions
+dev-python/urllib3 -zstd
 dev-build/cmake -ncurses
 dev-debug/strace static
 dev-vcs/git -blksha1 -gpg -iconv -pcre -perl -webdav
@@ -57,24 +58,25 @@ media-libs/libglvnd X
 media-libs/libplacebo -lcms -opengl -shaderc -vulkan -xxhash
 media-libs/mesa -gles2 -llvm -proprietary-codecs -zstd
 media-sound/alsa-utils -libsamplerate
-media-video/ffmpeg -bzip2 -dav1d -encode -gnutls -gpl -iconv -postproc -zlib X alsa network pic threads
+media-video/ffmpeg -bzip2 -dav1d -encode -gnutls -gpl -iconv -lmza -postproc -zlib X alsa network pic threads
 media-video/mpv -drm -egl -iconv -libmpv -libplacebo -lua -uchardet -xv -zlib
 net-analyzer/nmap -nse -ssl 
 net-analyzer/tcpdump -drop-root -samba -smi -ssl
 net-firewall/nftables -gmp -modern_kernel -readline
-net-libs/gnutls -cxx -idn -openssl -tls-heartbeat -zlib
+net-libs/gnutls -cxx -idn -openssl -tls-heartbeat -zlib -zstd
+net-libs/libpsl -idn
 net-libs/libssh2 -zlib
 net-misc/curl -adns -ftp -http2 -imap -pop3 -smtp -tftp ssl
 net-misc/iputils -arping -filecaps
 net-misc/openssh -pam -ssl
-net-misc/rsync -iconv -ssl
+net-misc/rsync -iconv -ssl -zstd
 net-misc/wget -pcre -zlib -gnutls
 net-vpn/tor -man -server
 net-vpn/wireguard-tools -wg-quick
 net-wireless/wpa_supplicant -crda -fils -hs2-0 -mbo -mesh -readline
 sys-apps/coreutils -openssl
 sys-apps/debianutils -installkernel
-sys-apps/file -bzip2 -zlib
+sys-apps/file -bzip2 -lzma -zlib -zstd
 sys-apps/gawk -readline
 sys-apps/gptfdisk -ncurses
 sys-apps/grep -egrep-fgrep -pcre
@@ -88,14 +90,14 @@ sys-apps/openrc -ncurses -netifrc -pam -unicode
 sys-apps/pciutils -kmod -udev -zlib
 sys-apps/portage -native-extensions -rsync-verify
 sys-apps/sandbox -nnp
-sys-apps/shadow -pam
+sys-apps/shadow -acl -nls -pam -xattr
 sys-apps/texinfo -standalone
 sys-apps/util-linux -cramfs -hardlink -logger -ncurses -pam -readline -su -suid caps
 sys-auth/pambase -nullok -passwdqc -sha512 minimal
 sys-boot/grub -fonts -themes nls
 sys-devel/bc -readline
-sys-devel/binutils -plugins
-sys-devel/gcc -fortran default-stack-clash-protection default-znow
+sys-devel/binutils -plugins -zstd
+sys-devel/gcc -fortran -openmp -zstd default-stack-clash-protection default-znow
 sys-devel/gdb -python -server
 sys-devel/gettext -cxx -ncurses -openmp
 sys-devel/llvm -libffi -ncurses

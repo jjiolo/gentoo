@@ -75,8 +75,7 @@ table inet filter {
 
   tcp dport {6667,22,25,80} skuid {ddns} ct state new log flags skuid prefix "output.lo.new " accept # tor hiddenservice
 
-  tcp dport {80} skuid {root} ct state new log flags skuid prefix "output.lo.new " accept # httpd
-
+  tcp dport {80} skuid {root,250} ct state new log flags skuid prefix "output.lo.new " accept # stage3
   udp dport {53} skuid {root,250} ct state new log flags skuid prefix "output.lo.new " accept # stage3
   tcp dport {443} skuid {root,250} ct state new log flags skuid prefix "output.lo.new " accept # stage3
 

@@ -1,0 +1,147 @@
+#!/bin/sh
+#############
+[ -d "/binhost/rootfs" ] && cd "/binhost/rootfs" || exit
+#############
+# [ dev ]
+rm -r dev
+# [ etc ]
+rm -r etc/bindresvport.blacklist
+rm -r etc/ca-certificates
+rm -r etc/ca-certificates.conf
+rm -r etc/conf.d
+rm -r etc/cron.weekly
+rm -r etc/csh.env
+rm -r etc/dbus-1
+rm -r etc/default
+rm -r etc/e2scrub.conf
+rm -r etc/env.d
+rm -r etc/environment.d
+rm -r etc/gai.conf
+rm -r etc/gtk-3.0
+rm -r etc/init.d
+rm -r etc/ld.so.cache
+rm -r etc/ld.so.conf
+rm -r etc/ld.so.conf.d
+rm -r etc/libinput
+rm -r etc/libnl
+rm -r etc/locale.gen
+rm -r etc/login.access
+rm -r etc/login.defs
+rm -r etc/machine-id
+rm -r etc/mdadm.conf
+rm -r etc/modprobe.d
+rm -r etc/mpv
+rm -r etc/netconfig
+rm -r etc/profile.env
+rm -r etc/rpc
+rm -r etc/sandbox.d
+rm -r etc/sasl2
+rm -r etc/ssl/misc
+rm -r etc/ssl/private
+rm -r etc/ssl/ct_log_list.cnf
+rm -r etc/ssl/ct_log_list.cnf.dist
+rm -r etc/ssl/openssl.cnf.dist
+rm -r etc/subgid
+rm -r etc/subuid
+rm -r etc/udev
+rm -r etc/wireless-regdb
+rm -r etc/X11
+rm -r etc/xdg
+# [ lib ]
+rm -r lib
+# [ proc ]
+rm -r proc
+# [ root ]
+rm -r root
+# [ run ]
+rm -r run
+# [ sys ]
+rm -r sys
+# [ tmp ]
+rm -r tmp
+# [ usr ]
+rm -r usr/include
+#
+rm -r usr/lib/systemd
+#
+rm -r usr/lib64/alsa-topology
+rm -r usr/lib64/audit
+rm -r usr/lib64/cairo
+rm -r usr/lib64/cmake
+rm -r usr/lib64/dbus-*
+rm -r usr/lib64/dri
+rm -r usr/lib64/e2fsprogs
+rm -r usr/lib64/engines-*
+rm -r usr/lib64/gdk-pixbuf-*
+rm -r usr/lib64/gconv
+rm -r usr/lib64/gio
+rm -r usr/lib64/glib-*
+rm -r usr/lib64/glibc-*
+rm -r usr/lib64/gnome-settings-daemon-*
+rm -r usr/lib64/gtk-*
+rm -r usr/lib64/libffi
+rm -r usr/lib64/misc
+rm -r usr/lib64/ossl-modules
+rm -r usr/lib64/pkgconfig
+rm -r usr/lib64/terminfo
+#
+rm -r usr/libexec/libinput
+rm -r usr/libexec/at-spi-bus-launcher
+rm -r usr/libexec/at-spi2-registryd
+rm -r usr/libexec/dbus-bash-completion-helper
+rm -r usr/libexec/dbus-daemon-launch-helper
+rm -r usr/libexec/gio-launch-desktop
+#
+rm -r usr/share/aclocal
+rm -r usr/share/applications
+rm -r usr/share/bash-completion
+rm -r usr/share/cmake
+rm -r usr/share/defaults
+rm -r usr/share/dbus-1
+rm -r usr/share/drirc.d
+rm -r usr/share/et
+rm -r usr/share/fc-lang
+rm -r usr/share/ffmpeg
+rm -r usr/share/gdb
+rm -r usr/share/gettext
+rm -r usr/share/glib-*
+rm -r usr/share/glib-*/gdb
+rm -r usr/share/glib-*/gettext
+rm -r usr/share/glib-*/valgrind
+rm -r usr/share/gtk-3.0
+rm -r usr/share/gtk-doc
+rm -r usr/share/i18n
+rm -r usr/share/icons
+rm -r usr/share/libgpg-error
+rm -r usr/share/libinput
+rm -r usr/share/locale
+rm -r usr/shared/metainfo
+rm -r usr/shared/mime
+rm -r usr/share/mimelnk
+rm -r usr/share/pixmaps
+rm -r usr/share/pkgconfig
+rm -r usr/share/portage
+rm -r usr/share/ss
+rm -r usr/share/tabset
+rm -r usr/share/terminfo
+rm -r usr/share/themes
+rm -r usr/share/thumbnailers
+rm -r usr/share/xml
+rm -r usr/share/xsessions
+rm -r usr/share/zsh
+# [ var ]
+rm -r var/cache
+#
+rm -r var/db/Makefile
+#
+rm -r var/lib/alsa
+rm -r var/lib/dbus
+rm -r var/lib/xkb
+#
+rm -r var/log
+#
+rm -r var/run
+#
+rm -r var/tmp
+#
+#############

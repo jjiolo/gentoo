@@ -76,7 +76,6 @@ table inet filter {
 
 
 
-
   udp dport {53} skuid {root,250} ct state new log flags skuid prefix "output.lan.new " accept # stage3
   tcp dport {443} skuid {root,250} ct state new log flags skuid prefix "output.lan.new " accept # stage3
 

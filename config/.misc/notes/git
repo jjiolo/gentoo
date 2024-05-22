@@ -2,16 +2,14 @@
 #############
 [git-http-backend]
 -------------
+/cgi-bin/project.git:toor:drowsapp # restart to secure new files
+/cgi-bin:root:password # applies to all new files
+^ does work
+-------------
 /cgi-bin:root:password
 /cgi-bin/project.git:toor:drowsapp
 ^ doesnt work
 -------------
-/cgi-bin/project.git:toor:drowsapp
-/cgi-bin:root:password
-^ does work
--------------
-/cgi-bin/new.cgi:root:password # restart to secure new files
-/cgi-bin:root:password # applies to all new files
 #############
 /tmp/storage/services/gitd/repo
 /tmp/storage/services/gitd/webroot
@@ -22,6 +20,8 @@
  [./configure --help] (ignores most options)
 
   vim Makefile - comments contain list of variables
+
+  diff git-A.B.C/Makefile git-X.Y.Z/Makefile
 
   cd git-A.B.C ; ./configure.sh > configure.sh
   cd git-X.Y.Z ; ./configure.sh > configure.sh
@@ -55,12 +55,13 @@
  httpd.conf - *.cgi:/bin/ash
 
  webroot/cgi-bin/project.git
-  GIT_PROJECT_ROOT=repo/project GIT_HTTP_EXPORT_ALL= \
-  exec /usr/libexec/git-core/git-http-backend
+ GIT_HTTP_EXPORT_ALL= \
+ GIT_PROJECT_ROOT=repo/project \
+ exec /usr/libexec/git-core/git-http-backend
 
  git init --bare --initial-branch project repo/project"
 
- git clone http://127.0.0.1/cgi-bin/project.git project
+ git clone http://username:password@127.0.0.1/cgi-bin/project.git project
  git pull
  git add . -A
  git commit -m message

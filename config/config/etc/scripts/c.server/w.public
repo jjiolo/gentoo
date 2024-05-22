@@ -1,0 +1,64 @@
+#!/usr/bin/sh
+#############
+usage(){ printf "\n${0} - ${1}\n\n takes interface and ssid\n\n" ; exit 1 ; }
+#############
+[ "${USER}" == "root" ] || usage "requires root"
+[ "${#}" == "2" ] || usage "no input"
+[ -d "/sys/class/net/${1}" ] || usage "interface does not exist"
+#############
+pkill -x /usr/sbin/wifi
+#############
+[ -f "${storage}/.net/address" ] && mv "${storage}/.net/address" "${storage}/.net/.address"
+[ -f "${storage}/.net/wifi" ] && mv "${storage}/.net/wifi" "${storage}/.net/.wifi"
+#############
+ip link set down "${1}"
+ip addr flush dev "${1}"
+random(){ hexdump -n6 -ve '1/1 "%02X:"' /dev/urandom | head -c17 ; }
+until ip link set dev "${1}" address "$(random)" ; do sleep .1 ; done
+install -o 5 -g 5 -m 0664 "/sys/class/net/${1}/address" "${storage}/.net/address"
+ip link set up "${1}"
+#############
+
+install -o 5 -g 5 -m 0600 "/dev/null" "${storage}/.net/entropy"
+install -o 5 -g 5 -m 0600 "/dev/null" "${storage}/.net/wifi"
+
+cat >> "${storage}/.net/wifi" << EOF
+
+mac_addr=0
+preassoc_mac_addr=0
+passive_scan=1
+network={
+
+
+ key_mgmt=NONE
+
+ ssid="${2}"
+ scan_ssid=0
+ ieee80211w=1
+ beacon_prot=1
+ ocv=1
+}
+
+EOF
+
+#############
+
+cd /
+
+caps="-all,+net_admin,+net_raw"
+
+/usr/bin/setsid /usr/bin/setpriv \
+ --reuid wifi \
+ --regid wifi \
+ --init-groups \
+ --nnp \
+ --reset-env \
+ --inh-caps "${caps}" \
+ --ambient-caps "${caps}" \
+ --bounding-set "${caps}" \
+ /usr/sbin/wifi -sBi "${1}" -c "${storage}/.net/wifi" -e "${storage}/.net/entropy" </dev/null &>/dev/null &
+
+renice +0 -u "wifi"
+
+#############
+

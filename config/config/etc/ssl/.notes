@@ -1,0 +1,7 @@
+
+#############
+openssl req -verify -text -noout -in file.csr
+#############
+opeenssl x509 -text -noout -in file.crt
+#############
+

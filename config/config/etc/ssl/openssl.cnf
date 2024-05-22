@@ -2,7 +2,7 @@
 #############
 [ req ]
 distinguished_name = req_distinguished_name
-string_mask        = utf8only
+string_mask        = default
 default_md         = sha512
 encrypt_key        = no
 #############
@@ -12,17 +12,29 @@ commonName_max   = 64
 emailAddress     = Email Address
 emailAddress_max = 64
 #############
+
+#############
 [ authority_extension ]
 subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid:always,issuer:always
 basicConstraints       = critical,CA:true,pathlen:0
 keyUsage               = critical,keyCertSign
 #############
+
+#############
+[ csr_extension ]
+subjectKeyIdentifier   = hash
+#authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints       = critical,CA:false
+keyUsage               = critical,keyAgreement,keyEncipherment
+subjectAltName         = IP:127.0.0.1, DNS:localhost
+#############
 [ certificate_extension ]
 subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid:always,issuer:always
 basicConstraints       = critical,CA:false
 keyUsage               = critical,keyAgreement,keyEncipherment
+subjectAltName         = IP:127.0.0.1, DNS:localhost
 #############
 [ certificate_policy ]
 countryName             = optional
@@ -31,6 +43,8 @@ organizationName        = optional
 organizationalUnitName  = optional
 commonName              = supplied
 emailAddress            = optional
+#############
+
 #############
 [ client ]
 certs          = ${ENV::HOME}/.ssl/.certs

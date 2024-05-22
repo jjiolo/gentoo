@@ -7,11 +7,9 @@ cd /root/repos || exit 1
 
 for i in \
 browser \
-communication \
 emulation \
 overlay \
 overflow \
-testing \
 xorg ; do
 
 printf "\n%s\n" "[${i}]"
@@ -21,7 +19,6 @@ find "${i}" -name '*.ebuild' -exec basename {} \; | while read ; do
 grep "${REPLY::-7}" /binhost/logs/build.onlydeps /binhost/logs/build.nodeps /binhost/logs/chroot.world |
 grep -q \
 -e ::browser \
--e ::communication \
 -e ::emulation \
 -e ::overflow \
 -e ::overlay \

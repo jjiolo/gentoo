@@ -77,3 +77,12 @@ panopticlick
 coveryourtracks.eff.org
 ^ browser fingerprinting
 #############
+audio jammer
+ultrasonic noise generator
+https://mynoise.net/NoiseMachines/audioJammerNoiseGenerator.php
+#############
+kyber - key encapsulation mechanism based on solving (learning with errors)
+dilithium - digital signature scheme (hardness of lattice problems over module lattices)
+falcon - cryptographic signature algorithm (short integer solution problem)
+sphincs+ - stateless hash based signature scheme
+#############

@@ -2,6 +2,28 @@
 #############
 dropped openssh for dropbear
 #############
+[dropbear]
+-------------
+authorized_keys <options> - doesnt build without DROPBEAR_SVR_PUBKEY_OPTIONS 1
+* DROPBEAR_SVR_PUBKEY_OPTIONS 0 - disabled
+^ error 'struct AuthState' has no member named 'pubkey_info'
+-------------
+* DROPBEAR_USER_ALGO_LIST 1 (-c -m flags) (didnt -c/m help only has chacha-poly?)
+* cant -R (delayed hostkey) (stores keys in ${shared} at boot?) (requires p2p group write)
+? doesnt match tors upstream rate limiting ?
+
+man dbclient.1
+* tried -o GatewayPorts
+- dbclient -o gatewayports=no -L 0.0.0.0:80:0.0.0.0:80 127.0.0.1 (didnt fail?)
+- dbclient -o gatewayports=no -R 0.0.0.0:80:0.0.0.0:80 127.0.0.1 (didnt fail?)
+^ dont get why client needs to ? up to the server ? (just dont enter it wrong?)
+-o Port specify a listening port ? its the client...
+
+test dbclient root@one,root@two,root@three ? (says it just works /shrug)
+
+-------------
+#############
+
 
 -------------
 [dropbear]

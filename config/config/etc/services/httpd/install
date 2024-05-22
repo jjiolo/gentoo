@@ -3,7 +3,14 @@
 . /etc/services/variables httpd
 #############
 [ -f "${service_storage}/error" ] || install -o 0 -g 80 -m 0640 "${service_system}/error" "${service_storage}/error"
+#############
 [ -f "${service_storage}/config" ] || install -o 0 -g 80 -m 0640 "${service_system}/config" "${service_storage}/config"
+username="$(tr -cd 'a-zA-Z'</dev/urandom|head -c13)"
+password="$(tr -cd 'a-zA-Z'</dev/urandom|head -c13)"
+sed -i "s/toor:drowssap/${username}:${password}/g" "${service_storage}/config"
+username="$(tr -cd 'a-zA-Z'</dev/urandom|head -c13)"
+password="$(tr -cd 'a-zA-Z'</dev/urandom|head -c13)"
+sed -i "s/root:password/${username}:${password}/g" "${service_storage}/config"
 #############
 [ -d "${service_storage}/webroot" ] || install -d -o 0 -g 80 -m 0750 "${service_storage}/webroot"
 [ -d "${service_storage}/webroot/css" ] || install -o 0 -g 0 -m 0640 "${service_system}/css" "${service_storage}/webroot/css"

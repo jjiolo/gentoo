@@ -1,0 +1,124 @@
+
+#############
+# | /tmp/storage/shared | .directory | [archive] | contacts | [downloads] | [torrents] |
+#############
+
+set +o noclobber
+
+# shared
+
+install -d -o 0 -g 0 -m 0775 "${shared}"
+
+#############
+
+# .directory
+
+install -d -o 0 -g 0 -m 0775 "${shared}/.directory"
+
+cd "${storage}" || exit
+
+find "shared/archive/music"  -type f -print0 2>/dev/null | sort > "${shared}/.directory/a.music"
+find "shared/archive/series" -type f -print0 2>/dev/null | sort > "${shared}/.directory/a.series"
+find "shared/archive/films"  -type f -print0 2>/dev/null | sort > "${shared}/.directory/a.films"
+find "shared/contacts"       -type f -print0 2>/dev/null | sort > "${shared}/.directory/contacts"
+find "shared/downloads"      -type f -print0 2>/dev/null | sort > "${shared}/.directory/downloads"
+find "shared/torrents"       -type f -print0 2>/dev/null | sort > "${shared}/.directory/torrents"
+
+cd -
+
+chown -R root:root "${shared}/.directory" &
+
+find "${shared}/.directory" -type d -exec chmod 0775 {} \; &
+find "${shared}/.directory" -type f -exec chmod 0664 {} \; &
+
+#############
+
+# archive
+
+install -d -o 0 -g 0 -m 0775 "${shared}/archive" "${shared}/archive/music" "${shared}/archive/series" "${shared}/archive/films"
+
+chown -R root:root "${shared}/archive" &
+
+find "${shared}/archive" -type d -exec chmod 0775 {} \; &
+find "${shared}/archive" -type f -exec chmod 0664 {} \; &
+
+#############
+
+# contacts
+
+install -d -o 0 -g 0 -m 0775 "${shared}/contacts" "${shared}/contacts/self"
+
+cd "${shared}/contacts/self" || exit
+
+gpg --homedir "${storage}/.gnupg" --export "$(hostname)" > "gnupg" 2>/dev/null
+
+dropbearkey -y -f "${storage}/.ssh/sshd" 2>/dev/null | grep "^ssh-ed25519" | cut -d' ' -f1,2 > "sshd"
+install -o 0 -g 0 -m 0664 "${storage}/.ssh/authorized_keys" "sshd.authorized"
+install -o 0 -g 0 -m 0664 "${storage}/.ssh/known_hosts" "sshd.known"
+
+for i in user nobody proxy jail irc ssh mail http p2p
+do
+ dropbearkey -y -f "${storage}/home/${i}/.ssh/ssh" 2>/dev/null | grep "^ssh-ed25519" | cut -d' ' -f1,2 > "${i}"
+ install -o 0 -g 0 -m 0664 "${storage}/home/${i}/.ssh/authorized_keys" "${i}.authorized"
+ install -o 0 -g 0 -m 0664 "${storage}/home/${i}/.ssh/known_hosts" "${i}.known"
+done
+
+wg pubkey < "${storage}/.vpn/wireguard" > "wireguard"
+
+printf "%s%s\n" "$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)" ".onion" > "public" # install -o 0 -g 0 -m 0664 "${services}/ddns/public/hostname" "public"
+
+cd -
+
+chown -R root:root "${shared}/contacts" &
+
+find "${shared}/contacts" -type d -exec chmod 0775 {} \; &
+find "${shared}/contacts" -type f -exec chmod 0664 {} \; &
+
+#############
+
+# downloads
+
+install -d -o 0 -g 0 -m 3775 "${shared}/downloads"
+
+chown -R p2pd:p2pd "${shared}/downloads" &
+
+find "${shared}/downloads" -type d -mindepth 1 -exec chmod 0755 {} \; &
+find "${shared}/downloads" -type f -exec chmod 0644 {} \; &
+
+#############
+
+# torrents
+
+install -d -o 0 -g 0 -m 3775 "${shared}/torrents"
+
+chown -R p2pd:p2pd "${shared}/torrents" &
+
+find "${shared}/torrents" -type d -mindepth 1 -exec chmod 0755 {} \; &
+find "${shared}/torrents" -type f -exec chmod 0644 {} \; &
+
+#############
+
+#############
+
+printf "%s\n" "#############"
+cat "${shared}/contacts/self/gnupg"
+printf "%s\n" "#############"
+cat "${shared}/contacts/self/public"
+printf "%s\n" "#############"
+cat "${shared}/contacts/self/wireguard"
+printf "%s\n" "#############"
+cat "${shared}/contacts/self/sshd" "${shared}/contacts/self/user" "${shared}/contacts/self/nobody" "${shared}/contacts/self/proxy" "${shared}/contacts/self/jail"
+printf "%s\n" "#############"
+wc -l "${shared}/.directory/contacts"
+wc -l "${shared}/.directory/downloads"
+wc -l "${shared}/.directory/torrents"
+printf "%s\n" "#############"
+wc -l "${shared}/.directory/a.music"
+wc -l "${shared}/.directory/a.series"
+wc -l "${shared}/.directory/a.films"
+printf "%s\n" "#############"
+
+#############
+
+set -o noclobber
+

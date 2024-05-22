@@ -1,21 +1,7 @@
 
-sys-apps/systemd-utils -kmod -tmpfiles -udev
-
-net-libs/libpsl -idn
+sys-apps/systemd-utils -kmod tmpfiles -udev
 
 #############
 
-sys-devel/gcc -zstd
-sys-devel/binutils -zstd
-sys-apps/file -lzma -zstd
-dev-libs/elfutils -lzma -zstd
-net-misc/rsync -zstd
-dev-libs/libxml2 -lzma
-net-libs/gnutls -zstd
-dev-python/urllib3 -zstd
-
-media-video/ffmpeg -lzma
-app-arch/libarchive -zstd
-
-#############
+dev-python/pillow -jpeg -zlib
 

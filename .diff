@@ -19,7 +19,15 @@
 cd /tmp/.diff/stage3 || exit
 #############
 
-for i in 0.binhost 1.rootfs 2.shell 3.umount backup qemu .diff
+for i in \
+0.binhost \
+1.rootfs \
+2.shell \
+3.umount \
+backup \
+qemu \
+.diff
+
 do
 
  diff ./$i /tmp/storage/stage3/$i
@@ -34,13 +42,13 @@ cd /tmp/.diff/stage3/config || exit
 
 for i in config kernels portage \
 repos/browser \
-repos/communication \
 repos/emulation \
-repos/overlay \
+repos/networking \
 repos/overflow \
-repos/testing \
+repos/overlay \
 repos/xorg \
 .misc
+
 do
 
  diff -r ./$i /tmp/storage/stage3/config/$i | less -S

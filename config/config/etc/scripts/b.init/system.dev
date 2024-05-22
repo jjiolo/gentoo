@@ -1,0 +1,77 @@
+
+#############
+for i in $(seq 10 63) ; do [ -c "/dev/tty${i}" ] && rm "/dev/tty${i}" ; done
+#############
+
+#############
+mdadm --assemble --scan --no-degraded &>/dev/null
+##############
+ln -sf "$(findfs LABEL=bootfs 2>/dev/null || echo /dev/null)" /dev/bootfs
+ln -sf "$(findfs LABEL=storage 2>/dev/null || echo /dev/null)" /dev/storage
+ln -sf "$(findfs LABEL=shared 2>/dev/null || echo /dev/null)" /dev/shared
+#############
+
+#############
+find "/dev" -mindepth 1 -exec chmod o-rwx {} \; &>/dev/null
+#############
+chmod 0666 "/dev/null"
+chmod 0666 "/dev/ptmx"
+chmod 0664 "/dev/random"
+chmod 0664 "/dev/urandom"
+chmod 0664 "/dev/zero"
+chmod 1777 "/dev/shm"
+#############
+[ -L "/dev/fd" ] || ln -sf /proc/self/fd /dev/fd
+#############
+[ -L "/dev/stdin"  ] || ln -sf /proc/self/fd/0 /dev/stdin
+[ -L "/dev/stdout" ] || ln -sf /proc/self/fd/1 /dev/stdout
+[ -L "/dev/stderr" ] || ln -sf /proc/self/fd/2 /dev/stderr
+#############
+
+printf "%s\n" "-------------"
+#############
+[ -d "/dev/snd" ] && printf "%s\n" "[audio: true]"
+[ -d "/dev/snd" ] || printf "%s\n" "[audio: false]"
+chown -R 0:7 "/dev/snd" &>/dev/null
+find "/dev/snd" -type d -exec chmod 0750 {} \; &>/dev/null
+find "/dev/snd" -type c -exec chmod 0660 {} \; &>/dev/null
+#############
+[ -e "/dev/video0" ] && printf "%s\n" "[video: true]"
+[ -e "/dev/video0" ] || printf "%s\n" "[video: false]"
+chown -R 0:9 /dev/video* &>/dev/null
+chmod -R 0660 /dev/video* &>/dev/null
+#############
+
+printf "%s\n" "-------------"
+#############
+[ -c "/dev/tty7" ] && printf "%s\n" "[desktop: true]"
+[ -c "/dev/tty7" ] || printf "%s\n" "[desktop: false]"
+chown 11:11 "/dev/tty7" &>/dev/null
+chmod -R 0660 "/dev/tty7" &>/dev/null
+#############
+[ -d "/dev/dri" ] && printf "%s\n" "[graphics: true]"
+[ -d "/dev/dri" ] || printf "%s\n" "[graphics: false]"
+chown -R 0:11 "/dev/dri" &>/dev/null
+find "/dev/dri" -type d -exec chmod 0750 {} \; &>/dev/null
+find "/dev/dri" -type c -exec chmod 0660 {} \; &>/dev/null
+#############
+[ -d "/dev/input" ] && printf "%s\n" "[input: true]"
+[ -d "/dev/input" ] || printf "%s\n" "[input: false]"
+chown -R 0:11 "/dev/input" &>/dev/null
+find "/dev/input" -type d -exec chmod 0750 {} \; &>/dev/null
+find "/dev/input" -type c -exec chmod 0660 {} \; &>/dev/null
+#############
+
+printf "%s\n" "-------------"
+#############
+[ -c "/dev/kvm" ] && printf "%s\n" "[kvm: true]"
+[ -c "/dev/kvm" ] || printf "%s\n" "[kvm: false]"
+chown -R 15:15 "/dev/kvm" &>/dev/null
+chmod -R 0660 "/dev/kvm" &>/dev/null
+#############
+chown -R 0:15 "/dev/net"
+find "/dev/net" -type d -exec chmod 0750 {} \;
+find "/dev/net" -type c -exec chmod 0660 {} \;
+#############
+printf "%s\n" "-------------"
+

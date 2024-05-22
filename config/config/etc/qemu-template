@@ -23,13 +23,6 @@ qemu-system-x86_64 ${defaults} ${cpu} ${mem} ${gpu} ${network} ${interface} ${ke
 #############
 chown user:user /dev/shm/qemu
 #############
-
-#############
-#usb="-device qemu-xhci"
-#usb="${usb} -usb -device usb-host,vendorid=0x1b1c,productid=0x0a4a" # usb audio wifi
-#usb="${usb} -usb -device usb-host,vendorid=0x1b1c,productid=0x0a41" # usb audio cable
-#usb="${usb} -usb -device usb-host,vendorid=0x1b1c,productid=0x0a3b" # usb soundcard
-#usb="${usb} -usb -device usb-host,vendorid=0x04f2,productid=0xb681" # usb webcam (laptop)
-#usb="${usb} -usb -device usb-host,vendorid=0x148f,productid=0x5372" # usb wifi (laptop)
+#usb="-usb -device qemu-xhci usb-host,vendorid=0x1234,productid=0x1234"
 #############
 

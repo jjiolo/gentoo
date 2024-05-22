@@ -1,0 +1,8 @@
+#!/usr/bin/sh
+#############
+[ "${1}" == "config" ] || return 0
+#############
+[ -z "${interface}" ] || [ -z "${ip}" ] && return 0
+#############
+ip addr add "${ip}/16" broadcast "169.254.255.255" dev "${interface}" scope link
+#############

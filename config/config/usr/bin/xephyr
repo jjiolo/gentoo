@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 debug(){ printf "%s\n" "debug - ${1}" ; exit 1 ; }
 #############
@@ -25,9 +25,8 @@ chown desktop:window /run/display/0.auth ; chmod 0640 /run/display/0.auth
 
 #############
 
-su -l -s /usr/bin/sh window << EOF
-DISPLAY=:0 XAUTHORITY=/run/display/0.auth \
-setsid Xephyr \
+setsid su -l -s /usr/bin/sh window << EOF
+DISPLAY=:0 XAUTHORITY=/run/display/0.auth Xephyr \
 -extension 'Generic Event Extension' \
 -extension 'MIT-SHM' \
 -extension 'XTEST' \
@@ -60,7 +59,7 @@ chown desktop:"${original}" /run/display/0.auth ; chmod 0640 /run/display/0.auth
 
 #############
 
-su -l -s /usr/bin/sh -c "DISPLAY=:${display} XAUTHORITY=/run/display/${display}.auth setsid dwm-guest </dev/null &>/dev/null & exit" "${user}"
+setsid su -l -s /usr/bin/sh -c "DISPLAY=:${display} XAUTHORITY=/run/display/${display}.auth dwm-guest </dev/null &>/dev/null & exit" "${user}"
 
 #############
 

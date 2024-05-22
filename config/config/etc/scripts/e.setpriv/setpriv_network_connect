@@ -1,0 +1,48 @@
+#!/usr/bin/sh
+#############
+usage(){ printf "%s\n" "set pre existing config - ${1}" ; exit 1 ; }
+#############
+[ "${USER}" == "root" ] || usage "requires root"
+[ "${#}" == "0" ] || usage "no input"
+[ -f "${storage}/.net/address" ] || usage "address does not exist"
+[ -f "${storage}/.net/dhcpc" ] || usage "dhcpc does not exist"
+#############
+read mac < "${storage}/.net/address"
+#############
+. "${storage}/.net/dhcpc"
+############n
+[ -z "${mac}" ] || 
+[ -z "${ip}" ] || 
+[ -z "${mask}" ] || 
+[ -z "${router}" ] || 
+[ -z "${interface}" ] &&
+usage "missing variables"
+#############
+[ -d "/sys/class/net/${interface}" ] || usage "interface does not exist"
+#############
+
+#############
+ip link set down dev "${interface}"
+ip addr flush dev "${interface}"
+ip link set dev "${interface}" address "${mac}"
+ip link set up "${interface}"
+#############
+sysctl -w "net.ipv6.conf.${interface}.autoconf=1"
+sysctl -w "net.ipv6.conf.${interface}.accept_ra=2"
+#############
+[ -z "${broadcast}" ] && ip addr add "${ip}/${mask}" dev "${interface}"
+[ -z "${broadcast}" ] || ip addr add "${ip}/${mask}" broadcast "${broadcast}" dev "${interface}"
+[ -z "${router}" ] || ip route del default
+[ -z "${router}" ] || ip route add default via "${router}" dev "${interface}" scope global metric 0
+#############
+[ -z "${opt96}" ] || ip addr add "${opt96}::${ip//./:}/64" dev "${interface}"
+[ -z "${opt96}" ] || ip -6 route del default
+[ -z "${opt96}" ] || ip -6 route add default via "${opt96}::${router//./:}" dev "${interface}" scope global metric 0
+#############
+[ -z "${dns}" ] || ln -sf /run/resolv.conf /etc/resolv.conf
+[ -z "${dns}" ] || install -o 0 -g 0 -m 0664 /dev/null /run/resolv.conf
+[ -z "${dns}" ] || printf "%s\n" "search localdomain" >> /run/resolv.conf
+[ -z "${dns}" ] || printf "%s\n" "options edns0" >> /run/resolv.conf # no-aaaa
+[ -z "${dns}" ] || for i in ${dns} ; do printf "%s\n" "nameserver ${i}" >> /run/resolv.conf ; done
+#############
+

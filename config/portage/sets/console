@@ -2,7 +2,6 @@
 app-crypt/argon2
 app-crypt/cryptsetup
 app-crypt/gnupg
-app-crypt/gpgme
 app-crypt/pinentry
 app-editors/vim
 app-emulation/qemu
@@ -18,9 +17,7 @@ dev-libs/libnl
 dev-libs/npth
 dev-libs/openssl
 dev-vcs/git
-mail-mta/opensmtpd
 net-firewall/nftables
-net-irc/ngircd
 net-libs/libmnl
 net-libs/libnftnl
 net-misc/curl
@@ -36,12 +33,10 @@ sys-apps/busybox-suid
 sys-fs/dosfstools
 sys-fs/e2fsprogs
 sys-fs/mdadm
-sys-fs/quota
 sys-libs/glibc
 sys-libs/libcap
 sys-libs/libseccomp
 sys-libs/libxcrypt
 sys-libs/ncurses
 sys-libs/zlib
-sys-process/audit
 sys-process/procps

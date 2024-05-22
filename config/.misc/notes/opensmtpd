@@ -1,11 +1,74 @@
 
 #############
 
+tldr
+
+only taking port 25 input
+check rcpt to:
+deliver to maildir or mbox format
+
+^ single uid:gid not root
+  writing to $services/maild/
+  dovecot pop3/imap access to $services/maild/
+
+ not exactly using alot of its code base
+ and no real reason it should be running as root
+
+
+
+#############
+
+alternative configuration ?
+
+runs as maild: -> writes to mail:
+
+action "my_action"
+ maildir "~/Maildir"
+  user "mail"
+^ uid when performing delivery
+  /tmp/storage/home/mail/.forward
+  list of expansion values
+  as described in aliases(5)
+  differs - no file inclusion
+  differs - performs expansion under the file owner uid
+
+aliases - nsswitch.conf ? /etc/aliases ? glibc
+
+key: value0, value1, value2
+user - /etc/passwd ?
+/path/to/file - append message to file no mbox or maildir format?
+|command - runs as maild ?
+:include:/path/to/file - .forward doesnt support include
+user@domain - erm ?
+error:code message - 4XX tempfail 5XX permfail
+
+^ sending mail bounce warn ?
+
+server is deliver only
+
+client is roaming
+ddns update via curl
+txt spf,dkim,dmarc
+
+^ 
+
+* listen on 0.0.0.0 port 25 no-dsn
+^ would stop attempts to send mail replies ?
+^^ roaming curl ddns with txt records
+
+ dynamic A AAAA TXT spf/dkim/dmarc
+ static MX record
+
+#############
+
  [mandoc smtpd.conf.5]
 
- action local maildir /tmp/storage/home/smtp/inbox userbase <vuserbase> virtual <vusers>
+ action local
+ maildir /tmp/storage/home/smtp/inbox
+ userbase <vuserbase>
+ virtual <vusers>
 
- ^ listen with listed virtual users (all smtp:465:465 clones)
+ ^ listen with listed virtual users (all mail:465:465 clones)
 
  action "relay" relay
 

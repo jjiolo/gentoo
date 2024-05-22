@@ -2,7 +2,7 @@
 static char *font = "Liberation Mono:pixelsize=21:antialias=true:autohint=true";
 static int borderpx = 2;
 /*************/
-static char *shell = "/bin/sh";
+static char *shell = "/usr/bin/sh";
 char *utmp = NULL;
 char *scroll = NULL;
 char *stty_args = "stty raw pass8 nl -echo -iexten -cstopb 38400";

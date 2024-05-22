@@ -1,0 +1,48 @@
+
+#############
+usage(){
+
+ printf "%s\n" "takes block and/or trigger formatting - ${1}"
+
+ mountpoint -q "${local}" && umount "${local}"
+ [ -b "/dev/mapper/storage.integrity" ] && integritysetup close storage.integrity
+ [ -b "/dev/mapper/storage.crypt" ] && cryptsetup close storage.crypt
+
+ exit 1
+
+}
+#############
+[ "${#}" == "1" ] || [ "${#}" == "2" ] || usage "no input"
+[ -b "${1}" ] || usage "input does not exist"
+[ -b "/dev/mapper/wipe" ] && usage "wipe already exists"
+[ -b "/dev/mapper/storage.integrity" ] && usage "storage.integrity already exists"
+[ -b "/dev/mapper/storage.crypt" ] && usage "storage.crypt already exists"
+mountpoint -q "${local}" && usage "mount already in use"
+#############
+
+[ "${#}" == "2" ] && {
+
+ lsblk ; read -rp "about to nuke ${1}"
+
+ cryptsetup open --key-file /dev/urandom --type plain "${1}" wipe
+ dd if=/dev/zero of=/dev/mapper/wipe bs=4096 conv=fsync
+ cryptsetup close wipe
+
+}
+
+#############
+read -rsp 'passphrase > ' passphrase ; echo
+uuid="$(hexdump -n32 -ve '1/1 "%02x"' "${1}")"
+threads="$(grep -c MHz /proc/cpuinfo)"
+#############
+printf "%s" "${passphrase}" | argon2 "${uuid}" -id -t 3 -m 12 -p "${threads}" -r |
+cryptsetup --key-file - --hash sha256 --cipher aes-cbc-essiv:sha256 --key-size 256 --offset 1 open --type plain "${1}" "storage.crypt" || usage "cryptsetup failed"
+############# # create
+[ "${#}" == "2" ] && { integritysetup format --integrity sha256 "/dev/mapper/storage.crypt" || usage "integritysetup failed" ; }
+[ "${#}" == "2" ] && { integritysetup open --integrity sha256 "/dev/mapper/storage.crypt" "storage.integrity" || usage "integritysetup failed" ; }
+[ "${#}" == "2" ] && { mkfs.ext4 -m 0 -L storage "/dev/mapper/storage.integrity" || usage "mkfs failed" ; }
+############# # restore
+[ "${#}" == "1" ] && { integritysetup open --integrity sha256 "/dev/mapper/storage.crypt" "storage.integrity" || usage "integritysetup failed" ; }
+[ "${#}" == "1" ] && { fsck.ext4 -pvf "/dev/mapper/storage.integrity" ; fsck.ext4 -pv "/dev/mapper/storage.integrity" ; }
+#############
+

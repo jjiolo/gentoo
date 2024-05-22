@@ -1,0 +1,7 @@
+
+#############
+#PATH="/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin:${PATH}"
+ CFLAGS="-I/opt/usr/include"
+ CFLAGS="-L/opt/usr/lib64"
+#############
+

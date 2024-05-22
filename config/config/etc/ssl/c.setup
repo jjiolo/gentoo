@@ -2,39 +2,40 @@
 #############
 usage(){ printf "%s\n" "creates default client/server root authority - ${1}" ; exit 1 ; }
 #############
-install -d -o "${USER}" -m 0700 "${HOME}/.ssl" && cd "${HOME}/.ssl" || usage "home failed"
+[ -d "${HOME}/.ssl" ] && rm -rf "${HOME}/.ssl"
+#############
+install -d -o "${USER}" -g "${USER}" -m 0700 "${HOME}/.ssl"
+#############
+cd "${HOME}/.ssl" || usage "home failed"
 #############
 
-#############
-[ -f .rand ] && rm .rand
-#############
-[ -d .certs    ] && rm -r .certs
-[ -f .serial   ] && rm    .serial*
-[ -f .database ] && rm    .database*
-#############
-[ -f client.pem  ] && rm client.*
-[ -f server.pem  ] && rm server.*
-[ -f token.pem   ] && rm token.*
-[ -f service.pem ] && rm service.*
-#############
-[ -f dhparam ] && rm dhparam
-#############
-
-#############
-openssl rand -out .rand 256
 #############
 mkdir .certs
 touch .database
 echo 1234 > .serial
 #############
-openssl genpkey -algorithm ed25519 -out server.pem
-openssl req -new -x509 -config /etc/ssl/openssl.cnf -extensions authority_extension -days 365 -sha512 -key server.pem -out server.crt -subj "/CN=server"
-openssl pkey -pubout -in server.pem -out server.pub
+openssl rand -out .rand 256
 #############
-openssl genpkey -algorithm ed25519 -out client.pem
-openssl req -new -x509 -config /etc/ssl/openssl.cnf -extensions authority_extension -days 365 -sha512 -key client.pem -out client.crt -subj "/CN=client"
-openssl pkey -pubout -in client.pem -out client.pub
+openssl dhparam -out dhparam 2048
 #############
-openssl dhparam -out dhparam 1024
+
+openssl genpkey -algorithm ed25519 -out server.pem -outpubkey server.pub
+
+openssl req -new -x509 -noenc \
+ -config /etc/ssl/openssl.cnf \
+ -extensions authority_extension \
+ -key server.pem -out server.crt \
+ -sha512 -days 365 -subj "/CN=server"
+
+#############
+
+openssl genpkey -algorithm ed25519 -out client.pem -outpubkey client.pub
+
+openssl req -new -x509 -noenc \
+ -config /etc/ssl/openssl.cnf \
+ -extensions authority_extension \
+ -key client.pem -out client.crt \
+ -sha512 -days 365 -subj "/CN=client"
+
 #############
 

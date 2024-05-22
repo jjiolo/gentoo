@@ -51,8 +51,8 @@ chroot . locale-gen
 
 ln -sf "/root/config/etc/profile" "etc/profile"
 
-[ -d "etc/self" ] && rm -rf "etc/self"
-ln -sf "/root/config/etc/self" "etc/self"
+[ -d "etc/scripts" ] && rm -rf "etc/scripts"
+ln -sf "/root/config/etc/scripts" "etc/scripts"
 
 [ -d "etc/portage" ] && rm -rf "etc/portage"
 ln -sf "/root/portage" "etc/portage"
@@ -80,6 +80,10 @@ find . -perm -1000 -exec chmod -t {} \;
 [ -d "mnt"   ] && rm -rf "mnt"
 [ -d "opt"   ] && rm -rf "opt"
 [ -d "run"   ] && rm -rf "run"
+
+[ -d "usr/local" ] && rmdir usr/local/*
+[ -d "usr/local" ] && rmdir usr/local
+[ -d "var/spool" ] && rmdir var/spool
 
 #############
 

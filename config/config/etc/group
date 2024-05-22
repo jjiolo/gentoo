@@ -20,7 +20,6 @@ ntpd:x:123:
 ircd:x:6667:
 sshd:x:22:
 maild:x:25:
-mailq:x:2525:
 httpd:x:80:
 p2pd:x:9091:nobody
 

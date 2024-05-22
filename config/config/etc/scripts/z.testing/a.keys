@@ -1,0 +1,14 @@
+
+############# host
+rm -r "${storage}/.gnupg"
+rm -r "${storage}/.ssh"
+rm -r "${storage}/.vpn"
+rm -r "${storage}/.wifi"
+############# home
+for i in user nobody proxy jail irc ssh mail http p2p ; do rm -r "${home}/${i}/.gnupg" "${home}/${i}/.ssh" ; done
+############# services
+rm -r "${services}/ddns"
+############# shared
+rm -r "${shared}/contacts/self"
+#############
+

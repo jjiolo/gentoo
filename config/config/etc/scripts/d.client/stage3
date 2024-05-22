@@ -1,0 +1,31 @@
+#!/usr/bin/sh
+#############
+
+[ -f "${mount}/stage3" ] || {
+
+ qemu-img create -f raw "${mount}/stage3" 47G
+
+ mkfs.ext4 -m 0 -L "stage3" "${mount}/stage3"
+
+}
+
+#############
+
+ mountpoint -q "/tmp/storage/stage3" && exit 0
+
+#############
+
+ losetup "/dev/loop0" "${mount}/stage3" 
+
+ fsck.ext4 -pvf "/dev/loop0"
+
+ install -d -o 0 -g 0 -m 0700 "${stage3}"
+
+ mount -t ext4 -o rw,dev,nosuid,exec,noatime "/dev/loop0" "${stage3}"
+
+ install -d -o 0 -g 0 -m 0700 "${stage3}"
+
+ rmdir "${stage3}/lost+found"
+
+#############
+

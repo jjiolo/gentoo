@@ -1,0 +1,15 @@
+
+#############
+
+chown -R 0:11 /proc/meminfo /proc/stat # xorg
+
+#############
+
+find /proc -type d -mindepth 1 -exec chmod 0550 {} \; 2>/dev/null
+find /proc -type f -mindepth 1 -exec chmod 0440 {} \; 2>/dev/null
+
+find /proc/self/net -type d -mindepth 1 -exec chmod 0550 {} \; 2>/dev/null
+find /proc/self/net -type f -mindepth 1 -exec chmod 0440 {} \; 2>/dev/null
+
+#############
+

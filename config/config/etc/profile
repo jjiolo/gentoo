@@ -15,10 +15,10 @@ export stage3="${storage}/stage3"
 #############
 export ENV="/etc/profile"
 export LANG="en_GB.UTF-8"
-export PATH="/usr/bin:/usr/sbin:/etc/self/z.testing"
-export PATH="${PATH}:/etc/self/a.chroot:/etc/self/b.init"
-export PATH="${PATH}:/etc/self/c.server:/etc/self/d.client"
-export PATH="${PATH}:/etc/self/e.setpriv:/etc/self/f.sets"
+export PATH="/usr/bin:/usr/sbin:/etc/scripts/z.testing"
+export PATH="${PATH}:/etc/scripts/a.chroot:/etc/scripts/b.init"
+export PATH="${PATH}:/etc/scripts/c.server:/etc/scripts/d.client"
+export PATH="${PATH}:/etc/scripts/e.setpriv:/etc/scripts/f.sets"
 export EDITOR="vim" PAGER="less" LESSHISTFILE="/dev/null"
 #############
 export TMPDIR="/dev/shm"
@@ -104,7 +104,6 @@ renice -5 -u ntpd  2>/dev/null
 renice +5 -u ircd  2>/dev/null
 renice +5 -u sshd  2>/dev/null
 renice +5 -u maild 2>/dev/null
-renice +5 -u mailq 2>/dev/null
 renice +5 -u httpd 2>/dev/null
 renice +5 -u p2pd  2>/dev/null
 
@@ -128,7 +127,8 @@ renice +5 -u ddns  2>/dev/null
  alias ..='cd ..'
 
  alias ps='/usr/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pri,ni,tty,comm --pid 2 --ppid 2 -N' # pmem,etime
- alias psw='watch -t /usr/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pri,ni,tty,comm --pid 2 --ppid 2 -N' # pmem,etime
+ alias psw='while sleep 1 ; do clear ; /usr/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pri,ni,tty,comm --pid 2 --ppid 2 -N ; done' # pmem,etime
+#alias psw='watch -t /usr/bin/ps fo sid,pid,ppid,uid,gid,pcpu,pri,ni,tty,comm --pid 2 --ppid 2 -N' # pmem,etime
 
  alias log='tail -F /run/logs/syslog'
  alias ffs='tail -F /run/logs/syslog|grep -v "^................kernel:"'
@@ -139,10 +139,11 @@ renice +5 -u ddns  2>/dev/null
  alias suid='find / -xdev -perm -4000 -exec ls -lah {} \;|less'
  alias guid='find / -xdev -perm -2000 -exec ls -lah {} \;|less'
  alias caps='find / -xdev -type f -exec getcap {} 2>/dev/null \;'
- alias libs='find ${PATH//:/ } /lib /lib64 /usr/lib /usr/lib64 -xdev -type f -exec sh /usr/bin/ldd {} 2>/dev/null \; | grep -i "not found" | sort -u'
+ alias libs='find /usr/bin /usr/sbin /usr/lib /usr/lib64 -xdev -type f -exec sh /usr/bin/ldd {} 2>/dev/null \; | grep -i "not found" | sort -u'
 
  alias t='transmission-remote --unix-socket ${services}/p2pd/.config/socket'
- alias tt='watch -tn3 transmission-remote --unix-socket ${services}/p2pd/.config/socket -l'
+ alias tt='while sleep 1 ; do clear ; transmission-remote --unix-socket ${services}/p2pd/.config/socket -l ; done'
+#alias tt='watch -tn3 transmission-remote --unix-socket ${services}/p2pd/.config/socket -l'
  alias ttt='for i in ${HOME}/downloads/*.torrent ; do transmission-remote --unix-socket ${services}/p2pd/.config/socket -a "${i}" ; done'
 
  alias torsocks="export LD_PRELOAD='/usr/lib64/libtorsocks.so'"

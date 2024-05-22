@@ -4,7 +4,7 @@ printf "%s\n" "#############"
 printf "%s\n" "# [executing /usr/sbin/init]"
 printf "%s\n" "#############"
 #############
-rm /init ; sleep 3
+rm /init ; rmdir /root ; sleep 3
 #############
 exec /usr/sbin/init
 #############

@@ -45,18 +45,14 @@ same game different medium
 [REBUILD]
 #############
 -------------
- lastest - 0000:00:00 00:00:00 pfft?
+ lastest - 0000:00:00 00:00:00
 -------------
-  Broke all of it... (currently debugging and patching)
 * manually - emerge -v1 gcc (before running first.run)
-^ waiting for the next stage3 release...
-^ either that or cet flag changes
-
-above works havent synced in a while
+^ stage3 wont build without rebuilding gcc first
 -------------
- broken - * linux-6.1 - kernels/.z.server (6.2 broke CONFIG_DRM_AST)
-          ^ X0-log - ShadowFB: preferred NO, enabled NO (something about no/modesetting)
- broken - * app-alternatives - FEATURES='-collision-protect' (remove after its in stage3)
+ broken - app-alternatives + FEATURES='-collision-protect' (remove after its in stage3)
+ broken - linux-6.1 - 6.2 broke CONFIG_DRM_AST
+        ^ X0.log - ShadowFB: preferred NO, enabled NO (something about no/modesetting)
 -------------
 #############
 
@@ -77,6 +73,7 @@ above works havent synced in a while
 * file(mv *match* ffs) directory(mv *match*/* /tmp/why; rmdir *match*;)
 * opening httpd pages is bad mode (no sanitization)
 * raw pasting into st/vim is bad mode...
+* pod2man|mandoc|less -S (fucking openssl)
 #############
 
 [TODO]
@@ -116,8 +113,6 @@ above works havent synced in a while
  to much half arsed shit compounding over time
  proof reads are harder than doing partial updates properly
 
- -------------
-
  [updating]
 
  full scope it once,
@@ -128,23 +123,16 @@ above works havent synced in a while
  ./sysctl -a > sysctl.sh
  1 hour upfront , 5 minutes each bump
 
- -------------
-
  [reduce]
 
-  ./z.package <package>
   ./z.contents <package>
-  ./z.library <libpackage>
+  ./z.library <package>
+  ./z.package <package>
+
  * contents pull library names
  * check the package is in DEPENDS
  * check the library is used in REQUIRES
  * dependencies that dont link to anything eg x11-misc/compose-tables
-
- * /binhost/rootfs/{bin,sbin,usr/bin,usr/sbin}/* --help > old/<command>.help
- * /binhost/rootfs/{bin,sbin,usr/bin,usr/sbin}/* --help > new/<command>.help
- ^ quickest way to list any binary changes from updates ?
-
- -------------
 
  [distfiles]
 
@@ -167,315 +155,341 @@ v attempt to create lists of things to actually do
 #############
 #############
 
-#############
-setpriv_udhcpd < - ignores first sleep ?
-#############
+couldnt finish gcc intime...
 
-busybox_init and embed scripts setup ?
-^ setup/mount/chroot wrapper ?
+^ going to play with glibc next
+  and attempt at chroot for 'slotting'
 
 #############
 
-portage broke ? maybe blargh to much shit check...
+gtk+ ebuild...
 
-emerge busybox installed /usr/bin/ps symlink
-emerge procps db/pkg/sys-process/procps/CONTENTS /usr/bin/ps ?
- ^ but installed something should have file collisioned
- * manually fixed it ? then it broke and overwrote procps
+gcc
+-fcf-protection=full,branch,return,none,check
+--enable-host-pie --enable-host-bind-now (-Wl,-z,now)
+-fhardened --help=hardened
+-fharden-control-flow-redundency
 
 #############
 
-meson
--Db_asneeded - -Wl,--as-needed
--Db_lundef   - -Wl,--no-undefined
--Db_ndebug   - disable asserts
+[slots]
 
-[UPTO]
+tldr; want to play with things that break @system
 
-* manually built...
-  doesnt work fully yet
-  gradually updating everything
-  (glibc /lib64 - last path to remove)
+SLOT=9999
+src_install(){
+ default
+ install -d -o 0 -g 0 -m 0755 "${D}/opt"
+ mv "${D}/usr" "${D}/opt"
+}
 
-      read config/portage
-      read config/kernels
-      read config/config (most of it)
-proof read config/etc/services
-proof read config/etc/self
-proof read config/repos/
+^ create a secondary rootfs
 
-! busybox_init ?
+-------------
+portage/package.env - app-misc/mtm slot
+portage/env/slot - CFLAGS="-I /opt/include -L /opt/lib64" # PATH="/opt:${PATH}"
+-------------
+CFLAGS="-I /opt/include -L /opt/lib64" emerge -av app-misc/mtm # build.root
+-------------
+build.initramfs - mv opt/* / ; rmdir opt # initramfs image
+-------------
+LDFLAGS="-Wl,-rpath,/opt/lib64" # dev in stage3
+-------------
 
+^ need two packages to test theory
+
+  ncurses abstract of host
+  glibc abstract of host
+  into external filesystem
+
+  build.rootfs point to external filesystem
+
+  build.initramfs move external filesystem to root
+
+-------------
+
+ or real gentoo install...
+
+ SLOT into /opt/<slot>/
+ LDFLAGS into -rpath /opt/<slot>
+
+ package.env || CFLAGS="" emerge
+
+ fakechroot esc multi library installs
+
+-------------
+
+my problems
+
+ build.initramfs - mv /opt / (leaves orphaned files)
+
+#############
+project.git
+project.cgi
+^ make it mimic perl.cgi output
+  last 9 commits + -m 'message'
+#############
+
+openssl csr - sign the issuer fingerprint
+              issuer signs the clients request
+            ^ lock who the provider is into the csr request
+              locks who the provider is into the crt itself
+
+netcat udp tunnel
+ requester hosts server -psk_hint or -psk (preshared over irc)
+ requestee makes client request ?
+^ probably wrong given need to udp and exchange both ports ?
+  heres my eye pee and port, send me your ip...
+  ^ hole punch starts
+  either end ? (full scope later)
+
+# client
+* general
+* network
+* identity
+* session
+* input/output
+* debug
+* protocol and version
+* random state
+* tls/ssl
+* validation
+* extended certificate
+* provider
+
+# server
+* general
+* network
+* identity
+* ocsp
+* debug
+* network
+* server identity
+* protocol and version
+* random state
+* tls/ssl
+* validation
+* extended certificate
+* provider
+
+############a
+* USB_DEFAULT_AUTHORIZATION_MODE
+^ echo 0 > /sys/bus/usb/devices/<device>/authorized
+^ echo 1 > /sys/bus/usb/devices/<device>/authorized
+- system.dev ?
+- for i in /sys/bus/usb/devices/* ; do echo 1 >> ${i} ; done
+^ attempt to mimic grsec enable usb on boot then lock ?
+############a
+shrinking again
+ircd - never used
+smtpd - never used
+quota - never used
+auditd - never used
+#############
+
+$storage/
+ .gnupg
+ .net
+ .ssh
+ .vpn
+
+^ system.network
+^ w.{ap,connect,private,public,scan}
+  network_{connect,dhcpc,ping,zcip}
+
+#############
+EXTRA_ECONF=--enable-option-checking
+^ dev-lang/perl failed unknown option
+  everything else worked
+#############
+* w.scan - setsid setpriv iw dev | while read -r ; do
+* w.scan - iw doesnt send packets ? (dont randomize mac)
+#############
+* meson: buildtype= || optimization= && debug=
+^ drop debug from all the meson ebuilds (lundef ndebug)
+#############
+-------------
+ [glibc]
+-------------
+* tl;dr tordns breaks (regardless of cachedns usednscache)
+* changing interface used for getaddrinfo makes it work again
+-------------
+* resolv/resolv.h #define _PATH_RESCONF "/run/derp"
+* resolv/arpa/nameser.h #define NS_DEFAULTPORT
+-------------
+* still installs libs to /lib64
+-------------
+^ custom ebuild breaks first.run ?
+^ custom ebuild worked emerge --root /binhost/rootfs glibc::overflow
+-------------
+#############
+-------------
+[busybox]
+-------------
+* check anything that scans paths (symlink recursion dos)
+-------------
+* broke busybox drag and drop -embed scripts now reference paths ?
+^ drag and drop - stand alone shell with script library
+^ busybox_init - make path bootable in q.wrapper
+^ busybox_init - hijack init and the entire system
+-------------
+#############
+-------------
+[networking]
+-------------
+* what if you do zcip first < dhcpc deletes zcip and ping
+-------------
+* mimic icmpv6
+  setpriv_network_slaac - v4 / v6 enable
+  setpriv_network_dhcpc - v4 / v6 enable
+  setpriv_network_ping - dhcpd variables
+  setpriv_network_zcip - (real v4 slaac?)
+-------------
+^ thought that might double up
+  replace _oneshot for address only (no route)
+-------------
+#############
+-------------
+[changes]
+-------------
+/etc/sysctl.conf
+-------------
+system.network - restart all networking
+-------------
+w.ap
+w.connect
+w.private
+w.public
+w.scan
+-------------
+network_connect
+network_dhcpc
+network_ping
+network_zcip
+-------------
+udhcpc_dhcpc
+udhcpc_ping
+udhcpc_zcip
+udhcpc_script
+-------------
+* dont connect to network unless prompted
+* network_connect - restore address/config, enable slaac
+* network_dhcpc - randomize address, dhcpc, enable slaac
+* network_ping - dont randomize mac, dont enable slaac
+* network_zcip - dont randomize mac, dont enable slaac
+-------------
+* cant start zcip before dhcpc ?
+^ sort of defeats the point in link local ?
+-------------
+ipv4/ipv6
+dmz/pinhole
+port_forward
+-------------
+/etc/ethers
+ fe:ed:de:ad:be:ef server
+ de:ad:be:ef:c0:fe desktop
+/etc/hosts
+ 192.168.1.1 server
+ 192.168.1.3 desktop
+-------------
+wpa_supplicant.conf
+-------------
+mac_addr=
+0 - static
+1 - random
+2 - fixed oui random nic
+rand_addr_lifetime=60
+preassoc_mac_addr=
+0 - static
+1 - random
+2 - fixed oui random nic
+-------------
+auto_uuid - 
+0 - generate static value based on mac address
+1 - generate random uuid everytime wpa starts
+-------------
+passive_scan=
+0 - normal scans (active) (leak ssid)
+1 - passive scans (dont leak ssid)
+-------------
+default
+hidden client no probe requests
+doesnt connect to hidden networks by default
+^ exposes ssid if hidden networks requested
+-------------
+#############
+* busybox has alot of hardcoded references to #!/bin/sh
+^ watch -tn1 command -broken
+#############
+dropped tls1_2
+^ www.kernel.org
+^ www.opensmtpd.org
+^ download.mozilla.org
+^ mirrors.edge.kernel.org
+^^ dont support tls1_3 ?
+#############
+* wpa_supplicant CONFIG_AP - disconnect now tears down interface and default route ?
+* tor - ignores sigterm ? sometimes sigcont ? (wifi goes down tor breaks forces sigkill)
+* transmission - umask breaks after long periods of use ? 022 goes 027 ? which isnt the host umask either ?
+#############
+* linux-6.8 - broke busybox tc applet
+#############
+* /etc/ssl - openssl s_client/s_server
+#############
+* m.brief - loops find file names ? trusts popmaildir name creation ?
+#############
+emerge --root /run/test procps # installs ps
+emerge --root /run/test busybox # overwrites
+^ overwrites binary with symlink
+* src_install symlinks in "${D}" arent checked for collisions
+#############
 * someone dropped apulse (need it for firefox)
-
-dropbear
-last - forced DROPBEAR_DSS on
-
-authorized_keys <options>
-DROPBEAR_SVR_PUBKEY_OPTIONS 0 - disabled
-* tried DROPBEAR_USER_ALGO_LIST 1 -c -m flags... (didnt -c help && -m help broke)
-* cant -R (delayed hostkey) (wont store keys in shared httpd at boot?) (requires p2p group write)
-? doesnt match tors upstream rate limiting ?
-
-man dbclient.1
-* tried -o GatewayPorts
-- dbclient -o gatewayports=no -L 0.0.0.0:80:0.0.0.0:80 127.0.0.1 (didnt fail?)
-- dbclient -o gatewayports=no -R 0.0.0.0:80:0.0.0.0:80 127.0.0.1 (didnt fail?)
-^ dont get why client needs to ? up to the server ? (just dont enter it wrong?)
--o Port specify a listening port ? its the client...
-
-! doesnt build without DROPBEAR_SVR_PUBKEY_OPTIONS 1
-^ error 'struct AuthState' has no member named 'pubkey_info'
-
-test dbclient root@one,root@two,root@three ? (says it just works /shrug)
-
--------------
-downgraded mpv so it doesnt need libplacebo
-removed libplacebo from sets/programs
--------------
-
-make repos/networking
- ^ tord torsocks
- ^ wireguard
- ^ dropbear
- ^ curl
-
- repos/bittorrent ?
- ^ transmission needs its own 
-
-
-
-
- someone broke mdadm --misc --action=repair
- just spits out permissioned denied
-^ mdadm -S /dev/md127 
-  mdadm --assemble --scan
-  mdadm --misc --action=repair /dev/md127
-
-^ does normal system.dev
-^ if its server it stops md126 md127
-^ if its server it scans and assembles again
-^ if its server mdadm --misc --action=repair /dev/md126 works
-^ if its server mdadm --misc --action=repair /dev/md127 works
-
-* dont know ? dont care ?
-
-
-
-#############
-* xorg bumped security vuln (still cant libxcvt .a to make a static build last library ?)
-* dropbear bumped partial security vuln
-* openssl about to bump
-* opensmtpd about to bump
-#############
+* mdadm --stop --assemble || repair doesnt work (someone fucked it?)
 * net-misc/curl - doesnt work with github again
-#############
 * syctl ipv6 max_addresses=1 (broke slaac) (still allows manually assigning addresses tho?)
 * turned off gratuitous arp and gratuitous neigbour discovery
-* ipv6.forwarding=1 (enables IsRouter flag in neighbour advertisements)
+* ipv6.forwarding=1 (enables IsRouter flag in neighbour advertisements?)
+* (patch/diff) (git diff/merge?) guide...
 #############
-* /etc/profile - alias hex + alias oct ? (reverse hex to oct)
-* (patch/diff) (git diff/merge?) guide... ffs still havent done it
-#############
-* added stuff to make.conf to test...
 ! test -ebuild-locks # parallel none sandboxed functions ?
 ! test stricter ? # react strongly to QA checks ?
-! EXTRA_ECONF="--enable-option-checking"
-#############
-* removed auth/developer/release keys - (dont use them got annoying to bump ebuilds)
 #############
 ! CONFIG_BLK_DEV_WRITE_MOUNTED
 ! bricked mdadm --misc --action=repair /dev/md127 ?
 ! e4defrag dies with 'failed to fadvise'
 ! fsck.ext4 dies 'superblock could not be read'
 * fstrim -v worked ?
-? ephemeral boot + z.test/disk
-#############
-* possibly add CONFIG_EFI and nvram again ? efivars
-* possibly add netfilter queue ? funneling to ulogd2 (huge)
-* possibly add conntrack-tools ? and remove /proc/net/nf_conntrack ?
+^ recreating the raid device fixes it ? because ?
 #############
 -------------
-merged-usr
+* merged-usr - glibc hardcoded /lib64
+* merged-usr - busybox removes /usr/bin/ps symlink (procps)
 -------------
-* all programs hard coding /lib64 glibc paths ? (--disable-rpath ?)
--------------
-* xinit calls xkbcomp via sh -s /bin/sh -c 'command' because why wouldnt it...
--------------
-* e2fsprogs --enable-libblkid
-  doesnt enable libblkid
-  installs static blkid
-* util-linux libblkid needed for lsblk
-^ busybox collision ? remove it
--------------
-* busybox ps vs procps ps
-^ or breaks ebuild symlinks
-^ or breaks ps ebuild path
--------------
-* glibc/libcap
-  install to /lib64 /sbin
--------------
- #!/bin/sh
- busybox embed scripts - most work without #!shebang
- ^ ??? bollox forgot to check
--------------
-build.initramfs - /bin/sh + move /sbin/* /usr/sbin/ rmdir /sbin ?
--------------
-
-[end game]
-
-/dev
-/etc
-/proc
-/sys
-/tmp
-/usr
-/var
-/run -> /tmp/run
-
-usr - all executables and static data required by them ?
-var - variables data that changes
-run - glorified tmpfs clone (pid files run time files)
-
-^ tidy as fuck...
-  run not being symlink is bit fugly
-  sort of like it tho
-
--------------
-
 #############
-gcc -openmp breaks lto threading ?
+* nftables - remove log prefix search match inside ?
+^ only uses private network public network
+  private - b.{server,client}
+  public - wireguard only
 #############
-upto first.run
-turned openmp back off 
-turned cet back off 
-? still breaks most of the time
-libcap glibc
+* BLK_DEV_WRITE_MOUNTED - mount -t ext4 -o rw,nodev,nosuid,exec,noatime file /path
+^ no longer works unless losetup -Pf file and /dev/loop0 are used ?
 #############
-mail
-\- mail
- - mail
-^ is really annoying
+* portage  src_configure(){ set -e ; default ; }
+* portage EXTRA_ECONF='--enable-option-checking'
 #############
-
-#############
-z.testing
--------------
-something to print .ssh public key + known / authorized ?
--------------
-g.setup - if gnupg exists print information ?
-^ /usr/share/openpgp-keys/{active-devs.gpg,gentoo-auth,asc,gentoo-relese.asc}
--------------
-vpn commands - added last endpoint address public and cumulative clients/servers
-^ still no command to restore ?
-#############
-/etc/nftables log --prefix to nft ?
-network - grep 'kernel: nftables' ?
-^ searches for every log string
-  eventually change chains to zones ? 
-  input_zone output_zone attached to interfaces ?
-#############
-linux-6.8.0 - > 6.8.1 - broke busybox tc (traffic control)
-CONFIG_KVM_SW_PROTECTED_VM - software protected virtual machines ? (disabled)
-BLK_DEV_WRITE_MOUNTED - allow writing to mounted block devices ? (disabled)
-AMD_WBRF - amd and wifi announcing frequencies to avoid harmonics ? (disabled)
-#############
-busybox mount -t ext4 -o rw,dev,suid,exec,atime /path/to/file /path/to/mount
-^ cant create loopback devices anymore ?
-^ BLK_DEV_WRITE_MOUNTED ?
--------------
-stage3 - losetup /dev/loop0 ${mount}/stage3
-mount -t ext4 -o rw,nodev,nosuid,exec,noatime,noswap
-#############
-
-ncurses - thefted mki
-
- no idea - tried to greenfield upstream no changes...
-
- forces pulling 6.4.0 + patch.YYYYMMDD
- for i in YYYYMMDD YYYYMMDD ; do curl -o patch/$i http://domain.tld/path/to/file ; done
- for i in YYYYMMDD YYYYMMDD ; do patch patch/$i ; done
-
- /usr/include/<target>/file.h ?
- ^ rebuilds itself 4 times ?
- make -C build/<target> -j16 -l16
-
- important - vim + mtm + alsa-utils
-
-#############
-hosting on lo/lan/tun/nat
--------------
-nat - address changes
-tun - address changes
--------------
-udhcpd references 172.16.0.1 #  b.server(dhcpd,tftpd,ntpd)
--------------
-ddns references 172.16.0.1 # dns/socks/service
--------------
-t.get/t.put references 172.16.0.1 # httpd/p2pd
-#############
-dropped tls1_2
-^ www.kernel.org download.mozilla.org
-^ both dont support tls1_3 ?
-#############
-x11-apps
- setxkbmap
- xauth
- xinit
- xkbcomp
- xrandr
- xset
- xsetroot
-#############
- set -e
-
- /usr/lib/portage/pythonX.YY/phase-function.sh
- ^ added 'set -e' to top of file
-   emerge --depclean - failed instantly ? (rm <missing_file> returned >0)
-   emerage -av x11-wm/st - failed instantly ? (unpack command returned >0)
-
-! add set -e to specific functions ? remove it at the end ?
-^ mostly interested in catching broken src_configure ?
-
-* app-alternatives/
-^ added multiple substitutes to gnu's toolchain
-  increases probability of silent error due to incompatability
-
-^ no idea where to set default functions ? /shrug
-
--------------
-
-[ -e thing ] exists ? checks char block symlink file directory
-
 find -type
-f ile?
-d irectory?
-l ink?
-b lock ?
-c har ?
-s pecial
-p ?
-
+(f)ile
+(d)irectory
+(l)ink
+(b)lock
+(c)har
+(s)pecial
+(P)
 ^ check scripts for [ -f and symlink hijacking ] ?
-
--------------
-never noticed mount as a directory ?
-stage3.<command>
-^ could start automating at a higher level ?
-  had trouble nesting scripts calling other scripts ?
-  could double with cleaning init system output
-  and drawing stupid libcaca loading screens...
-
-chroot wrapper ? external call to executing a specific command
- and try to abstract a real api for a higher level 'release'
-
-meh sort of stagnated
-
--------------
-
+^ [ -e exists? ] - checks char block symlink file directory
 #############
 -------------
-(more educational than functional)
+[mail] [maild] - (more educational than functional)
 -------------
 .bin/
 new/
@@ -484,46 +498,15 @@ save/
 sent/
 tmp/
 -------------
-m.send - no idea ? (makemime) (curl --enable-smtp?)
+m.send.netcat
+m.send.s_client
 -------------
-m.brief - show new/ from/to/subject ?
-to self@gmail.com -[from:] [subject:]
-to mailing list - [to:] [subject:]
--------------
+m.sync
+m.brief
 m.read
-(r)ead into read/
-(s)ave into save/
-(d)elete into .bin/
-(c)ontinue into read/ ? (annoying to skip without read?)
 -------------
-m.sync - finished ?
+minimalistic smtp client and server implementation
 -------------
-^ .bin/ new/ read/ save/ sent/ tmp/ (sort by year/ month/ week/) ?
-^ probably get horrific over time
-^ no ability to go back once you read it
-* sole purpose is to read mailing lists / educational with opensmtpd...
--------------
-
--------------
-openssl s_client + s_server (need a massive math rehaul)
--------------
-
-#############
-* gtk+ firefox cant open file manager (curl -O <url>) (/usr/bin/firefox-bin /path/to/file)
-* stage3 dtach shell - ignores ls -lah --group-directories-first
-#############
-[openssl]
-got rid of thread-pool
-got rid of comp+zlib
-got rid of tls1_2
-enabled dgram+dtls
-enabled http ? (opensmtpd failed ocsp)
-enabled pinshared ? (its the default)
-^ found openssl.conf man page ? (sort of)
-  any full list of available variables ?
-
-! https://www.kernel.org fails :'( (doesnt support tls1_3)
-
 #############
 aes-gcm-siv ? (everything in tls1_2 is vulnerable?)
 ^ no idea if aes-gcm-siv went to 1_2 or 1_3 ?
@@ -537,133 +520,20 @@ aes-gcm-siv ? (everything in tls1_2 is vulnerable?)
  curl - pfft no idea (need enable-bearer-auth for github)
  curl - Protocols IPFS IPNS ? (no configure options)
 #############
-
+/usr/bin/{startx,xephyr} - generic tidy up, new home /usr/bin
 #############
-/usr/bin/{startx,xephyr}
-^ general tidy up
-  +bs backing store
-  -tst disable testing extensions
-  -maxclients (wont open more than 64 windows)
-* man page has a better write up of options
--------------
-+xinerama -screen 1920x1080 -screen 1920x1080
-^ multi monitor xephyr (no idea how to wrap it...)
--------------
--grayscale < - useful for network connections (wouldnt play video)
--------------
--dpi < - useful for bad screen size and resolution values
--------------
-[both/xephyr]
--seat - (specific device access in /dev?)
--/+ accessx [timeout timeout_mask feeback options_mask] wtf ?
--deferglyphs [none|all|16] - couldnt find information ?
-+iglx - allow creating indirect glx contexts ? (no idea)
--r / r - off/on auto-repeat
--noxv - do not use XV ? no idea what it means
--fakescreenfps - ???
-[x only]
--depth - color depth ?
--gamma -rgamma -ggamma -bgamma -weight (color related)
--disableVidMode
--------------
--fbbpp - framebuffer ? default 8 ?
--maxbigreqsize 1 - did nothing ?
--maxclients ? (64 128 256...) thought it might lock ?
--render mono grey - did nothing ? (reduce network bandwidth ?)
--------------
+* binutils/gcc/glibc - added cet (doesnt work with old retpoline flags?)
 #############
-
-flip configure standard kernel features - test removing stuff and see what breaks ?
-grep the compile options for x86 userspace shadow stack ? (last time wouldnt work with retpoline enabled)
-efi variables ? (last time was a bit bloat and wtf)
-
-test turning frame buffer devices off ? device drivers - > graphics support - > frame buffer devices
-
-KVM_MAX_NR_VCPUS - doesnt allow setting below 1024 ?
-CONFIG_PCP_BATCH_SCALE_MAX - 5? could need more / less based on cpu count ? no hints in help output
-TCP_AO - tcp authenticate options (changes md5sum to more secure hashes) (md5sum states useful bgp)
-USB_PCI_AMD - usb implementation quirks common on x86 amd cpus ?
-
-* current fuck ups...
-  wpa_supplicant CONFIG_AP - disconnect now tears down interface and default route ?
-  tor - ignores sigterm ? (wifi goes down tor breaks forces sigkill)
-  transmission - umask breaks after long periods of use ? 022 goes 027 ? which isnt the host umask either ?
-
--------------
-
-* passwd/group/shadow
-  p.{irc,ssh,mail,http,p2p}
-  x.{user,nobody,proxy,jail}
-  added window: (privdrop xephyr remove raw input fd's?)
-  rce in xorg api gets raw keyboard and mouse
-  rce in xephyr api gets every instance ?
-  rce in xephyr api doesnt get the host ?
-  better than nothing ? (should be user per xephyr instance)
-
-* /run/display /run/window
-
- ^ startx - x.{user,nobody,proxy,jail} p.{irc,ssh,mail,http,p2p}
- ^ create a directory in /run for xorg and xephyr to use ?
- ^ use window:window to run xephyr (removes raw input fd) (lose xephyr not host?)
-
--------------
 * ircd botnet + irc_client (ircd+irc)
 * sshd botnet + ssh_client (sshd+ssh)
--------------
-* httpd - using old files/ gitd/files more modular
--------------
-* maild useless without diskquota
-* ephemeral useless without tmpfs quota ?
-^ none of that stuff actually worked 
--------------
-user -> tor -> ssh && setup wireguard...
-^ doesnt work
+#############
+* tmpfs quota - menuconfig enabled mount options ignored ?
+^ can enable ext4 mail files/space limits ? (delivered to client)
+#############
 * no tor v3 key generation on boot ?
 * no nftables access to tor or ssh ?
-* need to actually fix things but cant test regardless
--------------
-
--------------
-nftables
-lo/nat/tun - identical input (full setup)
-lo/nat/tun - indentical output (full setup)
-nobody+applications - lan removes cleartext lo/nat/tun allow cleartext ?
--------------
-
--------------
-!!! find config/config -type f -exec grep -Hi 'install ' {} \;
-^^^ check install uses all numeric or alphabetic input ?
-^^^ (changed ssh from 22 to 2222 numeric implies changing every file)
--------------
-
--------------
-Xephyr +xinerama -screen 1920x1080 -screen 1920x1080 -screen 1920x1080 -ac :1234
-^ multiple monitor emulation
--------------
-
 #############
-[updates]
--------------
-app-editors/vim - no changes ?
-app-emulation/qemu - virtio_sound (havent implemented yet)
-app-misc/ca-certificates - no changes
-sys-kernel/linux-headers - no changes
-sys-kernel/linux-firmware - no changes
-x11-libs/gtk+ - -libsrvg -libepoxy(egl)
-x11-libs/libdrm - no changes
--------------
-net-vpn/tor - removed dnsd symlink
-net-wireless/wpa_supplicant - created wifi symlink
-sys-apps/busybox - +static +locale +ntp_auth -millisecond_timestamps
-www-client/firefox - public google / private duckduckgo (failed)
--------------
-app-crypt/cryptsetup rc
-#############
-* gtk+ ebuild...
-#############
-firefox - public google / private duckduckgo ?
-^ about:config option to enable gui...
-  no about:config option to set private default...
+* multie monitor - Xephyr +xinerama -screen 1920x1080 -screen 1920x1080 -screen 1920x1080 -ac :1234
 #############
 qemu - 
 kernel - CONFIG_SND_VIRTIO
@@ -671,22 +541,6 @@ virtio-sound
  -device virtio-sound-pci,audiodev=my_audiodev
  -audiodev alsa,id=my_audiodev
  -audio driver=coreaudio,model=virtio
-#############
-/run/display desktop:desktop hold all xorg logs and auth files
-desktop == xorg-server
-window == xephyr
-^ split user permissions ?
--------------
-libxcb + xcb-proto - SRC_URI - > www.x.org (makes it easier to check versions)
-^ test www.x.org against gitlab for release
-* libbsd libmd can share libbsds SRC_URI page ? 
-#############
-[todo]
-started looking at xorg+mesa not even close...
-fltk has shiny X extensions ?
-Xephyr forced mit-shm in xorg but starts without it ?
-* xorg binary strips most of the --configure
-* xephyr apparently just goes fuck it and links everything
 #############
 :wifi nice - networking users can out %cpu the wifi daemon ?
 -------------
@@ -702,20 +556,13 @@ PORTAGE_NICENESS="+{0,39}" (priority goes from 0-39)
 renice -/+ 20 u <user>
 -------------
 #############
-* tor v3 key and address generator ? (during init)
-#############
-[xorg/xephyr]
--------------
-cant 1777 scan for lock files ?
-cant change auth/lock file directory ?
-while sleep 3 ; do DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth xrandr --auto ; done
-lsw && xev -
- id="$(lsw|awk '/Xephyr.*:13/{print$1}')"
- xev -display :0 -id "${id}" -1 -event structure |
- while read ; do DISPLAY=:13 XAUTHORITY=/tmp/.X13-auth xrandr ; done
+* startx / xephyr - doesnt check for lock files anymore ?
+  while sleep 3 ; do DISPLAY=:0 XAUTHORITY=/tmp/.X0-auth xrandr --auto ; done
+  lsw && xev - id="$(lsw|awk '/Xephyr.*:13/{print$1}')"
+  xev -display :0 -id "${id}" -1 -event structure |
+  while read ; do DISPLAY=:13 XAUTHORITY=/tmp/.X13-auth xrandr ; done
 #############
 -------------
-! opensmtpd doesnt compile with openssl 3.2.0
 ! find /binhost/logs/portage -type f -exec grep -H ' QA ' {} \;
 -------------
 * readme.md - write a decent overview
@@ -818,20 +665,6 @@ l
            network_{daemon,default,oneshot,ping,zcip}
  ^ could update to support routes from dhcp ?
 
-#############
-
-#############
-su -l -s /bin/sh nobody
-^ leaves /dev/pts with caller uid:gid
-  leaves /proc/self/fd as shell uid:gid
-  TIOCSTI esk remote code execution
-user - > root worked
-user - > pivot allows user execution
--------------
-pivot(){
-[ -z ${1} ] && printf "%s\n" "words"
-[ -z ${1} ] || sudo -l -s /bin/sh -c "dtach -A $HOME/socket /bin/sh" "${1}"
-}
 #############
  [gcc hardening]
  -ftrapv -fwrapv - trap/wrap signed overflow
@@ -2670,3 +2503,12 @@ xrandr --output VGA-1 --mode 1440x900
 xrandr --output DP-1 HDMI-1 HDMI-2 --mode 1920x1080
 Xephyr +xinerama -screen 1920x1080 -screen 1920x1080 -screen 1920x1080 -ac :1234
 #############
+setsid \
+setpriv \
+udpsvd 0.0.0.0 69 \
+tftpd -lc /tmp/storage/shared \
+</dev/null &>/dev/null &
+tftp -p -l file -r tftpd/file 127.0.0.1 69
+tftp -g -l test -r tftpd/file 127.0.0.1 69
+#############
+

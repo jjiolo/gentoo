@@ -1,0 +1,36 @@
+#!/usr/bin/sh
+#############
+[ "${USER}" == "root" ] || exit 1
+#############
+
+[ "${#}" == "1" ] && {
+
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/clients"
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/servers"
+
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/config"
+
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/endpoint"
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/address"
+install -o root -g root -m 0600 "/dev/null" "${storage}/.vpn/key"
+
+ip link del tun
+ip link add tun type wireguard
+sysctl -w "net.ipv6.conf.tun.autoconf=0" &>/dev/null
+sysctl -w "net.ipv6.conf.tun.accept_ra=0" &>/dev/null
+wg set tun listen-port 51820 private-key "${storage}/.vpn/wireguard"
+ip addr add 10.0.0.1/8 broadcast 10.255.255.255 dev tun
+ip addr add fd00::10:0:0:1/64 dev tun
+ip link set up tun
+
+}
+
+#############
+chown -R root:root "${storage}/.vpn"
+#############
+find "${storage}/.vpn" -type d -exec chmod 0700 {} \;
+find "${storage}/.vpn" -type f -exec chmod 0600 {} \;
+#############
+wg
+#############
+

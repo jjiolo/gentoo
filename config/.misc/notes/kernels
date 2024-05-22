@@ -1,4 +1,17 @@
 
+############
+
+x86_fred - new architecture for ring transitions ? (doesnt exist in hardware yet)
+
+retbleed=unret,ibpb
+
+USB_DEFAULT_AUTHORIZATION_MODE
+0 userland authorization to enable usb ?
+1 off
+2 on internal off external (acpi dictates hardware)
+
+#############
+BLK_DEV_WRITE_MOUNTED - broke ability to run disk maintence commands ?
 #############
 CONFIG_WARN_ALL_UNSEEDED_RANDOM
 ^ test it in virtual
