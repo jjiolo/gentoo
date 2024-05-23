@@ -73,7 +73,7 @@ done &
 
 #############
 
-openssl s_client -noservername -cert "sasl" -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet -connect "irc.libera.chat:6697" -ignore_unexpected_eof <&3 |
+openssl s_client -connect "irc.libera.chat:6697" -noservername -verify_hostname "irc.libera.chat" -cert "sasl" -verify 1 -verify_return_error -verify_quiet -quiet -ignore_unexpected_eof -ign_eof -tls1_3 <&3 |
 tr -cd '[:alnum:]:.!@/#\n ' |
 while read -r sender type target message ; do
 

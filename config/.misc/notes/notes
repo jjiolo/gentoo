@@ -24,6 +24,9 @@ social media
 -------------
 same game different medium
 -------------
+lie that implies defeating self preservation
+zero percent defection rating
+-------------
 #############
 
 #############
@@ -45,10 +48,9 @@ same game different medium
 [REBUILD]
 #############
 -------------
- lastest - 0000:00:00 00:00:00
--------------
 * manually - emerge -v1 gcc (before running first.run)
 ^ stage3 wont build without rebuilding gcc first
+^ rm /binhost/packages/sys-devel/gcc*
 -------------
  broken - app-alternatives + FEATURES='-collision-protect' (remove after its in stage3)
  broken - linux-6.1 - 6.2 broke CONFIG_DRM_AST
@@ -155,14 +157,12 @@ v attempt to create lists of things to actually do
 #############
 #############
 
-couldnt finish gcc intime...
+* shiny new gcc (didnt have time)
+* added uninitialized variable protection
 
-^ going to play with glibc next
-  and attempt at chroot for 'slotting'
+* going to play with slotting wrapper
 
 #############
-
-gtk+ ebuild...
 
 gcc
 -fcf-protection=full,branch,return,none,check
@@ -177,101 +177,57 @@ gcc
 tldr; want to play with things that break @system
 
 SLOT=9999
-src_install(){
- default
- install -d -o 0 -g 0 -m 0755 "${D}/opt"
- mv "${D}/usr" "${D}/opt"
-}
+src_install(){ default ; install -d -o 0 -g 0 -m 0755 ${D}/opt ; mv ${D}/* ${D}/opt ; }
 
 ^ create a secondary rootfs
 
 -------------
+# cli to force secondary rootfs
+CFLAGS="-I /opt/include -L /opt/lib64" \
+PATH="/opt:${PATH}" \
+emerge -av app-misc/mtm
+-------------
+# env to force secondary rootfs
 portage/package.env - app-misc/mtm slot
-portage/env/slot - CFLAGS="-I /opt/include -L /opt/lib64" # PATH="/opt:${PATH}"
+portage/env/slot - CFLAGS="-I /opt/include -L /opt/lib64" PATH="/opt:${PATH}"
+cli - emerge -av1 app-misc/mtm
 -------------
-CFLAGS="-I /opt/include -L /opt/lib64" emerge -av app-misc/mtm # build.root
--------------
-build.initramfs - mv opt/* / ; rmdir opt # initramfs image
--------------
-LDFLAGS="-Wl,-rpath,/opt/lib64" # dev in stage3
+# mv secondary to rootfs when building initramfs
+build.initramfs - mv opt/* / ; rmdir opt
 -------------
 
-^ need two packages to test theory
-
-  ncurses abstract of host
-  glibc abstract of host
-  into external filesystem
-
-  build.rootfs point to external filesystem
-
-  build.initramfs move external filesystem to root
-
 -------------
-
- or real gentoo install...
-
- SLOT into /opt/<slot>/
- LDFLAGS into -rpath /opt/<slot>
-
- package.env || CFLAGS="" emerge
-
- fakechroot esc multi library installs
-
+# stage3 compatible link to secondary rootfs
+SLOT into /opt/<slot>/
+LDFLAGS="-Wl,-rpath,/opt/lib64"
+PATH="/opt:${PATH}"
+vs
+PATH="/opt:${PATH}" LD_LIBRARY_PATH="/opt"
 -------------
-
-my problems
-
- build.initramfs - mv /opt / (leaves orphaned files)
 
 #############
-project.git
-project.cgi
-^ make it mimic perl.cgi output
-  last 9 commits + -m 'message'
-#############
-
-openssl csr - sign the issuer fingerprint
-              issuer signs the clients request
-            ^ lock who the provider is into the csr request
-              locks who the provider is into the crt itself
-
-netcat udp tunnel
- requester hosts server -psk_hint or -psk (preshared over irc)
- requestee makes client request ?
-^ probably wrong given need to udp and exchange both ports ?
-  heres my eye pee and port, send me your ip...
-  ^ hole punch starts
-  either end ? (full scope later)
-
-# client
-* general
-* network
-* identity
-* session
-* input/output
-* debug
-* protocol and version
-* random state
-* tls/ssl
-* validation
-* extended certificate
-* provider
-
-# server
-* general
-* network
-* identity
-* ocsp
-* debug
-* network
-* server identity
-* protocol and version
-* random state
-* tls/ssl
-* validation
-* extended certificate
-* provider
-
+-------------
+/etc/ssl/openssl.cnf
+/etc/ssl/c.{setup,server,client}
+/etc/ssl/s_{server,client}
+^ forced removing authority fingerprint from certificate signing requests
+* want to sign root authority fingerprint in csr
+* want to sign csr signed fingerprint in signed certificate
+^ what the fuck ?
+-------------
+* netcat udp tunnel to s_server unix socket
+* server sends ip + port
+* client replies ip + port
+* server starts netcat udp hole punch
+* server starts tls server socket
+* client starts netcat udp hole punch
+* client starts tls client socket
+-------------
+^ dont have anyone to test it with or multiple connections
+-------------
+nc -u -p 4444 -s local.com remote.com 4444
+nc -u -p 4444 -s remote.com local.com 4444
+-------------
 ############a
 * USB_DEFAULT_AUTHORIZATION_MODE
 ^ echo 0 > /sys/bus/usb/devices/<device>/authorized
@@ -280,12 +236,6 @@ netcat udp tunnel
 - for i in /sys/bus/usb/devices/* ; do echo 1 >> ${i} ; done
 ^ attempt to mimic grsec enable usb on boot then lock ?
 ############a
-shrinking again
-ircd - never used
-smtpd - never used
-quota - never used
-auditd - never used
-#############
 
 $storage/
  .gnupg
@@ -310,9 +260,6 @@ EXTRA_ECONF=--enable-option-checking
 #############
 -------------
  [glibc]
--------------
-* tl;dr tordns breaks (regardless of cachedns usednscache)
-* changing interface used for getaddrinfo makes it work again
 -------------
 * resolv/resolv.h #define _PATH_RESCONF "/run/derp"
 * resolv/arpa/nameser.h #define NS_DEFAULTPORT
@@ -429,12 +376,11 @@ dropped tls1_2
 ^^ dont support tls1_3 ?
 #############
 * wpa_supplicant CONFIG_AP - disconnect now tears down interface and default route ?
-* tor - ignores sigterm ? sometimes sigcont ? (wifi goes down tor breaks forces sigkill)
+* tor - breaks ignores sigterm ? sometimes sigcont ? (wifi goes down tor breaks forces sigkill)
+* transmission - breaks ignores sigterm ?
 * transmission - umask breaks after long periods of use ? 022 goes 027 ? which isnt the host umask either ?
 #############
 * linux-6.8 - broke busybox tc applet
-#############
-* /etc/ssl - openssl s_client/s_server
 #############
 * m.brief - loops find file names ? trusts popmaildir name creation ?
 #############

@@ -1,14 +1,19 @@
 
 ############# host
-rm -r "${storage}/.gnupg"
-rm -r "${storage}/.ssh"
-rm -r "${storage}/.vpn"
-rm -r "${storage}/.wifi"
+[ -d "${storage}/.gnupg" ] && rm -r "${storage}/.gnupg"
+[ -d "${storage}/.net" ] && rm -r "${storage}/.net"
+[ -d "${storage}/.ssh" ] && rm -r "${storage}/.ssh"
+[ -d "${storage}/.ssl" ] && rm -r "${storage}/.ssl"
+[ -d "${storage}/.vpn" ] && rm -r "${storage}/.vpn"
 ############# home
-for i in user nobody proxy jail irc ssh mail http p2p ; do rm -r "${home}/${i}/.gnupg" "${home}/${i}/.ssh" ; done
+for i in user nobody proxy jail irc ssh mail http p2p ; do
+[ -d "${home}/${i}/.gnupg" ] && rm -r "${home}/${i}/.gnupg"
+[ -d "${home}/${i}/.ssh" ] && rm -r "${home}/${i}/.ssh"
+[ -d "${home}/${i}/.ssl" ] && rm -r "${home}/${i}/.ssl"
+done
 ############# services
-rm -r "${services}/ddns"
+[ -d "${services}/ddns" ] && rm -r "${services}/ddns"
 ############# shared
-rm -r "${shared}/contacts/self"
+[ -d "${services}/contacts/self" ] && rm -r "${shared}/contacts/self"
 #############
 

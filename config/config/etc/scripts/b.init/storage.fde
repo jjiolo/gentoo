@@ -24,7 +24,7 @@ mountpoint -q "${local}" && usage "mount already in use"
 
  lsblk ; read -rp "about to nuke ${1}"
 
- cryptsetup open --key-file /dev/urandom --type plain "${1}" wipe
+ cryptsetup open --key-file /dev/urandom --hash sha256 --cipher aes-cbc-essiv:sha256 --key-size 256 --type plain "${1}" wipe
  dd if=/dev/zero of=/dev/mapper/wipe bs=4096 conv=fsync
  cryptsetup close wipe
 

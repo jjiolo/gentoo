@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 usage(){ printf "%s\n" "attempts to mount /dev/bootfs - ${1}" ; usb.umount ; exit 1 ; }
 #############

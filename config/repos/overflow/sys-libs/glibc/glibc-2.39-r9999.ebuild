@@ -6,16 +6,19 @@ HOMEPAGE="https://www.gnu.org/software/libc/"
 SRC_URI="mirror://gnu/glibc/${P}.tar.xz"
 #############
 LICENSE="LGPL-2.1+ BSD HPND ISC inner-net rc PCRE"
-SLOT="2.2"
+SLOT="9999"
 KEYWORDS="" #amd64"
-IUSE="+static-libs"
+IUSE="+static-libs +vanilla"
 RDEPEND=""
 DEPEND="${RDEPEND}"
 #############
 src_configure(){
-sed -i '108,125d' Makefile
-sed -i 's/NS_DEFAULTPORT\t53/NS_DEFAULTPORT\t3535/' resolv/arpa/nameser.h
-sed -i 's/\/etc\/resolv.conf/\/run\/derp/' resolv/resolv.h
+#
+# hardcoded /lib64 breaks slot chroot
+#
+sed -i '108,125d' Makefile # stop trying to /etc/ld.so.cache
+#sed -i 's/NS_DEFAULTPORT\t53/NS_DEFAULTPORT\t3535/' resolv/arpa/nameser.h
+#sed -i 's/\/etc\/resolv.conf/\/run\/resolv.conf/' resolv/resolv.h
 mkdir build
 cd build
 use_ldconfig=no ../configure \
@@ -63,5 +66,8 @@ use_ldconfig=no ../configure \
 #############
 src_compile(){ cd build ; default ; }
 #############
-src_install(){ cd build ; make install_root="${D}" install ; } # default ; }
+src_install(){
+ cd build ; make install_root="${D}" install
+ install -d -o 0 -g 0 -m 0755 "${D}/opt" ; mv ${D}/* ${D}/opt
+}
 #############

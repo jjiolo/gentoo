@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 [ -d "/tmp/a.bootfs" ] && cd "/tmp/a.bootfs" || exit
 #############
@@ -15,6 +15,9 @@
 
  [ -f "config.tar.gz" ] && openssl sha256 "config.tar.gz" || printf "%s\n" "SHA-256(config.tar.gz)= missing"
  [ -f "config.torrent" ] && openssl sha256 "config.torrent" || printf "%s\n" "SHA-256(config.torrent)= missing"
+
+ [ -f ".config.tar.gz" ] && openssl sha256 ".config.tar.gz" || printf "%s\n" "SHA-256(config.tar.gz)= missing"
+ [ -f ".config.torrent" ] && openssl sha256 ".config.torrent" || printf "%s\n" "SHA-256(config.torrent)= missing"
 
 } > .hashes
 

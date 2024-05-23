@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 [ "${#}" == "1" ] && pretend="--pretend" || pretend=""
 #############
@@ -15,6 +15,7 @@ emerge ${default} ${pretend} --root "/binhost/rootfs" --nodeps @console @desktop
 #############
 emerge ${default} --pretend --emptytree --onlydeps @console @desktop @programs | tee "/binhost/logs/build.onlydeps"
 #############
+#PATH="/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin:${PATH}" CFLAGS="-I/opt/usr/include -L/opt/usr/lib64" \
 emerge ${default} --pretend --emptytree --nodeps @console @desktop @programs | tee "/binhost/logs/build.nodeps"
 #############
 

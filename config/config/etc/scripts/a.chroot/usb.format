@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 usage(){ printf "%s\n" "takes block device - ${1}" ; usb.umount ; exit 1 ; }
 #############

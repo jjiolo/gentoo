@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 emerge --onlydeps --fetch-all-uri @console @desktop @programs
 emerge --nodeps --fetch-all-uri @console @desktop @programs

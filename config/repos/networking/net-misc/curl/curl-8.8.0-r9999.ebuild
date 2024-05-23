@@ -31,6 +31,7 @@ src_configure(){
 --enable-symbol-hiding \
 --disable-ares \
 --disable-rt \
+--disable-httpsrr \
 --disable-ech \
 --disable-code-coverage \
 --disable-dependency-tracking \
@@ -55,8 +56,8 @@ src_configure(){
 --disable-smtp \
 --disable-gopher \
 --disable-mqtt \
---disable-docs \
 --disable-manual \
+--disable-docs \
 --disable-libcurl-option \
 --disable-libgcc \
 --enable-ipv6 \
@@ -73,7 +74,6 @@ src_configure(){
 --disable-negotiate-auth \
 --disable-aws \
 --disable-ntlm \
---disable-ntlm-wb \
 --disable-tls-srp \
 --enable-unix-sockets \
 --disable-cookies \
@@ -105,6 +105,7 @@ src_configure(){
 --without-rustls \
 --without-test-nghttpx \
 --without-test-caddy \
+--without-test-vsftpd \
 --without-test-httpd \
 --with-pic \
 --with-aix-soname=aix \

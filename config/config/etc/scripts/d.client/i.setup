@@ -33,5 +33,5 @@ EOF
 #############
 [ -f "sasl" ] || openssl req -x509 -new -newkey ed25519 -sha512 -days 365 -noenc -keyout sasl -out sasl -subj "/CN=irc.libera.chat"
 #############
-openssl s_client -noservername -tls1_3 -verify 1 -verify_return_error -verify_quiet -quiet -cert "sasl" -connect "irc.libera.chat:6697"
+openssl s_client -connect "irc.libera.chat:6697" -noservername -verify_hostname "irc.libera.chat" -cert "sasl" -verify 1 -verify_return_error -verify_quiet -quiet -ignore_unexpected_eof -ign_eof -tls1_3
 #############

@@ -1,6 +1,6 @@
 #!/usr/bin/sh
 #############
-[ "${HOSTNAME}" == "server " ] || { printf "%s\n" "fuck off" ; exit ; }
+[ "${HOSTNAME}" == "server" ] || { printf "%s\n" "fuck off" ; exit ; }
 #############
 
 #############

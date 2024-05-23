@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 [ "${#}" == "1" ] && pretend="--pretend" || pretend=""
 #############

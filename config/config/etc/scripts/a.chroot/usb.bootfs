@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 install -d -o 0 -g 0 -m 0700 "${bootfs}" "${bootfs}/EFI" "${bootfs}/EFI/boot" "${bootfs}/images" "${bootfs}/kernels"
 #############
@@ -49,6 +49,8 @@ done
 
 printf "%s\n" "installing config"
 
+[ -f "config.tar.gz" ] && mv -f "config.tar.gz" ".config.tar.gz"
+[ -f "config.torrent" ] && mv -f "config.torrent" ".config.torrent"
 install -o 0 -g 0 -m 0600 "/binhost/config.tar.gz" "config.tar.gz"
 install -o 0 -g 0 -m 0600 "/binhost/config.torrent" "config.torrent"
 
@@ -69,12 +71,12 @@ printf "%s\n" "#############"
  [ -f "config.tar.gz" ] && openssl sha256 "config.tar.gz" || printf "%s\n" "SHA-256(config.tar.gz)= missing"
  [ -f "config.torrent" ] && openssl sha256 "config.torrent" || printf "%s\n" "SHA-256(config.torrent)= missing"
 
+ [ -f ".config.tar.gz" ] && openssl sha256 ".config.tar.gz" || printf "%s\n" "SHA-256(.config.tar.gz)= missing"
+ [ -f ".config.torrent" ] && openssl sha256 ".config.torrent" || printf "%s\n" "SHA-256(.config.torrent)= missing"
+
 } | tee hashes
 
 printf "%s\n" "#############"
-
-#############
-
 printf "%s\n" "syncing..."
 printf "%s\n" "#############"
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 emerge --fetch-all-uri @system
 emerge --fetch-all-uri @world

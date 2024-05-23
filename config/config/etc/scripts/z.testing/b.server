@@ -1,5 +1,6 @@
 
 #############
+pkill -x crond
 pkill -x /usr/sbin/udhcpd
 pkill -x /usr/bin/udpsvd
 pkill -x /usr/sbin/ntpd
@@ -9,6 +10,7 @@ pkill -x /usr/sbin/ntpd
 
 sleep 3
 #############
+ash /etc/services/crond/start
 setpriv_udhcpd
 setpriv_tftpd
 setpriv_ntpd

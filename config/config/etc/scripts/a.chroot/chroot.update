@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 #############
 
  install -d -o 0 -g 0 -m 0775 "/binhost/portage" && cd "/binhost/portage"
