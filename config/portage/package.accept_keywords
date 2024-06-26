@@ -1,5 +1,5 @@
 
-sys-devel/gcc -~amd64
+#sys-devel/gcc -~amd64
 
 dev-lang/python -~amd64
 sys-apps/portage -~amd64

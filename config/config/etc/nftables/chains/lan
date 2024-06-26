@@ -59,10 +59,10 @@ table inet filter {
   udp dport {53,123} skuid {ntpd} ct state new log flags skuid prefix "output.lan.new " accept # ntpc
 
   ip protocol {tcp} skuid {ddns} ct state new log flags skuid prefix "output.lan.new " accept # tord
-  ip protocol {tcp} skuid {dnsd} ct state new log flags skuid prefix "output.lan.new " accept # tord
+  ip6 nexthdr {tcp} skuid {ddns} ct state new log flags skuid prefix "output.lan.new " accept # tord
 
-  ip protocol {udp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept # p2pd
-  ip protocol {tcp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept # p2pd
+  ip protocol {udp,tcp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept # p2pd
+  ip6 nexthdr {udp,tcp} skuid {p2pd} ct state new log flags skuid prefix "output.lan.new " accept # p2pd
 
 
 
@@ -91,12 +91,9 @@ table inet filter {
 
   # icmp
 
+  ip protocol {igmp}   log flags skuid prefix "output.lan.igmp " accept # igmp
   ip protocol {icmp}   log flags skuid prefix "output.lan.icmp " accept # icmp
   ip6 nexthdr {icmpv6} log flags skuid prefix "output.lan.icmp " accept # icmp
-
-  # igmp
-
-  ip protocol {igmp} log flags skuid prefix "output.lan.igmp " accept # igmp
 
   # drop
 

@@ -12,8 +12,8 @@ IUSE=""
 RDEPEND="
 dev-libs/openssl
 net-misc/curl
+net-misc/miniupnp
 sys-libs/glibc
-sys-libs/zlib
 "
 DEPEND="${RDEPEND}"
 #############
@@ -62,7 +62,7 @@ cmake \
 -DUSE_SYSTEM_DEFLATE=OFF \
 -DUSE_SYSTEM_DHT=OFF \
 -DUSE_SYSTEM_EVENT2=OFF \
--DUSE_SYSTEM_MINIUPNPC=OFF \
+-DUSE_SYSTEM_MINIUPNPC=ON \
 -DUSE_SYSTEM_NATPMP=OFF \
 -DUSE_SYSTEM_PSL=OFF \
 -DUSE_SYSTEM_UTP=OFF \

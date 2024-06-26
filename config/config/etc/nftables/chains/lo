@@ -60,7 +60,7 @@ table inet filter {
 
   udp dport {53}   skuid {nobody}            ct state new log flags skuid prefix "output.lo.new " accept # tord dns
   udp dport {53}   skuid {irc,ssh,mail,http} ct state new log flags skuid prefix "output.lo.new " accept # tord dns
-  udp dport {53}   skuid {ddns,dnsd,p2pd}    ct state new log flags skuid prefix "output.lo.new " accept # tord dns
+  udp dport {53}   skuid {ddns,p2pd}         ct state new log flags skuid prefix "output.lo.new " accept # tord dns
   tcp dport {9050} skuid {nobody,proxy}      ct state new log flags skuid prefix "output.lo.new " accept # tord socks
 
   udp dport {67}  skuid {dhcpc} ct state new log flags skuid prefix "output.lo.new " accept # dhcpd
@@ -71,7 +71,7 @@ table inet filter {
   udp dport {6771} skuid {p2pd} ct state new log flags skuid prefix "output.lo.new " accept # p2pd multicast
   udp dport {9091} skuid {p2pd} ct state new log flags skuid prefix "output.lo.new " accept # p2pd peer
   tcp dport {9091} skuid {p2pd} ct state new log flags skuid prefix "output.lo.new " accept # p2pd peer
-  tcp dport {80,443} skuid {p2pd} ct state new log flags skuid prefix "output.lo.new " accept # httpd
+  tcp dport {80}   skuid {p2pd} ct state new log flags skuid prefix "output.lo.new " accept # httpd
 
   tcp dport {6667,22,25,80} skuid {ddns} ct state new log flags skuid prefix "output.lo.new " accept # tor hiddenservice
 
@@ -91,12 +91,9 @@ table inet filter {
 
   # icmp
 
+  ip protocol {igmp}   log flags skuid prefix "output.lo.igmp " accept # igmp
   ip protocol {icmp}   log flags skuid prefix "output.lo.icmp " accept # icmp
   ip6 nexthdr {icmpv6} log flags skuid prefix "output.lo.icmp " accept # icmp
-
-  # igmp
-
-  ip protocol {igmp} log flags skuid prefix "output.lo.igmp " accept # igmp
 
   # drop
 

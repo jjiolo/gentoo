@@ -70,12 +70,24 @@ cat > "etc/init" << EOF
 
 # mount
 
-     mountpoint -q "/dev" || { install -d -o 0 -g 0 -m 0700 "/dev"     ; mount -t devtmpfs -o rw,dev,nosuid,noexec,noatime,size=0% host "/dev" ; }
- mountpoint -q "/dev/pts" || { install -d -o 0 -g 0 -m 0700 "/dev/pts" ; mount -t devpts   -o rw,dev,nosuid,noexec,noatime,mode=0600,ptmxmode=0000 host "/dev/pts" ; }
- mountpoint -q "/dev/shm" || { install -d -o 0 -g 0 -m 0700 "/dev/shm" ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,noswap,quota,uid=0,gid=0,mode=1777,size=3% host "/dev/shm" ; }
-    mountpoint -q "/proc" || { install -d -o 0 -g 0 -m 0700 "/proc"    ; mount -t proc     -o rw,nodev,nosuid,noexec,noatime,hidepid=1 host "/proc" ; mount -o remount,hidepid=1 "/proc" ; }
-     mountpoint -q "/sys" || { install -d -o 0 -g 0 -m 0700 "/sys"     ; mount -t sysfs    -o rw,nodev,nosuid,noexec,noatime host "/sys" ; }
-     mountpoint -q "/tmp" || { install -d -o 0 -g 0 -m 0700 "/tmp"     ; mount -t tmpfs    -o rw,nodev,nosuid,noexec,noatime,noswap,quota,uid=0,gid=0,mode=1777,size=50% host "/tmp" ; }
+    perms="uid=0,gid=0,mode=1777,size=50%"
+    quota="usrquota,usrquota_block_hardlimit=,usrquota_inode_hardlimit="
+  #devshm="rw,nodev,nosuid,noexec,noatime,noswap,${perms},${quota}"
+   #tmpfs="rw,nodev,nosuid,noexec,noatime,noswap,${perms},${quota}"
+
+ devtmpfs="rw,dev,nosuid,noexec,noatime,size=0%"
+   devpts="rw,dev,nosuid,noexec,noatime,mode=0600,ptmxmode=0000"
+   devshm="rw,nodev,nosuid,noexec,noatime,noswap,uid=0,gid=0,mode=1777,size=3%" #,usrquota,usrquota_block_hardlimit=,usrquota_inode_hardlimit="
+     proc="rw,nodev,nosuid,noexec,noatime,hidepid=1"
+    sysfs="rw,nodev,nosuid,noexec,noatime"
+    tmpfs="rw,nodev,nosuid,noexec,noatime,noswap,uid=0,gid=0,mode=1777,size=50%" #,usrquota,usrquota_block_hardlimit=,usrquota_inode_hardlimit="
+
+     mountpoint -q "/dev" || { install -d -o 0 -g 0 -m 0700 "/dev"     ; mount -t devtmpfs -o "\${devtmpfs}" "host" "/dev"     ; }
+ mountpoint -q "/dev/pts" || { install -d -o 0 -g 0 -m 0700 "/dev/pts" ; mount -t devpts   -o "\${devpts}"   "host" "/dev/pts" ; }
+ mountpoint -q "/dev/shm" || { install -d -o 0 -g 0 -m 0700 "/dev/shm" ; mount -t tmpfs    -o "\${devshm}"   "host" "/dev/shm" ; }
+    mountpoint -q "/proc" || { install -d -o 0 -g 0 -m 0700 "/proc"    ; mount -t proc     -o "\${proc}"     "host" "/proc"    ; mount -o remount,hidepid=1 "/proc" ; }
+     mountpoint -q "/sys" || { install -d -o 0 -g 0 -m 0700 "/sys"     ; mount -t sysfs    -o "\${sysfs}"    "host" "/sys"     ; }
+     mountpoint -q "/tmp" || { install -d -o 0 -g 0 -m 0700 "/tmp"     ; mount -t tmpfs    -o "\${tmpfs}"    "host" "/tmp"     ; }
 
 # dev
 
@@ -154,7 +166,7 @@ cat > "etc/init" << EOF
  ip route add 127.0.0.0/8 dev lo scope host metric 0
  ip link set up lo
 
- [ -d "/sys/class/net/eth0" ] && echo yes | network_default eth0 "$(basename ${1})"
+ [ -d "/sys/class/net/eth0" ] && echo yes | network_dhcpc eth0
  [ -d "/sys/class/net/eth0" ] && echo yes | network_zcip eth0
 
 EOF

@@ -1,5 +1,13 @@
 
 #############
+about:config toolkit.legacyUserProfileCustomizations.stylesheets=true
+${HOME}/.mozilla/browser/chrome
+ userChrome.css
+ userContent.css
+^ still works and removes the annoying background screen flash
+#############
+
+#############
 * x11-libs/gtk+
 ^ ebuild broke ctrl+o and gtk filemanager ?
 ^ removing /usr/share/mime + /usr/share/glib-2.0

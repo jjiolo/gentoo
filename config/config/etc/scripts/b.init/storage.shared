@@ -3,7 +3,9 @@
 # | /tmp/storage/shared | .directory | [archive] | contacts | [downloads] | [torrents] |
 #############
 
-set +o noclobber
+printf "%s\n" "#############" ; set +o noclobber
+
+#############
 
 # shared
 
@@ -121,4 +123,6 @@ printf "%s\n" "#############"
 #############
 
 set -o noclobber
+
+#############
 

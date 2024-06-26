@@ -51,14 +51,13 @@ openssl s_client -connect "smtp.gmail.com:465" -noservername -verify_hostname "s
   printf "\r\n%s\r\n" "." >&3
  }
 
- [ "${REPLY:0:9}" == "250 2.0.0" ] && printf "%s\r\n" "quit" >&3
- [ "${REPLY:0:9}" == "250 2.0.0" ] && pkill -P$$
+ [ "${REPLY:0:9}" == "250 2.0.0" ] && { printf "%s\r\n" "quit" >&3 ; pkill -P$$ ; }
 
-done &
+done # &
 
 #############
 
-while read ; do printf "%s\n" "${REPLY}" >&3 ; done
+# while read ; do printf "%s\n" "${REPLY}" >&3 ; done
 
 #############
 

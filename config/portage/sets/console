@@ -22,6 +22,7 @@ net-libs/libmnl
 net-libs/libnftnl
 net-misc/curl
 net-misc/dropbear
+net-misc/miniupnp
 net-p2p/transmission
 net-vpn/tor
 net-vpn/torsocks

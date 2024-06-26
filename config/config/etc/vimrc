@@ -29,17 +29,14 @@ set history=13
 set numberwidth=3
 set number
 set ruler
-set laststatus=2
 
 set ignorecase
 set hlsearch
 set noincsearch
-set nowildmenu
 
 set nowrap
-set so=3
+set scrolloff=3
 set sidescroll=13
-set cmdheight=1
 
 set expandtab
 set tabstop=2
@@ -47,9 +44,16 @@ set tabstop=2
 set noautoindent
 set shiftwidth=2
 
+set nowildmenu
+set cmdheight=1
+set laststatus=2
+
+set cursorline
 set colorcolumn=0
 set colorcolumn=65
 colorscheme desert
+
+set notitle
 
 nmap <C-n> :tabnext<CR>
 nmap <C-p> :tabprevious<CR>

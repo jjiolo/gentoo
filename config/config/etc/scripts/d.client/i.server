@@ -2,7 +2,7 @@
 #############
 install -d -o "${USER}" -m 0700 "${HOME}/iserver" && cd "${HOME}/iserver" || exit 1 ; clear
 #############
-sigint(){ pkill -P$$ ; } ; trap sigint SIGINT
+sigint(){ printf "\n%s" "restarting server" ; pkill -P$$ ; exec i.server ; } ; trap sigint SIGINT
 #############
 
    [ -f "DEBUG" ] || install -o "${USER}" -m 0600 "/dev/null" "DEBUG"
@@ -20,13 +20,14 @@ onion="$(hexdump -n28 -ve '1/1 "%02x"'</dev/urandom)"
 nick="NICK $(tr -cd 'a-zA-Z'</dev/urandom|head -c13)"
 user="USER ${onion:0:9} 0 0 :${onion:9:47}~"
 #############
-random="$((${RANDOM}%5))"
+random="$((${RANDOM}%6))"
 #############
 [ "${random}" == "0" ] && account="spare"
 [ "${random}" == "1" ] && account="spareproject"
 [ "${random}" == "2" ] && account="theyneversleep"
-[ "${random}" == "3" ] && account="npc"
-[ "${random}" == "4" ] && account="op"
+[ "${random}" == "3" ] && account="obrien"
+[ "${random}" == "4" ] && account="npc"
+[ "${random}" == "5" ] && account="op"
 #############
 mode="MODE ${nick:5} +iuwQR"
 #############
@@ -131,7 +132,7 @@ done &
 
 #############
 
-wait
+wait ; sleep 3 ; exec i.server
 
 #############
 

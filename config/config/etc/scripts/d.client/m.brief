@@ -18,7 +18,7 @@ for i in new/* ; do
 
  printf "%s\n" "#############"
 
- strings "${i}" | grep -h -e '^From:' -e '^To:' -e '^Cc:' -e '^Subject:'
+ strings "${i}" | grep -h -e '^From:' -e '^To:' -e '^Cc:' -e '^Subject:' | sort -u
  
 done | less -S
 #############

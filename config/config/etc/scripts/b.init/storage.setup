@@ -1,7 +1,7 @@
 
 cat << EOF
 #############
-# | .gnupg .net .ssh .vpn | home | [mount] | [services] | shared | [stage3] | .init |
+| .gnupg .net .ssh .vpn | home | [mount] | [services] | shared | [stage3] | .init |
 #############
 EOF
 
@@ -130,6 +130,10 @@ printf "%s\n" "setting up .init"
 printf "%s\n" "setting up cache"
 
 find /tmp/storage </dev/null &>/dev/null &
+
+#############
+
+printf "%s\n" "#############"
 
 #############
 

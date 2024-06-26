@@ -11,11 +11,11 @@ default="${default} --keep-going y" #
 #############
 emerge ${default} ${pretend} --oneshot --onlydeps @console @desktop @programs 2>&1 | tee "/binhost/logs/build.upgrade.onlydeps"
 #############
+#PATH="/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin:${PATH}" CFLAGS="-I/opt/usr/include -L/opt/usr/lib64" \
 emerge ${default} ${pretend} --root "/binhost/rootfs" --nodeps @console @desktop @programs 2>&1 | tee "/binhost/logs/build.upgrade.nodeps"
 #############
 emerge ${default} --pretend --emptytree --onlydeps @console @desktop @programs | tee "/binhost/logs/build.onlydeps"
 #############
-#PATH="/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin:${PATH}" CFLAGS="-I/opt/usr/include -L/opt/usr/lib64" \
 emerge ${default} --pretend --emptytree --nodeps @console @desktop @programs | tee "/binhost/logs/build.nodeps"
 #############
 

@@ -33,7 +33,7 @@
  mdadm --examine /dev/sda
  mdadm --detail /dev/md127
  mdadm --detail --scan > /etc/mdadm.conf
- mdadm --detail --test /dev/md127 && echo true || echo fsck
+ mdadm --detail --test /dev/md127 && echo ok || echo degraded
  watch -tn3 cat /proc/mdstat
 
 #mdadm --monitor --scan --syslog --daemonise

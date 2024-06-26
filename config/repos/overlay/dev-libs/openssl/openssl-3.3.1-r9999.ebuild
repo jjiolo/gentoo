@@ -139,13 +139,13 @@ no-camellia \
 no-cast \
 no-chacha \
 no-cmac \
-no-des \
+enable-des \
 enable-dh \
 no-dsa \
 enable-ecdh \
 enable-ecdsa \
 no-idea \
-no-md4 \
+enable-md4 \
 no-mdc2 \
 no-ocb \
 no-poly1305 \

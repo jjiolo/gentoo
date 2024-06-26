@@ -65,11 +65,11 @@ printf "%s\n" "#############"
  for i in images/client kernels/desktop kernels/server kernels/virtual
   do [ -f "${i}" ] && openssl sha256 "${i}" || printf "%s\n" "SHA2-256(${i})= missing" ; done
 
- for i in images/.client kernels/.desktop kernels/.server kernels/.virtual
-  do [ -f "${i}" ] && openssl sha256 "${i}" || printf "%s\n" "SHA2-256(${i})= missing" ; done
-
  [ -f "config.tar.gz" ] && openssl sha256 "config.tar.gz" || printf "%s\n" "SHA-256(config.tar.gz)= missing"
  [ -f "config.torrent" ] && openssl sha256 "config.torrent" || printf "%s\n" "SHA-256(config.torrent)= missing"
+
+ for i in images/.client kernels/.desktop kernels/.server kernels/.virtual
+  do [ -f "${i}" ] && openssl sha256 "${i}" || printf "%s\n" "SHA2-256(${i})= missing" ; done
 
  [ -f ".config.tar.gz" ] && openssl sha256 ".config.tar.gz" || printf "%s\n" "SHA-256(.config.tar.gz)= missing"
  [ -f ".config.torrent" ] && openssl sha256 ".config.torrent" || printf "%s\n" "SHA-256(.config.torrent)= missing"

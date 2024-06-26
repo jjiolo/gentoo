@@ -82,6 +82,8 @@ sysctl -w "net.ipv6.conf.$(basename ${i}).autoconf=0"
 sysctl -w "net.ipv6.conf.$(basename ${i}).accept_ra=0"
 sysctl -w "net.ipv6.conf.$(basename ${i}).accept_redirects=0"
 sysctl -w "net.ipv6.conf.$(basename ${i}).use_tempaddr=0"
+sysctl -w "net.ipv6.conf.$(basename ${i}).drop_unsolicited_na=1"
+sysctl -w "net.ipv6.conf.$(basename ${i}).mac_addresses=3"
 #############
 done
 

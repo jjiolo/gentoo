@@ -40,8 +40,8 @@ print system.network ; . /etc/scripts/b.init/system.network 2>&1 | tee /dev/shm/
 [ "$(hostname)" == "server" ] && . /etc/scripts/z.testing/b.client start
 #############
 [ "$(hostname)" == "virtual" ] && { brctl delif lan eth0 ; brctl addif nat eth0 ; }
-[ "$(hostname)" == "virtual" ] && { echo yes | ash /etc/scripts/e.setpriv/setpriv_network_dhcpc nat virtual ; }
-[ "$(hostname)" == "virtual" ] && { echo yes | ash /etc/scrips/e.setpriv/setpriv_network_zcip nat ; }
+[ "$(hostname)" == "virtual" ] && { echo yes | ash /etc/scripts/e.setpriv/setpriv_network_dhcpc nat ; }
+[ "$(hostname)" == "virtual" ] && { echo yes | ash /etc/scripts/e.setpriv/setpriv_network_zcip nat ; }
 [ "$(hostname)" == "virtual" ] && { . /etc/scripts/z.testing/b.client start ; }
 #############
 [ -f "${storage}/.init" ] && . "${storage}/.init" ; clear

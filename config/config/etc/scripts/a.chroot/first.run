@@ -27,7 +27,7 @@ emerge --color y --tree --verbose --buildpkg --usepkg --oneshot dev-libs/openssl
 #############
 
 #############
-emerge --color y --depclean 
+emerge --color y --depclean ; emerge -c dev-python/backports-tarfile
 #############
 emerge --color y --tree --verbose --buildpkg --usepkg --update --deep --newuse --emptytree --exclude gcc --keep-going y @installed 2>&1 | tee "/binhost/logs/rebuild.installed"
 #############

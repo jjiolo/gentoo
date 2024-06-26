@@ -41,7 +41,7 @@ user="\[\e[01;32m\]" box="\[\e[01;30m\]" path="\[\e[01;34m\]" reset="\[\e[0m\]"
 #############
 [ "$(stat -c %i /)" == "1" ] || box="\[\e[01;37m\]"
 #############
-export PS1="${user}[\u]${reset}${box}[\h]${reset}${path}[\w]${reset} "
+export PS1="${user}[\u]${reset}${box}[\h]${reset}${path}[\W]${reset} "
 #############
 [ "${USER}" == "irc" ] && export PS1=' > '
 #############

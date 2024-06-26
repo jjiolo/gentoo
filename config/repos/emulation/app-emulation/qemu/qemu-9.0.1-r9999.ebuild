@@ -16,6 +16,7 @@ dev-libs/glib[static-libs]
 dev-libs/libpcre2[static-libs]
 dev-libs/libusb[static-libs]
 media-libs/libjpeg-turbo[static-libs]
+sys-apps/dtc[static-libs]
 sys-libs/glibc[static-libs]
 sys-libs/libseccomp[static-libs]
 sys-libs/zlib[static-libs]
@@ -46,7 +47,7 @@ src_configure(){
 --disable-hexagon-idef-parser \
 --disable-qom-cast-debug \
 --enable-malloc=system \
---enable-fdt=internal \
+--enable-fdt=system \
 \
 --disable-download \
 \

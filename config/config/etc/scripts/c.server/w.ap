@@ -15,12 +15,12 @@ ip link set down "${1}"
 ip addr flush dev "${1}"
 random(){ hexdump -n6 -ve '1/1 "%02X:"' /dev/urandom | head -c17 ; }
 until ip link set dev "${1}" address "$(random)" ; do sleep .1 ; done
-install -o 5 -g 5 -m 0664 "/sys/class/net/${1}/address" "${storage}/.net/address"
+install -o 0 -g 0 -m 0600 "/sys/class/net/${1}/address" "${storage}/.net/address"
 ip link set up "${1}"
 #############
 
-install -o 5 -g 5 -m 0600 "/dev/null" "${storage}/.net/entropy"
-install -o 5 -g 5 -m 0600 "/dev/null" "${storage}/.net/wifi"
+install -o 5 -g 5 -m 0640 "/dev/null" "${storage}/.net/entropy"
+install -o 0 -g 5 -m 0640 "/dev/null" "${storage}/.net/wifi"
 
 cat >> "${storage}/.net/wifi" << EOF
 
@@ -33,7 +33,7 @@ network={
  key_mgmt=SAE WPA-PSK-SHA256 WPA-PSK
  psk="${3}"
  ssid="${2}"
- ignore_broadcast_ssid=0
+ ignore_broadcast_ssid=1
  ieee80211w=1
  beacon_prot=1
  ocv=1

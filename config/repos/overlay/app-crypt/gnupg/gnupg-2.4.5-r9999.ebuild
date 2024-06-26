@@ -22,6 +22,7 @@ sys-libs/zlib
 DEPEND="${RDEPEND}"
 #############
 src_configure() {
+sed -i '428d' g10/photoid.c # gcc-14 update
 ./configure \
 --prefix=/usr \
 --enable-option-checking \
@@ -39,7 +40,7 @@ src_configure() {
 --disable-gpg-is-gpg2 \
 --disable-selinux-support \
 --enable-large-secmem \
---enable-trust-models \
+--disable-trust-models \
 --disable-tofu \
 --disable-libdns \
 --enable-gpg-rsa \

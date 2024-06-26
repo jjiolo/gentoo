@@ -14,7 +14,7 @@ DEPEND=""
 S="${WORKDIR}/${MP}"
 #############
 
-date="20240427 20240504 20240511"
+date="20240427 20240504 20240511 20240518 20240519 20240525 20240601 20240608"
 
 for i in ${date} ; do SRC_URI+=" https://invisible-island.net/archives/${PN}/${MPV}/${MP}-${i}.patch.gz " ; done
 

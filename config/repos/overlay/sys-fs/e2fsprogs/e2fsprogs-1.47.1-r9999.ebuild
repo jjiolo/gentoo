@@ -50,13 +50,13 @@ src_configure(){
 --disable-bmap-stats-ops \
 --disable-nls \
 --disable-rpath \
+--enable-largefile \
 --disable-fuse2fs \
 --enable-lto \
 --disable-ubsan \
 --disable-addrsan \
 --disable-threadsan \
 --disable-fuzzing \
---enable-largefile
 
 #--without-diet-libc \
 #--without-cc \
@@ -67,6 +67,7 @@ src_configure(){
 #--with-gnu-ld \
 #--without-libiconv-prefix \
 #--without-libintl-prefix \
+#--without-libarchive \
 #--without-multiarch \
 #--without-udev-rules-dir \
 #--without-crond-dir \

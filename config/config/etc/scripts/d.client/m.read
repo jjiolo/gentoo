@@ -10,7 +10,7 @@ for i in new/* ; do
  clear ; unset REPLY
 
  printf "%s\n" "#############"
- strings "${i}" | grep -h -e '^From:' -e '^To:' -e '^Cc:' -e '^Subject:'
+ strings "${i}" | grep -h -e '^From:' -e '^To:' -e '^Cc:' -e '^Subject:' | sort -u
  printf "%s\n" "#############"
 
  until [ "${REPLY}" == "r" ] || [ "${REPLY}" == "d" ] || [ "${REPLY}" == "c" ] || [ "${REPLY}" == "s" ] ; do read -rp '(r)ead (d)elete (c)ontinue (s)kip: ' ; done

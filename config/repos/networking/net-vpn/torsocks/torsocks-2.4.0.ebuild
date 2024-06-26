@@ -16,6 +16,8 @@ S="${WORKDIR}/${PN}-v${PV}"
 src_configure(){
 autoreconf -i
 sed -i '42 c\#define DEFAULT_CONF_FILE "/etc/torsocks"' src/common/defaults.h
+sed -i '184c\ret = 0;' src/common/config-file.c # gcc 14
+sed -i '102c\ret = 0;' src/lib/torsocks.c # gcc 14
 ./configure \
 --prefix=/usr \
 --sysconfdir=/etc \

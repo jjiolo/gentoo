@@ -49,7 +49,7 @@ meson build \
 -Dprefix=/usr \
 -Dbuildtype=release \
 -Ddebug=false \
--Ddefault_library=shared \
+-Ddefault_library=both \
 -Dprefer_static=false \
 -Dwerror=false \
 \

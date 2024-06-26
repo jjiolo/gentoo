@@ -1,8 +1,6 @@
 
 =sys-apps/dbus-1.15.8 # didnt build ? firefox-esr didnt care ?
 
-=app-emulation/qemu-8.2.2 # broke --enable-libfdt=internal
-
 # started pulling media-libs/libplacebo -> dev-util/vulkan-headers
 =media-video/mpv-0.37.0
 =media-video/mpv-0.37.0-r1

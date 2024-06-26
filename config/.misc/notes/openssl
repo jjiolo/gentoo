@@ -86,6 +86,9 @@ locked configure options...
  enable-scrypt     - python
  enable-http       - opensmtpd
 
+ enable-des - wpa_supplicant (gcc-14 errors)
+ enable-md4 - wpa_supplicant (gcc-14 errors)
+
 #############
 
 no-atexit - disable atexit because NonStop exists ?
