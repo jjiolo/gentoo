@@ -1,7 +1,0 @@
-#!/bin/sh
-#############
-. /etc/services/dnsd/install
-#############
-#unbound -c "${service_storage}/unbound.conf"
-su -ls /bin/sh -c "exec stubby -gC ${service_storage}/stubby.yml" dnsd
-#############

@@ -1,5 +1,0 @@
-
-find /binhost/rootfs/var/db/pkg -type f -name CONTENTS -exec grep -Hi ${1} {} \; | 
-grep -i '.*:obj' |
-grep -i -e ':obj /bin/' -e ':obj /sbin/' -e ':obj /lib/' -e ':obj /lib64/' -e ':obj /usr/bin/' -e ':obj /usr/sbin/' -e ':obj /usr/lib/' -e ':obj /usr/lib64/'
-

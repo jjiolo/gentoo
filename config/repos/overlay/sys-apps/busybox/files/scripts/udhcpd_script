@@ -1,4 +1,0 @@
-#!/usr/bin/sh
-#############
-echo "execute every sixty seconds"
-#############

@@ -1,9 +1,0 @@
-#!/bin/sh
-#############
-[[ -d .certs         ]] && rm -r .certs
-[[ -f .database      ]] && rm    .database*
-[[ -f .serial        ]] && rm    .serial*
-[[ -f root.pem       ]] && rm     root*
-[[ -f persistent.pem ]] && rm     persistent*
-[[ -f tmp.pem        ]] && rm     tmp*
-#############

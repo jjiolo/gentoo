@@ -1,7 +1,0 @@
-#!/usr/bin/sh
-#############
-emerge --fetch-all-uri @system
-emerge --fetch-all-uri @world
-#############
-emerge --fetch-all-uri @installed
-#############

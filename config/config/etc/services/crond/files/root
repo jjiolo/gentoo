@@ -1,7 +1,0 @@
-
-0 * * * * find /tmp/storage/services/crond/hour -type f -exec /usr/busybox/sh {} \;
-0 0 * * * find /tmp/storage/services/crond/day -type f -exec /usr/busybox/sh {} \;
-0 0 * * 0 find /tmp/storage/services/crond/week -type f -exec /usr/busybox/sh {} \;
-0 0 1 * * find /tmp/storage/services/crond/month -type f -exec /usr/busybox/sh {} \;
-0 0 1 1 * find /tmp/storage/services/crond/year -type f -exec /usr/busybox/sh {} \;
-

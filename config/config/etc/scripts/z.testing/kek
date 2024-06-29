@@ -1,7 +1,0 @@
-#!/usr/bin/sh
-#############
-while sleep 5 ; do
-grep -q 127.0.0.1 /run/resolv.conf && echo 'nameserver 172.16.0.1' > /run/resolv.conf && continue
-grep -q 172.16.0.1 /run/resolv.conf && echo 'nameserver 127.0.0.1' > /run/resolv.conf && continue
-done
-#############

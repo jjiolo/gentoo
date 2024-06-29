@@ -1,7 +1,0 @@
-
-sys-apps/systemd-utils -kmod -tmpfiles -udev
-
-#############
-
-dev-python/pillow -jpeg -zlib
-

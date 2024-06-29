@@ -1,9 +1,0 @@
-#!/bin/sh
-#############
-. /etc/services/variables tinydns
-#############
-[ -d "${service_storage}/data"     ] || install -o 5353 -g 5353 -m 0640 "${service_system}/files/data" "${service_storage}/data"
-[ -d "${service_storage}/data.cdb" ] || install -o 5353 -g 5353 -m 0640 "${service_system}/files/data.cdb" "${service_storage}/data.cdb"
-#############
-. /etc/services/permissions tinydns tinydns 0700 0600
-#############

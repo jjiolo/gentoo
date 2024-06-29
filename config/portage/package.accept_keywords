@@ -1,8 +1,0 @@
-
-#sys-devel/gcc -~amd64
-
-dev-lang/python -~amd64
-sys-apps/portage -~amd64
-
-net-vpn/tor -~amd64
-

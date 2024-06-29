@@ -1,6 +1,0 @@
-#!/bin/sh
-#############
-. /etc/services/mysqlc/config
-#############
-su -ls /bin/ash -c "LANG=en_GB.UTF-8 tmux -S ${mysqlc_tmp}/tmux new-session -c ${mysqlc_storage} -d -s mysql mysql --socket /tmp/services/mysqld/socket" mysqlc
-#############

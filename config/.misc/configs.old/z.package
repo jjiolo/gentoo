@@ -1,3 +1,0 @@
-
-find /binhost/rootfs/var/db/pkg -type f -name DEPEND -exec grep -Hi ${1} {} \; # search for package
-

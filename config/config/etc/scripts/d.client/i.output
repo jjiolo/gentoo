@@ -1,6 +1,0 @@
-#!/usr/bin/sh
-#############
-install -d -o "${USER}" -m 0700 "${HOME}/iserver" && cd "${HOME}/iserver" || exit 1 ; clear
-#############
-tail -Fqn50 SELF NOTICE PRIVMSG | grep -ivf filter
-#############
