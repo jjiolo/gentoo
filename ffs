@@ -1,5 +1,11 @@
 
+#############
+rm config*
+#############
+cp -a /etc/config* .
+#############
 git add . -A
 git commit -m "backup: ${RANDOM}"
 git push
+#############
 
