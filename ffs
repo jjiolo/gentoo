@@ -5,7 +5,7 @@ rm config*
 cp -a /etc/config* .
 #############
 git add . -A
-git commit -m "backup: ${RANDOM}"
+git commit -m "backup: $(date +%Y:%m:%d:%H:%M:%S)"
 git push
 #############
 
