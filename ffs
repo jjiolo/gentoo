@@ -2,7 +2,8 @@
 #############
 rm config*
 #############
-cp -a /etc/config* .
+#cp -a /etc/config* .
+ cp -a /tmp/storage/stage3/binhost/config.* .
 #############
 git add . -A
 git commit -m "backup: $(date +%Y:%m:%d:%H:%M:%S)"
